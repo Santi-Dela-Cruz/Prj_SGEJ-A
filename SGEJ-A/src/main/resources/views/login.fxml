@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="application.controllers.LoginController"
+            prefHeight="400.0" prefWidth="600.0" >
+
+
+
+    <!-- Barra superior personalizada -->
+    <HBox fx:id="titleBar" prefHeight="40.0"
+          AnchorPane.topAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+          styleClass="title-bar" alignment="CENTER_LEFT">
+        <Label text="SGEJ-A" styleClass="title-label" />
+        <Pane HBox.hgrow="ALWAYS"/>
+        <Button fx:id="minimizeButton" text="—" styleClass="title-button"/>
+        <Button fx:id="closeButton" text="✕" styleClass="title-button"/>
+    </HBox>
+
+
+    <!-- Contenido central del login -->
+    <VBox alignment="CENTER" spacing="10.0"
+          AnchorPane.topAnchor="40.0" AnchorPane.bottomAnchor="0.0"
+          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <Label text="Iniciar sesión" styleClass="login-title"/>
+        <TextField fx:id="usernameField" promptText="Usuario" maxWidth="250"/>
+        <PasswordField fx:id="passwordField" promptText="Contraseña" maxWidth="250"/>
+        <ComboBox fx:id="userTypeBox" maxWidth="250"/>
+        <Button text="Ingresar" onAction="#handleLogin" maxWidth="100" styleClass="button-windows"/>
+    </VBox>
+
+</AnchorPane>

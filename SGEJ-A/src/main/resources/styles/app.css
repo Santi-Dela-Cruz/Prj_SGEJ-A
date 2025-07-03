@@ -1,0 +1,282 @@
+/* === Barra superior personalizada tipo Windows === */
+.title-bar {
+    -fx-background-color: #0078d7; /* Azul Windows */
+    -fx-padding: 5 10 5 10;
+    -fx-alignment: center-left;
+}
+
+.title-label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.title-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.title-button:hover {
+    -fx-background-color: rgba(255,255,255,0.2);
+}
+
+/* === Barra de navegación === */
+.nav-bar {
+    -fx-background-color: #f1f1f1;
+    -fx-padding: 8 12;
+    -fx-spacing: 8;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* === Botones de los módulos === */
+.module-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0078d7;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 12;
+    -fx-border-width: 0 2px 0 0;
+    -fx-border-color: transparent #0078d7 transparent transparent;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+    -fx-cursor: hand;
+}
+
+.module-button:hover {
+    -fx-border-color: transparent #005a9e transparent transparent;
+    -fx-text-fill: #005a9e;
+}
+
+/* Último botón de módulo sin borde derecho */
+.module-button-last {
+    -fx-border-width: 0;
+}
+
+/* === Botones "Modo" y "Usuario" sin borde === */
+.no-border-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0078d7;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-padding: 6 12;
+    -fx-border-width: 0;
+}
+
+.button-windows {
+    -fx-background-color: #0078d7;            /* Azul Windows */
+    -fx-text-fill: white;                     /* Texto blanco */
+    -fx-font-weight: bold;                    /* Texto en negrita */
+    -fx-font-size: 13px;
+    -fx-padding: 6 16;                        /* Espaciado interno */
+    -fx-background-radius: 4;                 /* Bordes ligeramente redondeados */
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1); /* Sombra sutil */
+    -fx-border-color: transparent;
+}
+
+.button-windows:hover {
+    -fx-background-color: #005a9e;            /* Azul más oscuro al pasar el mouse */
+}
+
+.button-windows:pressed {
+    -fx-background-color: #004a86;            /* Aún más oscuro cuando se presiona */
+}
+
+
+/* === Botón estándar (por ejemplo: Guardar, Cancelar, Ingresar) === */
+/*.button {
+    -fx-background-color: #0078d7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-padding: 8 16;
+}
+
+.button:hover {
+    -fx-background-color: #005a9e;
+}*/
+
+/* === Campos de entrada === */
+.text-field, .combo-box, .date-picker {
+    -fx-background-radius: 4;
+    -fx-border-radius: 4;
+    -fx-border-color: #ccc;
+    -fx-padding: 6 10;
+}
+
+.text-field:focused, .combo-box:focused, .date-picker:focused {
+    -fx-border-color: #0078d7;
+    -fx-background-color: #ffffff;
+}
+
+/* === Etiquetas === */
+.label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #333;
+}
+
+/* === Panel lateral del formulario === */
+.form-panel {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 2);
+}
+
+/* === Panel del título superior del formulario === */
+.title-panel {
+    -fx-background-color: #e8f4fc;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+/* === ScrollPane transparente === */
+.scroll-form {
+    -fx-background-color: transparent;
+}
+
+.scroll-form .viewport {
+    -fx-background-color: transparent;
+}
+
+.scroll-form .scroll-pane {
+    -fx-background-insets: 0;
+    -fx-background-radius: 12;
+}
+
+.scroll-form .scroll-bar {
+    -fx-opacity: 0;
+    -fx-pref-width: 0;
+}
+
+/* === Tabla tipo Windows moderno === */
+.table-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 1);
+}
+
+/* === Encabezado === */
+.table-view .column-header-background {
+    -fx-background-color: #f7fafd;      /* Very light blue/gray */
+    -fx-border-width: 0;                /* No borders */
+    -fx-border-color: transparent;
+    -fx-background-insets: 0;
+    -fx-padding: 0 0 0 0;
+    -fx-background-radius: 8 8 0 0;     /* Rounded top corners */
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 2, 0, 0, 1);
+}
+.table-view .column-header {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+    -fx-background-color: transparent;
+    -fx-alignment: CENTER_LEFT;
+}
+
+.table-view .column-header .label {
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: #2a2a2a;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 10 12 10 12;
+    -fx-background-color: transparent;
+}
+
+/* === Celdas === */
+.table-view .cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: #222;
+    -fx-padding: 10 8;
+    -fx-border-color: transparent;
+}
+
+/* === Fila seleccionada === */
+.table-view .table-row-cell:selected {
+    -fx-background-color: #e5f1fb;
+    -fx-text-fill: #000;
+}
+
+.table-view .arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+/* === Botones dentro de la tabla === */
+.table-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0078d7;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-padding: 2;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+}
+
+.table-button:hover {
+    -fx-background-color: #e0f0ff;
+}
+
+/* === Columnas de acción sin encabezado visible === */
+.column-action {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header .column-action .label {
+    -fx-text-fill: transparent;
+    -fx-padding: 0;
+    -fx-background-color: transparent;
+}
+
+/* === Oculta bordes de separación innecesarios === */
+.table-view .column-header, .table-view .filler {
+    -fx-border-width: 0;
+    -fx-border-color: transparent;
+}
+
+.dropdown-menu {
+    -fx-background-color: #fff;
+    -fx-border-color: #0078d7;
+    -fx-border-width: 1;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+    -fx-padding: 6 0;
+    -fx-spacing: 2;
+    -fx-min-width: 180;
+    -fx-max-width: 220;
+}
+
+.dropdown-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0078d7;
+    -fx-alignment: CENTER_LEFT;
+    -fx-font-size: 13px;
+    -fx-font-weight: normal;
+    -fx-padding: 10 18;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-max-width: infinity;
+    -fx-pref-width: 100%;
+}
+
+.dropdown-item:hover {
+    -fx-background-color: #e5f1fb;
+    -fx-text-fill: #005a9e;
+}
+
+
+

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<ScrollPane fx:id="scroll_FormCaso"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fitToWidth="true"
+            styleClass="scroll-form" fx:controller="application.controllers.FormCasosController">
+
+    <content>
+        <AnchorPane prefWidth="520.0" styleClass="form-panel">
+            <children>
+
+                <!-- Título del formulario -->
+                <Text text="REGISTRAR / VER / EDITAR"
+                      layoutX="150.0" layoutY="30.0"
+                      styleClass="title-label"/>
+
+                <!-- Campos de texto -->
+                <Label layoutX="20.0" layoutY="50.0" text="Número de expediente:" />
+                <TextField fx:id="txtf_NumeroExpediente" layoutX="20.0" layoutY="70.0" prefWidth="200.0" styleClass="text-field"/>
+
+                <Label layoutX="260.0" layoutY="50.0" text="Título del caso:" />
+                <TextField fx:id="txtf_TituloCaso" layoutX="260.0" layoutY="70.0" prefWidth="220.0" styleClass="text-field"/>
+
+                <Label layoutX="20.0" layoutY="110.0" text="Tipo de caso:" />
+                <ComboBox fx:id="cbx_TipoCaso" layoutX="20.0" layoutY="130.0" prefWidth="200.0" styleClass="combo-box"/>
+
+                <Label layoutX="260.0" layoutY="110.0" text="Fecha de inicio:" />
+                <DatePicker fx:id="dt_FechaInicio" layoutX="260.0" layoutY="130.0" prefWidth="220.0"/>
+
+                <Label layoutX="20.0" layoutY="170.0" text="Descripción del caso:" />
+                <TextArea fx:id="txtb_DescripcionCaso" layoutX="20.0" layoutY="190.0"
+                          prefWidth="460.0" prefHeight="80.0" styleClass="text-field"/>
+
+                <Label layoutX="20.0" layoutY="285.0" text="Estado:" />
+                <ComboBox fx:id="cbx_Estado" layoutX="20.0" layoutY="305.0" prefWidth="200.0" styleClass="combo-box"/>
+
+                <!-- Tabla de abogados -->
+                <Label layoutX="20.0" layoutY="345.0" text="Abogados asignados:" />
+                <TableView fx:id="tb_Abogados"
+                           layoutX="20.0" layoutY="365.0"
+                           prefWidth="460.0" prefHeight="130.0">
+                    <columns>
+                        <TableColumn fx:id="tbc_CheckBoton" prefWidth="30.0" />
+                        <TableColumn fx:id="tbc_Nombres" text="Nombres" prefWidth="130.0"/>
+                        <TableColumn fx:id="tbc_Apellidos" text="Apellidos" prefWidth="130.0"/>
+                        <TableColumn fx:id="tbc_Rol_ChekBox" text="Rol" prefWidth="150.0"/>
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                </TableView>
+
+                <!-- Botones -->
+                <Button fx:id="btn_Guardar"
+                        layoutX="100.0" layoutY="520.0"
+                        prefWidth="120.0"
+                        text="Guardar" styleClass="button-windows"/>
+                <Button fx:id="btn_Cancelar"
+                        layoutX="260.0" layoutY="520.0"
+                        prefWidth="120.0"
+                        text="Cancelar" styleClass="button-windows"/>
+
+            </children>
+        </AnchorPane>
+    </content>
+</ScrollPane>

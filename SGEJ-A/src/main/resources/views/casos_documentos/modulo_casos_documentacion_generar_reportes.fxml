@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.ModuloReportesController"
+            AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+
+    <children>
+        <Text text="Estado del caso:" AnchorPane.topAnchor="14.0" AnchorPane.leftAnchor="14.0"/>
+        <ComboBox fx:id="cbx_EstadoCaso" AnchorPane.topAnchor="30.0" AnchorPane.leftAnchor="14.0" prefWidth="150.0"/>
+
+        <Text text="Tipo de caso:" AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="14.0"/>
+        <ComboBox fx:id="cbx_TipoCaso" AnchorPane.topAnchor="76.0" AnchorPane.leftAnchor="14.0" prefWidth="150.0"/>
+
+        <Text text="Abogado asignado:" AnchorPane.topAnchor="106.0" AnchorPane.leftAnchor="14.0"/>
+        <ComboBox fx:id="cbx_AbogadoAsignado" AnchorPane.topAnchor="122.0" AnchorPane.leftAnchor="14.0" prefWidth="150.0"/>
+
+        <Text text="Fecha desde:" AnchorPane.topAnchor="14.0" AnchorPane.leftAnchor="320.0"/>
+        <TextField fx:id="txtf_FechaDesde" AnchorPane.topAnchor="30.0" AnchorPane.leftAnchor="410.0"/>
+
+        <Text text="Fecha hasta:" AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="320.0"/>
+        <TextField fx:id="txtf_FechaHasta" AnchorPane.topAnchor="76.0" AnchorPane.leftAnchor="410.0"/>
+
+        <MenuButton fx:id="btnc_Generar"
+                    text="Generar"
+                    AnchorPane.topAnchor="122.0"
+                    AnchorPane.leftAnchor="410.0"
+                    prefWidth="101.0"
+                    prefHeight="26.0">
+            <items>
+                <MenuItem text="Generar PDF"/>
+                <MenuItem text="Generar Excel"/>
+            </items>
+        </MenuButton>
+
+        <TableView fx:id="tb_Reportes"
+                   AnchorPane.topAnchor="165.0"
+                   AnchorPane.leftAnchor="14.0"
+                   AnchorPane.rightAnchor="14.0"
+                   AnchorPane.bottomAnchor="10.0">
+            <columns>
+                <TableColumn fx:id="tbc_NombreReporte" text="Nombre Reporte"/>
+                <TableColumn fx:id="tbc_TituloCaso" text="Tipo de caso"/>
+                <TableColumn fx:id="tbc_AbogadoAsignado" text="Abogado asignado"/>
+                <TableColumn fx:id="tbc_FechaDesde" text="Fecha desde"/>
+                <TableColumn fx:id="tbc_FechaHasta" text="Fecha hasta"/>
+                <TableColumn fx:id="tbc_TipoDocumento" text="Tipo de documento"/>
+                <TableColumn fx:id="tbc_Tamano" text="Tamaño"/>
+                <TableColumn fx:id="tbc_ButonVisualizar" styleClass="column-action" text=" " prefWidth="40"/>
+            </columns>
+            <columnResizePolicy>
+                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+            </columnResizePolicy>
+        </TableView>
+    </children>
+</AnchorPane>

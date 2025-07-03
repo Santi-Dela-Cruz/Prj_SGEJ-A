@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="581.0" prefWidth="860.0"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.MainController">
+
+    <!-- Top bar -->
+    <HBox fx:id="titleBar"
+          alignment="CENTER_LEFT"
+          styleClass="title-bar"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="0.0">
+        <Label styleClass="title-label" text="AMBECUADOR" textFill="WHITE" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="minimizeButton" styleClass="title-button" text="—" />
+        <Button fx:id="closeButton" styleClass="title-button" text="✕" />
+    </HBox>
+
+    <!-- Navigation bar -->
+    <HBox alignment="CENTER_LEFT"
+          styleClass="nav-bar"
+          AnchorPane.leftAnchor="0.0"
+          AnchorPane.rightAnchor="0.0"
+          AnchorPane.topAnchor="40.0">
+        <Button fx:id="md_Clientes" styleClass="module-button" text="Clientes" />
+        <Button fx:id="md_CasosDocumentacion" styleClass="module-button" text="Casos y Documentacion" />
+        <Button fx:id="md_Facturacion" styleClass="module-button" text="Facturacion" />
+        <Button fx:id="md_Personal" styleClass="module-button" text="Personal" />
+        <Button fx:id="md_Sistema" styleClass="module-button" text="Sistema" />
+        <Region HBox.hgrow="ALWAYS" />
+        <Button fx:id="btn_modo" styleClass="no-border-button" text="Modo" />
+        <Button fx:id="md_Usuario" styleClass="no-border-button" text="Usuario" />
+    </HBox>
+
+    <!-- Main content area -->
+    <AnchorPane AnchorPane.topAnchor="100.0"
+                AnchorPane.bottomAnchor="10.0"
+                AnchorPane.leftAnchor="10.0"
+                AnchorPane.rightAnchor="10.0">
+        <children>
+            <AnchorPane fx:id="pnl_Modulos"
+                        AnchorPane.topAnchor="0.0"
+                        AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.leftAnchor="0.0"
+                        AnchorPane.rightAnchor="0.0" />
+            <AnchorPane fx:id="pnl_Forms"
+                        visible="false"
+                        managed="false"
+                        prefWidth="500.0"
+                        AnchorPane.topAnchor="0.0"
+                        AnchorPane.bottomAnchor="0.0"
+                        AnchorPane.rightAnchor="0.0"
+                        style="-fx-background-color: transparent;" />
+        </children>
+    </AnchorPane>
+
+    <!-- Dropdown panel for Casos y Documentacion (moved to the end to appear on top) -->
+    <VBox fx:id="vpnl_DesplegableCasosDocumentacion"
+          styleClass="dropdown-menu"
+          AnchorPane.topAnchor="90.0"
+          AnchorPane.leftAnchor="90.0"
+          prefWidth="220.0"
+          visible="false"
+          managed="false">
+        <Button fx:id="btn_Casos" styleClass="dropdown-item" text="Casos" maxWidth="Infinity" />
+        <Button fx:id="btn_Documentos" styleClass="dropdown-item" text="Documentos" maxWidth="Infinity" />
+        <Button fx:id="btn_HistorialComunicaciones" styleClass="dropdown-item" text="Historial de comunicaciones" maxWidth="Infinity" />
+        <Button fx:id="btn_Bitacora" styleClass="dropdown-item" text="Bitácora de casos" maxWidth="Infinity" />
+        <Button fx:id="btn_GenerarReporte" styleClass="dropdown-item" text="Generar reporte" maxWidth="Infinity" />
+    </VBox>
+
+</AnchorPane>
