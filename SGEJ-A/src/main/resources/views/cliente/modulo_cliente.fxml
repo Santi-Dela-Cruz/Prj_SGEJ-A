@@ -17,7 +17,7 @@
                     style="-fx-background-color: #14213d; -fx-background-radius: 16; -fx-border-radius: 16;"
                     AnchorPane.leftAnchor="14.0"
                     AnchorPane.rightAnchor="2.0"
-                    AnchorPane.topAnchor="8.0">
+                    AnchorPane.topAnchor="4.0">
                   <children>
                       <Text fill="WHITE"
                             text="Registro y Control de Clientes"
@@ -45,7 +45,7 @@
                       <TableColumn fx:id="tbc_Correo" text="Correo Electrónico" />
                       <TableColumn fx:id="tbc_Estado" text="Estado" />
                       <TableColumn fx:id="tbc_BotonEditar" prefWidth="20" styleClass="column-action" text=" " />
-                      <TableColumn fx:id="tbc_botonVer" prefWidth="20" styleClass="column-action" text=" " />
+                      <TableColumn fx:id="tbc_BotonVer" prefWidth="20" styleClass="column-action" text=" " />
                   </columns>
                   <columnResizePolicy>
                       <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

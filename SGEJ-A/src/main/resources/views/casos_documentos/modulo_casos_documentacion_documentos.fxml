@@ -2,6 +2,9 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -10,30 +13,49 @@
             AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
 
     <children>
+        <!-- Title Panel Centered at the Top -->
+        <Pane fx:id="pnl_Title"
+              prefHeight="44.0"
+              style="-fx-background-color: #14213d; -fx-background-radius: 16; -fx-border-radius: 16;"
+              AnchorPane.leftAnchor="14.0"
+              AnchorPane.rightAnchor="2.0"
+              AnchorPane.topAnchor="4.0">
+            <children>
+                <Text fill="WHITE"
+                      text="Gestión de Documentos"
+                      style="-fx-font-size: 16.0; -fx-font-weight: bold;"
+                      layoutY="28.0"
+                      layoutX="50.0">
+                    <font>
+                        <Font size="16.0" />
+                    </font>
+                </Text>
+            </children>
+        </Pane>
+
         <TextField fx:id="txtf_Buscar"
-                   AnchorPane.topAnchor="14.0" AnchorPane.leftAnchor="14.0"
+                   AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="14.0"
                    prefHeight="26.0" prefWidth="335.0"
                    promptText="Buscar documento..." />
 
         <Button fx:id="btn_Buscar"
                 text="Buscar"
                 styleClass="button-windows"
-                AnchorPane.topAnchor="14.0" AnchorPane.leftAnchor="360.0" />
+                AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="360.0" />
 
         <Button fx:id="btn_Subir"
                 text="Subir documento"
                 styleClass="button-windows"
-                AnchorPane.topAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+                AnchorPane.topAnchor="54.0" AnchorPane.rightAnchor="14.0" />
 
         <TableView fx:id="tb_Documentos"
-                   AnchorPane.topAnchor="56.0" AnchorPane.leftAnchor="14.0"
+                   AnchorPane.topAnchor="96.0" AnchorPane.leftAnchor="14.0"
                    AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
             <columns>
                 <TableColumn fx:id="tbc_Nombre" text="Nombre" />
                 <TableColumn fx:id="tbc_Tipo" text="Tipo" />
                 <TableColumn fx:id="tbc_Fecha" text="Fecha" />
                 <TableColumn fx:id="tbc_Tamano" text="Tamaño" />
-
                 <TableColumn fx:id="tbc_BotonVer" styleClass="column-action" text=" " prefWidth="40"/>
                 <TableColumn fx:id="tbc_BotonEliminar" styleClass="column-action" text=" " prefWidth="40"/>
                 <TableColumn fx:id="tbc_ButonDescargar" styleClass="column-action" text=" " prefWidth="40"/>

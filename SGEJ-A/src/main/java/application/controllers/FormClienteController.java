@@ -7,7 +7,7 @@ import javafx.scene.text.Text;
 public class FormClienteController {
 
     @FXML private Button btn_Guardar, btn_Cancelar;
-    @FXML private TextField txtf_Nombres, txtf_Apellidos, txtf_NumeroIdentificacion, txtF_Direccion, txtf_Correo, txtf_AdicionalCampo, txtf_NumeroTelefono;
+    @FXML private TextField txtf_Nombres, txtf_Apellidos, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Adicional, txtf_Telefono;
     @FXML private ComboBox<String> cbx_TipoCliente, cbx_TipoIdentificacion, cbx_Estado;
     @FXML private DatePicker dt_FechaIngreso;
     @FXML private Text txt_TituloForm;
@@ -26,11 +26,11 @@ public class FormClienteController {
     private void initialize() {
         cbx_Estado.getItems().addAll("Activo", "Inactivo");
         cbx_TipoIdentificacion.getItems().addAll("Cédula", "RUC", "Pasaporte");
-        cbx_TipoCliente.getItems().addAll("Natural", "Juridica");
+        cbx_TipoCliente.getItems().addAll("Natural", "Jurídica");
+
         btn_Guardar.setOnAction(e -> {
             if (onGuardar != null) onGuardar.run();
         });
-
         btn_Cancelar.setOnAction(e -> {
             if (onCancelar != null) onCancelar.run();
         });
@@ -40,46 +40,67 @@ public class FormClienteController {
         txtf_Nombres.setText(cliente.nombres());
         txtf_Apellidos.setText(cliente.apellidos());
         txtf_NumeroIdentificacion.setText(cliente.numeroIdentificacion());
-        // txtF_Direccion, txtf_AdicionalCampo, dt_FechaIngreso: set if your ClienteDemo has these fields
-        txtf_NumeroTelefono.setText(cliente.telefono());
+        txtf_Direccion.setText(cliente.direccion());
+        txtf_Adicional.setText(cliente.adicional());
+        dt_FechaIngreso.setValue(cliente.fechaIngreso());
+        txtf_Telefono.setText(cliente.telefono());
         txtf_Correo.setText(cliente.correo());
-        // cbx_TipoCliente, cbx_TipoIdentificacion, cbx_Estado: set if your ClienteDemo has these fields
-        // Example: cbx_TipoIdentificacion.setValue(cliente.tipoIdentificacion());
-        // Example: cbx_Estado.setValue(cliente.estado());
+        cbx_TipoCliente.setValue(cliente.tipoCliente());
+        cbx_TipoIdentificacion.setValue(cliente.tipoIdentificacion());
+        cbx_Estado.setValue(cliente.estado());
     }
 
     public void setModo(String modo) {
-        boolean editable = "EDITAR".equals(modo);
-        boolean ver = "VER".equals(modo);
+        boolean esEditar = "EDITAR".equalsIgnoreCase(modo);
+        boolean esVer = "VER".equalsIgnoreCase(modo);
+        boolean esRegistrar = !esEditar && !esVer;
 
-        txt_TituloForm.setText(editable ? "Editar Cliente" : "Registar nuevo Cliente");
-        txtf_Nombres.setEditable(editable);
-        txtf_Apellidos.setEditable(editable);
-        txtf_NumeroIdentificacion.setEditable(false);
-        cbx_TipoIdentificacion.setDisable(true);
-        txtf_NumeroTelefono.setEditable(editable);
-        txtf_Correo.setEditable(editable);
-        cbx_Estado.setDisable(true);
-        txtF_Direccion.setEditable(editable);
-        txtf_AdicionalCampo.setEditable(editable);
-        cbx_TipoCliente.setDisable(!editable);
-        dt_FechaIngreso.setDisable(!editable);
-
-        if (ver) {
+        if (esEditar) {
+            txt_TituloForm.setText("Editar Cliente");
+        } else if (esVer) {
             txt_TituloForm.setText("Ver Cliente");
+        } else {
+            txt_TituloForm.setText("Registrar nuevo Cliente");
+        }
+
+        if (esVer) {
             txtf_Nombres.setEditable(false);
             txtf_Apellidos.setEditable(false);
             txtf_NumeroIdentificacion.setEditable(false);
             cbx_TipoIdentificacion.setDisable(true);
-            txtf_NumeroTelefono.setEditable(false);
+            txtf_Telefono.setEditable(false);
             txtf_Correo.setEditable(false);
             cbx_Estado.setDisable(true);
-            txtF_Direccion.setEditable(false);
-            txtf_AdicionalCampo.setEditable(false);
+            txtf_Direccion.setEditable(false);
+            txtf_Adicional.setEditable(false);
             cbx_TipoCliente.setDisable(true);
             dt_FechaIngreso.setDisable(true);
             btn_Guardar.setDisable(true);
-        } else {
+        } else if (esEditar) {
+            txtf_Nombres.setEditable(true);
+            txtf_Apellidos.setEditable(true);
+            txtf_NumeroIdentificacion.setEditable(false);
+            cbx_TipoIdentificacion.setDisable(true);
+            txtf_Telefono.setEditable(true);
+            txtf_Correo.setEditable(true);
+            cbx_Estado.setDisable(true);
+            txtf_Direccion.setEditable(true);
+            txtf_Adicional.setEditable(true);
+            cbx_TipoCliente.setDisable(false);
+            dt_FechaIngreso.setDisable(false);
+            btn_Guardar.setDisable(false);
+        } else { // REGISTRAR
+            txtf_Nombres.setEditable(true);
+            txtf_Apellidos.setEditable(true);
+            txtf_NumeroIdentificacion.setEditable(true);
+            cbx_TipoIdentificacion.setDisable(false);
+            txtf_Telefono.setEditable(true);
+            txtf_Correo.setEditable(true);
+            cbx_Estado.setDisable(false);
+            txtf_Direccion.setEditable(true);
+            txtf_Adicional.setEditable(true);
+            cbx_TipoCliente.setDisable(false);
+            dt_FechaIngreso.setDisable(false);
             btn_Guardar.setDisable(false);
         }
     }

@@ -1,71 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
 
-<ScrollPane fitToWidth="true" fitToHeight="true" xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.FormClienteController"  styleClass="scroll-form">
-    <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="520.0" styleClass="form-panel">
+<ScrollPane fitToWidth="true" fitToHeight="true"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.FormClienteController"
+            styleClass="scroll-form">
+
+    <VBox spacing="20" styleClass="form-panel" alignment="TOP_LEFT">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
 
         <!-- Título -->
-        <StackPane fx:id="pnl_Titulo" AnchorPane.topAnchor="10.0" AnchorPane.leftAnchor="110.0"
-                   prefHeight="30.0" prefWidth="300.0" styleClass="title-panel">
-            <Text fx:id="txt_TituloForm" text="REGISTRAR / VISUALIZAR / EDITAR"
-                  styleClass="title-label" />
+        <StackPane fx:id="pnl_Titulo"
+                   prefHeight="30.0"
+                   styleClass="title-panel"
+                   alignment="CENTER">
+            <Text fx:id="txt_TituloForm"
+                  text="REGISTRAR / VISUALIZAR / EDITAR"
+                  styleClass="title-label"/>
         </StackPane>
 
-        <!-- Primera columna -->
-        <Text text="Tipo de Cliente:" AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="40.0" styleClass="label"/>
-        <ComboBox fx:id="cbx_TipoCliente" AnchorPane.topAnchor="80.0" AnchorPane.leftAnchor="40.0" prefWidth="180.0"
-                  promptText="Tipo de Cliente" styleClass="combo-box"/>
+        <!-- Formulario organizado -->
+        <GridPane hgap="20" vgap="12">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="250"/>
+                <ColumnConstraints prefWidth="250"/>
+            </columnConstraints>
 
-        <Text text="Nombres:" AnchorPane.topAnchor="125.0" AnchorPane.leftAnchor="40.0" styleClass="label"/>
-        <TextField fx:id="txtf_Nombres" AnchorPane.topAnchor="145.0" AnchorPane.leftAnchor="40.0" prefWidth="180.0"
-                   styleClass="text-field"/>
+            <!-- Fila 0: Tipo de Cliente ocupa ambas columnas -->
+            <Label text="Tipo de Cliente:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
+            <ComboBox fx:id="cbx_TipoCliente" promptText="Tipo de Cliente"
+                      prefWidth="250.0" styleClass="combo-box"
+                      GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
 
-        <Text text="Tipo de Identificación:" AnchorPane.topAnchor="190.0" AnchorPane.leftAnchor="40.0" styleClass="label"/>
-        <ComboBox fx:id="cbx_TipoIdentificacion" AnchorPane.topAnchor="210.0" AnchorPane.leftAnchor="40.0" prefWidth="180.0"
-                  promptText="Tipo de Identificación" styleClass="combo-box"/>
+            <!-- Fila 2 -->
+            <Label text="Nombres:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Apellidos:" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="label"/>
+            <TextField fx:id="txtf_Nombres" prefWidth="180.0" styleClass="text-field"
+                       GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtf_Apellidos" prefWidth="180.0" styleClass="text-field"
+                       GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-        <Text text="Dirección:" AnchorPane.topAnchor="255.0" AnchorPane.leftAnchor="40.0" styleClass="label"/>
-        <TextField fx:id="txtF_Direccion" AnchorPane.topAnchor="275.0" AnchorPane.leftAnchor="40.0" prefWidth="180.0"
-                   styleClass="text-field"/>
+            <!-- Fila 4 -->
+            <Label text="Tipo de Identificación:" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Número de Identificación:" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="label"/>
+            <ComboBox fx:id="cbx_TipoIdentificacion" promptText="Tipo de Identificación"
+                      prefWidth="180.0" styleClass="combo-box"
+                      GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtf_NumeroIdentificacion" prefWidth="180.0" styleClass="text-field"
+                       GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-        <Text text="Correo:" AnchorPane.topAnchor="320.0" AnchorPane.leftAnchor="40.0" styleClass="label"/>
-        <TextField fx:id="txtf_Correo" AnchorPane.topAnchor="340.0" AnchorPane.leftAnchor="40.0" prefWidth="180.0"
-                   styleClass="text-field"/>
+            <!-- Fila 6 -->
+            <Label text="Dirección:" GridPane.rowIndex="6" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Número de Teléfono:" GridPane.rowIndex="6" GridPane.columnIndex="1" styleClass="label"/>
+            <TextField fx:id="txtf_Direccion" prefWidth="180.0" styleClass="text-field"
+                       GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtf_Telefono" prefWidth="180.0" styleClass="text-field"
+                       GridPane.rowIndex="7" GridPane.columnIndex="1"/>
 
-        <Text text="Campo Adicional:" AnchorPane.topAnchor="385.0" AnchorPane.leftAnchor="40.0" styleClass="label"/>
-        <TextField fx:id="txtf_AdicionalCampo" AnchorPane.topAnchor="405.0" AnchorPane.leftAnchor="40.0" prefWidth="180.0"
-                   styleClass="text-field"/>
+            <!-- Fila 8 -->
+            <Label text="Correo:" GridPane.rowIndex="8" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Estado:" GridPane.rowIndex="8" GridPane.columnIndex="1" styleClass="label"/>
+            <TextField fx:id="txtf_Correo" prefWidth="180.0" styleClass="text-field"
+                       GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="cbx_Estado" promptText="Estado"
+                      prefWidth="180.0" styleClass="combo-box"
+                      GridPane.rowIndex="9" GridPane.columnIndex="1"/>
 
-        <!-- Segunda columna -->
-        <Text text="Apellidos:" AnchorPane.topAnchor="125.0" AnchorPane.leftAnchor="260.0" styleClass="label"/>
-        <TextField fx:id="txtf_Apellidos" AnchorPane.topAnchor="145.0" AnchorPane.leftAnchor="260.0" prefWidth="180.0"
-                   styleClass="text-field"/>
-
-        <Text text="Número de Identificación:" AnchorPane.topAnchor="190.0" AnchorPane.leftAnchor="260.0" styleClass="label"/>
-        <TextField fx:id="txtf_NumeroIdentificacion" AnchorPane.topAnchor="210.0" AnchorPane.leftAnchor="260.0" prefWidth="180.0"
-                   styleClass="text-field"/>
-
-        <Text text="Número de Teléfono:" AnchorPane.topAnchor="255.0" AnchorPane.leftAnchor="260.0" styleClass="label"/>
-        <TextField fx:id="txtf_NumeroTelefono" AnchorPane.topAnchor="275.0" AnchorPane.leftAnchor="260.0" prefWidth="180.0"
-                   styleClass="text-field"/>
-
-        <Text text="Estado:" AnchorPane.topAnchor="320.0" AnchorPane.leftAnchor="260.0" styleClass="label"/>
-        <ComboBox fx:id="cbx_Estado" AnchorPane.topAnchor="340.0" AnchorPane.leftAnchor="260.0" prefWidth="180.0"
-                  promptText="Estado" styleClass="combo-box"/>
-
-        <Text text="Fecha de Ingreso:" AnchorPane.topAnchor="385.0" AnchorPane.leftAnchor="260.0" styleClass="label"/>
-        <DatePicker fx:id="dt_FechaIngreso" AnchorPane.topAnchor="405.0" AnchorPane.leftAnchor="260.0" prefWidth="180.0"
-                    promptText="Fecha de Ingreso" styleClass="date-picker"/>
+            <!-- Fila 10 -->
+            <Label text="Campo Adicional:" GridPane.rowIndex="10" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Fecha de Ingreso:" GridPane.rowIndex="10" GridPane.columnIndex="1" styleClass="label"/>
+            <TextField fx:id="txtf_Adicional" prefWidth="180.0" styleClass="text-field"
+                       GridPane.rowIndex="11" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="dt_FechaIngreso" promptText="Fecha de Ingreso"
+                        prefWidth="180.0" styleClass="date-picker"
+                        GridPane.rowIndex="11" GridPane.columnIndex="1"/>
+        </GridPane>
 
         <!-- Botones -->
-        <Button fx:id="btn_Guardar" text="Guardar" AnchorPane.topAnchor="460.0" AnchorPane.leftAnchor="120.0"
-                prefWidth="100.0" styleClass="button-windows"/>
-        <Button fx:id="btn_Cancelar" text="Cancelar" AnchorPane.topAnchor="460.0" AnchorPane.leftAnchor="260.0"
-                prefWidth="100.0" styleClass="button-windows"/>
-
-    </AnchorPane>
+        <HBox spacing="20" alignment="CENTER">
+            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="100.0" styleClass="button-windows"/>
+            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="100.0" styleClass="button-windows"/>
+        </HBox>
+    </VBox>
 </ScrollPane>
