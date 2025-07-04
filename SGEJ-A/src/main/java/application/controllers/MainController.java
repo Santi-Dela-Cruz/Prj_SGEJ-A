@@ -116,6 +116,10 @@ public class MainController {
             Object controller = loader.getController();
             if (controller instanceof ModuloClienteController c) c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloCasosController c) c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloDocumentosController c) c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloHistorialController c) c.setFormularioContainer(pnl_Forms);// <-- Add this line
+            if (controller instanceof ModuloBitacoraController c) c.setFormularioContainer(pnl_Forms);
+
 
             AnchorPane.setTopAnchor(modulo, 0.0);
             AnchorPane.setBottomAnchor(modulo, 0.0);

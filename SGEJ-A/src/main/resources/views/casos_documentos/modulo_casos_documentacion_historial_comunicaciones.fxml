@@ -34,28 +34,30 @@
         </Pane>
 
         <TextField fx:id="txtf_Buscar"
-                   AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="14.0"
+                   AnchorPane.topAnchor="84.0" AnchorPane.leftAnchor="14.0"
                    prefHeight="26.0" prefWidth="335.0"
                    promptText="Buscar comunicación..." />
 
         <Button fx:id="btn_Buscar"
                 text="Buscar"
                 styleClass="button-windows"
-                AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="360.0" />
+                AnchorPane.topAnchor="84.0" AnchorPane.leftAnchor="360.0" />
 
         <Button fx:id="btn_Anadir"
                 text="Añadir comunicación"
                 styleClass="button-windows"
-                AnchorPane.topAnchor="54.0" AnchorPane.rightAnchor="14.0" />
+                AnchorPane.topAnchor="84.0" AnchorPane.rightAnchor="14.0" />
 
         <TableView fx:id="tb_Comunicaciones"
-                   AnchorPane.topAnchor="96.0" AnchorPane.leftAnchor="14.0"
+                   AnchorPane.topAnchor="126.0" AnchorPane.leftAnchor="14.0"
                    AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
             <columns>
                 <TableColumn fx:id="tbc_FechaEntrada" text="Fecha de entrada" />
                 <TableColumn fx:id="tbc_Usuario" text="Usuario" />
                 <TableColumn fx:id="tbc_TipoAccion" text="Tipo de acción" />
                 <TableColumn fx:id="tbc_Descripcion" text="Descripción" />
+                <TableColumn fx:id="tbc_Expediente" text="N° Expediente Asociado" />
+                <TableColumn fx:id="tbc_BotonEliminar" text=" " />
             </columns>
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>

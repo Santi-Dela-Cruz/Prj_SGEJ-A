@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.FormBitacoraController"
+            prefWidth="400.0" prefHeight="250.0"
+            style="-fx-background-color: white; -fx-background-radius: 8;" layoutX="85" layoutY="55">
+    <children>
+        <Label fx:id="lbl_TituloFormulario"
+               text="Nueva Bitácora"
+               layoutX="20" layoutY="20"
+               style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <Label fx:id="lbl_Expediente" text="N° de Expediente:" layoutX="20" layoutY="70"/>
+        <TextField fx:id="txtf_Expediente" layoutX="150" layoutY="66" prefWidth="220"/>
+        <Label fx:id="lbl_Responsable" text="Responsable:" layoutX="20" layoutY="110"/>
+        <TextField fx:id="txtf_Responsable" layoutX="150" layoutY="106" prefWidth="220"/>
+        <Label fx:id="lbl_FechaCreacion" text="Fecha de creación:" layoutX="20" layoutY="150"/>
+        <DatePicker fx:id="dp_FechaCreacion" layoutX="150" layoutY="146" prefWidth="220"/>
+        <Button fx:id="btn_Guardar" text="Guardar" layoutX="150" layoutY="200" styleClass="button-windows"/>
+        <Button fx:id="btn_Cancelar" text="Cancelar" layoutX="240" layoutY="200" styleClass="button-windows"/>
+    </children>
+</AnchorPane>
