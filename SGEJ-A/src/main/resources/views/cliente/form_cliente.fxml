@@ -11,14 +11,14 @@
             fx:controller="application.controllers.FormClienteController"
             styleClass="scroll-form">
 
-    <VBox spacing="20" styleClass="form-panel" alignment="TOP_LEFT">
+    <VBox spacing="24" styleClass="form-panel" alignment="TOP_LEFT">
         <padding>
-            <Insets top="20" right="20" bottom="20" left="20"/>
+            <Insets top="24" right="24" bottom="24" left="24"/>
         </padding>
 
-        <!-- Título -->
+        <!-- Título del formulario -->
         <StackPane fx:id="pnl_Titulo"
-                   prefHeight="30.0"
+                   prefHeight="40"
                    styleClass="title-panel"
                    alignment="CENTER">
             <Text fx:id="txt_TituloForm"
@@ -26,67 +26,69 @@
                   styleClass="title-label"/>
         </StackPane>
 
-        <!-- Formulario organizado -->
-        <GridPane hgap="20" vgap="12">
+        <!-- Grid con campos del formulario -->
+        <GridPane hgap="20" vgap="16">
             <columnConstraints>
                 <ColumnConstraints prefWidth="250"/>
                 <ColumnConstraints prefWidth="250"/>
             </columnConstraints>
 
-            <!-- Fila 0: Tipo de Cliente ocupa ambas columnas -->
+            <!-- Tipo de Cliente -->
             <Label text="Tipo de Cliente:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
             <ComboBox fx:id="cbx_TipoCliente" promptText="Tipo de Cliente"
-                      prefWidth="250.0" styleClass="combo-box"
+                      prefWidth="250" styleClass="combo-box"
                       GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
 
-            <!-- Fila 2 -->
+            <!-- Nombres y Apellidos -->
             <Label text="Nombres:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
             <Label text="Apellidos:" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="label"/>
-            <TextField fx:id="txtf_Nombres" prefWidth="180.0" styleClass="text-field"
+            <TextField fx:id="txtf_Nombres" styleClass="text-field"
                        GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtf_Apellidos" prefWidth="180.0" styleClass="text-field"
+            <TextField fx:id="txtf_Apellidos" styleClass="text-field"
                        GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-            <!-- Fila 4 -->
+            <!-- Tipo y número de Identificación -->
             <Label text="Tipo de Identificación:" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="label"/>
             <Label text="Número de Identificación:" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="label"/>
             <ComboBox fx:id="cbx_TipoIdentificacion" promptText="Tipo de Identificación"
-                      prefWidth="180.0" styleClass="combo-box"
+                      styleClass="combo-box"
                       GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtf_NumeroIdentificacion" prefWidth="180.0" styleClass="text-field"
+            <TextField fx:id="txtf_NumeroIdentificacion" styleClass="text-field"
                        GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-            <!-- Fila 6 -->
+            <!-- Dirección y Teléfono -->
             <Label text="Dirección:" GridPane.rowIndex="6" GridPane.columnIndex="0" styleClass="label"/>
             <Label text="Número de Teléfono:" GridPane.rowIndex="6" GridPane.columnIndex="1" styleClass="label"/>
-            <TextField fx:id="txtf_Direccion" prefWidth="180.0" styleClass="text-field"
+            <TextField fx:id="txtf_Direccion" styleClass="text-field"
                        GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtf_Telefono" prefWidth="180.0" styleClass="text-field"
+            <TextField fx:id="txtf_Telefono" styleClass="text-field"
                        GridPane.rowIndex="7" GridPane.columnIndex="1"/>
 
-            <!-- Fila 8 -->
+            <!-- Correo y Estado -->
             <Label text="Correo:" GridPane.rowIndex="8" GridPane.columnIndex="0" styleClass="label"/>
             <Label text="Estado:" GridPane.rowIndex="8" GridPane.columnIndex="1" styleClass="label"/>
-            <TextField fx:id="txtf_Correo" prefWidth="180.0" styleClass="text-field"
+            <TextField fx:id="txtf_Correo" styleClass="text-field"
                        GridPane.rowIndex="9" GridPane.columnIndex="0"/>
             <ComboBox fx:id="cbx_Estado" promptText="Estado"
-                      prefWidth="180.0" styleClass="combo-box"
+                      styleClass="combo-box"
                       GridPane.rowIndex="9" GridPane.columnIndex="1"/>
 
-            <!-- Fila 10 -->
+            <!-- Campo adicional y fecha -->
             <Label text="Campo Adicional:" GridPane.rowIndex="10" GridPane.columnIndex="0" styleClass="label"/>
             <Label text="Fecha de Ingreso:" GridPane.rowIndex="10" GridPane.columnIndex="1" styleClass="label"/>
-            <TextField fx:id="txtf_Adicional" prefWidth="180.0" styleClass="text-field"
+            <TextField fx:id="txtf_Adicional" styleClass="text-field"
                        GridPane.rowIndex="11" GridPane.columnIndex="0"/>
             <DatePicker fx:id="dt_FechaIngreso" promptText="Fecha de Ingreso"
-                        prefWidth="180.0" styleClass="date-picker"
+                        styleClass="jfx-date-picker"
                         GridPane.rowIndex="11" GridPane.columnIndex="1"/>
         </GridPane>
 
-        <!-- Botones -->
-        <HBox spacing="20" alignment="CENTER">
-            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="100.0" styleClass="button-windows"/>
-            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="100.0" styleClass="button-windows"/>
+        <!-- Botones Guardar / Cancelar -->
+        <HBox spacing="40" alignment="CENTER">
+            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="120"
+                    styleClass="button-windows,button-windows-green" />
+            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="120"
+                    styleClass="button-windows,button-windows-red"/>
         </HBox>
     </VBox>
 </ScrollPane>

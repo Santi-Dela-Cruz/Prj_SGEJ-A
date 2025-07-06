@@ -18,7 +18,7 @@ public class MainController {
 
     @FXML private HBox titleBar;
     @FXML private Button closeButton, minimizeButton;
-    @FXML private Button md_Clientes, md_CasosDocumentacion, md_Facturacion, md_Personal, md_Sistema;
+    @FXML private Button md_Clientes, md_CasosDocumentacion, md_Facturacion, md_Personal, md_Sistema, dashboard;
     @FXML private Button btn_modo, md_Usuario;
 
     @FXML private Button btn_Casos, btn_Documentos, btn_HistorialComunicaciones, btn_Bitacora, btn_GenerarReporte;
@@ -28,6 +28,8 @@ public class MainController {
 
     private double xOffset = 0;
     private double yOffset = 0;
+
+    private String tipoUsuario;
 
     @FXML
     private void initialize() {
@@ -57,7 +59,11 @@ public class MainController {
         vpnl_DesplegableCasosDocumentacion.setOnMouseExited(e -> hideDropdown());
 
         // Módulo inicial
+        dashboard.setOnAction(e -> cargarModulo("/views/dashboard.fxml"));
+
         md_Clientes.setOnAction(e -> cargarModulo("/views/cliente/modulo_cliente.fxml"));
+
+
 
         // Submódulos Casos y Documentación
         btn_Casos.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml"));
@@ -65,6 +71,8 @@ public class MainController {
         btn_HistorialComunicaciones.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_historial_comunicaciones.fxml"));
         btn_Bitacora.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_bitacora_caso.fxml"));
         btn_GenerarReporte.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_generar_reportes.fxml"));
+
+
 
         // Ocultar formulario lateral al cargar
         pnl_Forms.setVisible(false);
@@ -92,6 +100,7 @@ public class MainController {
     }
 
     public void setUserType(String userType) {
+        this.tipoUsuario = userType;
         switch (userType) {
             case "Administrador":
                 break;
@@ -106,9 +115,12 @@ public class MainController {
                 md_Sistema.setVisible(false); md_Sistema.setManaged(false);
                 break;
         }
+
+        // Cargar dashboard después de ocultar módulos
+        cargarModulo("/views/dashboard.fxml");
     }
 
-    private void cargarModulo(String rutaFXML) {
+    void cargarModulo(String rutaFXML) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
             Node modulo = loader.load();
@@ -117,9 +129,13 @@ public class MainController {
             if (controller instanceof ModuloClienteController c) c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloCasosController c) c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloDocumentosController c) c.setFormularioContainer(pnl_Forms);
-            if (controller instanceof ModuloHistorialController c) c.setFormularioContainer(pnl_Forms);// <-- Add this line
+            if (controller instanceof ModuloHistorialController c) c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloBitacoraController c) c.setFormularioContainer(pnl_Forms);
-
+            if (controller instanceof DashboardController c) {
+                c.setFormularioContainer(pnl_Forms);
+                c.setMainController(this);
+                if (tipoUsuario != null) c.configurarPorRol(tipoUsuario);
+            }
 
             AnchorPane.setTopAnchor(modulo, 0.0);
             AnchorPane.setBottomAnchor(modulo, 0.0);

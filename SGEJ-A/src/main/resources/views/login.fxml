@@ -31,8 +31,8 @@
         <Label text="Iniciar sesión" styleClass="login-title"/>
         <TextField fx:id="usernameField" promptText="Usuario" maxWidth="250"/>
         <PasswordField fx:id="passwordField" promptText="Contraseña" maxWidth="250"/>
-        <ComboBox fx:id="userTypeBox" maxWidth="250"/>
-        <Button text="Ingresar" onAction="#handleLogin" maxWidth="100" styleClass="button-windows"/>
+        <ComboBox fx:id="userTypeBox" maxWidth="250" styleClass="combo-box"/>
+        <Button text="Ingresar" onAction="#handleLogin" maxWidth="100" styleClass="button-windows,button-windows-blue"/>
     </VBox>
 
 </AnchorPane>

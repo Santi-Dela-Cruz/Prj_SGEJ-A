@@ -1,3 +1,7 @@
+/* ============================================================================
+   ESTILOS BASE - INTERFAZ TIPO WINDOWS MODERNA Y MINIMALISTA
+============================================================================ */
+
 /* === Barra superior personalizada tipo Windows === */
 .title-bar {
     -fx-background-color: #0078d7; /* Azul Windows */
@@ -44,18 +48,15 @@
     -fx-border-radius: 0;
     -fx-cursor: hand;
 }
-
 .module-button:hover {
     -fx-border-color: transparent #005a9e transparent transparent;
     -fx-text-fill: #005a9e;
 }
-
-/* Último botón de módulo sin borde derecho */
 .module-button-last {
     -fx-border-width: 0;
 }
 
-/* === Botones "Modo" y "Usuario" sin borde === */
+/* === Botones de esquina superior (Modo, Usuario) === */
 .no-border-button {
     -fx-background-color: transparent;
     -fx-text-fill: #0078d7;
@@ -66,41 +67,61 @@
     -fx-border-width: 0;
 }
 
+/* === Botón estilo Windows estándar === */
 .button-windows {
-    -fx-background-color: #0078d7;            /* Azul Windows */
-    -fx-text-fill: white;                     /* Texto blanco */
-    -fx-font-weight: bold;                    /* Texto en negrita */
-    -fx-font-size: 13px;
-    -fx-padding: 6 16;                        /* Espaciado interno */
-    -fx-background-radius: 4;                 /* Bordes ligeramente redondeados */
-    -fx-cursor: hand;
-    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1); /* Sombra sutil */
-    -fx-border-color: transparent;
-}
-
-.button-windows:hover {
-    -fx-background-color: #005a9e;            /* Azul más oscuro al pasar el mouse */
-}
-
-.button-windows:pressed {
-    -fx-background-color: #004a86;            /* Aún más oscuro cuando se presiona */
-}
-
-
-/* === Botón estándar (por ejemplo: Guardar, Cancelar, Ingresar) === */
-/*.button {
-    -fx-background-color: #0078d7;
     -fx-text-fill: white;
     -fx-font-weight: bold;
     -fx-font-size: 13px;
+    -fx-padding: 6 16;
     -fx-background-radius: 4;
     -fx-cursor: hand;
-    -fx-padding: 8 16;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+    -fx-min-height: 38;
+    -fx-pref-height: 38;
 }
 
-.button:hover {
+/* === Windows color variants (all keep white text) === */
+.button-windows-blue {
+    -fx-background-color: #0078d7;
+}
+.button-windows-blue:hover {
     -fx-background-color: #005a9e;
-}*/
+}
+.button-windows-blue:pressed {
+    -fx-background-color: #004a86;
+}
+
+.button-windows-red {
+    -fx-background-color: #d9534f;
+}
+.button-windows-red:hover {
+    -fx-background-color: #c9302c;
+}
+.button-windows-red:pressed {
+    -fx-background-color: #ac2925;
+}
+
+.button-windows-green {
+    -fx-background-color: #5cb85c;
+}
+.button-windows-green:hover {
+    -fx-background-color: #449d44;
+}
+.button-windows-green:pressed {
+    -fx-background-color: #398439;
+}
+
+.button-windows-gray {
+    -fx-background-color: #6c757d;
+}
+.button-windows-gray:hover {
+    -fx-background-color: #5a6268;
+}
+.button-windows-gray:pressed {
+    -fx-background-color: #4e555b;
+}
+
 
 /* === Campos de entrada === */
 .text-field, .combo-box, .date-picker {
@@ -108,11 +129,244 @@
     -fx-border-radius: 4;
     -fx-border-color: #ccc;
     -fx-padding: 6 10;
+    -fx-font-size: 13px;
 }
-
 .text-field:focused, .combo-box:focused, .date-picker:focused {
     -fx-border-color: #0078d7;
     -fx-background-color: #ffffff;
+    -fx-effect: dropshadow(gaussian, rgba(0,120,215,0.2), 4, 0, 0, 1);
+}
+
+
+/* === ComboBox Modern Windows Style === */
+.combo-box {
+    -fx-background-color: #f0f8ff; /* Azul muy claro para fondo visible */
+    -fx-border-color: #0078d7;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 0;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-min-height: 36;
+    -fx-pref-height: 36;
+    -fx-focus-color: transparent;
+    -fx-faint-focus-color: transparent;
+}
+
+.combo-box .text {
+    -fx-fill: #0078d7;     /* Color del texto principal */
+    -fx-padding: 0 12 0 12; /* Espacio interno para que no se corte */
+    -fx-font-size: 13px;
+}
+
+/* Eliminar superposición del background del list-cell */
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0078d7;
+    -fx-padding: 8 14;
+    -fx-font-size: 13px;
+}
+
+/* Flecha */
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0 10 0 4;
+}
+.combo-box .arrow {
+    -fx-shape: "M2,4 L6,8 L10,4";
+    -fx-background-color: #0078d7;
+    -fx-scale-x: 1.4;
+    -fx-scale-y: 1.4;
+}
+
+/* Lista desplegable */
+.combo-box-popup .list-view {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #0078d7;
+    -fx-border-radius: 0 0 8 8;
+    -fx-background-radius: 0 0 8 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 2);
+}
+
+
+
+
+
+/* === DatePicker Modern Elegant Windows Style === */
+.date-picker {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cfd8dc;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 0 0 0 10;
+    -fx-font-size: 13px;
+    -fx-text-fill: #333;
+    -fx-pref-height: 38;
+    -fx-cursor: hand;
+}
+
+/* Efecto al enfocar */
+.date-picker:focused {
+    -fx-border-color: #0078d7;
+    -fx-effect: dropshadow(gaussian, rgba(0,120,215,0.12), 4, 0, 0, 1);
+}
+
+/* === Flecha del botón desplegable === */
+.date-picker .arrow-button {
+    -fx-background-color: transparent;
+    -fx-border-radius: 0 6 6 0;
+    -fx-padding: 0 12 0 6;
+    -fx-cursor: hand;
+}
+.date-picker .arrow {
+    -fx-shape: "M2,4 L6,8 L10,4"; /* Chevron SVG */
+    -fx-background-color: #0078d7;
+    -fx-min-width: 10;
+    -fx-min-height: 8;
+    -fx-max-width: 10;
+    -fx-max-height: 8;
+    -fx-scale-x: 1.4;
+    -fx-scale-y: 1.4;
+    -fx-padding: 0;
+}
+
+/* === Popup del calendario === */
+.date-picker-popup .calendar-pane {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #dce3e8;
+    -fx-border-width: 1;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 8, 0, 0, 2);
+    -fx-padding: 10;
+}
+
+/* Cabecera del calendario */
+.date-picker-popup .calendar-pane .month-year-pane {
+    -fx-background-color: transparent;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-text-fill: #333;
+}
+
+/* Botones de navegación del mes */
+.date-picker-popup .calendar-pane .left-arrow,
+.date-picker-popup .calendar-pane .right-arrow {
+    -fx-background-color: transparent;
+    -fx-shape: "M8,2 L2,6 L8,10"; /* flecha izquierda simple */
+    -fx-padding: 4;
+    -fx-background-insets: 0;
+    -fx-background-radius: 4;
+}
+.date-picker-popup .calendar-pane .right-arrow {
+    -fx-shape: "M2,2 L8,6 L2,10"; /* flecha derecha */
+}
+
+/* Celdas de día */
+.date-picker-popup .calendar-pane .day-cell {
+    -fx-font-size: 12px;
+    -fx-text-fill: #333;
+    -fx-background-color: transparent;
+}
+.date-picker-popup .calendar-pane .day-cell:hover {
+    -fx-background-color: #e5f1fb;
+    -fx-text-fill: #0078d7;
+    -fx-background-radius: 6;
+}
+
+/* Día seleccionado */
+.date-picker-popup .calendar-pane .selected {
+    -fx-background-color: #0078d7;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+}
+
+/* Día actual (hoy) */
+.date-picker-popup .calendar-pane .today {
+    -fx-border-color: #0078d7;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+}
+
+/* === CheckBox moderno === */
+.check-box {
+    -fx-font-size: 13px;
+    -fx-text-fill: #333;
+    -fx-padding: 4 0 4 0;
+}
+.check-box .box {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #aaa;
+    -fx-border-radius: 3;
+    -fx-background-radius: 3;
+    -fx-padding: 4;
+}
+.check-box:selected .box {
+    -fx-background-color: #0078d7;
+    -fx-border-color: #0078d7;
+}
+.check-box:selected .mark {
+    -fx-background-color: white;
+}
+
+/* === DatePicker con diseño Windows === */
+.jfx-date-picker {
+    -jfx-default-color: #009688;
+}
+
+.jfx-date-picker,
+.jfx-date-picker:focused,
+.jfx-date-picker:focused:editable {
+    -fx-background-color: TRANSPARENT, TRANSPARENT, TRANSPARENT, TRANSPARENT;
+}
+
+.jfx-date-picker > .arrow-button,
+.jfx-date-picker:editable > .arrow-button,
+.jfx-date-picker:focused > .arrow-button,
+.jfx-date-picker:editable:focused > .arrow-button {
+    -fx-background-color: TRANSPARENT;
+    -fx-padding: 1 8 1 8;
+}
+
+.jfx-date-picker > .arrow-button > .jfx-svg-glyph {
+    -fx-background-color: -jfx-default-color;
+}
+
+.date-picker-popup > .month-year-pane {
+    -fx-background-color: -jfx-default-color;
+}
+
+.date-picker-popup > * > .spinner {
+    -fx-spacing: 0.25em; /* 3 */
+    -fx-alignment: CENTER;
+    -fx-fill-height: false;
+    -fx-background-color: transparent;
+}
+
+.date-picker-popup > * > .spinner > .label {
+    -fx-alignment: CENTER;
+}
+
+.date-picker-popup > * > .date-picker-list-view > .virtual-flow > .clipped-container > .sheet > .data-picker-list-cell {
+    -fx-font-size: 16;
+    -fx-font-weight: NORMAL;
+    -fx-background-color: WHITE;
+    -fx-alignment: center;
+    -fx-text-fill: #313131;
+}
+
+.date-picker-popup > * > .date-picker-list-view > .virtual-flow > .clipped-container > .sheet > .data-picker-list-cell > .jfx-rippler {
+    -jfx-rippler-fill: grey;
+}
+
+.date-picker-popup > * > .date-picker-list-view > .virtual-flow > .clipped-container > .sheet > .data-picker-list-cell:hover {
+    -fx-background-color: #EDEDED;
+}
+
+.date-picker-popup > * > .date-picker-list-view > .virtual-flow > .clipped-container > .sheet > .data-picker-list-cell:selected-year {
+    -fx-font-size: 24;
+    -fx-font-weight: BOLD;
+    -fx-text-fill: -jfx-default-color;
 }
 
 /* === Etiquetas === */
@@ -121,7 +375,7 @@
     -fx-text-fill: #333;
 }
 
-/* === Panel lateral del formulario === */
+/* === Formulario lateral y panel de contenido === */
 .form-panel {
     -fx-background-color: #ffffff;
     -fx-border-color: #dcdcdc;
@@ -132,27 +386,23 @@
     -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 10, 0, 0, 2);
 }
 
-/* === Panel del título superior del formulario === */
 .title-panel {
     -fx-background-color: #e8f4fc;
     -fx-border-radius: 6;
     -fx-background-radius: 6;
 }
 
-/* === ScrollPane transparente === */
+/* === ScrollPane sin fondo === */
 .scroll-form {
     -fx-background-color: transparent;
 }
-
 .scroll-form .viewport {
     -fx-background-color: transparent;
 }
-
 .scroll-form .scroll-pane {
     -fx-background-insets: 0;
     -fx-background-radius: 12;
 }
-
 .scroll-form .scroll-bar {
     -fx-opacity: 0;
     -fx-pref-width: 0;
@@ -168,85 +418,58 @@
     -fx-background-radius: 6;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 1);
 }
-
-/* === Encabezado === */
 .table-view .column-header-background {
-    -fx-background-color: #f7fafd;      /* Very light blue/gray */
-    -fx-border-width: 0;                /* No borders */
-    -fx-border-color: transparent;
+    -fx-background-color: #f7fafd;
+    -fx-border-width: 0;
     -fx-background-insets: 0;
-    -fx-padding: 0 0 0 0;
-    -fx-background-radius: 8 8 0 0;     /* Rounded top corners */
+    -fx-background-radius: 8 8 0 0;
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.03), 2, 0, 0, 1);
 }
 .table-view .column-header {
     -fx-border-width: 0;
-    -fx-border-color: transparent;
     -fx-background-color: transparent;
     -fx-alignment: CENTER_LEFT;
 }
-
 .table-view .column-header .label {
     -fx-font-weight: bold;
     -fx-font-size: 13px;
     -fx-text-fill: #2a2a2a;
-    -fx-alignment: CENTER_LEFT;
-    -fx-padding: 10 12 10 12;
-    -fx-background-color: transparent;
+    -fx-padding: 10 12;
 }
-
-/* === Celdas === */
 .table-view .cell {
     -fx-font-size: 13px;
     -fx-text-fill: #222;
     -fx-padding: 10 8;
     -fx-border-color: transparent;
 }
-
-/* === Fila seleccionada === */
 .table-view .table-row-cell:selected {
     -fx-background-color: #e5f1fb;
     -fx-text-fill: #000;
 }
-
 .table-view .arrow {
     -fx-shape: "";
     -fx-padding: 0;
 }
-
-/* === Botones dentro de la tabla === */
 .table-button {
     -fx-background-color: transparent;
     -fx-text-fill: #0078d7;
     -fx-cursor: hand;
     -fx-font-size: 13px;
     -fx-padding: 2;
-    -fx-border-radius: 4;
-    -fx-background-radius: 4;
 }
-
 .table-button:hover {
     -fx-background-color: #e0f0ff;
 }
-
-/* === Columnas de acción sin encabezado visible === */
 .column-action {
     -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
-
 .table-view .column-header .column-action .label {
     -fx-text-fill: transparent;
     -fx-padding: 0;
-    -fx-background-color: transparent;
 }
 
-/* === Oculta bordes de separación innecesarios === */
-.table-view .column-header, .table-view .filler {
-    -fx-border-width: 0;
-    -fx-border-color: transparent;
-}
-
+/* === Menús desplegables (drop down) === */
 .dropdown-menu {
     -fx-background-color: #fff;
     -fx-border-color: #0078d7;
@@ -258,7 +481,6 @@
     -fx-min-width: 180;
     -fx-max-width: 220;
 }
-
 .dropdown-item {
     -fx-background-color: transparent;
     -fx-text-fill: #0078d7;
@@ -268,15 +490,34 @@
     -fx-padding: 10 18;
     -fx-background-radius: 6;
     -fx-cursor: hand;
-    -fx-border-width: 0;
-    -fx-max-width: infinity;
-    -fx-pref-width: 100%;
 }
-
 .dropdown-item:hover {
     -fx-background-color: #e5f1fb;
     -fx-text-fill: #005a9e;
 }
 
+/* === Tarjetas resumen del Dashboard === */
+.card {
+    -fx-background-color: #f8f9fa;
+    -fx-background-radius: 10;
+    -fx-effect: dropshadow(gaussian, #b0b0b0, 6, 0.2, 0, 2);
+    -fx-padding: 16 24;
+    -fx-spacing: 4;
+}
+.card-title {
+    -fx-font-size: 13px;
+    -fx-text-fill: #555;
+}
+.card-value {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #2a7ae2;
+}
 
-
+/* === Títulos de sección === */
+.section-title {
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #0078d7;
+    -fx-padding: 0 0 4 0;
+}

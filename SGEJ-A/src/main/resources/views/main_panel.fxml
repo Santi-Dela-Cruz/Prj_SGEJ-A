@@ -36,6 +36,8 @@
         <Button fx:id="md_Facturacion" styleClass="module-button" text="Facturacion" />
         <Button fx:id="md_Personal" styleClass="module-button" text="Personal" />
         <Button fx:id="md_Sistema" styleClass="module-button" text="Sistema" />
+        <Button fx:id="dashboard" styleClass="module-button" text="Dashboard" />
+
         <Region HBox.hgrow="ALWAYS" />
         <Button fx:id="btn_modo" styleClass="no-border-button" text="Modo" />
         <Button fx:id="md_Usuario" styleClass="no-border-button" text="Usuario" />
