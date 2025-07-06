@@ -8,7 +8,7 @@
 <ScrollPane fitToWidth="true" fitToHeight="true"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="application.controllers.FormClienteController"
+            fx:controller="application.controllers.FormFacturaController"
             styleClass="scroll-form">
 
     <VBox spacing="24" styleClass="form-panel" alignment="TOP_LEFT">
@@ -33,9 +33,9 @@
                 <ColumnConstraints prefWidth="250"/>
             </columnConstraints>
 
-            <!-- Tipo de Cliente -->
-            <Label text="Tipo de Cliente:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
-            <ComboBox fx:id="cbx_TipoCliente" promptText="Tipo de Cliente"
+            <!-- Tipo de Factura -->
+            <Label text="Tipo de Factura:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
+            <ComboBox fx:id="cbx_TipoFactura" promptText="Tipo de Factura"
                       prefWidth="250" styleClass="combo-box"
                       GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
 

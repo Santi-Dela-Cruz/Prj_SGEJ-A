@@ -10,24 +10,23 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 
-public class ModuloEmpleadoController {
+public class ModuloFacturaController {
 
     @FXML private Button btn_Nuevo;
     @FXML private Button btn_Buscar;
     @FXML private TextField txt_Busqueda;
 
-    @FXML private TableView<EmpleadoDemo> tb_Empleados;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Nombres;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Apellidos;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_NumeroI;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_TipoIdentificacion;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Telefono;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Correo;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Estado;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Rol;
+    @FXML private TableView<FacturaDemo> tb_Facturas;
+    @FXML private TableColumn<FacturaDemo, String> tbc_Nombres;
+    @FXML private TableColumn<FacturaDemo, String> tbc_Apellidos;
+    @FXML private TableColumn<FacturaDemo, String> tbc_NumeroI;
+    @FXML private TableColumn<FacturaDemo, String> tbc_TipoIdentificacion;
+    @FXML private TableColumn<FacturaDemo, String> tbc_Telefono;
+    @FXML private TableColumn<FacturaDemo, String> tbc_Correo;
+    @FXML private TableColumn<FacturaDemo, String> tbc_Estado;
 
-    @FXML private TableColumn<EmpleadoDemo, Void> tbc_BotonEditar;
-    @FXML private TableColumn<EmpleadoDemo, Void> tbc_BotonVer;
+    @FXML private TableColumn<FacturaDemo, Void> tbc_BotonEditar;
+    @FXML private TableColumn<FacturaDemo, Void> tbc_BotonVer;
 
     private Pane pnl_Forms;
 
@@ -49,25 +48,25 @@ public class ModuloEmpleadoController {
     }
 
     private void ocultarEncabezadosColumnasDeAccion() {
-        tb_Empleados.widthProperty().addListener((obs, oldVal, newVal) -> {
-            Node header = tb_Empleados.lookup("TableHeaderRow");
+        tb_Facturas.widthProperty().addListener((obs, oldVal, newVal) -> {
+            Node header = tb_Facturas.lookup("TableHeaderRow");
             if (header != null) {
                 header.setVisible(true);
             }
         });
     }
 
-    private void mostrarFormulario(EmpleadoDemo empleado, String modo) {
+    private void mostrarFormulario(FacturaDemo factura, String modo) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/personal/form_empleado.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/factura/form_factura.fxml"));
             Node form = loader.load();
 
-            FormEmpleadoController controller = loader.getController();
+            FormFacturaController controller = loader.getController();
             controller.setOnCancelar(this::cerrarFormulario);
             controller.setOnGuardar(this::cerrarFormulario);
 
-            if (empleado != null) {
-                controller.cargarEmpleado(empleado);
+            if (factura != null) {
+                controller.cargarFactura(factura);
                 controller.setModo(modo);
             } else {
                 controller.setModo("NUEVO");
@@ -101,7 +100,6 @@ public class ModuloEmpleadoController {
         tbc_Telefono.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().telefono()));
         tbc_Correo.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().correo()));
         tbc_Estado.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().estado()));
-        tbc_Rol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().rol()));
     }
 
     private void inicializarColumnasDeBotones() {
@@ -112,7 +110,7 @@ public class ModuloEmpleadoController {
         tbc_BotonVer.setPrefWidth(40);
     }
 
-    private void agregarBotonPorColumna(TableColumn<EmpleadoDemo, Void> columna, String texto, String tooltip) {
+    private void agregarBotonPorColumna(TableColumn<FacturaDemo, Void> columna, String texto, String tooltip) {
         columna.getStyleClass().add("column-action");
 
         columna.setCellFactory(param -> new TableCell<>() {
@@ -123,11 +121,11 @@ public class ModuloEmpleadoController {
                 setStyle("-fx-alignment: CENTER;");
                 btn.setTooltip(new Tooltip(tooltip));
                 btn.setOnAction(event -> {
-                    EmpleadoDemo empleado = getTableView().getItems().get(getIndex());
+                    FacturaDemo factura = getTableView().getItems().get(getIndex());
                     if ("Editar".equals(tooltip)) {
-                        mostrarFormulario(empleado, "EDITAR");
+                        mostrarFormulario(factura, "EDITAR");
                     } else if ("Ver".equals(tooltip)) {
-                        mostrarFormulario(empleado, "VER");
+                        mostrarFormulario(factura, "VER");
                     }
                 });
             }
@@ -141,23 +139,23 @@ public class ModuloEmpleadoController {
     }
 
     private void cargarDatosEjemplo() {
-        tb_Empleados.getItems().addAll(
-                new EmpleadoDemo(
+        tb_Facturas.getItems().addAll(
+                new FacturaDemo(
                         "Ana", "Mora", "0102030405", "Cédula", "0991234567", "ana@correo.com", "Activo",
-                        "Av. Siempre Viva 123", "Referencia 1", java.time.LocalDate.of(2023, 1, 10), "Natural", "Administrador"
+                        "Av. Siempre Viva 123", "Referencia 1", java.time.LocalDate.of(2023, 1, 10), "Natural"
                 ),
-                new EmpleadoDemo(
+                new FacturaDemo(
                         "Luis", "Pérez", "1102233445", "Pasaporte", "0987654321", "luis@correo.com", "Activo",
-                        "Calle Falsa 456", "Referencia 2", java.time.LocalDate.of(2022, 5, 20), "Jurídica", "Gerente"
+                        "Calle Falsa 456", "Referencia 2", java.time.LocalDate.of(2022, 5, 20), "Jurídica"
                 ),
-                new EmpleadoDemo(
+                new FacturaDemo(
                         "María", "Salas", "2223334445", "RUC", "0970001122", "maria@correo.com", "Inactivo",
-                        "Calle Real 789", "Referencia 3", java.time.LocalDate.of(2021, 8, 15), "Natural", "Asistente"
+                        "Calle Real 789", "Referencia 3", java.time.LocalDate.of(2021, 8, 15), "Natural"
                 )
         );
     }
-    // Example record (replace with your real Empleado class if needed)
-    public record EmpleadoDemo(
+    // Example record (replace with your real Factura class if needed)
+    public record FacturaDemo(
             String nombres,
             String apellidos,
             String numeroIdentificacion,
@@ -168,7 +166,6 @@ public class ModuloEmpleadoController {
             String direccion,
             String adicional,
             java.time.LocalDate fechaIngreso,
-            String tipoEmpleado,
-            String rol
+            String tipoFactura
     ) {}
 }

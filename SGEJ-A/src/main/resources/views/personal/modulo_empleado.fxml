@@ -44,6 +44,7 @@
                       <TableColumn fx:id="tbc_Telefono" text="Teléfono" />
                       <TableColumn fx:id="tbc_Correo" text="Correo Electrónico" />
                       <TableColumn fx:id="tbc_Estado" text="Estado" />
+                      <TableColumn fx:id="tbc_Rol" text="Rol" />
                       <TableColumn fx:id="tbc_BotonEditar" prefWidth="20" styleClass="column-action" text=" " />
                       <TableColumn fx:id="tbc_BotonVer" prefWidth="20" styleClass="column-action" text=" " />
                   </columns>

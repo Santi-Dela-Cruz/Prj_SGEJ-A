@@ -34,8 +34,8 @@
             </columnConstraints>
 
             <!-- Tipo de Empleado -->
-            <Label text="Tipo de Empleado:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
-            <ComboBox fx:id="cbx_TipoEmpleado" promptText="Tipo de Empleado"
+            <Label text="Rol:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
+            <ComboBox fx:id="cbx_Rol" promptText="Roles"
                       prefWidth="250" styleClass="combo-box"
                       GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
 
