@@ -309,64 +309,102 @@
     -fx-background-color: white;
 }
 
-/* === DatePicker con diseño Windows === */
+/* === Estilo Material Moderno === */
+/* ==== Estilo Moderno para JFXDatePicker (Estilo Windows 11) ==== */
 .jfx-date-picker {
-    -jfx-default-color: #009688;
+    -jfx-default-color: #0078d7;
+    -fx-font-size: 14px;
+    -fx-pref-height: 38;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #d0d7de;
+    -fx-background-color: #ffffff;
+    -fx-padding: 0 0 0 12;
 }
 
-.jfx-date-picker,
-.jfx-date-picker:focused,
-.jfx-date-picker:focused:editable {
-    -fx-background-color: TRANSPARENT, TRANSPARENT, TRANSPARENT, TRANSPARENT;
-}
-
-.jfx-date-picker > .arrow-button,
-.jfx-date-picker:editable > .arrow-button,
-.jfx-date-picker:focused > .arrow-button,
-.jfx-date-picker:editable:focused > .arrow-button {
-    -fx-background-color: TRANSPARENT;
-    -fx-padding: 1 8 1 8;
-}
-
-.jfx-date-picker > .arrow-button > .jfx-svg-glyph {
-    -fx-background-color: -jfx-default-color;
-}
-
-.date-picker-popup > .month-year-pane {
-    -fx-background-color: -jfx-default-color;
-}
-
-.date-picker-popup > * > .spinner {
-    -fx-spacing: 0.25em; /* 3 */
-    -fx-alignment: CENTER;
-    -fx-fill-height: false;
+/* === Botón de flecha desplegable === */
+.jfx-date-picker > .arrow-button {
     -fx-background-color: transparent;
+    -fx-padding: 0 10 0 6;
+    -fx-cursor: hand;
+}
+.jfx-date-picker > .arrow-button > .jfx-svg-glyph {
+    -fx-fill: #0078d7;
+    -fx-scale-x: 1.2;
+    -fx-scale-y: 1.2;
 }
 
-.date-picker-popup > * > .spinner > .label {
-    -fx-alignment: CENTER;
-}
-
-.date-picker-popup > * > .date-picker-list-view > .virtual-flow > .clipped-container > .sheet > .data-picker-list-cell {
-    -fx-font-size: 16;
-    -fx-font-weight: NORMAL;
-    -fx-background-color: WHITE;
+/* === Encabezado de calendario (Mes/Año) === */
+.date-picker-popup > .calendar-pane > .month-year-pane {
+    -fx-background-color: #0078d7;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-radius: 8 8 0 0;
     -fx-alignment: center;
-    -fx-text-fill: #313131;
+    -fx-padding: 10 0;
 }
 
-.date-picker-popup > * > .date-picker-list-view > .virtual-flow > .clipped-container > .sheet > .data-picker-list-cell > .jfx-rippler {
-    -jfx-rippler-fill: grey;
+/* === Flechas de navegación izquierda/derecha === */
+.date-picker-popup .left-arrow,
+.date-picker-popup .right-arrow {
+    -fx-background-color: transparent;
+    -fx-background-radius: 4;
+    -fx-shape: "M0,0 L4,4 L0,8";
+    -fx-min-width: 12;
+    -fx-min-height: 12;
+    -fx-max-width: 12;
+    -fx-max-height: 12;
+    -fx-padding: 4;
+    -fx-background-color: white;
+}
+.date-picker-popup .right-arrow {
+    -fx-rotate: 180;
 }
 
-.date-picker-popup > * > .date-picker-list-view > .virtual-flow > .clipped-container > .sheet > .data-picker-list-cell:hover {
-    -fx-background-color: #EDEDED;
+/* === Panel de días === */
+.date-picker-popup > .calendar-pane {
+    -fx-background-color: white;
+    -fx-border-color: #d0d7de;
+    -fx-border-width: 0 1 1 1;
+    -fx-border-radius: 0 0 8 8;
+    -fx-background-radius: 0 0 8 8;
+    -fx-padding: 10;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 6, 0, 0, 2);
 }
 
-.date-picker-popup > * > .date-picker-list-view > .virtual-flow > .clipped-container > .sheet > .data-picker-list-cell:selected-year {
-    -fx-font-size: 24;
-    -fx-font-weight: BOLD;
-    -fx-text-fill: -jfx-default-color;
+/* === Celdas de días === */
+.date-picker-popup .calendar-pane .day-cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: #1b1f23;
+    -fx-background-color: transparent;
+    -fx-background-radius: 6;
+    -fx-padding: 6 0;
+    -fx-alignment: center;
+    -fx-cursor: hand;
+}
+.date-picker-popup .calendar-pane .day-cell:hover {
+    -fx-background-color: #e5f1fb;
+    -fx-text-fill: #0078d7;
+}
+.date-picker-popup .calendar-pane .selected {
+    -fx-background-color: #0078d7;
+    -fx-text-fill: white;
+}
+.date-picker-popup .calendar-pane .today {
+    -fx-border-color: #0078d7;
+    -fx-border-width: 1;
+    -fx-border-radius: 6;
+}
+
+/* === Campo de texto del DatePicker === */
+.jfx-date-picker .text-field {
+    -fx-font-size: 14px;
+    -fx-padding: 6 12;
+    -fx-text-fill: #222;
+    -fx-background-color: #fff;
+    -fx-background-radius: 8;
+    -fx-border-color: transparent;
 }
 
 /* === Etiquetas === */

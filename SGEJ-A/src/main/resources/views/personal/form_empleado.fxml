@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<ScrollPane fitToWidth="true" fitToHeight="true"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.FormEmpleadoController"
+            styleClass="scroll-form">
+
+    <VBox spacing="24" styleClass="form-panel" alignment="TOP_LEFT">
+        <padding>
+            <Insets top="24" right="24" bottom="24" left="24"/>
+        </padding>
+
+        <!-- Título del formulario -->
+        <StackPane fx:id="pnl_Titulo"
+                   prefHeight="40"
+                   styleClass="title-panel"
+                   alignment="CENTER">
+            <Text fx:id="txt_TituloForm"
+                  text="REGISTRAR / VISUALIZAR / EDITAR"
+                  styleClass="title-label"/>
+        </StackPane>
+
+        <!-- Grid con campos del formulario -->
+        <GridPane hgap="20" vgap="16">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="250"/>
+                <ColumnConstraints prefWidth="250"/>
+            </columnConstraints>
+
+            <!-- Tipo de Empleado -->
+            <Label text="Tipo de Empleado:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
+            <ComboBox fx:id="cbx_TipoEmpleado" promptText="Tipo de Empleado"
+                      prefWidth="250" styleClass="combo-box"
+                      GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+
+            <!-- Nombres y Apellidos -->
+            <Label text="Nombres:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Apellidos:" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="label"/>
+            <TextField fx:id="txtf_Nombres" styleClass="text-field"
+                       GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtf_Apellidos" styleClass="text-field"
+                       GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+            <!-- Tipo y número de Identificación -->
+            <Label text="Tipo de Identificación:" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Número de Identificación:" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="label"/>
+            <ComboBox fx:id="cbx_TipoIdentificacion" promptText="Tipo de Identificación"
+                      styleClass="combo-box"
+                      GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtf_NumeroIdentificacion" styleClass="text-field"
+                       GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+            <!-- Dirección y Teléfono -->
+            <Label text="Dirección:" GridPane.rowIndex="6" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Número de Teléfono:" GridPane.rowIndex="6" GridPane.columnIndex="1" styleClass="label"/>
+            <TextField fx:id="txtf_Direccion" styleClass="text-field"
+                       GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+            <TextField fx:id="txtf_Telefono" styleClass="text-field"
+                       GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+            <!-- Correo y Estado -->
+            <Label text="Correo:" GridPane.rowIndex="8" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Estado:" GridPane.rowIndex="8" GridPane.columnIndex="1" styleClass="label"/>
+            <TextField fx:id="txtf_Correo" styleClass="text-field"
+                       GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+            <ComboBox fx:id="cbx_Estado" promptText="Estado"
+                      styleClass="combo-box"
+                      GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+
+            <!-- Campo adicional y fecha -->
+            <Label text="Campo Adicional:" GridPane.rowIndex="10" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Fecha de Ingreso:" GridPane.rowIndex="10" GridPane.columnIndex="1" styleClass="label"/>
+            <TextField fx:id="txtf_Adicional" styleClass="text-field"
+                       GridPane.rowIndex="11" GridPane.columnIndex="0"/>
+            <DatePicker fx:id="dt_FechaIngreso" promptText="Fecha de Ingreso"
+                        styleClass="jfx-date-picker"
+                        GridPane.rowIndex="11" GridPane.columnIndex="1"/>
+        </GridPane>
+
+        <!-- Botones Guardar / Cancelar -->
+        <HBox spacing="40" alignment="CENTER">
+            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="120"
+                    styleClass="button-windows,button-windows-green" />
+            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="120"
+                    styleClass="button-windows,button-windows-red"/>
+        </HBox>
+    </VBox>
+</ScrollPane>

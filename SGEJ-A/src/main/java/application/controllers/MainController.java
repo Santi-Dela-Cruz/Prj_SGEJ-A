@@ -62,6 +62,7 @@ public class MainController {
         dashboard.setOnAction(e -> cargarModulo("/views/dashboard.fxml"));
 
         md_Clientes.setOnAction(e -> cargarModulo("/views/cliente/modulo_cliente.fxml"));
+        md_Personal.setOnAction(e -> cargarModulo("/views/personal/modulo_empleado.fxml"));
 
 
 
@@ -136,6 +137,7 @@ public class MainController {
                 c.setMainController(this);
                 if (tipoUsuario != null) c.configurarPorRol(tipoUsuario);
             }
+            if (controller instanceof  ModuloEmpleadoController c) c.setFormularioContainer(pnl_Forms);
 
             AnchorPane.setTopAnchor(modulo, 0.0);
             AnchorPane.setBottomAnchor(modulo, 0.0);
