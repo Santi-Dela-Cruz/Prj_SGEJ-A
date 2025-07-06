@@ -10,8 +10,8 @@ import javafx.scene.text.Text;
 public class FormUsuarioController {
 
     @FXML private Button btn_Guardar, btn_Cancelar;
-    @FXML private TextField txtf_Nombres, txtf_Apellidos, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Adicional, txtf_Telefono;
-    @FXML private ComboBox<String> cbx_TipoUsuario, cbx_TipoIdentificacion, cbx_Estado;
+    @FXML private TextField txtf_NombresCompletos, txtf_NombreUsuario, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Adicional, txtf_Telefono;
+    @FXML private ComboBox<String> cbx_Rol, cbx_TipoIdentificacion, cbx_Estado;
     @FXML private DatePicker dt_FechaIngreso;
     @FXML private Text txt_TituloForm;
 
@@ -29,7 +29,7 @@ public class FormUsuarioController {
     private void initialize() {
         cbx_Estado.getItems().addAll("Activo", "Inactivo");
         cbx_TipoIdentificacion.getItems().addAll("Cédula", "RUC", "Pasaporte");
-        cbx_TipoUsuario.getItems().addAll("Natural", "Jurídica");
+        cbx_Rol.getItems().addAll("Administrador", "Usuario", "Invitado");
 
         btn_Guardar.setOnAction(e -> {
             if (onGuardar != null) onGuardar.run();
@@ -40,15 +40,15 @@ public class FormUsuarioController {
     }
 
     public void cargarUsuario(ModuloUsuarioController.UsuarioDemo usuario) {
-        txtf_Nombres.setText(usuario.nombres());
-        txtf_Apellidos.setText(usuario.apellidos());
+        txtf_NombresCompletos.setText(usuario.nombresCompletos());
+        txtf_NombreUsuario.setText(usuario.nombreUsuario());
         txtf_NumeroIdentificacion.setText(usuario.numeroIdentificacion());
         txtf_Direccion.setText(usuario.direccion());
         txtf_Adicional.setText(usuario.adicional());
         dt_FechaIngreso.setValue(usuario.fechaIngreso());
         txtf_Telefono.setText(usuario.telefono());
         txtf_Correo.setText(usuario.correo());
-        cbx_TipoUsuario.setValue(usuario.tipoUsuario());
+        cbx_Rol.setValue(usuario.rol());
         cbx_TipoIdentificacion.setValue(usuario.tipoIdentificacion());
         cbx_Estado.setValue(usuario.estado());
     }
@@ -67,8 +67,8 @@ public class FormUsuarioController {
         }
 
         if (esVer) {
-            txtf_Nombres.setEditable(false);
-            txtf_Apellidos.setEditable(false);
+            txtf_NombresCompletos.setEditable(false);
+            txtf_NombreUsuario.setEditable(false);
             txtf_NumeroIdentificacion.setEditable(false);
             cbx_TipoIdentificacion.setDisable(true);
             txtf_Telefono.setEditable(false);
@@ -76,12 +76,12 @@ public class FormUsuarioController {
             cbx_Estado.setDisable(true);
             txtf_Direccion.setEditable(false);
             txtf_Adicional.setEditable(false);
-            cbx_TipoUsuario.setDisable(true);
+            cbx_Rol.setDisable(true);
             dt_FechaIngreso.setDisable(true);
             btn_Guardar.setDisable(true);
         } else if (esEditar) {
-            txtf_Nombres.setEditable(true);
-            txtf_Apellidos.setEditable(true);
+            txtf_NombresCompletos.setEditable(true);
+            txtf_NombreUsuario.setEditable(true);
             txtf_NumeroIdentificacion.setEditable(false);
             cbx_TipoIdentificacion.setDisable(true);
             txtf_Telefono.setEditable(true);
@@ -89,12 +89,12 @@ public class FormUsuarioController {
             cbx_Estado.setDisable(true);
             txtf_Direccion.setEditable(true);
             txtf_Adicional.setEditable(true);
-            cbx_TipoUsuario.setDisable(false);
+            cbx_Rol.setDisable(false);
             dt_FechaIngreso.setDisable(false);
             btn_Guardar.setDisable(false);
         } else { // REGISTRAR
-            txtf_Nombres.setEditable(true);
-            txtf_Apellidos.setEditable(true);
+            txtf_NombresCompletos.setEditable(true);
+            txtf_NombreUsuario.setEditable(true);
             txtf_NumeroIdentificacion.setEditable(true);
             cbx_TipoIdentificacion.setDisable(false);
             txtf_Telefono.setEditable(true);
@@ -102,7 +102,7 @@ public class FormUsuarioController {
             cbx_Estado.setDisable(false);
             txtf_Direccion.setEditable(true);
             txtf_Adicional.setEditable(true);
-            cbx_TipoUsuario.setDisable(false);
+            cbx_Rol.setDisable(false);
             dt_FechaIngreso.setDisable(false);
             btn_Guardar.setDisable(false);
         }

@@ -34,17 +34,17 @@
             </columnConstraints>
 
             <!-- Tipo de Usuario -->
-            <Label text="Tipo de Usuario:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
-            <ComboBox fx:id="cbx_TipoUsuario" promptText="Tipo de Usuario"
+            <Label text="Rol:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
+            <ComboBox fx:id="cbx_Rol" promptText="Rol"
                       prefWidth="250" styleClass="combo-box"
                       GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
 
             <!-- Nombres y Apellidos -->
-            <Label text="Nombres:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
-            <Label text="Apellidos:" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="label"/>
-            <TextField fx:id="txtf_Nombres" styleClass="text-field"
+            <Label text="Nombres Completos:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
+            <Label text="Nombre Usuario:" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="label"/>
+            <TextField fx:id="txtf_NombresCompletos" styleClass="text-field"
                        GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-            <TextField fx:id="txtf_Apellidos" styleClass="text-field"
+            <TextField fx:id="txtf_NombreUsuario" styleClass="text-field"
                        GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
             <!-- Tipo y número de Identificación -->

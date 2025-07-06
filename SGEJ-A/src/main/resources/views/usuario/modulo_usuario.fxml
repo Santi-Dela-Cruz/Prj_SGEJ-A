@@ -37,13 +37,14 @@
 
               <TableView fx:id="tb_Usuarios" layoutY="96.0" prefHeight="362.0" prefWidth="604.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="96.0">
                   <columns>
-                      <TableColumn fx:id="tbc_Nombres" text="Nombres" />
-                      <TableColumn fx:id="tbc_Apellidos" text="Apellidos" />
+                      <TableColumn fx:id="tbc_NombresCompletos" text="Nombres Completos" />
+                      <TableColumn fx:id="tbc_NombreUsuario" text="Usuario" />
                       <TableColumn fx:id="tbc_NumeroI" text="Número de Identificación" />
                       <TableColumn fx:id="tbc_TipoIdentificacion" text="Tipo de Identificación" />
                       <TableColumn fx:id="tbc_Telefono" text="Teléfono" />
                       <TableColumn fx:id="tbc_Correo" text="Correo Electrónico" />
                       <TableColumn fx:id="tbc_Estado" text="Estado" />
+                      <TableColumn fx:id="tbc_Rol" text="Rol" />
                       <TableColumn fx:id="tbc_BotonEditar" prefWidth="20" styleClass="column-action" text=" " />
                       <TableColumn fx:id="tbc_BotonVer" prefWidth="20" styleClass="column-action" text=" " />
                   </columns>

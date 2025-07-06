@@ -17,13 +17,14 @@ public class ModuloUsuarioController {
     @FXML private TextField txt_Busqueda;
 
     @FXML private TableView<UsuarioDemo> tb_Usuarios;
-    @FXML private TableColumn<UsuarioDemo, String> tbc_Nombres;
-    @FXML private TableColumn<UsuarioDemo, String> tbc_Apellidos;
+    @FXML private TableColumn<UsuarioDemo, String> tbc_NombresCompletos;
+    @FXML private TableColumn<UsuarioDemo, String> tbc_NombreUsuario;
     @FXML private TableColumn<UsuarioDemo, String> tbc_NumeroI;
     @FXML private TableColumn<UsuarioDemo, String> tbc_TipoIdentificacion;
     @FXML private TableColumn<UsuarioDemo, String> tbc_Telefono;
     @FXML private TableColumn<UsuarioDemo, String> tbc_Correo;
     @FXML private TableColumn<UsuarioDemo, String> tbc_Estado;
+    @FXML private TableColumn<UsuarioDemo, String> tbc_Rol;
 
     @FXML private TableColumn<UsuarioDemo, Void> tbc_BotonEditar;
     @FXML private TableColumn<UsuarioDemo, Void> tbc_BotonVer;
@@ -93,13 +94,14 @@ public class ModuloUsuarioController {
     }
 
     private void configurarColumnasTexto() {
-        tbc_Nombres.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().nombres()));
-        tbc_Apellidos.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().apellidos()));
+        tbc_NombresCompletos.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().nombresCompletos()));
+        tbc_NombreUsuario.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().nombreUsuario()));
         tbc_NumeroI.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().numeroIdentificacion()));
         tbc_TipoIdentificacion.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().tipoIdentificacion()));
         tbc_Telefono.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().telefono()));
         tbc_Correo.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().correo()));
         tbc_Estado.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().estado()));
+        tbc_Rol.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().rol()));
     }
 
     private void inicializarColumnasDeBotones() {
@@ -141,23 +143,23 @@ public class ModuloUsuarioController {
     private void cargarDatosEjemplo() {
         tb_Usuarios.getItems().addAll(
                 new UsuarioDemo(
-                        "Ana", "Mora", "0102030405", "Cédula", "0991234567", "ana@correo.com", "Activo",
-                        "Av. Siempre Viva 123", "Referencia 1", java.time.LocalDate.of(2023, 1, 10), "Natural"
+                        "Ana Mora", "anaMora", "0102030405", "Cédula", "0991234567", "ana@correo.com", "Activo",
+                        "Av. Siempre Viva 123", "Referencia 1", java.time.LocalDate.of(2023, 1, 10), "Natural", "Administrador"
                 ),
                 new UsuarioDemo(
-                        "Luis", "Pérez", "1102233445", "Pasaporte", "0987654321", "luis@correo.com", "Activo",
-                        "Calle Falsa 456", "Referencia 2", java.time.LocalDate.of(2022, 5, 20), "Jurídica"
+                        "Luis Pérez", "luisPerez", "1102233445", "Pasaporte", "0987654321", "luis@correo.com", "Activo",
+                        "Calle Falsa 456", "Referencia 2", java.time.LocalDate.of(2022, 5, 20), "Jurídica", "Usuario"
                 ),
                 new UsuarioDemo(
-                        "María", "Salas", "2223334445", "RUC", "0970001122", "maria@correo.com", "Inactivo",
-                        "Calle Real 789", "Referencia 3", java.time.LocalDate.of(2021, 8, 15), "Natural"
+                        "María Salas", "mariaSalas", "2223334445", "RUC", "0970001122", "maria@correo.com", "Inactivo",
+                        "Calle Real 789", "Referencia 3", java.time.LocalDate.of(2021, 8, 15), "Natural", "Administrador"
                 )
         );
     }
     // Example record (replace with your real Usuario class if needed)
     public record UsuarioDemo(
-            String nombres,
-            String apellidos,
+            String nombresCompletos,
+            String nombreUsuario,
             String numeroIdentificacion,
             String tipoIdentificacion,
             String telefono,
@@ -166,6 +168,7 @@ public class ModuloUsuarioController {
             String direccion,
             String adicional,
             java.time.LocalDate fechaIngreso,
-            String tipoUsuario
+            String tipoUsuario,
+            String rol
     ) {}
 }
