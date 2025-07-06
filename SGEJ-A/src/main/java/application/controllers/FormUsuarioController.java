@@ -7,10 +7,10 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
-public class FormEmpleadoController {
+public class FormUsuarioController {
 
     @FXML private Button btn_Guardar, btn_Cancelar;
-    @FXML private TextField txtf_Nombres, txtf_Apellidos, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Adicional, txtf_Telefono;
+    @FXML private TextField txtf_NombresCompletos, txtf_NombreUsuario, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Adicional, txtf_Telefono;
     @FXML private ComboBox<String> cbx_Rol, cbx_TipoIdentificacion, cbx_Estado;
     @FXML private DatePicker dt_FechaIngreso;
     @FXML private Text txt_TituloForm;
@@ -29,7 +29,7 @@ public class FormEmpleadoController {
     private void initialize() {
         cbx_Estado.getItems().addAll("Activo", "Inactivo");
         cbx_TipoIdentificacion.getItems().addAll("Cédula", "RUC", "Pasaporte");
-        cbx_Rol.getItems().addAll("Gerente", "Administrador", "Empleado", "Supervisor", "Asistente");
+        cbx_Rol.getItems().addAll("Administrador", "Usuario", "Invitado");
 
         btn_Guardar.setOnAction(e -> {
             if (onGuardar != null) onGuardar.run();
@@ -39,18 +39,18 @@ public class FormEmpleadoController {
         });
     }
 
-    public void cargarEmpleado(ModuloEmpleadoController.EmpleadoDemo empleado) {
-        txtf_Nombres.setText(empleado.nombres());
-        txtf_Apellidos.setText(empleado.apellidos());
-        txtf_NumeroIdentificacion.setText(empleado.numeroIdentificacion());
-        txtf_Direccion.setText(empleado.direccion());
-        txtf_Adicional.setText(empleado.adicional());
-        dt_FechaIngreso.setValue(empleado.fechaIngreso());
-        txtf_Telefono.setText(empleado.telefono());
-        txtf_Correo.setText(empleado.correo());
-        cbx_Rol.setValue(empleado.rol());
-        cbx_TipoIdentificacion.setValue(empleado.tipoIdentificacion());
-        cbx_Estado.setValue(empleado.estado());
+    public void cargarUsuario(ModuloUsuarioController.UsuarioDemo usuario) {
+        txtf_NombresCompletos.setText(usuario.nombresCompletos());
+        txtf_NombreUsuario.setText(usuario.nombreUsuario());
+        txtf_NumeroIdentificacion.setText(usuario.numeroIdentificacion());
+        txtf_Direccion.setText(usuario.direccion());
+        txtf_Adicional.setText(usuario.adicional());
+        dt_FechaIngreso.setValue(usuario.fechaIngreso());
+        txtf_Telefono.setText(usuario.telefono());
+        txtf_Correo.setText(usuario.correo());
+        cbx_Rol.setValue(usuario.rol());
+        cbx_TipoIdentificacion.setValue(usuario.tipoIdentificacion());
+        cbx_Estado.setValue(usuario.estado());
     }
 
     public void setModo(String modo) {
@@ -59,16 +59,16 @@ public class FormEmpleadoController {
         boolean esRegistrar = !esEditar && !esVer;
 
         if (esEditar) {
-            txt_TituloForm.setText("Editar Empleado");
+            txt_TituloForm.setText("Editar Usuario");
         } else if (esVer) {
-            txt_TituloForm.setText("Ver Empleado");
+            txt_TituloForm.setText("Ver Usuario");
         } else {
-            txt_TituloForm.setText("Registrar nuevo Empleado");
+            txt_TituloForm.setText("Registrar nuevo Usuario");
         }
 
         if (esVer) {
-            txtf_Nombres.setEditable(false);
-            txtf_Apellidos.setEditable(false);
+            txtf_NombresCompletos.setEditable(false);
+            txtf_NombreUsuario.setEditable(false);
             txtf_NumeroIdentificacion.setEditable(false);
             cbx_TipoIdentificacion.setDisable(true);
             txtf_Telefono.setEditable(false);
@@ -80,8 +80,8 @@ public class FormEmpleadoController {
             dt_FechaIngreso.setDisable(true);
             btn_Guardar.setDisable(true);
         } else if (esEditar) {
-            txtf_Nombres.setEditable(true);
-            txtf_Apellidos.setEditable(true);
+            txtf_NombresCompletos.setEditable(true);
+            txtf_NombreUsuario.setEditable(true);
             txtf_NumeroIdentificacion.setEditable(false);
             cbx_TipoIdentificacion.setDisable(true);
             txtf_Telefono.setEditable(true);
@@ -93,8 +93,8 @@ public class FormEmpleadoController {
             dt_FechaIngreso.setDisable(false);
             btn_Guardar.setDisable(false);
         } else { // REGISTRAR
-            txtf_Nombres.setEditable(true);
-            txtf_Apellidos.setEditable(true);
+            txtf_NombresCompletos.setEditable(true);
+            txtf_NombreUsuario.setEditable(true);
             txtf_NumeroIdentificacion.setEditable(true);
             cbx_TipoIdentificacion.setDisable(false);
             txtf_Telefono.setEditable(true);

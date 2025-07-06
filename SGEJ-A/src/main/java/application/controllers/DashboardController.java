@@ -136,7 +136,7 @@ public class DashboardController {
         mainController.cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml");
     }
     @FXML private void irFacturacion() {
-        mainController.cargarModulo("/views/facturacion/modulo_facturacion.fxml");
+        mainController.cargarModulo("/views/factura/modulo_factura.fxml");
     }
     @FXML private void irSistema() {
         mainController.cargarModulo("/views/sistema/modulo_sistema.fxml");

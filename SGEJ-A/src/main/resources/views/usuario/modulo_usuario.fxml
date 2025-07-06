@@ -9,7 +9,7 @@
       <?import javafx.scene.text.Font?>
       <?import javafx.scene.text.Text?>
 
-      <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.ModuloEmpleadoController">
+      <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.ModuloUsuarioController">
           <children>
               <!-- Title Panel Centered at the Top -->
               <Pane fx:id="pnl_Title"
@@ -20,7 +20,7 @@
                     AnchorPane.topAnchor="4.0">
                   <children>
                       <Text fill="WHITE"
-                            text="Registro y Control de Empleados"
+                            text="Registro y Control de Usuarios"
                             style="-fx-font-size: 16.0; -fx-font-weight: bold;"
                             layoutY="28.0"
                             layoutX="50.0">
@@ -35,10 +35,10 @@
               <Button fx:id="btn_Buscar" layoutY="55.0" styleClass="button-windows" text="Buscar" AnchorPane.leftAnchor="356.0" AnchorPane.topAnchor="55.0" />
               <Button fx:id="btn_Nuevo" layoutY="55.0" styleClass="button-windows" text="Nuevo" AnchorPane.rightAnchor="15.6" AnchorPane.topAnchor="55.0" />
 
-              <TableView fx:id="tb_Empleados" layoutY="96.0" prefHeight="362.0" prefWidth="604.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="96.0">
+              <TableView fx:id="tb_Usuarios" layoutY="96.0" prefHeight="362.0" prefWidth="604.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="96.0">
                   <columns>
-                      <TableColumn fx:id="tbc_Nombres" text="Nombres" />
-                      <TableColumn fx:id="tbc_Apellidos" text="Apellidos" />
+                      <TableColumn fx:id="tbc_NombresCompletos" text="Nombres Completos" />
+                      <TableColumn fx:id="tbc_NombreUsuario" text="Usuario" />
                       <TableColumn fx:id="tbc_NumeroI" text="Número de Identificación" />
                       <TableColumn fx:id="tbc_TipoIdentificacion" text="Tipo de Identificación" />
                       <TableColumn fx:id="tbc_Telefono" text="Teléfono" />
