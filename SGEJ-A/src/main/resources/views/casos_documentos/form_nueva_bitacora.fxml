@@ -2,6 +2,7 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
@@ -10,10 +11,13 @@
             style="-fx-background-color: white; -fx-background-radius: 8;" layoutX="85" layoutY="55">
 
     <children>
-        <Label fx:id="lbl_TituloFormulario"
-               text="Nueva Entrada"
-               layoutX="20" layoutY="20"
-               style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+        <!-- Title in a colored panel -->
+        <StackPane layoutX="0" layoutY="0" prefHeight="50" prefWidth="400"
+                   style="-fx-background-color: #90caf9; -fx-background-radius: 8;" alignment="CENTER">
+            <Text fx:id="lbl_TituloFormulario"
+                  text="Nueva Entrada"
+                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
+        </StackPane>
 
         <Label fx:id="lbl_Fecha" text="Fecha:" layoutX="20" layoutY="80"/>
         <DatePicker fx:id="dp_Fecha" layoutX="150" layoutY="76" prefWidth="220"/>

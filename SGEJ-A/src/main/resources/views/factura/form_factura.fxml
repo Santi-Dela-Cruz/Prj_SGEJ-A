@@ -14,9 +14,12 @@
     <VBox spacing="24" styleClass="form-panel" alignment="TOP_LEFT">
         <padding><Insets top="24" right="24" bottom="24" left="24"/></padding>
 
-        <!-- Título -->
-        <StackPane prefHeight="40" styleClass="title-panel" alignment="CENTER">
-            <Text fx:id="txt_TituloForm" text="GENERAR FACTURA" styleClass="title-label"/>
+        <!-- Title in a colored panel -->
+        <StackPane prefHeight="50" alignment="CENTER"
+                   style="-fx-background-color: #90caf9; -fx-background-radius: 8;">
+            <Text fx:id="txt_TituloForm"
+                  text="GENERAR FACTURA"
+                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
         </StackPane>
 
         <!-- Datos del Emisor -->

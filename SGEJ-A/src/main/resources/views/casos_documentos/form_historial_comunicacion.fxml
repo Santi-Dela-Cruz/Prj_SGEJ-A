@@ -16,19 +16,23 @@
             <Insets top="20" right="20" bottom="20" left="20"/>
         </padding>
 
-        <!-- Título -->
-        <StackPane fx:id="pnl_Titulo" prefHeight="30.0" styleClass="title-panel" alignment="CENTER">
-            <Text fx:id="txt_TituloForm" text="AÑADIR COMUNICACIÓN" styleClass="title-label"/>
+        <!-- Title in a colored panel -->
+        <StackPane fx:id="pnl_Titulo" prefHeight="50"
+                   alignment="CENTER"
+                   style="-fx-background-color: #90caf9; -fx-background-radius: 8;">
+            <Text fx:id="txt_TituloForm"
+                  text="AÑADIR COMUNICACIÓN"
+                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
         </StackPane>
 
-        <!-- Formulario -->
+        <!-- Form -->
         <GridPane hgap="20" vgap="12">
             <columnConstraints>
                 <ColumnConstraints prefWidth="250"/>
                 <ColumnConstraints prefWidth="250"/>
             </columnConstraints>
 
-            <!-- Fila 0 -->
+            <!-- Row 0 -->
             <Label text="Fecha de entrada:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
             <DatePicker fx:id="dtp_Fecha" prefWidth="180.0" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
 
@@ -36,7 +40,7 @@
             <TextField fx:id="txtf_Usuario" prefWidth="180.0" styleClass="text-field"
                        GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-            <!-- Fila 2 -->
+            <!-- Row 2 -->
             <Label text="Tipo de acción:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
             <ComboBox fx:id="cbx_TipoAccion" prefWidth="180.0" styleClass="combo-box"
                       GridPane.rowIndex="3" GridPane.columnIndex="0"/>
@@ -45,7 +49,7 @@
             <TextField fx:id="txtf_Expediente" prefWidth="180.0" styleClass="text-field"
                        GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-            <!-- Fila 4 - Descripción -->
+            <!-- Row 4 - Description -->
             <Label text="Descripción:" GridPane.rowIndex="4" GridPane.columnIndex="0"
                    GridPane.columnSpan="2" styleClass="label"/>
             <TextArea fx:id="txta_Descripcion" prefWidth="460.0" prefHeight="100.0"
@@ -53,7 +57,7 @@
                       VBox.vgrow="ALWAYS" styleClass="text-field"/>
         </GridPane>
 
-        <!-- Botones -->
+        <!-- Buttons -->
         <HBox spacing="20" alignment="CENTER">
             <Button fx:id="btn_Guardar" text="Guardar" prefWidth="100.0" styleClass="button-windows,button-windows-green"/>
             <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="100.0" styleClass="button-windows,button-windows-red"/>

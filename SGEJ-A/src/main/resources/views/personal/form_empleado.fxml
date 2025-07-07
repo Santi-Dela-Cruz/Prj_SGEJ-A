@@ -16,17 +16,17 @@
             <Insets top="24" right="24" bottom="24" left="24"/>
         </padding>
 
-        <!-- Título del formulario -->
+        <!-- Title in a colored panel -->
         <StackPane fx:id="pnl_Titulo"
-                   prefHeight="40"
-                   styleClass="title-panel"
-                   alignment="CENTER">
+                   prefHeight="50"
+                   alignment="CENTER"
+                   style="-fx-background-color: #90caf9; -fx-background-radius: 8;">
             <Text fx:id="txt_TituloForm"
                   text="REGISTRAR / VISUALIZAR / EDITAR"
-                  styleClass="title-label"/>
+                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
         </StackPane>
 
-        <!-- Grid con campos del formulario -->
+        <!-- Grid with form fields -->
         <GridPane hgap="20" vgap="16">
             <columnConstraints>
                 <ColumnConstraints prefWidth="250"/>
@@ -80,7 +80,7 @@
                         GridPane.rowIndex="11" GridPane.columnIndex="0"/>
         </GridPane>
 
-        <!-- Botones Guardar / Cancelar -->
+        <!-- Save / Cancel Buttons -->
         <HBox spacing="40" alignment="CENTER">
             <Button fx:id="btn_Guardar" text="Guardar" prefWidth="120"
                     styleClass="button-windows,button-windows-green" />

@@ -8,18 +8,18 @@
             fx:controller="application.controllers.DashboardController"
             fitToWidth="true" styleClass="scroll-form">
 
-    <VBox spacing="24">
+    <VBox spacing="36">
         <padding>
-            <Insets top="20" right="20" bottom="20" left="20"/>
+            <Insets top="32" right="32" bottom="32" left="32"/>
         </padding>
 
         <!-- Welcome Title -->
-        <StackPane alignment="CENTER" prefHeight="40" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+        <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 20;">
             <Label fx:id="lblBienvenida" text="Bienvenido, Nombre del usuario" styleClass="section-title"/>
         </StackPane>
 
         <!-- Summary Cards -->
-        <HBox spacing="16" alignment="CENTER">
+        <HBox spacing="24" alignment="CENTER">
             <VBox styleClass="card" alignment="CENTER">
                 <Label text="📂 Casos Activos" styleClass="card-title"/>
                 <Label fx:id="lblCasosActivos" text="32" styleClass="card-value"/>
@@ -39,8 +39,11 @@
         </HBox>
 
         <!-- Últimos Casos Modificados -->
-        <VBox fx:id="seccionCasos" spacing="8">
-            <StackPane alignment="CENTER" prefHeight="32" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+        <VBox fx:id="seccionCasos" spacing="12" style="-fx-background-color: #f0f8ff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16;">
                 <Label text="Últimos Casos Modificados" styleClass="section-title"/>
             </StackPane>
             <TableView fx:id="tableCasosRecientes" prefHeight="360" styleClass="table-view">
@@ -57,8 +60,11 @@
         </VBox>
 
         <!-- Facturas Pendientes -->
-        <VBox fx:id="seccionFacturas" spacing="8">
-            <StackPane alignment="CENTER" prefHeight="32" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+        <VBox fx:id="seccionFacturas" spacing="12" style="-fx-background-color: #f0f8ff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16;">
                 <Label text="Facturas Pendientes" styleClass="section-title"/>
             </StackPane>
             <TableView fx:id="tableFacturasPendientes" prefHeight="360" styleClass="table-view">
@@ -76,8 +82,11 @@
         </VBox>
 
         <!-- Tareas del día -->
-        <VBox fx:id="seccionTareas" spacing="8">
-            <StackPane alignment="CENTER" prefHeight="32" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+        <VBox fx:id="seccionTareas" spacing="12" style="-fx-background-color: #f0f8ff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16;">
                 <Label text="Tareas del día" styleClass="section-title"/>
             </StackPane>
             <TableView fx:id="tableTareasDia" prefHeight="360" styleClass="table-view">
@@ -94,8 +103,11 @@
         </VBox>
 
         <!-- Próximas Audiencias -->
-        <VBox fx:id="seccionAudiencias" spacing="8">
-            <StackPane alignment="CENTER" prefHeight="32" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+        <VBox fx:id="seccionAudiencias" spacing="12" style="-fx-background-color: #f0f8ff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16;">
                 <Label text="Próximas Audiencias" styleClass="section-title"/>
             </StackPane>
             <TableView fx:id="tableAudiencias" prefHeight="360" styleClass="table-view">
@@ -112,8 +124,11 @@
         </VBox>
 
         <!-- Documentos recientes -->
-        <VBox fx:id="seccionDocumentos" spacing="8">
-            <StackPane alignment="CENTER" prefHeight="32" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+        <VBox fx:id="seccionDocumentos" spacing="12" style="-fx-background-color: #f0f8ff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16;">
                 <Label text="Documentos Recientes" styleClass="section-title"/>
             </StackPane>
             <TableView fx:id="tableDocumentosRecientes" prefHeight="360" styleClass="table-view">
@@ -128,7 +143,7 @@
         </VBox>
 
         <!-- Accesos rápidos -->
-        <HBox spacing="20" alignment="CENTER">
+        <HBox spacing="28" alignment="CENTER">
             <Button text="⚙️ Clientes" onAction="#irClientes" styleClass="button-windows, button-windows-gray"/>
             <Button text="⚖️ Casos" onAction="#irCasos" styleClass="button-windows, button-windows-gray"/>
             <Button text="💳 Facturación" onAction="#irFacturacion" styleClass="button-windows, button-windows-gray"/>

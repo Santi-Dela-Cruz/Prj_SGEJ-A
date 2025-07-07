@@ -16,9 +16,13 @@
             <Insets top="20" right="20" bottom="20" left="20"/>
         </padding>
 
-        <!-- Título -->
-        <StackPane fx:id="pnl_Titulo" prefHeight="30.0" styleClass="title-panel" alignment="CENTER">
-            <Text fx:id="txt_TituloForm" text="REGISTRAR / VISUALIZAR / EDITAR" styleClass="title-label"/>
+        <!-- Título en panel de color claro con texto blanco -->
+        <StackPane fx:id="pnl_Titulo" prefHeight="50"
+                   alignment="CENTER"
+                   style="-fx-background-color: #90caf9; -fx-background-radius: 8;">
+            <Text fx:id="txt_TituloForm"
+                  text="REGISTRAR / VISUALIZAR / EDITAR"
+                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
         </StackPane>
 
         <!-- Formulario -->

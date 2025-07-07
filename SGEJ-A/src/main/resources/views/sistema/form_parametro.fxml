@@ -1,87 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.RadioButton?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="600.0" prefWidth="480.0" styleClass="form-container" 
-            xmlns="http://javafx.com/javafx/23.0.1" 
-            xmlns:fx="http://javafx.com/fxml/1" 
+<AnchorPane prefHeight="600.0" prefWidth="480.0" styleClass="form-container"
+            xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="application.controllers.FormParametroController">
-    
-    <!-- Header -->
-    <VBox AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
-        <Label fx:id="lbl_Titulo" styleClass="form-title" text="Nuevo Parámetro" />
-        <Label styleClass="form-subtitle" text="Complete los datos del parámetro del sistema" />
-    </VBox>
-    
-    <!-- Form Fields -->
-    <VBox spacing="15.0" 
-          AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="80.0">
-        
+
+    <!-- Title in a colored panel -->
+    <StackPane fx:id="pnl_Title"
+               prefHeight="50"
+               AnchorPane.leftAnchor="14.0"
+               AnchorPane.rightAnchor="14.0"
+               AnchorPane.topAnchor="10.0"
+               alignment="CENTER"
+               style="-fx-background-color: #90caf9; -fx-background-radius: 16;">
+        <Text fx:id="lbl_Titulo"
+              text="Nuevo Parámetro"
+              style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
+    </StackPane>
+
+    <!-- Subtitle -->
+    <Label layoutX="90.0" layoutY="60.0" text="Complete los datos del parámetro del sistema"
+           styleClass="form-subtitle" />
+
+    <!-- Form fields -->
+    <VBox spacing="15.0"
+          AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0"
+          AnchorPane.topAnchor="90.0">
+
         <!-- Código -->
         <VBox spacing="5.0">
             <Label styleClass="field-label" text="Código *" />
             <TextField fx:id="txt_Codigo" promptText="Código único del parámetro" />
         </VBox>
-        
+
         <!-- Nombre -->
         <VBox spacing="5.0">
             <Label styleClass="field-label" text="Nombre *" />
             <TextField fx:id="txt_Nombre" promptText="Nombre del parámetro" />
         </VBox>
-        
+
         <!-- Descripción -->
         <VBox spacing="5.0">
             <Label styleClass="field-label" text="Descripción" />
             <TextArea fx:id="txt_Descripcion" prefRowCount="3" promptText="Descripción del parámetro" />
         </VBox>
-        
+
         <!-- Valor -->
         <VBox fx:id="vbox_Valor" spacing="5.0">
             <Label styleClass="field-label" text="Valor *" />
             <TextField fx:id="txt_Valor" promptText="Valor del parámetro" />
         </VBox>
-        
-        <!-- Sección de Upload de Archivos (inicialmente oculta) -->
+
+        <!-- Upload de Archivos (oculto por defecto) -->
         <VBox fx:id="vbox_Upload" spacing="10.0" visible="false" managed="false">
             <Label styleClass="field-label" text="Archivo" />
             <HBox spacing="10.0" alignment="CENTER_LEFT">
                 <Button fx:id="btn_SeleccionarArchivo" styleClass="secondary-button" text="Seleccionar Archivo" />
                 <Label fx:id="lbl_NombreArchivo" text="Ningún archivo seleccionado" />
             </HBox>
-            
-            <!-- Preview de imagen -->
+
+            <!-- Vista previa (oculta por defecto) -->
             <VBox fx:id="vbox_Preview" spacing="5.0" visible="false" managed="false">
                 <Label styleClass="field-label" text="Vista previa" />
-                <javafx.scene.image.ImageView fx:id="img_Preview" 
-                                             fitWidth="150.0" 
-                                             fitHeight="150.0" 
-                                             preserveRatio="true" 
-                                             styleClass="image-preview" />
+                <ImageView fx:id="img_Preview"
+                           fitWidth="150.0"
+                           fitHeight="150.0"
+                           preserveRatio="true"
+                           styleClass="image-preview" />
             </VBox>
         </VBox>
-        
+
         <!-- Tipo -->
         <VBox spacing="5.0">
             <Label styleClass="field-label" text="Tipo *" />
             <ComboBox fx:id="cmb_Tipo" prefWidth="200.0" promptText="Seleccione el tipo" />
         </VBox>
-        
+
         <!-- Categoría -->
         <VBox spacing="5.0">
             <Label styleClass="field-label" text="Categoría" />
             <ComboBox fx:id="cmb_Categoria" prefWidth="200.0" promptText="Seleccione la categoría" />
         </VBox>
-        
+
         <!-- Estado -->
         <VBox spacing="5.0">
             <Label styleClass="field-label" text="Estado" />
@@ -93,14 +98,13 @@
                 <RadioButton fx:id="rb_Inactivo" text="Inactivo" toggleGroup="$toggleGroupEstado" />
             </HBox>
         </VBox>
-        
     </VBox>
-    
-    <!-- Action Buttons -->
-    <HBox alignment="CENTER_RIGHT" spacing="10.0" 
+
+    <!-- Action buttons -->
+    <HBox alignment="CENTER_RIGHT" spacing="10.0"
           AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0">
         <Button fx:id="btn_Cancelar" styleClass="secondary-button" text="Cancelar" />
         <Button fx:id="btn_Guardar" styleClass="action-button" text="Guardar" />
     </HBox>
-    
+
 </AnchorPane>

@@ -4,13 +4,15 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 
 public class FormUsuarioController {
 
     @FXML private Button btn_Guardar, btn_Cancelar;
-    @FXML private TextField txtf_NombresCompletos, txtf_NombreUsuario, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Adicional, txtf_Telefono;
+    @FXML private TextField txtf_NombresCompletos, txtf_NombreUsuario, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Telefono;
+    @FXML private PasswordField txtf_Contrasena, txtf_ConfirmarContrasena;
     @FXML private ComboBox<String> cbx_Rol, cbx_TipoIdentificacion, cbx_Estado;
     @FXML private DatePicker dt_FechaIngreso;
     @FXML private Text txt_TituloForm;
@@ -44,19 +46,18 @@ public class FormUsuarioController {
         txtf_NombreUsuario.setText(usuario.nombreUsuario());
         txtf_NumeroIdentificacion.setText(usuario.numeroIdentificacion());
         txtf_Direccion.setText(usuario.direccion());
-        txtf_Adicional.setText(usuario.adicional());
         dt_FechaIngreso.setValue(usuario.fechaIngreso());
         txtf_Telefono.setText(usuario.telefono());
         txtf_Correo.setText(usuario.correo());
         cbx_Rol.setValue(usuario.rol());
         cbx_TipoIdentificacion.setValue(usuario.tipoIdentificacion());
         cbx_Estado.setValue(usuario.estado());
+        // Password fields are not loaded for security reasons
     }
 
     public void setModo(String modo) {
         boolean esEditar = "EDITAR".equalsIgnoreCase(modo);
         boolean esVer = "VER".equalsIgnoreCase(modo);
-        boolean esRegistrar = !esEditar && !esVer;
 
         if (esEditar) {
             txt_TituloForm.setText("Editar Usuario");
@@ -66,45 +67,19 @@ public class FormUsuarioController {
             txt_TituloForm.setText("Registrar nuevo Usuario");
         }
 
-        if (esVer) {
-            txtf_NombresCompletos.setEditable(false);
-            txtf_NombreUsuario.setEditable(false);
-            txtf_NumeroIdentificacion.setEditable(false);
-            cbx_TipoIdentificacion.setDisable(true);
-            txtf_Telefono.setEditable(false);
-            txtf_Correo.setEditable(false);
-            cbx_Estado.setDisable(true);
-            txtf_Direccion.setEditable(false);
-            txtf_Adicional.setEditable(false);
-            cbx_Rol.setDisable(true);
-            dt_FechaIngreso.setDisable(true);
-            btn_Guardar.setDisable(true);
-        } else if (esEditar) {
-            txtf_NombresCompletos.setEditable(true);
-            txtf_NombreUsuario.setEditable(true);
-            txtf_NumeroIdentificacion.setEditable(false);
-            cbx_TipoIdentificacion.setDisable(true);
-            txtf_Telefono.setEditable(true);
-            txtf_Correo.setEditable(true);
-            cbx_Estado.setDisable(true);
-            txtf_Direccion.setEditable(true);
-            txtf_Adicional.setEditable(true);
-            cbx_Rol.setDisable(false);
-            dt_FechaIngreso.setDisable(false);
-            btn_Guardar.setDisable(false);
-        } else { // REGISTRAR
-            txtf_NombresCompletos.setEditable(true);
-            txtf_NombreUsuario.setEditable(true);
-            txtf_NumeroIdentificacion.setEditable(true);
-            cbx_TipoIdentificacion.setDisable(false);
-            txtf_Telefono.setEditable(true);
-            txtf_Correo.setEditable(true);
-            cbx_Estado.setDisable(false);
-            txtf_Direccion.setEditable(true);
-            txtf_Adicional.setEditable(true);
-            cbx_Rol.setDisable(false);
-            dt_FechaIngreso.setDisable(false);
-            btn_Guardar.setDisable(false);
-        }
+        boolean editable = !esVer;
+        txtf_NombresCompletos.setEditable(editable);
+        txtf_NombreUsuario.setEditable(editable);
+        txtf_NumeroIdentificacion.setEditable(!esEditar && !esVer);
+        cbx_TipoIdentificacion.setDisable(esEditar || esVer);
+        txtf_Telefono.setEditable(editable);
+        txtf_Correo.setEditable(editable);
+        cbx_Estado.setDisable(esVer);
+        txtf_Direccion.setEditable(editable);
+        cbx_Rol.setDisable(esVer);
+        dt_FechaIngreso.setDisable(esVer);
+        txtf_Contrasena.setEditable(editable);
+        txtf_ConfirmarContrasena.setEditable(editable);
+        btn_Guardar.setDisable(esVer);
     }
 }

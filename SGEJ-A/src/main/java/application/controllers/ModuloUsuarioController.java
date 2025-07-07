@@ -9,13 +9,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class ModuloUsuarioController {
 
+    // Botones
     @FXML private Button btn_Nuevo;
     @FXML private Button btn_Buscar;
     @FXML private TextField txt_Busqueda;
 
+    // Tabla y columnas
     @FXML private TableView<UsuarioDemo> tb_Usuarios;
     @FXML private TableColumn<UsuarioDemo, String> tbc_NombresCompletos;
     @FXML private TableColumn<UsuarioDemo, String> tbc_NombreUsuario;
@@ -28,6 +31,8 @@ public class ModuloUsuarioController {
 
     @FXML private TableColumn<UsuarioDemo, Void> tbc_BotonEditar;
     @FXML private TableColumn<UsuarioDemo, Void> tbc_BotonVer;
+    @FXML private TableColumn<UsuarioDemo, Void> tbc_BotonReset;
+    @FXML private TableColumn<UsuarioDemo, Void> tbc_BotonCambiarClave;
 
     private Pane pnl_Forms;
 
@@ -38,23 +43,9 @@ public class ModuloUsuarioController {
     @FXML
     private void initialize() {
         btn_Nuevo.setOnAction(e -> mostrarFormulario(null, "NUEVO"));
-
         configurarColumnasTexto();
         inicializarColumnasDeBotones();
         cargarDatosEjemplo();
-        ocultarEncabezadosColumnasDeAccion();
-
-        tbc_BotonEditar.getStyleClass().add("column-action");
-        tbc_BotonVer.getStyleClass().add("column-action");
-    }
-
-    private void ocultarEncabezadosColumnasDeAccion() {
-        tb_Usuarios.widthProperty().addListener((obs, oldVal, newVal) -> {
-            Node header = tb_Usuarios.lookup("TableHeaderRow");
-            if (header != null) {
-                header.setVisible(true);
-            }
-        });
     }
 
     private void mostrarFormulario(UsuarioDemo usuario, String modo) {
@@ -73,18 +64,36 @@ public class ModuloUsuarioController {
                 controller.setModo("NUEVO");
             }
 
-            AnchorPane.setTopAnchor(form, 0.0);
-            AnchorPane.setBottomAnchor(form, 0.0);
-            AnchorPane.setLeftAnchor(form, 0.0);
-            AnchorPane.setRightAnchor(form, 0.0);
-
-            pnl_Forms.getChildren().setAll(form);
-            pnl_Forms.setVisible(true);
-            pnl_Forms.setManaged(true);
-
+            mostrarEnPanel(form);
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void mostrarFormularioCambioClave(UsuarioDemo usuario, String modo) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/usuario/form_cambio_clave.fxml"));
+            Node form = loader.load();
+
+            FormCambioClaveController controller = loader.getController();
+            controller.setOnCancelar(this::cerrarFormulario);
+            controller.setModo(modo); // "CAMBIO" o "RESET"
+
+            mostrarEnPanel(form);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void mostrarEnPanel(Node form) {
+        AnchorPane.setTopAnchor(form, 0.0);
+        AnchorPane.setBottomAnchor(form, 0.0);
+        AnchorPane.setLeftAnchor(form, 0.0);
+        AnchorPane.setRightAnchor(form, 0.0);
+
+        pnl_Forms.getChildren().setAll(form);
+        pnl_Forms.setVisible(true);
+        pnl_Forms.setManaged(true);
     }
 
     private void cerrarFormulario() {
@@ -107,27 +116,29 @@ public class ModuloUsuarioController {
     private void inicializarColumnasDeBotones() {
         agregarBotonPorColumna(tbc_BotonEditar, "✎", "Editar");
         agregarBotonPorColumna(tbc_BotonVer, "👁", "Ver");
+        agregarBotonPorColumna(tbc_BotonReset, "🔁", "Restablecer");
+        agregarBotonPorColumna(tbc_BotonCambiarClave, "🔒", "CambiarClave");
 
         tbc_BotonEditar.setPrefWidth(40);
         tbc_BotonVer.setPrefWidth(40);
+        tbc_BotonReset.setPrefWidth(40);
+        tbc_BotonCambiarClave.setPrefWidth(40);
     }
 
     private void agregarBotonPorColumna(TableColumn<UsuarioDemo, Void> columna, String texto, String tooltip) {
-        columna.getStyleClass().add("column-action");
-
         columna.setCellFactory(param -> new TableCell<>() {
             private final Button btn = new Button(texto);
 
             {
                 btn.getStyleClass().add("table-button");
-                setStyle("-fx-alignment: CENTER;");
                 btn.setTooltip(new Tooltip(tooltip));
                 btn.setOnAction(event -> {
                     UsuarioDemo usuario = getTableView().getItems().get(getIndex());
-                    if ("Editar".equals(tooltip)) {
-                        mostrarFormulario(usuario, "EDITAR");
-                    } else if ("Ver".equals(tooltip)) {
-                        mostrarFormulario(usuario, "VER");
+                    switch (tooltip) {
+                        case "Editar" -> mostrarFormulario(usuario, "EDITAR");
+                        case "Ver" -> mostrarFormulario(usuario, "VER");
+                        case "CambiarClave" -> mostrarFormularioCambioClave(usuario, "CAMBIO");
+                        case "Restablecer" -> mostrarFormularioCambioClave(usuario, "RESET");
                     }
                 });
             }
@@ -136,27 +147,19 @@ public class ModuloUsuarioController {
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 setGraphic(empty ? null : btn);
+                setStyle("-fx-alignment: CENTER;");
             }
         });
     }
 
     private void cargarDatosEjemplo() {
         tb_Usuarios.getItems().addAll(
-                new UsuarioDemo(
-                        "Ana Mora", "anaMora", "0102030405", "Cédula", "0991234567", "ana@correo.com", "Activo",
-                        "Av. Siempre Viva 123", "Referencia 1", java.time.LocalDate.of(2023, 1, 10), "Natural", "Administrador"
-                ),
-                new UsuarioDemo(
-                        "Luis Pérez", "luisPerez", "1102233445", "Pasaporte", "0987654321", "luis@correo.com", "Activo",
-                        "Calle Falsa 456", "Referencia 2", java.time.LocalDate.of(2022, 5, 20), "Jurídica", "Usuario"
-                ),
-                new UsuarioDemo(
-                        "María Salas", "mariaSalas", "2223334445", "RUC", "0970001122", "maria@correo.com", "Inactivo",
-                        "Calle Real 789", "Referencia 3", java.time.LocalDate.of(2021, 8, 15), "Natural", "Administrador"
-                )
+                new UsuarioDemo("Ana Mora", "anaMora", "0102030405", "Cédula", "0991234567", "ana@correo.com", "Activo", "Av. Siempre Viva 123", LocalDate.of(2023, 1, 10), "Natural", "Administrador"),
+                new UsuarioDemo("Luis Pérez", "luisPerez", "1102233445", "Pasaporte", "0987654321", "luis@correo.com", "Activo", "Calle Falsa 456", LocalDate.of(2022, 5, 20), "Jurídica", "Usuario"),
+                new UsuarioDemo("María Salas", "mariaSalas", "2223334445", "RUC", "0970001122", "maria@correo.com", "Inactivo", "Calle Real 789", LocalDate.of(2021, 8, 15), "Natural", "Administrador")
         );
     }
-    // Example record (replace with your real Usuario class if needed)
+
     public record UsuarioDemo(
             String nombresCompletos,
             String nombreUsuario,
@@ -166,8 +169,7 @@ public class ModuloUsuarioController {
             String correo,
             String estado,
             String direccion,
-            String adicional,
-            java.time.LocalDate fechaIngreso,
+            LocalDate fechaIngreso,
             String tipoUsuario,
             String rol
     ) {}
