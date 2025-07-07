@@ -80,4 +80,16 @@
         <Button fx:id="btn_GenerarReporte" styleClass="dropdown-item" text="Generar reporte" maxWidth="Infinity" />
     </VBox>
 
+    <!-- Dropdown panel for Sistema -->
+    <VBox fx:id="vpnl_DesplegableSistema"
+          styleClass="dropdown-menu"
+          AnchorPane.topAnchor="90.0"
+          AnchorPane.leftAnchor="520.0"
+          prefWidth="180.0"
+          visible="false"
+          managed="false">
+        <Button fx:id="btn_AdministracionUsuarios" styleClass="dropdown-item" text="Administración de usuarios" maxWidth="Infinity" />
+        <Button fx:id="btn_Parametros" styleClass="dropdown-item" text="Parámetros" maxWidth="Infinity" />
+    </VBox>
+
 </AnchorPane>

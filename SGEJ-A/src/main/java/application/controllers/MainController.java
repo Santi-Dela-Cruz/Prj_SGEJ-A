@@ -22,8 +22,9 @@ public class MainController {
     @FXML private Button btn_modo, md_Usuario;
 
     @FXML private Button btn_Casos, btn_Documentos, btn_HistorialComunicaciones, btn_Bitacora, btn_GenerarReporte;
+    @FXML private Button btn_AdministracionUsuarios, btn_Parametros;
 
-    @FXML private VBox vpnl_DesplegableCasosDocumentacion;
+    @FXML private VBox vpnl_DesplegableCasosDocumentacion, vpnl_DesplegableSistema;
     @FXML private AnchorPane pnl_Modulos, pnl_Forms;
 
     private double xOffset = 0;
@@ -51,21 +52,26 @@ public class MainController {
 
         // Ocultar menú desplegable al iniciar
         hideDropdown();
+        hideDropdownSistema();
 
-        // Mostrar menú desplegable al hacer hover
+        // Mostrar menú desplegable al hacer hover - Casos y Documentación
         md_CasosDocumentacion.setOnMouseEntered(e -> showDropdown());
         md_CasosDocumentacion.setOnMouseExited(e -> hideDropdownWithDelay());
         vpnl_DesplegableCasosDocumentacion.setOnMouseEntered(e -> showDropdown());
         vpnl_DesplegableCasosDocumentacion.setOnMouseExited(e -> hideDropdown());
+
+        // Mostrar menú desplegable al hacer hover - Sistema
+        md_Sistema.setOnMouseEntered(e -> showDropdownSistema());
+        md_Sistema.setOnMouseExited(e -> hideDropdownSistemaWithDelay());
+        vpnl_DesplegableSistema.setOnMouseEntered(e -> showDropdownSistema());
+        vpnl_DesplegableSistema.setOnMouseExited(e -> hideDropdownSistema());
 
         // Módulo inicial
         dashboard.setOnAction(e -> cargarModulo("/views/dashboard.fxml"));
 
         md_Clientes.setOnAction(e -> cargarModulo("/views/cliente/modulo_cliente.fxml"));
         md_Personal.setOnAction(e -> cargarModulo("/views/personal/modulo_empleado.fxml"));
-        md_Sistema.setOnAction(e -> cargarModulo("/views/usuario/modulo_usuario.fxml"));
         md_Facturacion.setOnAction(e -> cargarModulo("/views/factura/modulo_factura.fxml"));
-
 
         // Submódulos Casos y Documentación
         btn_Casos.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml"));
@@ -73,6 +79,10 @@ public class MainController {
         btn_HistorialComunicaciones.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_historial_comunicaciones.fxml"));
         btn_Bitacora.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_bitacora_caso.fxml"));
         btn_GenerarReporte.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_generar_reportes.fxml"));
+
+        // Submódulos Sistema
+        btn_AdministracionUsuarios.setOnAction(e -> cargarModulo("/views/usuario/modulo_usuario.fxml"));
+        btn_Parametros.setOnAction(e -> cargarModulo("/views/sistema/modulo_parametros.fxml"));
 
 
 
@@ -96,6 +106,26 @@ public class MainController {
         pause.setOnFinished(e -> {
             if (!vpnl_DesplegableCasosDocumentacion.isHover() && !md_CasosDocumentacion.isHover()) {
                 hideDropdown();
+            }
+        });
+        pause.play();
+    }
+
+    private void showDropdownSistema() {
+        vpnl_DesplegableSistema.setVisible(true);
+        vpnl_DesplegableSistema.setManaged(true);
+    }
+
+    private void hideDropdownSistema() {
+        vpnl_DesplegableSistema.setVisible(false);
+        vpnl_DesplegableSistema.setManaged(false);
+    }
+
+    private void hideDropdownSistemaWithDelay() {
+        PauseTransition pause = new PauseTransition(Duration.millis(150));
+        pause.setOnFinished(e -> {
+            if (!vpnl_DesplegableSistema.isHover() && !md_Sistema.isHover()) {
+                hideDropdownSistema();
             }
         });
         pause.play();
@@ -141,6 +171,7 @@ public class MainController {
             if (controller instanceof  ModuloEmpleadoController c) c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloUsuarioController c) c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloFacturaController c) c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloParametrosController c) c.setFormularioContainer(pnl_Forms);
 
             AnchorPane.setTopAnchor(modulo, 0.0);
             AnchorPane.setBottomAnchor(modulo, 0.0);
@@ -154,6 +185,7 @@ public class MainController {
             pnl_Forms.setManaged(false);
 
             hideDropdown();
+            hideDropdownSistema();
 
         } catch (IOException e) {
             e.printStackTrace();
