@@ -30,7 +30,7 @@
     </HBox>
     
     <!-- Table -->
-    <TableView fx:id="tb_Parametros" styleClass="data-table" 
+    <TableView fx:id="tb_Parametros" styleClass="table-view"
                AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" 
                AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="130.0">
         <columns>

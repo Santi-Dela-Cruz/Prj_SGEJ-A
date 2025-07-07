@@ -10,7 +10,7 @@ import javafx.scene.text.Text;
 public class FormEmpleadoController {
 
     @FXML private Button btn_Guardar, btn_Cancelar;
-    @FXML private TextField txtf_Nombres, txtf_Apellidos, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Adicional, txtf_Telefono;
+    @FXML private TextField txtf_Nombres, txtf_Apellidos, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Telefono;
     @FXML private ComboBox<String> cbx_Rol, cbx_TipoIdentificacion, cbx_Estado;
     @FXML private DatePicker dt_FechaIngreso;
     @FXML private Text txt_TituloForm;
@@ -44,7 +44,6 @@ public class FormEmpleadoController {
         txtf_Apellidos.setText(empleado.apellidos());
         txtf_NumeroIdentificacion.setText(empleado.numeroIdentificacion());
         txtf_Direccion.setText(empleado.direccion());
-        txtf_Adicional.setText(empleado.adicional());
         dt_FechaIngreso.setValue(empleado.fechaIngreso());
         txtf_Telefono.setText(empleado.telefono());
         txtf_Correo.setText(empleado.correo());
@@ -75,7 +74,6 @@ public class FormEmpleadoController {
             txtf_Correo.setEditable(false);
             cbx_Estado.setDisable(true);
             txtf_Direccion.setEditable(false);
-            txtf_Adicional.setEditable(false);
             cbx_Rol.setDisable(true);
             dt_FechaIngreso.setDisable(true);
             btn_Guardar.setDisable(true);
@@ -88,7 +86,6 @@ public class FormEmpleadoController {
             txtf_Correo.setEditable(true);
             cbx_Estado.setDisable(true);
             txtf_Direccion.setEditable(true);
-            txtf_Adicional.setEditable(true);
             cbx_Rol.setDisable(false);
             dt_FechaIngreso.setDisable(false);
             btn_Guardar.setDisable(false);
@@ -101,7 +98,6 @@ public class FormEmpleadoController {
             txtf_Correo.setEditable(true);
             cbx_Estado.setDisable(false);
             txtf_Direccion.setEditable(true);
-            txtf_Adicional.setEditable(true);
             cbx_Rol.setDisable(false);
             dt_FechaIngreso.setDisable(false);
             btn_Guardar.setDisable(false);

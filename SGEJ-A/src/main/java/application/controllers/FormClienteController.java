@@ -83,7 +83,7 @@ public class FormClienteController {
             cbx_TipoIdentificacion.setDisable(true);
             txtf_Telefono.setEditable(true);
             txtf_Correo.setEditable(true);
-            cbx_Estado.setDisable(true);
+            cbx_Estado.setEditable(true);
             txtf_Direccion.setEditable(true);
             txtf_Adicional.setEditable(true);
             cbx_TipoCliente.setDisable(false);

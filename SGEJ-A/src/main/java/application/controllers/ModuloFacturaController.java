@@ -26,6 +26,7 @@ public class ModuloFacturaController {
 
     @FXML private TableColumn<FacturaDemo, Void> tbc_BotonEditar;
     @FXML private TableColumn<FacturaDemo, Void> tbc_BotonVer;
+    @FXML private TableColumn<FacturaDemo, Void> tbc_BotonDescargar;
 
     private Pane pnl_Forms;
 
@@ -99,6 +100,7 @@ public class ModuloFacturaController {
     private void inicializarColumnasDeBotones() {
         agregarBotonPorColumna(tbc_BotonEditar, "✎", "Editar");
         agregarBotonPorColumna(tbc_BotonVer, "👁", "Ver");
+        agregarBotonPorColumna(tbc_BotonDescargar, "⬇", "Descargar");
 
         tbc_BotonEditar.setPrefWidth(40);
         tbc_BotonVer.setPrefWidth(40);

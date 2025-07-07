@@ -44,14 +44,14 @@
 
         <Button fx:id="btn_Buscar"
                 text="Buscar"
-                styleClass="button-windows"
+                styleClass="button-windows, button-windows-blue"
                 layoutY="55.0"
                 AnchorPane.leftAnchor="356.0"
                 AnchorPane.topAnchor="55.0"/>
 
         <Button fx:id="btn_Nuevo"
                 text="Nuevo"
-                styleClass="button-windows"
+                styleClass="button-windows, button-windows-blue"
                 layoutY="55.0"
                 AnchorPane.rightAnchor="15.6"
                 AnchorPane.topAnchor="55.0"/>
@@ -77,6 +77,7 @@
                 <!-- Botones acción -->
                 <TableColumn fx:id="tbc_BotonEditar" text=" " prefWidth="30" styleClass="column-action"/>
                 <TableColumn fx:id="tbc_BotonVer" text=" " prefWidth="30" styleClass="column-action"/>
+                <TableColumn fx:id="tbc_BotonDescargar" styleClass="column-action" text=" " prefWidth="40"/>
             </columns>
 
             <columnResizePolicy>

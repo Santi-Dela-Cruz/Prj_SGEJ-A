@@ -74,13 +74,10 @@
                       GridPane.rowIndex="9" GridPane.columnIndex="1"/>
 
             <!-- Campo adicional y fecha -->
-            <Label text="Campo Adicional:" GridPane.rowIndex="10" GridPane.columnIndex="0" styleClass="label"/>
-            <Label text="Fecha de Ingreso:" GridPane.rowIndex="10" GridPane.columnIndex="1" styleClass="label"/>
-            <TextField fx:id="txtf_Adicional" styleClass="text-field"
-                       GridPane.rowIndex="11" GridPane.columnIndex="0"/>
+            <Label text="Fecha de Ingreso:" GridPane.rowIndex="10" GridPane.columnIndex="0" styleClass="label"/>
             <DatePicker fx:id="dt_FechaIngreso" promptText="Fecha de Ingreso"
                         styleClass="jfx-date-picker"
-                        GridPane.rowIndex="11" GridPane.columnIndex="1"/>
+                        GridPane.rowIndex="11" GridPane.columnIndex="0"/>
         </GridPane>
 
         <!-- Botones Guardar / Cancelar -->

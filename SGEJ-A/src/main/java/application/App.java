@@ -22,7 +22,7 @@ public class App extends Application {
     public void start(Stage primaryStage) throws Exception {
         // Usamos StageStyle.UNDECORATED para quitar la barra de título predeterminada de Windows
         primaryStage.initStyle(StageStyle.UNDECORATED);
-        primaryStage.setResizable(true); // La ventana es redimensionable
+        //primaryStage.setResizable(true); // La ventana es redimensionable
 
         // Cargar la vista FXML
         Parent root = FXMLLoader.load(getClass().getResource("/views/login.fxml"));
@@ -35,13 +35,13 @@ public class App extends Application {
         primaryStage.setScene(scene);
 
         // Obtener las dimensiones de la pantalla para ajustarlo sin cubrir la barra de tareas
-        Screen screen = Screen.getPrimary();
-        double width = screen.getVisualBounds().getWidth();
-        double height = screen.getVisualBounds().getHeight();
+        //Screen screen = Screen.getPrimary();
+        //double width = screen.getVisualBounds().getWidth();
+        //double height = screen.getVisualBounds().getHeight();
 
         // Establecer el tamaño de la ventana para que ocupe todo el espacio disponible
-        primaryStage.setWidth(width);
-        primaryStage.setHeight(height);
+        //primaryStage.setWidth(width);
+        //primaryStage.setHeight(height);
 
         primaryStage.show();
 
