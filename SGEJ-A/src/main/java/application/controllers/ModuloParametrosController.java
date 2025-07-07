@@ -14,7 +14,6 @@ public class ModuloParametrosController {
 
     @FXML private Button btn_Nuevo;
     @FXML private Button btn_Buscar;
-    @FXML private Button btn_Refrescar;
     @FXML private TextField txt_Busqueda;
 
     @FXML private TableView<ParametroDemo> tb_Parametros;
@@ -36,7 +35,6 @@ public class ModuloParametrosController {
     @FXML
     private void initialize() {
         btn_Nuevo.setOnAction(e -> mostrarFormulario(null, "NUEVO"));
-        btn_Refrescar.setOnAction(e -> cargarDatos());
         btn_Buscar.setOnAction(e -> buscarParametros());
 
         configurarColumnasTexto();
@@ -58,32 +56,30 @@ public class ModuloParametrosController {
     }
 
     private void inicializarColumnasDeBotones() {
-        // Botón Editar
-        tbc_BotonEditar.setCellFactory(column -> new TableCell<ParametroDemo, Void>() {
-            private final Button btn = new Button("Editar");
+        agregarBotonPorColumna(tbc_BotonEditar, "✎", "Editar");
+        agregarBotonPorColumna(tbc_BotonEliminar, "🗑", "Eliminar");
+        
+        tbc_BotonEditar.setPrefWidth(40);
+        tbc_BotonEliminar.setPrefWidth(40);
+    }
+
+    private void agregarBotonPorColumna(TableColumn<ParametroDemo, Void> columna, String texto, String tooltip) {
+        columna.getStyleClass().add("column-action");
+
+        columna.setCellFactory(param -> new TableCell<>() {
+            private final Button btn = new Button(texto);
+
             {
                 btn.getStyleClass().add("table-button");
-                btn.setOnAction(e -> {
+                setStyle("-fx-alignment: CENTER;");
+                btn.setTooltip(new Tooltip(tooltip));
+                btn.setOnAction(event -> {
                     ParametroDemo parametro = getTableView().getItems().get(getIndex());
-                    mostrarFormulario(parametro, "EDITAR");
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : btn);
-            }
-        });
-
-        // Botón Eliminar
-        tbc_BotonEliminar.setCellFactory(column -> new TableCell<ParametroDemo, Void>() {
-            private final Button btn = new Button("Eliminar");
-            {
-                btn.getStyleClass().add("table-button-danger");
-                btn.setOnAction(e -> {
-                    ParametroDemo parametro = getTableView().getItems().get(getIndex());
-                    eliminarParametro(parametro);
+                    if ("Editar".equals(tooltip)) {
+                        mostrarFormulario(parametro, "EDITAR");
+                    } else if ("Eliminar".equals(tooltip)) {
+                        eliminarParametro(parametro);
+                    }
                 });
             }
 
