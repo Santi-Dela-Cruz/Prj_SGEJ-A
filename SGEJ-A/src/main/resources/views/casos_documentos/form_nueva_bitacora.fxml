@@ -6,23 +6,31 @@
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="application.controllers.FormBitacoraController"
-            prefWidth="400.0" prefHeight="320.0"
+            prefWidth="400.0" prefHeight="440.0"
             style="-fx-background-color: white; -fx-background-radius: 8;" layoutX="85" layoutY="55">
+
     <children>
         <Label fx:id="lbl_TituloFormulario"
                text="Nueva Entrada"
                layoutX="20" layoutY="20"
                style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-        <Label fx:id="lbl_Fecha" text="Fecha:" layoutX="20" layoutY="70"/>
-        <DatePicker fx:id="dp_Fecha" layoutX="150" layoutY="66" prefWidth="220"/>
-        <Label fx:id="lbl_Usuario" text="Usuario:" layoutX="20" layoutY="110"/>
-        <TextField fx:id="txtf_Usuario" layoutX="150" layoutY="106" prefWidth="220"/>
-        <Label fx:id="lbl_Accion" text="Tipo de acción:" layoutX="20" layoutY="150"/>
-        <TextField fx:id="txtf_Accion" layoutX="150" layoutY="146" prefWidth="220"/>
-        <Label fx:id="lbl_Descripcion" text="Descripción:" layoutX="20" layoutY="190"/>
-        <TextArea fx:id="txta_Descripcion" layoutX="150" layoutY="186"
-                  prefWidth="220" prefHeight="60"/>
-        <Button fx:id="btn_Guardar" text="Guardar" layoutX="150" layoutY="260" styleClass="button-windows"/>
-        <Button fx:id="btn_Cancelar" text="Cancelar" layoutX="240" layoutY="260" styleClass="button-windows"/>
+
+        <Label fx:id="lbl_Fecha" text="Fecha:" layoutX="20" layoutY="80"/>
+        <DatePicker fx:id="dp_Fecha" layoutX="150" layoutY="76" prefWidth="220"/>
+
+        <Label fx:id="lbl_Usuario" text="Usuario:" layoutX="20" layoutY="140"/>
+        <TextField fx:id="txtf_Usuario" layoutX="150" layoutY="136" prefWidth="220"/>
+
+        <Label fx:id="lbl_Accion" text="Tipo de acción:" layoutX="20" layoutY="200"/>
+        <TextField fx:id="txtf_Accion" layoutX="150" layoutY="196" prefWidth="220"/>
+
+        <Label fx:id="lbl_Descripcion" text="Descripción:" layoutX="20" layoutY="260"/>
+        <TextArea fx:id="txta_Descripcion" layoutX="150" layoutY="256"
+                  prefWidth="220" prefHeight="80"/>
+
+        <Button fx:id="btn_Guardar" text="Guardar" layoutX="150" layoutY="360"
+                styleClass="button-windows,button-windows-green"/>
+        <Button fx:id="btn_Cancelar" text="Cancelar" layoutX="250" layoutY="360"
+                styleClass="button-windows,button-windows-red"/>
     </children>
 </AnchorPane>

@@ -1,18 +1,40 @@
 package application.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
+
+import java.time.LocalDate;
 
 public class FormFacturaController {
 
     @FXML private Button btn_Guardar, btn_Cancelar;
-    @FXML private TextField txtf_Nombres, txtf_Apellidos, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Adicional, txtf_Telefono;
-    @FXML private ComboBox<String> cbx_TipoFactura, cbx_TipoIdentificacion, cbx_Estado;
-    @FXML private DatePicker dt_FechaIngreso;
+
+    // Datos del Emisor
+    @FXML private TextField txtf_RucEmisor, txtf_RazonSocialEmisor, txtf_DireccionEmisor,
+            txtf_CodEstablecimiento, txtf_CodPuntoEmision, txtf_Secuencial,
+            txtf_CodigoDocumento;
+    @FXML private DatePicker dtp_FechaEmision;
+
+    // Cliente
+    @FXML private TextField txtf_NombreCliente, txtf_IdCliente, txtf_DirCliente, txtf_EmailCliente;
+    @FXML private ComboBox<String> cbx_TipoIdCliente;
+
+    // Servicios
+    @FXML private TextField txtf_CodigoServicio, txtf_DescripcionServicio, txtf_Cantidad,
+            txtf_Tarifa, txtf_Descuento, txtf_SubtotalServicio;
+
+    // Caso
+    @FXML private TextField txtf_NumExpediente, txtf_NombreCaso, txtf_Abogado;
+
+    // Totales
+    @FXML private TextField txtf_Subtotal, txtf_TotalDescuento, txtf_Iva, txtf_TotalFactura;
+
+    // Pago
+    @FXML private ComboBox<String> cbx_FormaPago, cbx_EstadoFactura;
+    @FXML private TextField txtf_MontoPago, txtf_Plazo;
+    @FXML private CheckBox chk_PagoRealizado;
+
     @FXML private Text txt_TituloForm;
 
     private Runnable onGuardar, onCancelar;
@@ -27,9 +49,9 @@ public class FormFacturaController {
 
     @FXML
     private void initialize() {
-        cbx_Estado.getItems().addAll("Activo", "Inactivo");
-        cbx_TipoIdentificacion.getItems().addAll("Cédula", "RUC", "Pasaporte");
-        cbx_TipoFactura.getItems().addAll("Natural", "Jurídica");
+        cbx_TipoIdCliente.getItems().addAll("Cédula", "RUC", "Pasaporte");
+        cbx_FormaPago.getItems().addAll("Efectivo", "Transferencia", "Tarjeta");
+        cbx_EstadoFactura.getItems().addAll("Abierto", "Registrado", "Rechazado");
 
         btn_Guardar.setOnAction(e -> {
             if (onGuardar != null) onGuardar.run();
@@ -39,72 +61,98 @@ public class FormFacturaController {
         });
     }
 
-    public void cargarFactura(ModuloFacturaController.FacturaDemo factura) {
-        txtf_Nombres.setText(factura.nombres());
-        txtf_Apellidos.setText(factura.apellidos());
-        txtf_NumeroIdentificacion.setText(factura.numeroIdentificacion());
-        txtf_Direccion.setText(factura.direccion());
-        txtf_Adicional.setText(factura.adicional());
-        dt_FechaIngreso.setValue(factura.fechaIngreso());
-        txtf_Telefono.setText(factura.telefono());
-        txtf_Correo.setText(factura.correo());
-        cbx_TipoFactura.setValue(factura.tipoFactura());
-        cbx_TipoIdentificacion.setValue(factura.tipoIdentificacion());
-        cbx_Estado.setValue(factura.estado());
-    }
-
     public void setModo(String modo) {
         boolean esEditar = "EDITAR".equalsIgnoreCase(modo);
         boolean esVer = "VER".equalsIgnoreCase(modo);
         boolean esRegistrar = !esEditar && !esVer;
 
-        if (esEditar) {
-            txt_TituloForm.setText("Editar Factura");
-        } else if (esVer) {
-            txt_TituloForm.setText("Ver Factura");
-        } else {
-            txt_TituloForm.setText("Registrar nuevo Factura");
-        }
+        txt_TituloForm.setText(switch (modo.toUpperCase()) {
+            case "EDITAR" -> "Editar Factura";
+            case "VER" -> "Ver Factura";
+            default -> "Registrar nueva Factura";
+        });
 
-        if (esVer) {
-            txtf_Nombres.setEditable(false);
-            txtf_Apellidos.setEditable(false);
-            txtf_NumeroIdentificacion.setEditable(false);
-            cbx_TipoIdentificacion.setDisable(true);
-            txtf_Telefono.setEditable(false);
-            txtf_Correo.setEditable(false);
-            cbx_Estado.setDisable(true);
-            txtf_Direccion.setEditable(false);
-            txtf_Adicional.setEditable(false);
-            cbx_TipoFactura.setDisable(true);
-            dt_FechaIngreso.setDisable(true);
-            btn_Guardar.setDisable(true);
-        } else if (esEditar) {
-            txtf_Nombres.setEditable(true);
-            txtf_Apellidos.setEditable(true);
-            txtf_NumeroIdentificacion.setEditable(false);
-            cbx_TipoIdentificacion.setDisable(true);
-            txtf_Telefono.setEditable(true);
-            txtf_Correo.setEditable(true);
-            cbx_Estado.setDisable(true);
-            txtf_Direccion.setEditable(true);
-            txtf_Adicional.setEditable(true);
-            cbx_TipoFactura.setDisable(false);
-            dt_FechaIngreso.setDisable(false);
-            btn_Guardar.setDisable(false);
-        } else { // REGISTRAR
-            txtf_Nombres.setEditable(true);
-            txtf_Apellidos.setEditable(true);
-            txtf_NumeroIdentificacion.setEditable(true);
-            cbx_TipoIdentificacion.setDisable(false);
-            txtf_Telefono.setEditable(true);
-            txtf_Correo.setEditable(true);
-            cbx_Estado.setDisable(false);
-            txtf_Direccion.setEditable(true);
-            txtf_Adicional.setEditable(true);
-            cbx_TipoFactura.setDisable(false);
-            dt_FechaIngreso.setDisable(false);
-            btn_Guardar.setDisable(false);
-        }
+        boolean editable = esRegistrar || (esEditar && cbx_EstadoFactura.getValue() != null && cbx_EstadoFactura.getValue().equals("Abierto"));
+
+        setEditableCampos(editable);
+        btn_Guardar.setDisable(esVer || !editable);
+    }
+
+    private void setEditableCampos(boolean editable) {
+        txtf_RucEmisor.setEditable(editable);
+        txtf_RazonSocialEmisor.setEditable(editable);
+        txtf_DireccionEmisor.setEditable(editable);
+        txtf_CodEstablecimiento.setEditable(editable);
+        txtf_CodPuntoEmision.setEditable(editable);
+        txtf_Secuencial.setEditable(editable);
+        txtf_CodigoDocumento.setEditable(editable);
+        dtp_FechaEmision.setDisable(!editable);
+
+        txtf_NombreCliente.setEditable(editable);
+        txtf_IdCliente.setEditable(editable);
+        txtf_DirCliente.setEditable(editable);
+        txtf_EmailCliente.setEditable(editable);
+        cbx_TipoIdCliente.setDisable(!editable);
+
+        txtf_CodigoServicio.setEditable(editable);
+        txtf_DescripcionServicio.setEditable(editable);
+        txtf_Cantidad.setEditable(editable);
+        txtf_Tarifa.setEditable(editable);
+        txtf_Descuento.setEditable(editable);
+        txtf_SubtotalServicio.setEditable(false);
+
+        txtf_NumExpediente.setEditable(editable);
+        txtf_NombreCaso.setEditable(editable);
+        txtf_Abogado.setEditable(editable);
+
+        txtf_Subtotal.setEditable(false);
+        txtf_TotalDescuento.setEditable(false);
+        txtf_Iva.setEditable(false);
+        txtf_TotalFactura.setEditable(false);
+
+        cbx_FormaPago.setDisable(!editable);
+        txtf_MontoPago.setEditable(editable);
+        txtf_Plazo.setEditable(editable);
+        cbx_EstadoFactura.setDisable(!editable);
+        chk_PagoRealizado.setDisable(!editable);
+    }
+
+    public void cargarFactura(ModuloFacturaController.FacturaDemo factura) {
+        txtf_RucEmisor.setText(factura.rucEmisor());
+        txtf_RazonSocialEmisor.setText(factura.razonSocialEmisor());
+        txtf_DireccionEmisor.setText(factura.direccionEmisor());
+        txtf_CodEstablecimiento.setText(factura.codigoEstablecimiento());
+        txtf_CodPuntoEmision.setText(factura.codigoPuntoEmision());
+        txtf_Secuencial.setText(factura.numeroFactura());
+        txtf_CodigoDocumento.setText(factura.codigoDocumento());
+        dtp_FechaEmision.setValue(LocalDate.parse(factura.fechaEmision()));
+
+        txtf_NombreCliente.setText(factura.nombreCliente());
+        txtf_IdCliente.setText(factura.idCliente());
+        txtf_DirCliente.setText(factura.dirCliente());
+        txtf_EmailCliente.setText(factura.emailCliente());
+        cbx_TipoIdCliente.setValue(factura.tipoIdCliente());
+
+        txtf_CodigoServicio.setText(factura.codigoServicio());
+        txtf_DescripcionServicio.setText(factura.descripcionServicio());
+        txtf_Cantidad.setText(factura.cantidad());
+        txtf_Tarifa.setText(factura.tarifa());
+        txtf_Descuento.setText(factura.descuento());
+        txtf_SubtotalServicio.setText(factura.subtotalServicio());
+
+        txtf_NumExpediente.setText(factura.numeroExpediente());
+        txtf_NombreCaso.setText(factura.nombreCaso());
+        txtf_Abogado.setText(factura.abogadoResponsable());
+
+        txtf_Subtotal.setText(factura.subtotal());
+        txtf_TotalDescuento.setText(factura.totalDescuento());
+        txtf_Iva.setText(factura.iva());
+        txtf_TotalFactura.setText(factura.totalFactura());
+
+        cbx_FormaPago.setValue(factura.formaPago());
+        txtf_MontoPago.setText(factura.montoPago());
+        txtf_Plazo.setText(factura.plazo());
+        cbx_EstadoFactura.setValue(factura.estadoFactura());
+        chk_PagoRealizado.setSelected(factura.pagoRealizado());
     }
 }

@@ -55,8 +55,8 @@
 
         <!-- Botones -->
         <HBox spacing="20" alignment="CENTER">
-            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="100.0" styleClass="button-windows"/>
-            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="100.0" styleClass="button-windows"/>
+            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="100.0" styleClass="button-windows,button-windows-green"/>
+            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="100.0" styleClass="button-windows,button-windows-red"/>
         </HBox>
     </VBox>
 </ScrollPane>

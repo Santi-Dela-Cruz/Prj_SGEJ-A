@@ -32,10 +32,10 @@
               </Pane>
 
               <TextField fx:id="txt_Busqueda" layoutY="54.0" prefHeight="26.0" prefWidth="332.0" text="Buscar por nombre, cédula, etc." AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="54.0" />
-              <Button fx:id="btn_Buscar" layoutY="55.0" styleClass="button-windows" text="Buscar" AnchorPane.leftAnchor="356.0" AnchorPane.topAnchor="55.0" />
-              <Button fx:id="btn_Nuevo" layoutY="55.0" styleClass="button-windows" text="Nuevo" AnchorPane.rightAnchor="15.6" AnchorPane.topAnchor="55.0" />
+              <Button fx:id="btn_Buscar" layoutY="55.0" maxWidth="100" styleClass="button-windows,button-windows-blue" text="Buscar" AnchorPane.leftAnchor="356.0" AnchorPane.topAnchor="55.0" />
+              <Button fx:id="btn_Nuevo" layoutY="55.0" maxWidth="100" styleClass="button-windows,button-windows-blue" text="Nuevo" AnchorPane.rightAnchor="15.6" AnchorPane.topAnchor="55.0" />
 
-              <TableView fx:id="tb_Clientes" layoutY="96.0" prefHeight="362.0" prefWidth="604.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="96.0">
+              <TableView fx:id="tb_Clientes" layoutY="96.0" prefHeight="362.0" prefWidth="604.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="105.0">
                   <columns>
                       <TableColumn fx:id="tbc_Nombres" text="Nombres" />
                       <TableColumn fx:id="tbc_Apellidos" text="Apellidos" />

@@ -57,14 +57,14 @@
             <Label text="Archivo adjunto:" GridPane.rowIndex="6" GridPane.columnIndex="0" styleClass="label"/>
             <HBox spacing="10" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="2">
                 <TextField fx:id="txtf_RutaArchivo" editable="false" prefWidth="340.0" styleClass="text-field"/>
-                <Button fx:id="btn_SeleccionarArchivo" text="Seleccionar" styleClass="button-windows"/>
+                <Button fx:id="btn_SeleccionarArchivo" text="Seleccionar" styleClass="button-windows,button-windows-blue"/>
             </HBox>
         </GridPane>
 
         <!-- Botones -->
         <HBox spacing="20" alignment="CENTER">
-            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="100.0" styleClass="button-windows"/>
-            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="100.0" styleClass="button-windows"/>
+            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="100.0" styleClass="button-windows,button-windows-green"/>
+            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="100.0" styleClass="button-windows,button-windows-red"/>
         </HBox>
     </VBox>
 </ScrollPane>
