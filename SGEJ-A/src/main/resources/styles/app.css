@@ -598,6 +598,131 @@
 }
 
 /* ============================================================================
+   ESTILOS PARA MÓDULOS
+============================================================================ */
+.content-area {
+    -fx-background-color: #ffffff;
+    -fx-padding: 0;
+}
+
+/* === Header del módulo con fondo azul === */
+.module-header {
+    -fx-background-color: #14213d;
+    -fx-padding: 20 20 20 20;
+}
+
+.module-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #ffffff;
+    -fx-padding: 0 0 5 0;
+}
+
+.module-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #e5e5e5;
+    -fx-padding: 0 0 0 0;
+}
+
+/* === Botones de acción === */
+.action-button {
+    -fx-background-color: #0078d7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+    -fx-min-height: 36;
+    -fx-pref-height: 36;
+}
+
+.action-button:hover {
+    -fx-background-color: #106ebe;
+}
+
+.action-button:pressed {
+    -fx-background-color: #005a9e;
+}
+
+.secondary-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+    -fx-min-height: 36;
+    -fx-pref-height: 36;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #5a6268;
+}
+
+.secondary-button:pressed {
+    -fx-background-color: #4e555b;
+}
+
+/* === Botones de tabla === */
+.table-button-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: #dc3545;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-padding: 4 8;
+    -fx-background-radius: 4;
+    -fx-border-color: transparent;
+}
+
+.table-button-danger:hover {
+    -fx-background-color: #f8d7da;
+    -fx-text-fill: #721c24;
+}
+
+/* === Tabla de datos === */
+.data-table {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 1);
+}
+
+/* === Estilos para formularios === */
+.form-container {
+    -fx-background-color: #ffffff;
+    -fx-padding: 0;
+}
+
+.form-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #14213d;
+    -fx-padding: 0 0 5 0;
+}
+
+.form-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #666666;
+    -fx-padding: 0 0 10 0;
+}
+
+.field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-padding: 0 0 3 0;
+}
+
+/* ============================================================================
    TITLED PANE MODERNO PARA FIRMA DE ABOGADOS
 ============================================================================ */
 .titled-pane {
