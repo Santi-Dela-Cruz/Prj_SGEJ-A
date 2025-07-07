@@ -39,16 +39,16 @@
 
         <Button fx:id="btn_Buscar"
                 text="Buscar"
-                styleClass="button-windows"
+                maxWidth="100" styleClass="button-windows,button-windows-blue"
                 AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="360.0" />
 
         <Button fx:id="btn_Nuevo"
                 text="Nuevo"
-                styleClass="button-windows"
+                maxWidth="100" styleClass="button-windows,button-windows-blue"
                 AnchorPane.topAnchor="54.0" AnchorPane.rightAnchor="14.0" />
 
         <TableView fx:id="tb_Casos"
-                   AnchorPane.topAnchor="96.0" AnchorPane.leftAnchor="14.0"
+                   AnchorPane.topAnchor="105.0" AnchorPane.leftAnchor="14.0"
                    AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
             <columns>
                 <TableColumn fx:id="tbc_NumeroExpediente" text="Número de expediente" />

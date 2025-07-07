@@ -32,12 +32,12 @@
                        prefWidth="250.0"/>
             <Button fx:id="btn_Buscar"
                     text="Buscar"
-                    AnchorPane.leftAnchor="270.0" AnchorPane.topAnchor="54.0" styleClass="button-windows"/>
+                    AnchorPane.leftAnchor="270.0" AnchorPane.topAnchor="54.0" maxWidth="100" styleClass="button-windows,button-windows-blue"/>
             <Button fx:id="btn_AnadirBitacora"
                     text="Añadir Bitácora"
-                    AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="54.0" styleClass="button-windows"/>
+                    AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="54.0" maxWidth="150" styleClass="button-windows,button-windows-blue"/>
             <TableView fx:id="tb_BitacorasList"
-                       AnchorPane.topAnchor="96.0" AnchorPane.leftAnchor="14.0"
+                       AnchorPane.topAnchor="105.0" AnchorPane.leftAnchor="14.0"
                        AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
                 <columns>
                     <TableColumn fx:id="tbc_Expediente" text="Número de Expediente" prefWidth="200.0" />
@@ -70,16 +70,16 @@
             </Pane>
             <Button fx:id="btn_Back"
                     text="Regresar"
-                    AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="54.0" styleClass="button-windows"/>
+                    AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="54.0" maxWidth="100" styleClass="button-windows,button-windows-blue"/>
             <Label fx:id="lbl_NumeroBitacora"
                    text="Expediente N°"
                    AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="54.0"
                    style="-fx-font-size: 16px; -fx-font-weight: bold;" />
             <Button fx:id="btn_AnadirEntrada"
                     text="Añadir entrada"
-                    AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="54.0" styleClass="button-windows"/>
+                    AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="54.0" maxWidth="160" styleClass="button-windows,button-windows-blue"/>
             <TableView fx:id="tb_BitacoraEntries"
-                       AnchorPane.topAnchor="96.0" AnchorPane.leftAnchor="14.0"
+                       AnchorPane.topAnchor="105.0" AnchorPane.leftAnchor="14.0"
                        AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
                 <columns>
                     <TableColumn fx:id="tbc_Fecha" text="Fecha" />

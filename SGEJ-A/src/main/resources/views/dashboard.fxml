@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
@@ -13,7 +14,9 @@
         </padding>
 
         <!-- Welcome Title -->
-        <Label fx:id="lblBienvenida" text="Bienvenido, Nombre del usuario" styleClass="section-title" />
+        <StackPane alignment="CENTER" prefHeight="40" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+            <Label fx:id="lblBienvenida" text="Bienvenido, Nombre del usuario" styleClass="section-title"/>
+        </StackPane>
 
         <!-- Summary Cards -->
         <HBox spacing="16" alignment="CENTER">
@@ -37,7 +40,9 @@
 
         <!-- Últimos Casos Modificados -->
         <VBox fx:id="seccionCasos" spacing="8">
-            <Label text="Últimos Casos Modificados" styleClass="section-title"/>
+            <StackPane alignment="CENTER" prefHeight="32" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+                <Label text="Últimos Casos Modificados" styleClass="section-title"/>
+            </StackPane>
             <TableView fx:id="tableCasosRecientes" prefHeight="360" styleClass="table-view">
                 <columns>
                     <TableColumn fx:id="colCasoId" text="ID" prefWidth="60"/>
@@ -46,14 +51,16 @@
                     <TableColumn fx:id="colCasoFecha" text="Fecha" prefWidth="80"/>
                 </columns>
                 <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                 </columnResizePolicy>
             </TableView>
         </VBox>
 
         <!-- Facturas Pendientes -->
         <VBox fx:id="seccionFacturas" spacing="8">
-            <Label text="Facturas Pendientes" styleClass="section-title"/>
+            <StackPane alignment="CENTER" prefHeight="32" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+                <Label text="Facturas Pendientes" styleClass="section-title"/>
+            </StackPane>
             <TableView fx:id="tableFacturasPendientes" prefHeight="360" styleClass="table-view">
                 <columns>
                     <TableColumn fx:id="colFacturaId" text="ID" prefWidth="60"/>
@@ -63,14 +70,16 @@
                     <TableColumn fx:id="colFacturaVencimiento" text="Vencimiento" prefWidth="100"/>
                 </columns>
                 <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                 </columnResizePolicy>
             </TableView>
         </VBox>
 
         <!-- Tareas del día -->
         <VBox fx:id="seccionTareas" spacing="8">
-            <Label text="Tareas del día" styleClass="section-title"/>
+            <StackPane alignment="CENTER" prefHeight="32" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+                <Label text="Tareas del día" styleClass="section-title"/>
+            </StackPane>
             <TableView fx:id="tableTareasDia" prefHeight="360" styleClass="table-view">
                 <columns>
                     <TableColumn fx:id="colTarea" text="Tarea" prefWidth="200"/>
@@ -79,14 +88,16 @@
                     <TableColumn fx:id="colTareaEstado" text="Estado" prefWidth="100"/>
                 </columns>
                 <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                 </columnResizePolicy>
             </TableView>
         </VBox>
 
         <!-- Próximas Audiencias -->
         <VBox fx:id="seccionAudiencias" spacing="8">
-            <Label text="Próximas Audiencias" styleClass="section-title"/>
+            <StackPane alignment="CENTER" prefHeight="32" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+                <Label text="Próximas Audiencias" styleClass="section-title"/>
+            </StackPane>
             <TableView fx:id="tableAudiencias" prefHeight="360" styleClass="table-view">
                 <columns>
                     <TableColumn fx:id="colAudienciaCaso" text="Caso" prefWidth="180"/>
@@ -95,31 +106,33 @@
                     <TableColumn fx:id="colAudienciaLugar" text="Lugar" prefWidth="120"/>
                 </columns>
                 <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                 </columnResizePolicy>
             </TableView>
         </VBox>
 
         <!-- Documentos recientes -->
         <VBox fx:id="seccionDocumentos" spacing="8">
-            <Label text="Documentos Recientes" styleClass="section-title"/>
+            <StackPane alignment="CENTER" prefHeight="32" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16; -fx-border-radius: 16;">
+                <Label text="Documentos Recientes" styleClass="section-title"/>
+            </StackPane>
             <TableView fx:id="tableDocumentosRecientes" prefHeight="360" styleClass="table-view">
                 <columns>
                     <TableColumn fx:id="colDocNombre" text="Documento" prefWidth="220"/>
                     <TableColumn fx:id="colDocFecha" text="Fecha" prefWidth="100"/>
                 </columns>
                 <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
                 </columnResizePolicy>
             </TableView>
         </VBox>
 
         <!-- Accesos rápidos -->
         <HBox spacing="20" alignment="CENTER">
-            <Button text="⚙️ Clientes" onAction="#irClientes" styleClass="button-windows"/>
-            <Button text="⚖️ Casos" onAction="#irCasos" styleClass="button-windows"/>
-            <Button text="💳 Facturación" onAction="#irFacturacion" styleClass="button-windows"/>
-            <Button text="🔐 Sistema" onAction="#irSistema" styleClass="button-windows"/>
+            <Button text="⚙️ Clientes" onAction="#irClientes" styleClass="button-windows, button-windows-gray"/>
+            <Button text="⚖️ Casos" onAction="#irCasos" styleClass="button-windows, button-windows-gray"/>
+            <Button text="💳 Facturación" onAction="#irFacturacion" styleClass="button-windows, button-windows-gray"/>
+            <Button text="🔐 Sistema" onAction="#irSistema" styleClass="button-windows, button-windows-gray"/>
         </HBox>
     </VBox>
 </ScrollPane>

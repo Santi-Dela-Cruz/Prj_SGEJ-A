@@ -58,7 +58,7 @@
                     AnchorPane.topAnchor="194.0"
                     AnchorPane.leftAnchor="410.0"
                     prefWidth="101.0"
-                    prefHeight="26.0">
+                    prefHeight="26.0" styleClass="combo-box">
             <items>
                 <MenuItem text="Generar PDF"/>
                 <MenuItem text="Generar Excel"/>

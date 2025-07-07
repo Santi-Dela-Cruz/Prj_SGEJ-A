@@ -7,7 +7,6 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
-
 import java.io.IOException;
 
 public class ModuloFacturaController {
@@ -17,13 +16,13 @@ public class ModuloFacturaController {
     @FXML private TextField txt_Busqueda;
 
     @FXML private TableView<FacturaDemo> tb_Facturas;
-    @FXML private TableColumn<FacturaDemo, String> tbc_Nombres;
-    @FXML private TableColumn<FacturaDemo, String> tbc_Apellidos;
-    @FXML private TableColumn<FacturaDemo, String> tbc_NumeroI;
-    @FXML private TableColumn<FacturaDemo, String> tbc_TipoIdentificacion;
-    @FXML private TableColumn<FacturaDemo, String> tbc_Telefono;
-    @FXML private TableColumn<FacturaDemo, String> tbc_Correo;
-    @FXML private TableColumn<FacturaDemo, String> tbc_Estado;
+    @FXML private TableColumn<FacturaDemo, String> tbc_NumeroFactura;
+    @FXML private TableColumn<FacturaDemo, String> tbc_FechaEmision;
+    @FXML private TableColumn<FacturaDemo, String> tbc_NombreCliente;
+    @FXML private TableColumn<FacturaDemo, String> tbc_NumExpediente;
+    @FXML private TableColumn<FacturaDemo, String> tbc_Total;
+    @FXML private TableColumn<FacturaDemo, String> tbc_EstadoFactura;
+    @FXML private TableColumn<FacturaDemo, String> tbc_PagoRealizado;
 
     @FXML private TableColumn<FacturaDemo, Void> tbc_BotonEditar;
     @FXML private TableColumn<FacturaDemo, Void> tbc_BotonVer;
@@ -42,17 +41,12 @@ public class ModuloFacturaController {
         inicializarColumnasDeBotones();
         cargarDatosEjemplo();
         ocultarEncabezadosColumnasDeAccion();
-
-        tbc_BotonEditar.getStyleClass().add("column-action");
-        tbc_BotonVer.getStyleClass().add("column-action");
     }
 
     private void ocultarEncabezadosColumnasDeAccion() {
         tb_Facturas.widthProperty().addListener((obs, oldVal, newVal) -> {
             Node header = tb_Facturas.lookup("TableHeaderRow");
-            if (header != null) {
-                header.setVisible(true);
-            }
+            if (header != null) header.setVisible(true);
         });
     }
 
@@ -93,13 +87,13 @@ public class ModuloFacturaController {
     }
 
     private void configurarColumnasTexto() {
-        tbc_Nombres.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().nombres()));
-        tbc_Apellidos.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().apellidos()));
-        tbc_NumeroI.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().numeroIdentificacion()));
-        tbc_TipoIdentificacion.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().tipoIdentificacion()));
-        tbc_Telefono.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().telefono()));
-        tbc_Correo.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().correo()));
-        tbc_Estado.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().estado()));
+        tbc_NumeroFactura.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().numeroFactura()));
+        tbc_FechaEmision.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().fechaEmision()));
+        tbc_NombreCliente.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().nombreCliente()));
+        tbc_NumExpediente.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().numeroExpediente()));
+        tbc_Total.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().totalFactura()));
+        tbc_EstadoFactura.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().estadoFactura()));
+        tbc_PagoRealizado.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().pagoRealizado() ? "Sí" : "No"));
     }
 
     private void inicializarColumnasDeBotones() {
@@ -141,31 +135,67 @@ public class ModuloFacturaController {
     private void cargarDatosEjemplo() {
         tb_Facturas.getItems().addAll(
                 new FacturaDemo(
-                        "Ana", "Mora", "0102030405", "Cédula", "0991234567", "ana@correo.com", "Activo",
-                        "Av. Siempre Viva 123", "Referencia 1", java.time.LocalDate.of(2023, 1, 10), "Natural"
+                        "F001-000001", "2025-07-06", "Ana Mora", "EXP-123", "313.60", "Abierto", true,
+                        "0999999999001", "ABMECUADOR ESTUDIO JURÍDICO", "Av. Amazonas y NNUU, Quito",
+                        "001", "002", "01", "Cédula", "0102030405", "Calle Siempre Viva 123", "cliente@correo.com",
+                        "SVC-001", "Asesoría Legal Completa", "3", "100.00", "20.00", "280.00",
+                        "Caso Martínez vs López", "Dra. Carolina Montalvo", "300.00", "20.00", "33.60",
+                        "Transferencia", "313.60", "30 días"
                 ),
                 new FacturaDemo(
-                        "Luis", "Pérez", "1102233445", "Pasaporte", "0987654321", "luis@correo.com", "Activo",
-                        "Calle Falsa 456", "Referencia 2", java.time.LocalDate.of(2022, 5, 20), "Jurídica"
+                        "F001-000002", "2025-07-01", "Luis Pérez", "EXP-124", "201.60", "Registrado", true,
+                        "0998888888002", "LEGALGROUP S.A.", "Calle Bolívar y Olmedo",
+                        "002", "005", "01", "RUC", "1102233445", "Av. Patria E5-10", "luis@legal.com",
+                        "SVC-003", "Redacción de documentos legales", "2", "80.00", "0.00", "160.00",
+                        "Caso Herencia Familia Pérez", "Dr. Esteban Castro", "160.00", "0.00", "19.20",
+                        "Tarjeta", "179.20", "15 días"
                 ),
                 new FacturaDemo(
-                        "María", "Salas", "2223334445", "RUC", "0970001122", "maria@correo.com", "Inactivo",
-                        "Calle Real 789", "Referencia 3", java.time.LocalDate.of(2021, 8, 15), "Natural"
+                        "F001-000003", "2025-06-28", "María Salas", "EXP-125", "278.00", "Rechazado", false,
+                        "0997777777003", "JUSTICIA Y LEY", "Av. República y 10 de Agosto",
+                        "003", "007", "01", "Pasaporte", "P1234567", "Calle 10 N-22", "maria@justicia.com",
+                        "SVC-005", "Auditoría legal", "4", "75.00", "22.00", "278.00",
+                        "Caso Empresa XY Audit", "Dra. Paulina Sánchez", "300.00", "22.00", "33.60",
+                        "Efectivo", "278.00", "Contado"
                 )
         );
+
     }
-    // Example record (replace with your real Factura class if needed)
+
     public record FacturaDemo(
-            String nombres,
-            String apellidos,
-            String numeroIdentificacion,
-            String tipoIdentificacion,
-            String telefono,
-            String correo,
-            String estado,
-            String direccion,
-            String adicional,
-            java.time.LocalDate fechaIngreso,
-            String tipoFactura
+            String numeroFactura,
+            String fechaEmision,
+            String nombreCliente,
+            String numeroExpediente,
+            String totalFactura,
+            String estadoFactura,
+            boolean pagoRealizado,
+
+            // Campos adicionales para demo completo
+            String rucEmisor,
+            String razonSocialEmisor,
+            String direccionEmisor,
+            String codigoEstablecimiento,
+            String codigoPuntoEmision,
+            String codigoDocumento,
+            String tipoIdCliente,
+            String idCliente,
+            String dirCliente,
+            String emailCliente,
+            String codigoServicio,
+            String descripcionServicio,
+            String cantidad,
+            String tarifa,
+            String descuento,
+            String subtotalServicio,
+            String nombreCaso,
+            String abogadoResponsable,
+            String subtotal,
+            String totalDescuento,
+            String iva,
+            String formaPago,
+            String montoPago,
+            String plazo
     ) {}
+
 }
