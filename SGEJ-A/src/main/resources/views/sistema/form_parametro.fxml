@@ -7,6 +7,7 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -45,15 +46,40 @@
         </VBox>
         
         <!-- Valor -->
-        <VBox spacing="5.0">
+        <VBox fx:id="vbox_Valor" spacing="5.0">
             <Label styleClass="field-label" text="Valor *" />
             <TextField fx:id="txt_Valor" promptText="Valor del parámetro" />
+        </VBox>
+        
+        <!-- Sección de Upload de Archivos (inicialmente oculta) -->
+        <VBox fx:id="vbox_Upload" spacing="10.0" visible="false" managed="false">
+            <Label styleClass="field-label" text="Archivo" />
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Button fx:id="btn_SeleccionarArchivo" styleClass="secondary-button" text="Seleccionar Archivo" />
+                <Label fx:id="lbl_NombreArchivo" text="Ningún archivo seleccionado" />
+            </HBox>
+            
+            <!-- Preview de imagen -->
+            <VBox fx:id="vbox_Preview" spacing="5.0" visible="false" managed="false">
+                <Label styleClass="field-label" text="Vista previa" />
+                <javafx.scene.image.ImageView fx:id="img_Preview" 
+                                             fitWidth="150.0" 
+                                             fitHeight="150.0" 
+                                             preserveRatio="true" 
+                                             styleClass="image-preview" />
+            </VBox>
         </VBox>
         
         <!-- Tipo -->
         <VBox spacing="5.0">
             <Label styleClass="field-label" text="Tipo *" />
             <ComboBox fx:id="cmb_Tipo" prefWidth="200.0" promptText="Seleccione el tipo" />
+        </VBox>
+        
+        <!-- Categoría -->
+        <VBox spacing="5.0">
+            <Label styleClass="field-label" text="Categoría" />
+            <ComboBox fx:id="cmb_Categoria" prefWidth="200.0" promptText="Seleccione la categoría" />
         </VBox>
         
         <!-- Estado -->
