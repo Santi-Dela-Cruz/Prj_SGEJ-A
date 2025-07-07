@@ -598,6 +598,125 @@
 }
 
 /* ============================================================================
+   ESTILOS PARA MÓDULOS
+============================================================================ */
+.content-area {
+    -fx-background-color: #ffffff;
+    -fx-padding: 0;
+}
+
+.module-title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #14213d;
+    -fx-padding: 0 0 5 0;
+}
+
+.module-subtitle {
+    -fx-font-size: 14px;
+    -fx-text-fill: #666666;
+    -fx-padding: 0 0 10 0;
+}
+
+/* === Botones de acción === */
+.action-button {
+    -fx-background-color: #0078d7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+    -fx-min-height: 36;
+    -fx-pref-height: 36;
+}
+
+.action-button:hover {
+    -fx-background-color: #106ebe;
+}
+
+.action-button:pressed {
+    -fx-background-color: #005a9e;
+}
+
+.secondary-button {
+    -fx-background-color: #6c757d;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+    -fx-padding: 8 16;
+    -fx-background-radius: 4;
+    -fx-cursor: hand;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);
+    -fx-min-height: 36;
+    -fx-pref-height: 36;
+}
+
+.secondary-button:hover {
+    -fx-background-color: #5a6268;
+}
+
+.secondary-button:pressed {
+    -fx-background-color: #4e555b;
+}
+
+/* === Botones de tabla === */
+.table-button-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: #dc3545;
+    -fx-cursor: hand;
+    -fx-font-size: 13px;
+    -fx-padding: 4 8;
+    -fx-background-radius: 4;
+    -fx-border-color: transparent;
+}
+
+.table-button-danger:hover {
+    -fx-background-color: #f8d7da;
+    -fx-text-fill: #721c24;
+}
+
+/* === Tabla de datos === */
+.data-table {
+    -fx-background-color: #ffffff;
+    -fx-border-color: #e0e0e0;
+    -fx-table-cell-border-color: transparent;
+    -fx-padding: 0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 8, 0, 0, 1);
+}
+
+/* === Estilos para formularios === */
+.form-container {
+    -fx-background-color: #ffffff;
+    -fx-padding: 0;
+}
+
+.form-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #14213d;
+    -fx-padding: 0 0 5 0;
+}
+
+.form-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #666666;
+    -fx-padding: 0 0 10 0;
+}
+
+.field-label {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #333333;
+    -fx-padding: 0 0 3 0;
+}
+
+/* ============================================================================
    TITLED PANE MODERNO PARA FIRMA DE ABOGADOS
 ============================================================================ */
 .titled-pane {
@@ -651,4 +770,129 @@
     -fx-border-radius: 0 0 10 10;
     -fx-border-color: #e5e5e5;
     -fx-border-width: 1 0 0 0;
+}
+
+/* Estilos para componentes de upload de archivos */
+.file-upload-container {
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 2px;
+    -fx-border-style: dashed;
+    -fx-border-radius: 8px;
+    -fx-padding: 20px;
+    -fx-background-color: #FAFAFA;
+}
+
+.file-upload-container:hover {
+    -fx-border-color: #2196F3;
+    -fx-background-color: #F5F9FF;
+}
+
+.image-preview {
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-background-color: white;
+    -fx-padding: 5px;
+}
+
+.file-selected-label {
+    -fx-text-fill: #4CAF50;
+    -fx-font-weight: bold;
+}
+
+.file-info-label {
+    -fx-text-fill: #666666;
+    -fx-font-size: 12px;
+}
+
+.upload-button {
+    -fx-background-color: #FFF3E0;
+    -fx-text-fill: #FF9800;
+    -fx-border-color: #FF9800;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 8px 16px;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+}
+
+.upload-button:hover {
+    -fx-background-color: #FF9800;
+    -fx-text-fill: white;
+}
+
+.upload-button:pressed {
+    -fx-background-color: #F57C00;
+}
+
+/* Estilos para vista previa de archivos */
+.file-preview-container {
+    -fx-background-color: white;
+    -fx-border-color: #E0E0E0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
+    -fx-padding: 10px;
+    -fx-spacing: 10px;
+}
+
+/* ============================================================================
+   ESTILOS PARA BOTONES DE ACCIÓN EN TABLAS
+============================================================================ */
+.table-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #0078d7;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 8px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-min-width: 30px;
+    -fx-pref-width: 30px;
+    -fx-min-height: 28px;
+    -fx-pref-height: 28px;
+    -fx-border-width: 0;
+}
+
+.table-button:hover {
+    -fx-background-color: #e0f0ff;
+}
+
+.table-button:pressed {
+    -fx-background-color: #b3d9ff;
+}
+
+.table-button-danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: #dc3545;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 4px 8px;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-min-width: 30px;
+    -fx-pref-width: 30px;
+    -fx-min-height: 28px;
+    -fx-pref-height: 28px;
+    -fx-border-width: 0;
+}
+
+.table-button-danger:hover {
+    -fx-background-color: #f8d7da;
+}
+
+.table-button-danger:pressed {
+    -fx-background-color: #f5c6cb;
+}
+
+/* Estilos para columnas de acción */
+.column-action {
+    -fx-alignment: center;
+    -fx-padding: 0;
+}
+
+.column-action .table-cell {
+    -fx-alignment: center;
+    -fx-padding: 2px;
 }

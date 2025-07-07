@@ -14,7 +14,6 @@ public class ModuloParametrosController {
 
     @FXML private Button btn_Nuevo;
     @FXML private Button btn_Buscar;
-    @FXML private Button btn_Refrescar;
     @FXML private TextField txt_Busqueda;
 
     @FXML private TableView<ParametroDemo> tb_Parametros;
@@ -23,7 +22,6 @@ public class ModuloParametrosController {
     @FXML private TableColumn<ParametroDemo, String> tbc_Descripcion;
     @FXML private TableColumn<ParametroDemo, String> tbc_Valor;
     @FXML private TableColumn<ParametroDemo, String> tbc_Tipo;
-    @FXML private TableColumn<ParametroDemo, String> tbc_Estado;
     @FXML private TableColumn<ParametroDemo, Void> tbc_BotonEditar;
     @FXML private TableColumn<ParametroDemo, Void> tbc_BotonEliminar;
 
@@ -36,7 +34,6 @@ public class ModuloParametrosController {
     @FXML
     private void initialize() {
         btn_Nuevo.setOnAction(e -> mostrarFormulario(null, "NUEVO"));
-        btn_Refrescar.setOnAction(e -> cargarDatos());
         btn_Buscar.setOnAction(e -> buscarParametros());
 
         configurarColumnasTexto();
@@ -47,25 +44,37 @@ public class ModuloParametrosController {
         tbc_BotonEditar.getStyleClass().add("column-action");
         tbc_BotonEliminar.getStyleClass().add("column-action");
     }
-
+    
     private void configurarColumnasTexto() {
         tbc_Codigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
         tbc_Nombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         tbc_Descripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
         tbc_Valor.setCellValueFactory(new PropertyValueFactory<>("valor"));
         tbc_Tipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
-        tbc_Estado.setCellValueFactory(new PropertyValueFactory<>("estado"));
     }
 
     private void inicializarColumnasDeBotones() {
-        // Botón Editar
-        tbc_BotonEditar.setCellFactory(column -> new TableCell<ParametroDemo, Void>() {
-            private final Button btn = new Button("Editar");
+        agregarBotonPorColumna(tbc_BotonEditar, "✎", "Editar");
+        agregarBotonPorColumna(tbc_BotonEliminar, "🗑", "Eliminar");
+
+        tbc_BotonEditar.setPrefWidth(40);
+        tbc_BotonEliminar.setPrefWidth(40);
+    }
+
+    private void agregarBotonPorColumna(TableColumn<ParametroDemo, Void> columna, String texto, String tooltip) {
+        columna.setCellFactory(param -> new TableCell<>() {
+            private final Button btn = new Button(texto);
+
             {
                 btn.getStyleClass().add("table-button");
-                btn.setOnAction(e -> {
+                btn.setTooltip(new Tooltip(tooltip));
+                btn.setOnAction(event -> {
                     ParametroDemo parametro = getTableView().getItems().get(getIndex());
-                    mostrarFormulario(parametro, "EDITAR");
+                    if ("Editar".equals(tooltip)) {
+                        mostrarFormulario(parametro, "EDITAR");
+                    } else if ("Eliminar".equals(tooltip)) {
+                        eliminarParametro(parametro);
+                    }
                 });
             }
 
@@ -73,24 +82,7 @@ public class ModuloParametrosController {
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 setGraphic(empty ? null : btn);
-            }
-        });
-
-        // Botón Eliminar
-        tbc_BotonEliminar.setCellFactory(column -> new TableCell<ParametroDemo, Void>() {
-            private final Button btn = new Button("Eliminar");
-            {
-                btn.getStyleClass().add("table-button-danger");
-                btn.setOnAction(e -> {
-                    ParametroDemo parametro = getTableView().getItems().get(getIndex());
-                    eliminarParametro(parametro);
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : btn);
+                setStyle("-fx-alignment: CENTER;");
             }
         });
     }
@@ -100,16 +92,16 @@ public class ModuloParametrosController {
         
         // Datos de ejemplo
         tb_Parametros.getItems().addAll(
-            new ParametroDemo("SYS001", "Timeout Session", "Tiempo de sesión en minutos", "30", "Numérico", "Activo"),
-            new ParametroDemo("SYS002", "Max File Size", "Tamaño máximo de archivo en MB", "10", "Numérico", "Activo"),
-            new ParametroDemo("SYS003", "Email Server", "Servidor de correo electrónico", "smtp.gmail.com", "Texto", "Activo"),
-            new ParametroDemo("SYS004", "Email Port", "Puerto del servidor de correo", "587", "Numérico", "Activo"),
-            new ParametroDemo("SYS005", "Backup Schedule", "Horario de respaldo automático", "02:00", "Tiempo", "Activo"),
-            new ParametroDemo("SYS006", "Currency Symbol", "Símbolo de moneda", "$", "Texto", "Activo"),
-            new ParametroDemo("SYS007", "Date Format", "Formato de fecha", "dd/MM/yyyy", "Texto", "Activo"),
-            new ParametroDemo("SYS008", "Max Login Attempts", "Intentos máximos de login", "3", "Numérico", "Activo"),
-            new ParametroDemo("SYS009", "System Language", "Idioma del sistema", "es-ES", "Texto", "Activo"),
-            new ParametroDemo("SYS010", "Debug Mode", "Modo de depuración", "false", "Booleano", "Inactivo")
+            new ParametroDemo("SYS001", "Timeout Session", "Tiempo de sesión en minutos", "30", "Numérico"),
+            new ParametroDemo("SYS002", "Max File Size", "Tamaño máximo de archivo en MB", "10", "Numérico"),
+            new ParametroDemo("SYS003", "Email Server", "Servidor de correo electrónico", "smtp.gmail.com", "Texto"),
+            new ParametroDemo("SYS004", "Email Port", "Puerto del servidor de correo", "587", "Numérico"),
+            new ParametroDemo("SYS005", "Backup Schedule", "Horario de respaldo automático", "02:00", "Tiempo"),
+            new ParametroDemo("SYS006", "Currency Symbol", "Símbolo de moneda", "$", "Texto"),
+            new ParametroDemo("SYS007", "Date Format", "Formato de fecha", "dd/MM/yyyy", "Texto"),
+            new ParametroDemo("SYS008", "Max Login Attempts", "Intentos máximos de login", "3", "Numérico"),
+            new ParametroDemo("SYS009", "System Language", "Idioma del sistema", "es-ES", "Texto"),
+            new ParametroDemo("SYS010", "Debug Mode", "Modo de depuración", "false", "Booleano")
         );
     }
 
@@ -118,18 +110,24 @@ public class ModuloParametrosController {
         cargarDatosEjemplo();
     }
 
+    
     private void buscarParametros() {
-        String criterio = txt_Busqueda.getText().trim();
-        if (criterio.isEmpty()) {
+        String termino = txt_Busqueda.getText();
+        if (termino == null || termino.trim().isEmpty()) {
             cargarDatos();
             return;
         }
-
-        // Filtrar los datos existentes
+        
+        // Filtrar por término de búsqueda
+        tb_Parametros.getItems().clear();
+        cargarDatosEjemplo();
+        
+        String terminoBusqueda = termino.toLowerCase();
         tb_Parametros.getItems().removeIf(parametro -> 
-            !parametro.getCodigo().toLowerCase().contains(criterio.toLowerCase()) &&
-            !parametro.getNombre().toLowerCase().contains(criterio.toLowerCase()) &&
-            !parametro.getDescripcion().toLowerCase().contains(criterio.toLowerCase())
+            !parametro.getCodigo().toLowerCase().contains(terminoBusqueda) &&
+            !parametro.getNombre().toLowerCase().contains(terminoBusqueda) &&
+            !parametro.getDescripcion().toLowerCase().contains(terminoBusqueda) &&
+            !parametro.getValor().toLowerCase().contains(terminoBusqueda)
         );
     }
 
@@ -196,15 +194,13 @@ public class ModuloParametrosController {
         private final SimpleStringProperty descripcion;
         private final SimpleStringProperty valor;
         private final SimpleStringProperty tipo;
-        private final SimpleStringProperty estado;
 
-        public ParametroDemo(String codigo, String nombre, String descripcion, String valor, String tipo, String estado) {
+        public ParametroDemo(String codigo, String nombre, String descripcion, String valor, String tipo) {
             this.codigo = new SimpleStringProperty(codigo);
             this.nombre = new SimpleStringProperty(nombre);
             this.descripcion = new SimpleStringProperty(descripcion);
             this.valor = new SimpleStringProperty(valor);
             this.tipo = new SimpleStringProperty(tipo);
-            this.estado = new SimpleStringProperty(estado);
         }
 
         // Getters
@@ -213,7 +209,6 @@ public class ModuloParametrosController {
         public String getDescripcion() { return descripcion.get(); }
         public String getValor() { return valor.get(); }
         public String getTipo() { return tipo.get(); }
-        public String getEstado() { return estado.get(); }
 
         // Property getters para TableView
         public SimpleStringProperty codigoProperty() { return codigo; }
@@ -221,6 +216,5 @@ public class ModuloParametrosController {
         public SimpleStringProperty descripcionProperty() { return descripcion; }
         public SimpleStringProperty valorProperty() { return valor; }
         public SimpleStringProperty tipoProperty() { return tipo; }
-        public SimpleStringProperty estadoProperty() { return estado; }
     }
 }
