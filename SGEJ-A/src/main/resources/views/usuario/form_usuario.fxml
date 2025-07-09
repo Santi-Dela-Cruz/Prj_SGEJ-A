@@ -79,10 +79,10 @@
                            GridPane.rowIndex="11" GridPane.columnIndex="1"/>
 
             <!-- Entry Date -->
-            <Label text="Fecha de Ingreso:" GridPane.rowIndex="12" GridPane.columnIndex="1" styleClass="label"/>
+            <Label text="Fecha de Ingreso:" GridPane.rowIndex="12" GridPane.columnIndex="0" styleClass="label"/>
             <DatePicker fx:id="dt_FechaIngreso" promptText="Fecha de Ingreso"
                         styleClass="jfx-date-picker"
-                        GridPane.rowIndex="13" GridPane.columnIndex="1"/>
+                        GridPane.rowIndex="13" GridPane.columnIndex="0"/>
         </GridPane>
 
         <!-- Save / Cancel Buttons -->

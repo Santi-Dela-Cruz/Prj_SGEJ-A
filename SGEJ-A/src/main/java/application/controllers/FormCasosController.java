@@ -10,6 +10,8 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.text.Text;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class FormCasosController {
@@ -32,12 +34,15 @@ public class FormCasosController {
     @FXML private Button btn_Guardar;
     @FXML private Button btn_Cancelar;
 
-    private Consumer<Void> onCancelar;
-    private Consumer<Void> onGuardar;
+
+
+    private Runnable onGuardar, onCancelar;
 
     private final ObservableList<String> roles = FXCollections.observableArrayList(
             "Principal", "Asistente", "Apoderado", "Consultor"
     );
+
+
 
     @FXML
     private void initialize() {
@@ -47,22 +52,49 @@ public class FormCasosController {
         configurarTabla();
         cargarAbogadosEjemplo();
 
-        btn_Cancelar.setOnAction(e -> {
-            if (onCancelar != null) onCancelar.accept(null);
-        });
-
         btn_Guardar.setOnAction(e -> {
-            guardarCaso();
-            if (onGuardar != null) onGuardar.accept(null);
+            if (txtf_NumeroExpediente.getText().isEmpty() || txtf_TituloCaso.getText().isEmpty() || cbx_TipoCaso.getItems().isEmpty() || cbx_Estado.getItems().isEmpty()) {
+                DialogUtil.mostrarDialogo(
+                        "Campos requeridos",
+                        "Por favor, complete los campos obligatorios: \n - Número Expediente \n - Título del Caso \n - Tipo de Caso de Identificación \n - Estado del Caso",
+                        "warning",
+                        List.of(ButtonType.OK)
+                );
+                return;
+            }
+
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea guardar este caso?",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onGuardar != null) onGuardar.run();
+            }
+        });
+
+        btn_Cancelar.setOnAction(e -> {
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onCancelar != null) onCancelar.run();
+            }
         });
     }
 
-    public void setOnCancelar(Consumer<Void> callback) {
-        this.onCancelar = callback;
+    public void setOnGuardar(Runnable handler) {
+        this.onGuardar = handler;
     }
 
-    public void setOnGuardar(Consumer<Void> callback) {
-        this.onGuardar = callback;
+    public void setOnCancelar(Runnable handler) {
+        this.onCancelar = handler;
     }
 
     public void cargarDatosCaso(String numeroExpediente, String titulo, String tipo, String fecha, String estado) {

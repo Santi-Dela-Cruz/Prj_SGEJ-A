@@ -14,7 +14,7 @@
         <!-- Title in a colored panel -->
         <StackPane layoutX="0" layoutY="0" prefHeight="50" prefWidth="400"
                    style="-fx-background-color: #90caf9; -fx-background-radius: 8;" alignment="CENTER">
-            <Text fx:id="lbl_TituloFormulario"
+            <Label fx:id="lbl_TituloFormulario"
                   text="Nueva Entrada"
                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
         </StackPane>

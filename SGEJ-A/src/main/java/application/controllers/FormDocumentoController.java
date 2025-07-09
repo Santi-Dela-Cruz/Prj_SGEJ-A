@@ -10,6 +10,8 @@ import java.io.File;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
+import java.util.Optional;
 
 public class FormDocumentoController {
 
@@ -34,14 +36,50 @@ public class FormDocumentoController {
 
         btn_SeleccionarArchivo.setOnAction(e -> seleccionarArchivo());
 
-        btn_Cancelar.setOnAction(e -> {
-            if (onCancelar != null) onCancelar.run();
+        btn_Guardar.setOnAction(e -> {
+            if (txtf_NumeroExpediente.getText().isEmpty() ||
+                    txtf_NombreDocumento.getText().isEmpty() ||
+                    cbx_TipoDocumento.getValue() == null ||
+                    dtp_FechaCarga.getValue() == null) {
+
+                DialogUtil.mostrarDialogo(
+                        "Campos requeridos",
+                        "Por favor, complete los campos obligatorios:\n" +
+                                " - Número de Expediente\n" +
+                                " - Nombre del Documento\n" +
+                                " - Tipo de Documento\n" +
+                                " - Fecha de Carga",
+                        "warning",
+                        List.of(ButtonType.OK)
+                );
+                return;
+            }
+
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea guardar este documento?",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onGuardar != null) onGuardar.run();
+            }
         });
 
-        btn_Guardar.setOnAction(e -> {
-            guardarDocumento();
-            if (onGuardar != null) onGuardar.run();
+        btn_Cancelar.setOnAction(e -> {
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onCancelar != null) onCancelar.run();
+            }
         });
+
     }
 
     private void seleccionarArchivo() {

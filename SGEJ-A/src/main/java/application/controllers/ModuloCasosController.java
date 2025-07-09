@@ -77,8 +77,8 @@ public class ModuloCasosController {
             Node form = loader.load();
 
             FormCasosController controller = loader.getController();
-            controller.setOnCancelar(v -> cerrarFormulario());
-            controller.setOnGuardar(v -> cerrarFormulario());
+            controller.setOnCancelar(this::cerrarFormulario);
+            controller.setOnGuardar(this::cerrarFormulario);
             controller.setModo(modo);
 
             if (caso != null && !modo.equals("NUEVO")) {

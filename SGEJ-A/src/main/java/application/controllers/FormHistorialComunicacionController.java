@@ -10,6 +10,8 @@ import javafx.scene.text.Text;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class FormHistorialComunicacionController {
@@ -23,29 +25,66 @@ public class FormHistorialComunicacionController {
     @FXML private Button btn_Cancelar;
     @FXML private Text txt_TituloForm;
 
-    private Consumer<Void> onCancelar;
-    private Consumer<Void> onGuardar;
+    private Runnable onGuardar, onCancelar;
 
     @FXML
     private void initialize() {
         cbx_TipoAccion.getItems().addAll("Llamada", "Correo", "Mensaje", "Visita", "Otro");
 
-        btn_Cancelar.setOnAction(e -> {
-            if (onCancelar != null) onCancelar.accept(null);
-        });
-
         btn_Guardar.setOnAction(e -> {
-            guardarComunicacion();
-            if (onGuardar != null) onGuardar.accept(null);
+            if (dtp_Fecha.getValue() == null ||
+                    txtf_Usuario.getText().isEmpty() ||
+                    cbx_TipoAccion.getValue() == null ||
+                    txtf_Expediente.getText().isEmpty() ||
+                    txta_Descripcion.getText().isEmpty()) {
+
+                DialogUtil.mostrarDialogo(
+                        "Campos requeridos",
+                        "Por favor, complete los campos obligatorios:\n" +
+                                " - Fecha\n" +
+                                " - Usuario\n" +
+                                " - Tipo de Acción\n" +
+                                " - Número de Expediente\n" +
+                                " - Descripción",
+                        "warning",
+                        List.of(ButtonType.OK)
+                );
+                return;
+            }
+
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea guardar este historial de comunicación?",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onGuardar != null) onGuardar.run();
+            }
         });
+
+        btn_Cancelar.setOnAction(e -> {
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onCancelar != null) onCancelar.run();
+            }
+        });
+
     }
 
-    public void setOnCancelar(Consumer<Void> callback) {
-        this.onCancelar = callback;
+    public void setOnGuardar(Runnable handler) {
+        this.onGuardar = handler;
     }
 
-    public void setOnGuardar(Consumer<Void> callback) {
-        this.onGuardar = callback;
+    public void setOnCancelar(Runnable handler) {
+        this.onCancelar = handler;
     }
 
     public void setModo(String modo) {
@@ -101,8 +140,8 @@ public class FormHistorialComunicacionController {
 
             FormHistorialComunicacionController controller = loader.getController();
             controller.setModo(modo);
-            controller.setOnGuardar(onGuardar);
-            controller.setOnCancelar(onCancelar);
+            controller.setOnGuardar(() -> onGuardar.accept(null));
+            controller.setOnCancelar(() -> onCancelar.accept(null));
 
             if (comunicacion != null && !modo.equals("NUEVO")) {
                 controller.cargarDatos(

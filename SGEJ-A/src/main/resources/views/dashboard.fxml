@@ -14,8 +14,8 @@
         </padding>
 
         <!-- Welcome Title -->
-        <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 20;">
-            <Label fx:id="lblBienvenida" text="Bienvenido, Nombre del usuario" styleClass="section-title"/>
+        <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #023047; -fx-background-radius: 20; -fx-text-fill: white;" >
+            <Label fx:id="lblBienvenida" text="Bienvenido, Nombre del usuario" styleClass="section-title" style="-fx-text-fill: white;"/>
         </StackPane>
 
         <!-- Summary Cards -->
@@ -39,12 +39,12 @@
         </HBox>
 
         <!-- Últimos Casos Modificados -->
-        <VBox fx:id="seccionCasos" spacing="12" style="-fx-background-color: #f0f8ff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+        <VBox fx:id="seccionCasos" spacing="12" style="-fx-background-color: #e5e9ec; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16;">
-                <Label text="Últimos Casos Modificados" styleClass="section-title"/>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #669bbc; -fx-background-radius: 20; -fx-text-fill: white;">
+                <Label text="Últimos Casos Modificados" styleClass="section-title" style="-fx-text-fill: white;"/>
             </StackPane>
             <TableView fx:id="tableCasosRecientes" prefHeight="360" styleClass="table-view">
                 <columns>
@@ -60,12 +60,12 @@
         </VBox>
 
         <!-- Facturas Pendientes -->
-        <VBox fx:id="seccionFacturas" spacing="12" style="-fx-background-color: #f0f8ff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+        <VBox fx:id="seccionFacturas" spacing="12" style="-fx-background-color:  #e5e9ec; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16;">
-                <Label text="Facturas Pendientes" styleClass="section-title"/>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #669bbc; -fx-background-radius: 20; -fx-text-fill: white;">
+                <Label text="Facturas Pendientes" styleClass="section-title" style="-fx-text-fill: white;" />
             </StackPane>
             <TableView fx:id="tableFacturasPendientes" prefHeight="360" styleClass="table-view">
                 <columns>
@@ -82,12 +82,12 @@
         </VBox>
 
         <!-- Tareas del día -->
-        <VBox fx:id="seccionTareas" spacing="12" style="-fx-background-color: #f0f8ff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+        <VBox fx:id="seccionTareas" spacing="12" style="-fx-background-color:  #e5e9ec; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16;">
-                <Label text="Tareas del día" styleClass="section-title"/>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #669bbc; -fx-background-radius: 20; -fx-text-fill: white;">
+                <Label text="Tareas del día" styleClass="section-title" style="-fx-text-fill: white;"/>
             </StackPane>
             <TableView fx:id="tableTareasDia" prefHeight="360" styleClass="table-view">
                 <columns>
@@ -103,12 +103,12 @@
         </VBox>
 
         <!-- Próximas Audiencias -->
-        <VBox fx:id="seccionAudiencias" spacing="12" style="-fx-background-color: #f0f8ff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+        <VBox fx:id="seccionAudiencias" spacing="12" style="-fx-background-color:  #e5e9ec; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16;">
-                <Label text="Próximas Audiencias" styleClass="section-title"/>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #669bbc; -fx-background-radius: 20; -fx-text-fill: white;">
+                <Label text="Próximas Audiencias" styleClass="section-title" style="-fx-text-fill: white;"/>
             </StackPane>
             <TableView fx:id="tableAudiencias" prefHeight="360" styleClass="table-view">
                 <columns>
@@ -124,12 +124,12 @@
         </VBox>
 
         <!-- Documentos recientes -->
-        <VBox fx:id="seccionDocumentos" spacing="12" style="-fx-background-color: #f0f8ff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+        <VBox fx:id="seccionDocumentos" spacing="12" style="-fx-background-color:  #e5e9ec; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
             <padding>
                 <Insets top="20" right="20" bottom="20" left="20"/>
             </padding>
-            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #8ecae6; -fx-background-radius: 16;">
-                <Label text="Documentos Recientes" styleClass="section-title"/>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #669bbc; -fx-background-radius: 20; -fx-text-fill: white;">
+                <Label text="Documentos Recientes" styleClass="section-title" style="-fx-text-fill: white;"/>
             </StackPane>
             <TableView fx:id="tableDocumentosRecientes" prefHeight="360" styleClass="table-view">
                 <columns>

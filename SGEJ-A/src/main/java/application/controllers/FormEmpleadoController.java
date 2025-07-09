@@ -1,11 +1,11 @@
 package application.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
+
+import java.util.List;
+import java.util.Optional;
 
 public class FormEmpleadoController {
 
@@ -32,11 +32,55 @@ public class FormEmpleadoController {
         cbx_Rol.getItems().addAll("Gerente", "Administrador", "Empleado", "Supervisor", "Asistente");
 
         btn_Guardar.setOnAction(e -> {
-            if (onGuardar != null) onGuardar.run();
+            if (txtf_Nombres.getText().isEmpty() ||
+                    txtf_Apellidos.getText().isEmpty() ||
+                    txtf_NumeroIdentificacion.getText().isEmpty() ||
+                    cbx_TipoIdentificacion.getValue() == null ||
+                    cbx_Rol.getValue() == null ||
+                    cbx_Estado.getValue() == null ||
+                    dt_FechaIngreso.getValue() == null) {
+
+                DialogUtil.mostrarDialogo(
+                        "Campos requeridos",
+                        "Por favor, complete los campos obligatorios:\n" +
+                                " - Nombres\n" +
+                                " - Apellidos\n" +
+                                " - Número de Identificación\n" +
+                                " - Tipo de Identificación\n" +
+                                " - Rol\n" +
+                                " - Estado\n" +
+                                " - Fecha de Ingreso",
+                        "warning",
+                        List.of(ButtonType.OK)
+                );
+                return;
+            }
+
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea guardar este empleado?",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onGuardar != null) onGuardar.run();
+            }
         });
+
         btn_Cancelar.setOnAction(e -> {
-            if (onCancelar != null) onCancelar.run();
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onCancelar != null) onCancelar.run();
+            }
         });
+
     }
 
     public void cargarEmpleado(ModuloEmpleadoController.EmpleadoDemo empleado) {

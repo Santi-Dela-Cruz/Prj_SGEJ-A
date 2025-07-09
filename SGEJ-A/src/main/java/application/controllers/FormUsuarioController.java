@@ -1,12 +1,11 @@
 package application.controllers;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.text.Text;
+
+import java.util.List;
+import java.util.Optional;
 
 public class FormUsuarioController {
 
@@ -34,11 +33,68 @@ public class FormUsuarioController {
         cbx_Rol.getItems().addAll("Administrador", "Usuario", "Invitado");
 
         btn_Guardar.setOnAction(e -> {
-            if (onGuardar != null) onGuardar.run();
+            if (txtf_NombresCompletos.getText().isEmpty() ||
+                    txtf_NombreUsuario.getText().isEmpty() ||
+                    txtf_NumeroIdentificacion.getText().isEmpty() ||
+                    cbx_TipoIdentificacion.getValue() == null ||
+                    cbx_Rol.getValue() == null ||
+                    cbx_Estado.getValue() == null ||
+                    dt_FechaIngreso.getValue() == null ||
+                    txtf_Contrasena.getText().isEmpty() ||
+                    txtf_ConfirmarContrasena.getText().isEmpty()) {
+
+                DialogUtil.mostrarDialogo(
+                        "Campos requeridos",
+                        "Por favor, complete los campos obligatorios:\n" +
+                                " - Nombres Completos\n" +
+                                " - Nombre de Usuario\n" +
+                                " - Número de Identificación\n" +
+                                " - Tipo de Identificación\n" +
+                                " - Rol\n" +
+                                " - Estado\n" +
+                                " - Fecha de Ingreso\n" +
+                                " - Contraseña y Confirmación",
+                        "warning",
+                        List.of(ButtonType.OK)
+                );
+                return;
+            }
+
+            if (!txtf_Contrasena.getText().equals(txtf_ConfirmarContrasena.getText())) {
+                DialogUtil.mostrarDialogo(
+                        "Contraseña incorrecta",
+                        "La contraseña y la confirmación no coinciden.",
+                        "error",
+                        List.of(ButtonType.OK)
+                );
+                return;
+            }
+
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea guardar este usuario?",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onGuardar != null) onGuardar.run();
+            }
         });
+
         btn_Cancelar.setOnAction(e -> {
-            if (onCancelar != null) onCancelar.run();
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onCancelar != null) onCancelar.run();
+            }
         });
+
     }
 
     public void cargarUsuario(ModuloUsuarioController.UsuarioDemo usuario) {

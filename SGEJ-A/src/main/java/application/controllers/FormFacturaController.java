@@ -5,6 +5,8 @@ import javafx.scene.control.*;
 import javafx.scene.text.Text;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 public class FormFacturaController {
 
@@ -54,11 +56,59 @@ public class FormFacturaController {
         cbx_EstadoFactura.getItems().addAll("Abierto", "Registrado", "Rechazado");
 
         btn_Guardar.setOnAction(e -> {
-            if (onGuardar != null) onGuardar.run();
+            if (dtp_FechaEmision.getValue() == null ||
+                    txtf_RucEmisor.getText().isEmpty() ||
+                    txtf_NombreCliente.getText().isEmpty() ||
+                    cbx_TipoIdCliente.getValue() == null ||
+                    txtf_CodigoServicio.getText().isEmpty() ||
+                    txtf_Cantidad.getText().isEmpty() ||
+                    txtf_Tarifa.getText().isEmpty() ||
+                    cbx_FormaPago.getValue() == null ||
+                    cbx_EstadoFactura.getValue() == null) {
+
+                DialogUtil.mostrarDialogo(
+                        "Campos requeridos",
+                        "Por favor, complete los campos obligatorios:\n" +
+                                " - Fecha de Emisión\n" +
+                                " - RUC del Emisor\n" +
+                                " - Nombre del Cliente\n" +
+                                " - Tipo de Identificación del Cliente\n" +
+                                " - Código del Servicio\n" +
+                                " - Cantidad\n" +
+                                " - Tarifa\n" +
+                                " - Forma de Pago\n" +
+                                " - Estado de la Factura",
+                        "warning",
+                        List.of(ButtonType.OK)
+                );
+                return;
+            }
+
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea guardar esta factura?",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onGuardar != null) onGuardar.run();
+            }
         });
+
         btn_Cancelar.setOnAction(e -> {
-            if (onCancelar != null) onCancelar.run();
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onCancelar != null) onCancelar.run();
+            }
         });
+
     }
 
     public void setModo(String modo) {

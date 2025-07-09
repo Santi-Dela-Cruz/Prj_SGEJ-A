@@ -3,14 +3,21 @@ package application.controllers;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
+import java.util.List;
+import java.util.Optional;
 
 public class FormClienteController {
 
     @FXML private Button btn_Guardar, btn_Cancelar;
-    @FXML private TextField txtf_Nombres, txtf_Apellidos, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Adicional, txtf_Telefono;
+    @FXML private TextField txtf_Nombres, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Telefono;
     @FXML private ComboBox<String> cbx_TipoCliente, cbx_TipoIdentificacion, cbx_Estado;
     @FXML private DatePicker dt_FechaIngreso;
     @FXML private Text txt_TituloForm;
+
+    // Campos condicionales
+    @FXML private ComboBox<String> cbx_EstadoCivil;
+    @FXML private TextField txtf_RepresentanteLegal, txtf_DireccionFiscal;
+    @FXML private Label lbl_EstadoCivil, lbl_RepresentanteLegal, lbl_DireccionFiscal;
 
     private Runnable onGuardar, onCancelar;
 
@@ -27,27 +34,98 @@ public class FormClienteController {
         cbx_Estado.getItems().addAll("Activo", "Inactivo");
         cbx_TipoIdentificacion.getItems().addAll("Cédula", "RUC", "Pasaporte");
         cbx_TipoCliente.getItems().addAll("Natural", "Jurídica");
+        cbx_EstadoCivil.getItems().addAll("Soltero/a", "Casado/a", "Divorciado/a", "Viudo/a");
+
+        cbx_TipoCliente.setOnAction(e -> actualizarCamposCondicionales());
+        ocultarCamposCondicionales();
 
         btn_Guardar.setOnAction(e -> {
-            if (onGuardar != null) onGuardar.run();
+            if (txtf_Nombres.getText().isEmpty()) {
+                DialogUtil.mostrarDialogo(
+                        "Campos requeridos",
+                        "Por favor, complete los campos obligatorios: \n - Nombres Completo \n - Tipo de Identificación \n - Número de Identificación",
+                        "warning",
+                        List.of(ButtonType.OK)
+                );
+                return;
+            }
+
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea guardar este cliente?",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onGuardar != null) onGuardar.run();
+            }
         });
+
         btn_Cancelar.setOnAction(e -> {
-            if (onCancelar != null) onCancelar.run();
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onCancelar != null) onCancelar.run();
+            }
         });
+
+    }
+
+    private void actualizarCamposCondicionales() {
+        String tipo = cbx_TipoCliente.getValue();
+        boolean esNatural = "Natural".equalsIgnoreCase(tipo);
+        boolean esJuridica = "Jurídica".equalsIgnoreCase(tipo);
+
+        // Natural
+        lbl_EstadoCivil.setVisible(esNatural);
+        cbx_EstadoCivil.setVisible(esNatural);
+        cbx_EstadoCivil.setManaged(esNatural);
+
+        // Jurídica
+        lbl_RepresentanteLegal.setVisible(esJuridica);
+        txtf_RepresentanteLegal.setVisible(esJuridica);
+        txtf_RepresentanteLegal.setManaged(esJuridica);
+
+        lbl_DireccionFiscal.setVisible(esJuridica);
+        txtf_DireccionFiscal.setVisible(esJuridica);
+        txtf_DireccionFiscal.setManaged(esJuridica);
+    }
+
+    private void ocultarCamposCondicionales() {
+        lbl_EstadoCivil.setVisible(false);
+        cbx_EstadoCivil.setVisible(false);
+        cbx_EstadoCivil.setManaged(false);
+
+        lbl_RepresentanteLegal.setVisible(false);
+        txtf_RepresentanteLegal.setVisible(false);
+        txtf_RepresentanteLegal.setManaged(false);
+
+        lbl_DireccionFiscal.setVisible(false);
+        txtf_DireccionFiscal.setVisible(false);
+        txtf_DireccionFiscal.setManaged(false);
     }
 
     public void cargarCliente(ModuloClienteController.ClienteDemo cliente) {
         txtf_Nombres.setText(cliente.nombres());
-        txtf_Apellidos.setText(cliente.apellidos());
         txtf_NumeroIdentificacion.setText(cliente.numeroIdentificacion());
         txtf_Direccion.setText(cliente.direccion());
-        txtf_Adicional.setText(cliente.adicional());
         dt_FechaIngreso.setValue(cliente.fechaIngreso());
         txtf_Telefono.setText(cliente.telefono());
         txtf_Correo.setText(cliente.correo());
         cbx_TipoCliente.setValue(cliente.tipoCliente());
         cbx_TipoIdentificacion.setValue(cliente.tipoIdentificacion());
         cbx_Estado.setValue(cliente.estado());
+        cbx_EstadoCivil.setValue(cliente.estadoCivil());
+        txtf_RepresentanteLegal.setText(cliente.representanteLegal());
+        txtf_DireccionFiscal.setText(cliente.direccionFiscal());
+
+        actualizarCamposCondicionales();
     }
 
     public void setModo(String modo) {
@@ -55,53 +133,22 @@ public class FormClienteController {
         boolean esVer = "VER".equalsIgnoreCase(modo);
         boolean esRegistrar = !esEditar && !esVer;
 
-        if (esEditar) {
-            txt_TituloForm.setText("Editar Cliente");
-        } else if (esVer) {
-            txt_TituloForm.setText("Ver Cliente");
-        } else {
-            txt_TituloForm.setText("Registrar nuevo Cliente");
-        }
+        txt_TituloForm.setText(esEditar ? "Editar Cliente" : esVer ? "Ver Cliente" : "Registrar nuevo Cliente");
 
-        if (esVer) {
-            txtf_Nombres.setEditable(false);
-            txtf_Apellidos.setEditable(false);
-            txtf_NumeroIdentificacion.setEditable(false);
-            cbx_TipoIdentificacion.setDisable(true);
-            txtf_Telefono.setEditable(false);
-            txtf_Correo.setEditable(false);
-            cbx_Estado.setDisable(true);
-            txtf_Direccion.setEditable(false);
-            txtf_Adicional.setEditable(false);
-            cbx_TipoCliente.setDisable(true);
-            dt_FechaIngreso.setDisable(true);
-            btn_Guardar.setDisable(true);
-        } else if (esEditar) {
-            txtf_Nombres.setEditable(true);
-            txtf_Apellidos.setEditable(true);
-            txtf_NumeroIdentificacion.setEditable(false);
-            cbx_TipoIdentificacion.setDisable(true);
-            txtf_Telefono.setEditable(true);
-            txtf_Correo.setEditable(true);
-            cbx_Estado.setEditable(true);
-            txtf_Direccion.setEditable(true);
-            txtf_Adicional.setEditable(true);
-            cbx_TipoCliente.setDisable(false);
-            dt_FechaIngreso.setDisable(false);
-            btn_Guardar.setDisable(false);
-        } else { // REGISTRAR
-            txtf_Nombres.setEditable(true);
-            txtf_Apellidos.setEditable(true);
-            txtf_NumeroIdentificacion.setEditable(true);
-            cbx_TipoIdentificacion.setDisable(false);
-            txtf_Telefono.setEditable(true);
-            txtf_Correo.setEditable(true);
-            cbx_Estado.setDisable(false);
-            txtf_Direccion.setEditable(true);
-            txtf_Adicional.setEditable(true);
-            cbx_TipoCliente.setDisable(false);
-            dt_FechaIngreso.setDisable(false);
-            btn_Guardar.setDisable(false);
-        }
+        boolean editable = !esVer;
+        txtf_Nombres.setEditable(editable);
+        txtf_NumeroIdentificacion.setEditable(esRegistrar);
+        cbx_TipoIdentificacion.setDisable(esVer);
+        txtf_Telefono.setEditable(editable);
+        txtf_Correo.setEditable(editable);
+        cbx_Estado.setDisable(esVer);
+        txtf_Direccion.setEditable(editable);
+        cbx_TipoCliente.setDisable(esVer);
+        dt_FechaIngreso.setDisable(esVer);
+        btn_Guardar.setDisable(esVer);
+
+        cbx_EstadoCivil.setDisable(esVer);
+        txtf_RepresentanteLegal.setEditable(editable);
+        txtf_DireccionFiscal.setEditable(editable);
     }
 }

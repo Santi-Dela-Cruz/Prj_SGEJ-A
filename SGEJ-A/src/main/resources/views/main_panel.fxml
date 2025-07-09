@@ -34,8 +34,8 @@
         <Button fx:id="md_Clientes" styleClass="module-button" text="Clientes" />
         <Button fx:id="md_CasosDocumentacion" styleClass="module-button" text="Casos y Documentacion" />
         <Button fx:id="md_Facturacion" styleClass="module-button" text="Facturacion" />
-        <Button fx:id="md_Personal" styleClass="module-button" text="Personal" />
-        <Button fx:id="md_Sistema" styleClass="module-button" text="Sistema" />
+        <Button fx:id="md_Personal" styleClass="module-button" text="Empleados" />
+        <Button fx:id="md_Sistema" styleClass="module-button" text="Administración del sistema" />
         <Button fx:id="dashboard" styleClass="module-button" text="Dashboard" />
 
         <Region HBox.hgrow="ALWAYS" />
@@ -84,8 +84,8 @@
     <VBox fx:id="vpnl_DesplegableSistema"
           styleClass="dropdown-menu"
           AnchorPane.topAnchor="90.0"
-          AnchorPane.leftAnchor="520.0"
-          prefWidth="180.0"
+          AnchorPane.leftAnchor="480.0"
+          prefWidth="200.0"
           visible="false"
           managed="false">
         <Button fx:id="btn_AdministracionUsuarios" styleClass="dropdown-item" text="Administración de usuarios" maxWidth="Infinity" />

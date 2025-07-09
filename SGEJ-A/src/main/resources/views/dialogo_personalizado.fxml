@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.*?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml" fx:id="rootPane"
+            fx:controller="application.controllers.DialogoPersonalizadoController"
+            style="-fx-background-color: #f8f9fa; -fx-background-radius: 18; -fx-border-radius: 18;"
+            styleClass="dialog-container"
+            prefWidth="420" prefHeight="220">
+
+    <!-- Barra superior -->
+    <HBox fx:id="titleBar" styleClass="dialog-title-bar" spacing="8" alignment="CENTER_LEFT"
+          AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <Label fx:id="lbl_Titulo" styleClass="dialog-title"/>
+        <Region HBox.hgrow="ALWAYS"/>
+        <Button fx:id="btn_Cerrar" text="✕" onAction="#cerrarDialogo" styleClass="dialog-close-button"/>
+    </HBox>
+
+    <!-- Contenido -->
+    <VBox spacing="20" alignment="TOP_LEFT"
+          AnchorPane.topAnchor="80" AnchorPane.bottomAnchor="60"
+          AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
+        <HBox spacing="12" alignment="TOP_LEFT">
+            <ImageView fx:id="img_IconoContenido" fitWidth="40" fitHeight="40"/>
+            <Label fx:id="lbl_Mensaje" wrapText="true" styleClass="dialog-message"/>
+        </HBox>
+    </VBox>
+
+    <!-- Botones -->
+    <HBox fx:id="contenedorBotones" spacing="10" alignment="CENTER_RIGHT"
+          AnchorPane.bottomAnchor="20" AnchorPane.rightAnchor="20" />
+</AnchorPane>

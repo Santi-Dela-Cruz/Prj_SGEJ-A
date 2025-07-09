@@ -18,7 +18,6 @@ public class ModuloClienteController {
 
     @FXML private TableView<ClienteDemo> tb_Clientes;
     @FXML private TableColumn<ClienteDemo, String> tbc_Nombres;
-    @FXML private TableColumn<ClienteDemo, String> tbc_Apellidos;
     @FXML private TableColumn<ClienteDemo, String> tbc_NumeroI;
     @FXML private TableColumn<ClienteDemo, String> tbc_TipoIdentificacion;
     @FXML private TableColumn<ClienteDemo, String> tbc_Telefono;
@@ -94,7 +93,6 @@ public class ModuloClienteController {
 
     private void configurarColumnasTexto() {
         tbc_Nombres.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().nombres()));
-        tbc_Apellidos.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().apellidos()));
         tbc_NumeroI.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().numeroIdentificacion()));
         tbc_TipoIdentificacion.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().tipoIdentificacion()));
         tbc_Telefono.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().telefono()));
@@ -141,31 +139,36 @@ public class ModuloClienteController {
     private void cargarDatosEjemplo() {
         tb_Clientes.getItems().addAll(
                 new ClienteDemo(
-                        "Ana", "Mora", "0102030405", "Cédula", "0991234567", "ana@correo.com", "Activo",
-                        "Av. Siempre Viva 123", "Referencia 1", java.time.LocalDate.of(2023, 1, 10), "Natural"
+                        "Ana Perez", "0102030405", "Cédula", "0991234567", "ana@correo.com", "Activo",
+                        "Av. Siempre Viva 123", java.time.LocalDate.of(2023, 1, 10), "Natural",
+                        "Soltera", null, null
                 ),
                 new ClienteDemo(
-                        "Luis", "Pérez", "1102233445", "Pasaporte", "0987654321", "luis@correo.com", "Activo",
-                        "Calle Falsa 456", "Referencia 2", java.time.LocalDate.of(2022, 5, 20), "Jurídica"
+                        "Luis Lopez", "1102233445", "Pasaporte", "0987654321", "luis@correo.com", "Activo",
+                        "Calle Falsa 456", java.time.LocalDate.of(2022, 5, 20), "Jurídica",
+                        null, "Laura López", "Oficinas Zárate, Quito"
                 ),
                 new ClienteDemo(
-                        "María", "Salas", "2223334445", "RUC", "0970001122", "maria@correo.com", "Inactivo",
-                        "Calle Real 789", "Referencia 3", java.time.LocalDate.of(2021, 8, 15), "Natural"
+                        "María Torres", "2223334445", "RUC", "0970001122", "maria@correo.com", "Inactivo",
+                        "Calle Real 789",  java.time.LocalDate.of(2021, 8, 15), "Natural",
+                        "Casada", null, null
                 )
         );
     }
-    // Example record (replace with your real Cliente class if needed)
+
+    // Modelo extendido con nuevos campos
     public record ClienteDemo(
             String nombres,
-            String apellidos,
             String numeroIdentificacion,
             String tipoIdentificacion,
             String telefono,
             String correo,
             String estado,
             String direccion,
-            String adicional,
             java.time.LocalDate fechaIngreso,
-            String tipoCliente
+            String tipoCliente,
+            String estadoCivil,
+            String representanteLegal,
+            String direccionFiscal
     ) {}
 }

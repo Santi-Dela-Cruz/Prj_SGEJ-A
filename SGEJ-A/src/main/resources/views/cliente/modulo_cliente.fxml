@@ -37,8 +37,7 @@
 
               <TableView fx:id="tb_Clientes" layoutY="96.0" prefHeight="362.0" prefWidth="604.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="105.0">
                   <columns>
-                      <TableColumn fx:id="tbc_Nombres" text="Nombres" />
-                      <TableColumn fx:id="tbc_Apellidos" text="Apellidos" />
+                      <TableColumn fx:id="tbc_Nombres" text="Nombre Completo" />
                       <TableColumn fx:id="tbc_NumeroI" text="Número de Identificación" />
                       <TableColumn fx:id="tbc_TipoIdentificacion" text="Tipo de Identificación" />
                       <TableColumn fx:id="tbc_Telefono" text="Teléfono" />
