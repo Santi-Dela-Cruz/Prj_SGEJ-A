@@ -8,7 +8,7 @@
 <ScrollPane fitToWidth="true" fitToHeight="true"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="application.controllers.FormEmpleadoController"
+            fx:controller="application.controllers.personal.FormEmpleadoController"
             styleClass="scroll-form">
 
     <VBox spacing="24" styleClass="form-panel" alignment="TOP_LEFT">

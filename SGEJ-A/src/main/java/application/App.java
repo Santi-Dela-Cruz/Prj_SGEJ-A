@@ -1,5 +1,6 @@
 package application;
 
+import application.database.DatabaseConnection;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -20,6 +21,9 @@ public class App extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        // Inicializar la base de datos
+        DatabaseConnection.initializeDatabase();
+        
         // Usamos StageStyle.UNDECORATED para quitar la barra de título predeterminada de Windows
         primaryStage.initStyle(StageStyle.UNDECORATED);
         //primaryStage.setResizable(true); // La ventana es redimensionable

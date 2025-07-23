@@ -9,7 +9,7 @@
       <?import javafx.scene.text.Font?>
       <?import javafx.scene.text.Text?>
 
-      <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.ModuloUsuarioController">
+      <AnchorPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application.controllers.administracion_sistema.ModuloUsuarioController">
           <children>
               <!-- Title Panel Centered at the Top -->
               <Pane fx:id="pnl_Title"

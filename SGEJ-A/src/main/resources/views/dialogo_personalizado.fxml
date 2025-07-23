@@ -4,32 +4,77 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.geometry.*?>
+<?import javafx.scene.shape.*?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml" fx:id="rootPane"
             fx:controller="application.controllers.DialogoPersonalizadoController"
-            style="-fx-background-color: #f8f9fa; -fx-background-radius: 18; -fx-border-radius: 18;"
-            styleClass="dialog-container"
-            prefWidth="420" prefHeight="220">
+            style="-fx-background-color: transparent;"
+            prefWidth="400" prefHeight="220"
+            stylesheets="/styles/dialogo_personalizado.css">
 
-    <!-- Barra superior -->
-    <HBox fx:id="titleBar" styleClass="dialog-title-bar" spacing="8" alignment="CENTER_LEFT"
-          AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-        <Label fx:id="lbl_Titulo" styleClass="dialog-title"/>
-        <Region HBox.hgrow="ALWAYS"/>
-        <Button fx:id="btn_Cerrar" text="✕" onAction="#cerrarDialogo" styleClass="dialog-close-button"/>
-    </HBox>
-
-    <!-- Contenido -->
-    <VBox spacing="20" alignment="TOP_LEFT"
-          AnchorPane.topAnchor="80" AnchorPane.bottomAnchor="60"
-          AnchorPane.leftAnchor="20" AnchorPane.rightAnchor="20">
-        <HBox spacing="12" alignment="TOP_LEFT">
-            <ImageView fx:id="img_IconoContenido" fitWidth="40" fitHeight="40"/>
-            <Label fx:id="lbl_Mensaje" wrapText="true" styleClass="dialog-message"/>
+    <!-- Contenedor principal con sombra -->
+    <VBox fx:id="mainContainer" style="-fx-background-color: #fafbfc; -fx-background-radius: 10 10 10 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 12, 0.2, 0, 4);" 
+          AnchorPane.topAnchor="0" AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        
+        <!-- Barra superior con gradiente suave -->
+        <HBox fx:id="titleBar" spacing="10" alignment="CENTER" 
+              style="-fx-background-color: linear-gradient(to right, #475569, #64748b, #94a3b8); -fx-background-radius: 10 10 0 0; -fx-padding: 14 18 14 18; -fx-min-height: 55;">
+            <children>
+                <!-- Información del título -->
+                <VBox spacing="2" alignment="CENTER" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label fx:id="lbl_Titulo" text="Diálogo Personalizado" 
+                               style="-fx-text-fill: white; -fx-font-size: 15px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 1, 0, 0, 1);"/>
+                        <Label fx:id="lbl_Subtitulo" text="Panel de Mensaje" 
+                               style="-fx-text-fill: #cbd5e1; -fx-font-size: 10px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-style: italic;"/>
+                    </children>
+                </VBox>
+                
+                <!-- Botón cerrar mejorado -->
+                <Region HBox.hgrow="ALWAYS"/>
+                            <Button fx:id="btn_Cerrar" text="×" onAction="#cerrarDialogo"/>
+            </children>
         </HBox>
+        
+        <!-- Línea decorativa suave -->
+        <Pane prefHeight="2" style="-fx-background-color: linear-gradient(to right, #94a3b8, #64748b, #475569);"/>
+        
+        <!-- Área de contenido con botones integrados -->
+        <VBox spacing="18" alignment="CENTER" style="-fx-padding: 22 22 22 22; -fx-background-radius: 0 0 10 10;" VBox.vgrow="ALWAYS">
+            <children>
+                <!-- Contenedor del mensaje con icono -->
+                <HBox spacing="12" alignment="TOP_LEFT" style="-fx-padding: 0;">
+                    <children>
+                        <!-- Contenedor del icono con fondo -->
+                        <HBox alignment="CENTER" spacing="0">
+                            <children>
+                                <Pane fx:id="iconContainer" styleClass="dialog-icon-container" prefWidth="45" prefHeight="45">
+                                    <children>
+                                        <ImageView fx:id="img_IconoContenido" styleClass="dialog-icon-image" alignment="CENTER"/>
+                                    </children>
+                                </Pane>
+                            </children>
+                        </HBox>
+                        <!-- Mensaje -->
+                        <VBox spacing="4" alignment="TOP_LEFT" HBox.hgrow="ALWAYS" VBox.vgrow="ALWAYS">
+                            <children>
+                                <Label fx:id="lbl_TituloMensaje" text="Información" 
+                                       style="-fx-text-fill: #d69e2e; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-padding: 0 0 2 0;"/>
+                                <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent; -fx-padding: 0;">
+                                    <content>
+                                        <Label fx:id="lbl_Mensaje" wrapText="true" 
+                                               style="-fx-text-fill: #475569; -fx-font-size: 12px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-line-spacing: 1; -fx-padding: 0 0 0 0;"
+                                               text="Este es el mensaje del diálogo personalizado." VBox.vgrow="ALWAYS"/>
+                                    </content>
+                                </ScrollPane>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                
+                <!-- Área de botones centrada -->
+                <HBox fx:id="contenedorBotones" spacing="10" alignment="CENTER" style="-fx-background-radius: 0 0 10 10;"/>
+            </children>
+        </VBox>
     </VBox>
-
-    <!-- Botones -->
-    <HBox fx:id="contenedorBotones" spacing="10" alignment="CENTER_RIGHT"
-          AnchorPane.bottomAnchor="20" AnchorPane.rightAnchor="20" />
 </AnchorPane>

@@ -1,0 +1,49 @@
+/* Estilos para el icono de advertencia y su contenedor circular */
+
+.dialog-icon-container {
+  -fx-background-color: #fffbe6;
+  -fx-background-radius: 50;
+  -fx-border-radius: 50;
+  -fx-border-color: #facc15;
+  -fx-border-width: 2;
+  -fx-pref-width: 45;
+  -fx-pref-height: 45;
+  -fx-max-width: 45;
+  -fx-max-height: 45;
+  -fx-min-width: 45;
+  -fx-min-height: 45;
+  -fx-padding: 0;
+  -fx-alignment: center;
+  -fx-position: relative;
+}
+
+.dialog-icon-image {
+  -fx-fit-width: 40;
+  -fx-fit-height: 40;
+  -fx-alignment: center;
+  -fx-padding: 0;
+}
+
+/* Botón cerrar: X siempre visible, incluso en hover */
+#btn_Cerrar {
+  -fx-background-color: #e53e3e;
+  -fx-text-fill: #fff;
+  -fx-font-size: 22px;
+  -fx-font-weight: bold;
+  -fx-background-radius: 38;
+  -fx-border-color: #c53030;
+  -fx-border-width: 2;
+  -fx-border-radius: 38;
+  -fx-cursor: hand;
+  -fx-pref-width: 38;
+  -fx-pref-height: 38;
+  /* Solo prefWidth/prefHeight para evitar saltos */
+  -fx-padding: 0;
+  -fx-font-family: "Segoe UI", Arial, sans-serif;
+  -fx-alignment: center;
+  -fx-effect: none;
+}
+
+#btn_Cerrar:hover {
+  /* Sin efecto hover, mantiene el mismo estilo que el estado normal */
+}

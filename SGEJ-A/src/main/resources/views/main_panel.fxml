@@ -7,7 +7,7 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="581.0" prefWidth="860.0"
+<AnchorPane prefHeight="700.0" prefWidth="1400.0"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="application.controllers.MainController">
@@ -57,7 +57,8 @@
             <AnchorPane fx:id="pnl_Forms"
                         visible="false"
                         managed="false"
-                        prefWidth="500.0"
+                        prefWidth="1200.0"
+                        minWidth="1200.0"
                         AnchorPane.topAnchor="0.0"
                         AnchorPane.bottomAnchor="0.0"
                         AnchorPane.rightAnchor="0.0"

@@ -47,12 +47,12 @@ public class LoginController {
             stage.setY(event.getScreenY() - yOffset);
         });
 
-        closeButton.setOnAction(event -> {
+        closeButton.setOnAction(_ -> {
             Stage stage = (Stage) closeButton.getScene().getWindow();
             stage.close();
         });
 
-        minimizeButton.setOnAction(event -> {
+        minimizeButton.setOnAction(_ -> {
             Stage stage = (Stage) minimizeButton.getScene().getWindow();
             stage.setIconified(true);
         });

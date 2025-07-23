@@ -1,5 +1,14 @@
 package application.controllers;
 
+import application.controllers.administracion_sistema.ModuloParametrosController;
+import application.controllers.administracion_sistema.ModuloUsuarioController;
+import application.controllers.casos_documentacion.ModuloBitacoraController;
+import application.controllers.casos_documentacion.ModuloCasosController;
+import application.controllers.casos_documentacion.ModuloDocumentosController;
+import application.controllers.casos_documentacion.ModuloHistorialController;
+import application.controllers.cliente.ModuloClienteController;
+import application.controllers.facturacion.ModuloFacturaController;
+import application.controllers.personal.ModuloEmpleadoController;
 import javafx.animation.PauseTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -158,7 +167,10 @@ public class MainController {
             Node modulo = loader.load();
 
             Object controller = loader.getController();
-            if (controller instanceof ModuloClienteController c) c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloClienteController c) {
+                c.setFormularioContainer(pnl_Forms);
+                if (tipoUsuario != null) c.configurarPorRol(tipoUsuario);
+            }
             if (controller instanceof ModuloCasosController c) c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloDocumentosController c) c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloHistorialController c) c.setFormularioContainer(pnl_Forms);

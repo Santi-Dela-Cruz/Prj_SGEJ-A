@@ -2,6 +2,204 @@
    ESTILOS BASE - INTERFAZ TIPO WINDOWS MODERNA Y MINIMALISTA
 ============================================================================ */
 
+/* ===== ESTILOS PARA COMBOS MEJORADOS ===== */
+
+/* ===== ESTILOS PARA MÓDULOS MEJORADOS ===== */
+
+/* Header de módulos con gradiente profesional */
+.modulo-header {
+    -fx-background-color: linear-gradient(to bottom, #1e3a8a, #2563eb, #3b82f6);
+    -fx-background-radius: 0 0 20 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 0, 3);
+}
+
+/* Panel de control mejorado */
+.control-panel-profesional {
+    -fx-background-color: white;
+    -fx-background-radius: 15;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 2);
+    -fx-padding: 20;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 1;
+    -fx-border-radius: 15;
+}
+
+/* Botones con gradiente para módulos */
+.boton-buscar-profesional {
+    -fx-background-color: linear-gradient(to bottom, #3b82f6, #2563eb);
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 4, 0, 0, 2);
+}
+
+.boton-limpiar-profesional {
+    -fx-background-color: linear-gradient(to bottom, #6b7280, #4b5563);
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(107, 114, 128, 0.4), 4, 0, 0, 2);
+}
+
+.boton-nuevo-profesional {
+    -fx-background-color: linear-gradient(to bottom, #10b981, #059669);
+    -fx-text-fill: white;
+    -fx-background-radius: 10;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);
+}
+
+/* Campo de búsqueda mejorado */
+.campo-busqueda-profesional {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+    -fx-padding: 12;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);
+}
+
+/* Separador colorido */
+.separador-colorido {
+    -fx-background-color: linear-gradient(to right, #3b82f6, #10b981, #f59e0b);
+    -fx-pref-height: 2;
+}
+
+/* Badge indicador */
+.badge-indicador {
+    -fx-background-color: linear-gradient(to right, #10b981, #059669);
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.3), 3, 0, 0, 1);
+}
+
+/* Hover effects para botones */
+.boton-buscar-profesional:hover {
+    -fx-background-color: linear-gradient(to bottom, #2563eb, #1d4ed8);
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.6), 6, 0, 0, 3);
+}
+
+.boton-limpiar-profesional:hover {
+    -fx-background-color: linear-gradient(to bottom, #4b5563, #374151);
+    -fx-effect: dropshadow(gaussian, rgba(107, 114, 128, 0.6), 6, 0, 0, 3);
+}
+
+.boton-nuevo-profesional:hover {
+    -fx-background-color: linear-gradient(to bottom, #059669, #047857);
+    -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.6), 6, 0, 0, 3);
+}
+
+/* ===== ESTILOS PARA COMBOBOX DE FILTRO ===== */
+
+/* ComboBox de filtro para administradores */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);
+    -fx-text-fill: #374151;
+    -fx-font-weight: bold;
+    -fx-padding: 2 8;
+    -fx-alignment: center-left;
+}
+
+.combo-box:hover {
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 4, 0, 0, 1);
+}
+
+.combo-box:focused {
+    -fx-border-color: #2563eb;
+    -fx-effect: dropshadow(gaussian, rgba(37, 99, 235, 0.4), 4, 0, 0, 1);
+}
+
+/* Texto del ComboBox */
+.combo-box .text-input {
+    -fx-text-fill: #374151;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-font-weight: bold;
+    -fx-padding: 4 8;
+    -fx-alignment: center-left;
+}
+
+/* Lista desplegable */
+.combo-box .list-cell {
+    -fx-text-fill: #374151;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-font-weight: normal;
+    -fx-padding: 6 12;
+    -fx-alignment: center-left;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #f3f4f6;
+    -fx-text-fill: #1f2937;
+}
+
+.combo-box .list-cell:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+/* Arrow button del ComboBox */
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 0 8;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #6b7280;
+    -fx-shape: "M 0 2 L 4 6 L 8 2 Z";
+    -fx-scale-shape: true;
+    -fx-scale-x: 0.8;
+    -fx-scale-y: 0.8;
+}
+
+.combo-box:hover .arrow {
+    -fx-background-color: #3b82f6;
+}
+
+/* Popup de la lista */
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 4);
+}
+
+/* Línea decorativa superior */
+.linea-decorativa {
+    -fx-background-color: linear-gradient(to right, #f59e0b, #10b981, #3b82f6);
+}
+
+/* Estilos para tabla mejorada */
+.tabla-profesional {
+    -fx-background-color: transparent;
+    -fx-table-cell-border-color: #e2e8f0;
+    -fx-selection-bar: linear-gradient(to right, #3b82f6, #2563eb);
+    -fx-selection-bar-non-focused: #93c5fd;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-radius: 10;
+}
 
 /* ============================================================================
    BARRA SUPERIOR PERSONALIZADA
@@ -899,7 +1097,203 @@
 
 
 /* ============================================================================
-   ESTILOS PARA DIALOGS PERSONALIZADOS
+   ESTILOS PARA DIALOGS PERSONALIZADOS PROFESIONALES
+============================================================================ */
+
+/* Contenedor principal del diálogo */
+.dialog-main-container {
+    -fx-background-color: white;
+    -fx-background-radius: 20;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 20, 0.3, 0, 8);
+}
+
+/* Barra de título del diálogo */
+.dialog-title-bar-professional {
+    -fx-background-color: linear-gradient(to right, #1e3a8a, #2563eb, #3b82f6);
+    -fx-background-radius: 20 20 0 0;
+    -fx-padding: 20 25;
+    -fx-min-height: 70;
+}
+
+/* Título principal del diálogo */
+.dialog-title-professional {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);
+}
+
+/* Subtítulo del diálogo */
+.dialog-subtitle-professional {
+    -fx-text-fill: #cbd5e1;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-font-style: italic;
+}
+
+/* Contenedor de icono con fondo */
+.dialog-icon-container {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-background-radius: 25;
+    -fx-padding: 10;
+}
+
+/* Botón cerrar del diálogo */
+.dialog-close-button-professional {
+    -fx-background-color: rgba(255,255,255,0.1);
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 20;
+    -fx-border-color: rgba(255,255,255,0.2);
+    -fx-border-width: 1;
+    -fx-border-radius: 20;
+    -fx-cursor: hand;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-max-width: 40;
+    -fx-max-height: 40;
+}
+
+.dialog-close-button-professional:hover {
+    -fx-background-color: rgba(239, 68, 68, 0.8);
+    -fx-text-fill: white;
+    -fx-border-color: rgba(255,255,255,0.3);
+}
+
+/* Área de contenido del diálogo */
+.dialog-content-area {
+    -fx-padding: 30 30 20 30;
+    -fx-background-color: white;
+}
+
+/* Mensaje del diálogo */
+.dialog-message-professional {
+    -fx-text-fill: #374151;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-line-spacing: 2;
+    -fx-wrap-text: true;
+}
+
+/* Título del mensaje */
+.dialog-message-title {
+    -fx-text-fill: #1e40af;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Área de botones del diálogo */
+.dialog-buttons-area {
+    -fx-padding: 20 30 25 30;
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 0 0 20 20;
+}
+
+/* Botones del diálogo */
+.dialog-button-primary {
+    -fx-background-color: linear-gradient(to bottom, #3b82f6, #2563eb);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-cursor: hand;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 10 20;
+    -fx-min-width: 100;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+.dialog-button-primary:hover {
+    -fx-background-color: linear-gradient(to bottom, #2563eb, #1d4ed8);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 6, 0, 0, 3);
+}
+
+.dialog-button-danger {
+    -fx-background-color: linear-gradient(to bottom, #dc2626, #b91c1c);
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-cursor: hand;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-padding: 10 20;
+    -fx-min-width: 100;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+.dialog-button-danger:hover {
+    -fx-background-color: linear-gradient(to bottom, #b91c1c, #991b1b);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 6, 0, 0, 3);
+}
+
+.dialog-button-secondary {
+    -fx-background-color: linear-gradient(to bottom, #f8fafc, #f1f5f9);
+    -fx-text-fill: #374151;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-cursor: hand;
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: #d1d5db;
+    -fx-border-width: 1;
+    -fx-padding: 10 20;
+    -fx-min-width: 100;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+}
+
+.dialog-button-secondary:hover {
+    -fx-background-color: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+    -fx-border-color: #9ca3af;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 6, 0, 0, 3);
+}
+
+/* Línea decorativa del diálogo */
+.dialog-decorative-line {
+    -fx-background-color: linear-gradient(to right, #f59e0b, #10b981, #3b82f6);
+    -fx-pref-height: 3;
+}
+
+/* Contenedores de iconos según tipo */
+.dialog-icon-info {
+    -fx-background-color: #f0f9ff;
+    -fx-border-color: #3b82f6;
+    -fx-border-width: 2;
+    -fx-border-radius: 30;
+    -fx-background-radius: 30;
+}
+
+.dialog-icon-error {
+    -fx-background-color: #fef2f2;
+    -fx-border-color: #dc2626;
+    -fx-border-width: 2;
+    -fx-border-radius: 30;
+    -fx-background-radius: 30;
+}
+
+.dialog-icon-warning {
+    -fx-background-color: #fffbeb;
+    -fx-border-color: #f59e0b;
+    -fx-border-width: 2;
+    -fx-border-radius: 30;
+    -fx-background-radius: 30;
+}
+
+.dialog-icon-confirm {
+    -fx-background-color: #f0fdf4;
+    -fx-border-color: #10b981;
+    -fx-border-width: 2;
+    -fx-border-radius: 30;
+    -fx-background-radius: 30;
+}
+
+/* ============================================================================
+   ESTILOS PARA DIALOGS PERSONALIZADOS (LEGACY)
 ============================================================================ */
 .dialog-container {
     -fx-background-color: #f8f9fa;
@@ -913,8 +1307,6 @@
     -fx-padding: 8 12;
     -fx-background-radius: 18 18 0 0;
 }
-
-
 
 .dialog-title {
     -fx-text-fill: white;
@@ -937,5 +1329,432 @@
 .dialog-message {
     -fx-font-size: 13px;
     -fx-text-fill: #333;
+}
+
+/* ============================================================================
+   ESTILOS MEJORADOS PARA TABLAS
+============================================================================ */
+
+/* Tabla principal */
+.table-view {
+    -fx-background-color: transparent;
+    -fx-table-cell-border-color: #e2e8f0;
+    -fx-selection-bar: #3b82f6;
+    -fx-selection-bar-non-focused: #93c5fd;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-font-size: 12px;
+}
+
+/* Encabezados de columna */
+.table-view .column-header {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 8 12;
+    -fx-font-weight: bold;
+    -fx-font-size: 11px;
+    -fx-text-fill: #374151;
+}
+
+.table-view .column-header:hover {
+    -fx-background-color: #f1f5f9;
+}
+
+/* Celdas de la tabla */
+.table-view .table-cell {
+    -fx-padding: 6 12;
+    -fx-border-color: #f1f5f9;
+    -fx-border-width: 0 0 1 0;
+    -fx-background-color: white;
+    -fx-text-fill: #374151;
+}
+
+.table-view .table-row-cell:hover .table-cell {
+    -fx-background-color: #f8fafc;
+}
+
+.table-view .table-row-cell:selected .table-cell {
+    -fx-background-color: #dbeafe;
+    -fx-text-fill: #1e40af;
+}
+
+/* Botones en tabla específicamente */
+.table-button {
+    -fx-background-radius: 4;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-min-width: 55;
+    -fx-max-width: 55;
+    -fx-min-height: 25;
+    -fx-max-height: 25;
+    -fx-cursor: hand;
+    -fx-padding: 0;
+}
+
+.table-button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);
+}
+
+/* Scroll bar para tablas */
+.table-view .scroll-bar:vertical {
+    -fx-background-color: #f8fafc;
+    -fx-background-radius: 0;
+    -fx-min-width: 8;
+    -fx-max-width: 8;
+}
+
+.table-view .scroll-bar:vertical .thumb {
+    -fx-background-color: #cbd5e1;
+    -fx-background-radius: 4;
+    -fx-min-height: 30;
+}
+
+.table-view .scroll-bar:vertical .thumb:hover {
+    -fx-background-color: #94a3b8;
+}
+
+/* ============================================================================
+   ESTILOS PARA BÚSQUEDA MEJORADA
+============================================================================ */
+
+/* Barra de búsqueda más amplia */
+.search-text-field {
+    -fx-background-color: #f7fafc;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 8 12;
+    -fx-font-size: 13px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-min-width: 300;
+}
+
+.search-text-field:focused {
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 4, 0, 0, 0);
+}
+
+/* Botón limpiar filtro */
+.clear-filter-button {
+    -fx-background-color: #6b7280;
+    -fx-text-fill: white;
+    -fx-background-radius: 6;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-cursor: hand;
+    -fx-padding: 8 12;
+}
+
+.clear-filter-button:hover {
+    -fx-background-color: #4b5563;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+}
+
+/* Mejoras para ComboBox */
+.combo-box {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-min-height: 38;
+    -fx-max-height: 38;
+}
+
+.combo-box:focused {
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 4, 0, 0, 0);
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #374151;
+    -fx-padding: 10 12;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #f3f4f6;
+}
+
+.combo-box .list-cell:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+}
+
+/* Mejorar el desplegable del ComboBox */
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 6, 0, 0, 2);
+    -fx-padding: 5;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-padding: 12 15;
+    -fx-font-size: 14px;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #f8fafc;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+}
+
+/* ============================================================================
+   ESTILOS PARA FORMULARIOS JURÍDICOS
+============================================================================ */
+
+/* Campos de texto mejorados */
+.text-field {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-min-height: 38;
+    -fx-max-height: 38;
+    -fx-text-fill: #374151;
+}
+
+.text-field:focused {
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 4, 0, 0, 0);
+}
+
+.text-field:hover {
+    -fx-border-color: #9ca3af;
+}
+
+/* DatePicker mejorado */
+.date-picker {
+    -fx-background-color: #f8fafc;
+    -fx-border-color: #d1d5db;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 10;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-min-height: 38;
+    -fx-max-height: 38;
+}
+
+.date-picker:focused {
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 4, 0, 0, 0);
+}
+
+.date-picker .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-radius: 0;
+    -fx-background-radius: 0;
+    -fx-padding: 0;
+}
+
+/* Botones mejorados */
+.button {
+    -fx-background-radius: 10;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+    -fx-cursor: hand;
+    -fx-border-width: 0;
+    -fx-min-height: 45;
+}
+
+.button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 6, 0, 0, 2);
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
+}
+
+.button:pressed {
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+/* Estilos específicos para paneles jurídicos */
+.juridico-panel {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 2);
+    -fx-padding: 25;
+    -fx-border-width: 2;
+    -fx-border-radius: 12;
+}
+
+.juridico-panel-natural {
+    -fx-border-color: #10b981;
+}
+
+.juridico-panel-juridica {
+    -fx-border-color: #f59e0b;
+}
+
+/* Labels mejorados */
+.label {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #374151;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Separadores estilizados */
+.separator {
+    -fx-background-color: #e2e8f0;
+}
+
+/* ===== ESTILOS MEJORADOS PARA COMBOBOX ===== */
+.combo-box-profesional .arrow-button {
+    -fx-background-color: transparent;
+    -fx-padding: 5;
+    -fx-background-radius: 0 8 8 0;
+}
+
+.combo-box-profesional .arrow {
+    -fx-background-color: #4a5568;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z";
+    -fx-scale-shape: true;
+    -fx-padding: 3;
+}
+
+/* Estilos para el popup del ComboBox */
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e0;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2);
+    -fx-max-height: 200;
+    -fx-pref-height: 200;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: white;
+    -fx-text-fill: #374151;
+    -fx-font-size: 14px;
+    -fx-padding: 8 12 8 12;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: #f3f4f6;
+}
+
+.combo-box-popup .list-view .list-cell:selected {
+    -fx-background-color: #3b82f6;
+    -fx-text-fill: white;
+}
+
+/* ===== ESTILOS PARA ETIQUETAS MEJORADAS ===== */
+.label {
+    -fx-wrap-text: true;
+    -fx-text-alignment: left;
+    -fx-alignment: center-left;
+}
+
+/* ===== ESTILOS PARA CONTENEDORES DE FORMULARIO ===== */
+.form-container {
+    -fx-pref-width: 900;
+}
+
+.grid-pane {
+    -fx-pref-width: 840;
+}
+
+/* ===== ESTILOS ESPECÍFICOS PARA ELEMENTOS DEL FORMULARIO ===== */
+.combo-box-profesional {
+    -fx-pref-width: 270;
+}
+
+.combo-box-profesional .text {
+    -fx-fill: #374151;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.combo-box-profesional .prompt-text {
+    -fx-fill: #9ca3af;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Asegurar que los ComboBox muestren el dropdown correctamente */
+.combo-box-base {
+    -fx-background-color: white;
+    -fx-border-color: #cbd5e0;
+    -fx-border-width: 2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-padding: 12;
+    -fx-font-size: 14px;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.combo-box-base:showing {
+    -fx-border-color: #3b82f6;
+    -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.3), 4, 0, 0, 1);
+}
+
+.combo-box-base .arrow-button:hover {
+    -fx-background-color: #f3f4f6;
+}
+
+.combo-box-base .arrow-button:pressed {
+    -fx-background-color: #e5e7eb;
+}
+
+/* Estilos para mejorar la visibilidad del contenido */
+.combo-box-base .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #374151;
+    -fx-font-size: 14px;
+    -fx-padding: 8 12 8 12;
+}
+
+.combo-box-base .list-cell:empty {
+    -fx-background-color: transparent;
+}
+
+.combo-box-base .list-cell:filled {
+    -fx-background-color: transparent;
+    -fx-text-fill: #374151;
+}
+
+/* Forzar que las etiquetas no se corten */
+.label {
+    -fx-ellipsis-string: "";
+    -fx-text-overrun: clip;
+    -fx-content-display: text-only;
+}
+
+/* Estilos específicos para mejorar el layout */
+.grid-pane .label {
+    -fx-min-height: 30;
+    -fx-pref-height: 30;
+    -fx-max-height: 30;
+}
+
+.grid-pane .text-field,
+.grid-pane .combo-box {
+    -fx-min-height: 40;
+    -fx-pref-height: 40;
+    -fx-max-height: 40;
 }
 

@@ -8,7 +8,7 @@
 <AnchorPane prefHeight="600.0" prefWidth="480.0" styleClass="form-container"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="application.controllers.FormParametroController">
+            fx:controller="application.controllers.administracion_sistema.FormParametroController">
 
     <!-- Title in a colored panel -->
     <StackPane fx:id="pnl_Title"
