@@ -1,68 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="application.controllers.casos_documentacion.ModuloCasosController"
-            AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-    <children>
-        <!-- Title Panel Centered at the Top -->
-        <Pane fx:id="pnl_Title"
-              prefHeight="44.0"
-              style="-fx-background-color: #14213d; -fx-background-radius: 16; -fx-border-radius: 16;"
-              AnchorPane.leftAnchor="14.0"
-              AnchorPane.rightAnchor="2.0"
-              AnchorPane.topAnchor="4.0">
-            <children>
-                <Text fill="WHITE"
-                      text="Gestión de Casos"
-                      style="-fx-font-size: 16.0; -fx-font-weight: bold;"
-                      layoutY="28.0"
-                      layoutX="50.0">
-                    <font>
-                        <Font size="16.0" />
-                    </font>
-                </Text>
-            </children>
-        </Pane>
+<StackPane xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="application.controllers.casos_documentacion.ModuloCasosController"
+           prefWidth="800.0" prefHeight="500.0">
+    <!-- Panel de lista de casos -->
+    <AnchorPane fx:id="pnl_ListView" visible="true" managed="true"
+                AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <children>
+            <Pane fx:id="pnl_Title"
+                  prefHeight="44.0"
+                  style="-fx-background-color: #14213d; -fx-background-radius: 16; -fx-border-radius: 16;"
+                  AnchorPane.leftAnchor="14.0"
+                  AnchorPane.rightAnchor="2.0"
+                  AnchorPane.topAnchor="4.0">
+                <children>
+                    <Text fill="WHITE"
+                          text="Gestión de Casos"
+                          style="-fx-font-size: 16.0; -fx-font-weight: bold;"
+                          layoutY="28.0"
+                          layoutX="50.0">
+                        <font>
+                            <Font size="16.0" />
+                        </font>
+                    </Text>
+                </children>
+            </Pane>
 
-        <TextField fx:id="txtf_Buscar"
-                   AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="14.0"
-                   prefHeight="26.0" prefWidth="335.0"
-                   promptText="Buscar por expediente, título..." />
+            <TextField fx:id="txtf_Buscar"
+                       AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="14.0"
+                       prefHeight="26.0" prefWidth="335.0"
+                       promptText="Buscar por expediente, título..." />
 
-        <Button fx:id="btn_Buscar"
-                text="Buscar"
-                maxWidth="100" styleClass="button-windows,button-windows-blue"
-                AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="360.0" />
+            <Button fx:id="btn_Buscar"
+                    text="Buscar"
+                    maxWidth="100" styleClass="button-windows,button-windows-blue"
+                    AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="360.0" />
 
-        <Button fx:id="btn_Nuevo"
-                text="Nuevo"
-                maxWidth="100" styleClass="button-windows,button-windows-blue"
-                AnchorPane.topAnchor="54.0" AnchorPane.rightAnchor="14.0" />
+            <Button fx:id="btn_Nuevo"
+                    text="Nuevo"
+                    maxWidth="100" styleClass="button-windows,button-windows-blue"
+                    AnchorPane.topAnchor="54.0" AnchorPane.rightAnchor="14.0" />
 
-        <TableView fx:id="tb_Casos"
-                   AnchorPane.topAnchor="105.0" AnchorPane.leftAnchor="14.0"
-                   AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
-            <columns>
-                <TableColumn fx:id="tbc_NumeroExpediente" text="Número de expediente" />
-                <TableColumn fx:id="tbc_TituloCaso" text="Título del caso" />
-                <TableColumn fx:id="tbc_TipoCaso" text="Tipo de caso" />
-                <TableColumn fx:id="tbc_FechaInicio" text="Fecha de inicio" />
-                <TableColumn fx:id="tbc_AbogadoAsignado" text="Abogado asignado" />
-                <TableColumn fx:id="tbc_Estado" text="Estado" />
-                <TableColumn fx:id="tbc_BotonEditar" styleClass="column-action" text=" " prefWidth="40"/>
-                <TableColumn fx:id="tbc_ButonVisualizar" styleClass="column-action" text=" " prefWidth="40"/>
-            </columns>
-            <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-            </columnResizePolicy>
-        </TableView>
-    </children>
-</AnchorPane>
+            <TableView fx:id="tb_Casos"
+                       AnchorPane.topAnchor="105.0" AnchorPane.leftAnchor="14.0"
+                       AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
+                <columns>
+                    <TableColumn fx:id="tbc_NumeroExpediente" text="Número de expediente" />
+                    <TableColumn fx:id="tbc_TituloCaso" text="Título del caso" />
+                    <TableColumn fx:id="tbc_TipoCaso" text="Tipo de caso" />
+                    <TableColumn fx:id="tbc_FechaInicio" text="Fecha de inicio" />
+                    <TableColumn fx:id="tbc_AbogadoAsignado" text="Abogado asignado" />
+                    <TableColumn fx:id="tbc_Estado" text="Estado" />
+                    <TableColumn fx:id="tbc_BotonEditar" styleClass="column-action" text=" " prefWidth="40"/>
+                    <TableColumn fx:id="tbc_ButonVisualizar" styleClass="column-action" text=" " prefWidth="40"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </children>
+    </AnchorPane>
+    <!-- Panel de detalle y bitácora -->
+    <AnchorPane fx:id="pnl_DetalleView" visible="false" managed="false"
+                AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" />
+</StackPane>

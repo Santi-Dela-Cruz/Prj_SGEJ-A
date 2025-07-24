@@ -11,26 +11,79 @@ import javafx.scene.layout.Pane;
 import java.io.IOException;
 
 public class ModuloCasosController {
+    // Referencia al panel principal de módulos
+    private AnchorPane pnl_Modulos;
 
-    @FXML private TextField txtf_Buscar;
-    @FXML private Button btn_Buscar, btn_Nuevo;
-    @FXML private TableView<CasoDemo> tb_Casos;
-    @FXML private TableColumn<CasoDemo, String> tbc_NumeroExpediente, tbc_TituloCaso, tbc_TipoCaso,
-            tbc_FechaInicio, tbc_AbogadoAsignado, tbc_Estado;
-    @FXML private TableColumn<CasoDemo, Void> tbc_BotonEditar, tbc_ButonVisualizar;
+    // Permite inyectar el panel desde MainController
+    public void setPanelModulos(AnchorPane panel) {
+        this.pnl_Modulos = panel;
+    }
 
-    private Pane pnl_Forms;
+    @FXML
+    private Button btn_Nuevo;
+    @FXML
+    private TableColumn<CasoDemo, String> tbc_NumeroExpediente, tbc_TituloCaso, tbc_TipoCaso, tbc_FechaInicio,
+            tbc_AbogadoAsignado, tbc_Estado;
+    @FXML
+    private TableColumn<CasoDemo, Void> tbc_BotonEditar, tbc_ButonVisualizar;
+    @FXML
+    private AnchorPane pnl_ListView;
+    @FXML
+    private AnchorPane pnl_DetalleView;
+    @FXML
+    private TableView<CasoDemo> tb_Casos;
 
-    public void setFormularioContainer(Pane pnl_Forms) {
-        this.pnl_Forms = pnl_Forms;
+    // Muestra la vista de detalle y la bitácora del caso seleccionado
+    private void mostrarDetalleYBitacora(CasoDemo caso) {
+        try {
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/casos_documentos/detalle_caso_bitacora.fxml"));
+            Node detalle = loader.load();
+            DetalleCasoBitacoraController controller = loader.getController();
+            controller.setCaso(caso);
+            controller.setOnRegresar(() -> cerrarDetalleYMostrarCasos());
+
+            if (pnl_Modulos != null) {
+                AnchorPane.setTopAnchor(detalle, 0.0);
+                AnchorPane.setBottomAnchor(detalle, 0.0);
+                AnchorPane.setLeftAnchor(detalle, 0.0);
+                AnchorPane.setRightAnchor(detalle, 0.0);
+                pnl_Modulos.getChildren().setAll(detalle);
+            } else {
+                pnl_DetalleView.getChildren().setAll(detalle);
+                pnl_DetalleView.setVisible(true);
+                pnl_DetalleView.setManaged(true);
+                pnl_ListView.setVisible(false);
+                pnl_ListView.setManaged(false);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cerrarDetalleYMostrarCasos() {
+        pnl_DetalleView.getChildren().clear();
+        pnl_DetalleView.setVisible(false);
+        pnl_DetalleView.setManaged(false);
+        pnl_ListView.setVisible(true);
+        pnl_ListView.setManaged(true);
     }
 
     @FXML
     private void initialize() {
+        tb_Casos.setRowFactory(tv -> {
+            TableRow<CasoDemo> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    CasoDemo caso = row.getItem();
+                    mostrarDetalleYBitacora(caso);
+                }
+            });
+            return row;
+        });
         configurarColumnas();
         inicializarColumnasDeBotones();
         cargarDatosEjemplo();
-
         btn_Nuevo.setOnAction(e -> mostrarFormulario(null, "NUEVO"));
     }
 
@@ -53,12 +106,10 @@ public class ModuloCasosController {
             final Button btn = new Button(texto);
 
             {
-                btn.getStyleClass().add("table-button");
                 btn.setTooltip(new Tooltip(tooltip));
                 btn.setOnAction(e -> {
                     CasoDemo caso = getTableView().getItems().get(getIndex());
-                    if (tooltip.equals("Editar")) mostrarFormulario(caso, "EDITAR");
-                    else mostrarFormulario(caso, "VER");
+                    mostrarDetalleYBitacora(caso);
                 });
             }
 
@@ -87,18 +138,14 @@ public class ModuloCasosController {
                         caso.titulo(),
                         caso.tipo(),
                         caso.fecha(),
-                        caso.estado()
-                );
+                        caso.estado());
             }
 
-            AnchorPane.setTopAnchor(form, 0.0);
-            AnchorPane.setBottomAnchor(form, 0.0);
-            AnchorPane.setLeftAnchor(form, 0.0);
-            AnchorPane.setRightAnchor(form, 0.0);
-
-            pnl_Forms.getChildren().setAll(form);
-            pnl_Forms.setVisible(true);
-            pnl_Forms.setManaged(true);
+            pnl_DetalleView.getChildren().setAll(form);
+            pnl_DetalleView.setVisible(true);
+            pnl_DetalleView.setManaged(true);
+            pnl_ListView.setVisible(false);
+            pnl_ListView.setManaged(false);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -106,16 +153,21 @@ public class ModuloCasosController {
     }
 
     private void cerrarFormulario() {
-        pnl_Forms.getChildren().clear();
-        pnl_Forms.setVisible(false);
-        pnl_Forms.setManaged(false);
+        pnl_DetalleView.getChildren().clear();
+        pnl_DetalleView.setVisible(false);
+        pnl_DetalleView.setManaged(false);
+        pnl_ListView.setVisible(true);
+        pnl_ListView.setManaged(true);
+        if (tb_Casos != null) {
+            tb_Casos.setVisible(true);
+            tb_Casos.setManaged(true);
+        }
     }
 
     private void cargarDatosEjemplo() {
         tb_Casos.getItems().addAll(
                 new CasoDemo("EXP001", "Caso Morales", "Civil", "2024-05-01", "Dra. Paredes", "Abierto"),
-                new CasoDemo("EXP002", "Caso Rivera", "Penal", "2024-04-03", "Dr. López", "Archivado")
-        );
+                new CasoDemo("EXP002", "Caso Rivera", "Penal", "2024-04-03", "Dr. López", "Archivado"));
     }
 
     public record CasoDemo(
@@ -124,6 +176,6 @@ public class ModuloCasosController {
             String tipo,
             String fecha,
             String abogado,
-            String estado
-    ) {}
+            String estado) {
+    }
 }

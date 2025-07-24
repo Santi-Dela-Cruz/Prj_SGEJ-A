@@ -171,7 +171,9 @@ public class MainController {
                 c.setFormularioContainer(pnl_Forms);
                 if (tipoUsuario != null) c.configurarPorRol(tipoUsuario);
             }
-            if (controller instanceof ModuloCasosController c) c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloCasosController c) {
+                c.setPanelModulos(pnl_Modulos);
+            }
             if (controller instanceof ModuloDocumentosController c) c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloHistorialController c) c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloBitacoraController c) c.setFormularioContainer(pnl_Forms);

@@ -37,7 +37,11 @@
             <TextField fx:id="txtf_NumeroExpediente" prefWidth="180.0" styleClass="text-field"
                        GridPane.rowIndex="1" GridPane.columnIndex="0"/>
 
-            <Label text="Título del caso:" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="label"/>
+            <Label text="Cliente:" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="label"/>
+            <ComboBox fx:id="cbx_Cliente" prefWidth="180.0" styleClass="combo-box"
+                      GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+            <Label text="Título del caso:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
             <TextField fx:id="txtf_TituloCaso" prefWidth="180.0" styleClass="text-field"
                        GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
