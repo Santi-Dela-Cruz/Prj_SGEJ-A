@@ -115,6 +115,40 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
+            
+            <!-- Panel de Paginación COMPACTO pero LEGIBLE -->
+            <HBox alignment="CENTER" spacing="6.0" style="-fx-padding: 4 0 4 0; -fx-min-height: 24; -fx-max-height: 24;">
+               <children>
+                  <!-- Información compacta pero legible -->
+                  <Label fx:id="lbl_InfoPaginacion" text="1-10 de 50" textFill="#6b7280" style="-fx-font-size: 10px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-weight: bold;" />
+                  
+                  <!-- Controles compactos pero visibles -->
+                  <HBox alignment="CENTER" spacing="3.0">
+                     <children>
+                        <Button fx:id="btn_PrimeraPagina" mnemonicParsing="false" prefHeight="20.0" prefWidth="24.0" style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 3; -fx-background-radius: 3; -fx-font-size: 9px; -fx-font-weight: bold; -fx-cursor: hand; -fx-text-fill: #374151;" text="⏮" />
+                        <Button fx:id="btn_PaginaAnterior" mnemonicParsing="false" prefHeight="20.0" prefWidth="24.0" style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 3; -fx-background-radius: 3; -fx-font-size: 9px; -fx-font-weight: bold; -fx-cursor: hand; -fx-text-fill: #374151;" text="◀" />
+                        
+                        <HBox alignment="CENTER" spacing="2.0" style="-fx-padding: 0 4 0 4;">
+                           <children>
+                              <TextField fx:id="txt_PaginaActual" alignment="CENTER" prefHeight="20.0" prefWidth="28.0" style="-fx-background-color: white; -fx-border-color: #3b82f6; -fx-border-width: 1; -fx-border-radius: 3; -fx-background-radius: 3; -fx-font-size: 10px; -fx-font-weight: bold; -fx-text-fill: #1e40af;" text="1" />
+                              <Label text="/" textFill="#6b7280" style="-fx-font-size: 10px; -fx-font-weight: bold;" />
+                              <Label fx:id="lbl_TotalPaginas" text="5" textFill="#1e40af" style="-fx-font-size: 10px; -fx-font-weight: bold;" />
+                           </children>
+                        </HBox>
+                        
+                        <Button fx:id="btn_PaginaSiguiente" mnemonicParsing="false" prefHeight="20.0" prefWidth="24.0" style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 3; -fx-background-radius: 3; -fx-font-size: 9px; -fx-font-weight: bold; -fx-cursor: hand; -fx-text-fill: #374151;" text="▶" />
+                        <Button fx:id="btn_UltimaPagina" mnemonicParsing="false" prefHeight="20.0" prefWidth="24.0" style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 3; -fx-background-radius: 3; -fx-font-size: 9px; -fx-font-weight: bold; -fx-cursor: hand; -fx-text-fill: #374151;" text="⏭" />
+                     </children>
+                  </HBox>
+                  
+                  <HBox alignment="CENTER" spacing="3.0">
+                     <children>
+                        <Label text="Por página:" textFill="#6b7280" style="-fx-font-size: 9px;" />
+                        <ComboBox fx:id="cmb_RegistrosPorPagina" prefHeight="20.0" prefWidth="40.0" style="-fx-background-color: white; -fx-border-color: #d1d5db; -fx-border-radius: 3; -fx-background-radius: 3; -fx-font-size: 9px; -fx-text-fill: #374151;" value="10" />
+                     </children>
+                  </HBox>
+               </children>
+            </HBox>
          </children>
       </VBox>
    </children>

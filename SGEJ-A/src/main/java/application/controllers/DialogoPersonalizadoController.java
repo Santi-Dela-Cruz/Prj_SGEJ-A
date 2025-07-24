@@ -16,21 +16,29 @@ import java.util.List;
 
 public class DialogoPersonalizadoController {
 
-    @FXML private Label lbl_Titulo, lbl_Subtitulo, lbl_TituloMensaje, lbl_Mensaje;
-    @FXML private ImageView img_IconoContenido;
-    @FXML private HBox contenedorBotones;
-    @FXML private Button btn_Cerrar;
-    @FXML private AnchorPane rootPane;
-    @FXML private HBox titleBar;
-    @FXML private VBox mainContainer;
-    @FXML private Pane iconContainer;
+    @FXML
+    private Label lbl_Titulo, lbl_Subtitulo, lbl_TituloMensaje, lbl_Mensaje;
+    @FXML
+    private ImageView img_IconoContenido;
+    @FXML
+    private HBox contenedorBotones;
+    @FXML
+    private Button btn_Cerrar;
+    @FXML
+    private AnchorPane rootPane;
+    @FXML
+    private HBox titleBar;
+    @FXML
+    private VBox mainContainer;
+    @FXML
+    private Pane iconContainer;
 
     private Stage stage;
     private double xOffset = 0;
     private double yOffset = 0;
 
     public void inicializar(String titulo, String mensaje, String tipo, Stage stage,
-                            List<ButtonType> botones) {
+            List<ButtonType> botones) {
         this.stage = stage;
         lbl_Titulo.setText(titulo);
         lbl_Mensaje.setText(mensaje);
@@ -71,11 +79,11 @@ public class DialogoPersonalizadoController {
                 stage.setUserData(bt);
                 stage.close();
             });
-            
+
             // Efectos hover para botones
             b.setOnMouseEntered(e -> b.setStyle(getButtonHoverStyle(bt)));
             b.setOnMouseExited(e -> b.setStyle(getButtonStyle(bt)));
-            
+
             contenedorBotones.getChildren().add(b);
         }
 
@@ -114,48 +122,63 @@ public class DialogoPersonalizadoController {
         switch (tipo.toLowerCase()) {
             case "error":
                 colorTitulo = "#c53030";
-                iconContainer.getStyleClass().removeAll("dialog-icon-warning", "dialog-icon-confirm", "dialog-icon-info", "dialog-icon-error");
-                if (!iconContainer.getStyleClass().contains("dialog-icon-error")) iconContainer.getStyleClass().add("dialog-icon-error");
+                iconContainer.getStyleClass().removeAll("dialog-icon-warning", "dialog-icon-confirm",
+                        "dialog-icon-info", "dialog-icon-error");
+                if (!iconContainer.getStyleClass().contains("dialog-icon-error"))
+                    iconContainer.getStyleClass().add("dialog-icon-error");
                 break;
             case "warning":
                 colorTitulo = "#d69e2e";
-                iconContainer.getStyleClass().removeAll("dialog-icon-error", "dialog-icon-confirm", "dialog-icon-info", "dialog-icon-warning");
-                if (!iconContainer.getStyleClass().contains("dialog-icon-warning")) iconContainer.getStyleClass().add("dialog-icon-warning");
+                iconContainer.getStyleClass().removeAll("dialog-icon-error", "dialog-icon-confirm", "dialog-icon-info",
+                        "dialog-icon-warning");
+                if (!iconContainer.getStyleClass().contains("dialog-icon-warning"))
+                    iconContainer.getStyleClass().add("dialog-icon-warning");
                 break;
             case "confirm":
                 colorTitulo = "#2f855a";
-                iconContainer.getStyleClass().removeAll("dialog-icon-error", "dialog-icon-warning", "dialog-icon-info", "dialog-icon-confirm");
-                if (!iconContainer.getStyleClass().contains("dialog-icon-confirm")) iconContainer.getStyleClass().add("dialog-icon-confirm");
+                iconContainer.getStyleClass().removeAll("dialog-icon-error", "dialog-icon-warning", "dialog-icon-info",
+                        "dialog-icon-confirm");
+                if (!iconContainer.getStyleClass().contains("dialog-icon-confirm"))
+                    iconContainer.getStyleClass().add("dialog-icon-confirm");
                 break;
             default: // info
                 colorTitulo = "#475569";
-                iconContainer.getStyleClass().removeAll("dialog-icon-error", "dialog-icon-warning", "dialog-icon-confirm", "dialog-icon-info");
-                if (!iconContainer.getStyleClass().contains("dialog-icon-info")) iconContainer.getStyleClass().add("dialog-icon-info");
+                iconContainer.getStyleClass().removeAll("dialog-icon-error", "dialog-icon-warning",
+                        "dialog-icon-confirm", "dialog-icon-info");
+                if (!iconContainer.getStyleClass().contains("dialog-icon-info"))
+                    iconContainer.getStyleClass().add("dialog-icon-info");
         }
-        lbl_TituloMensaje.setStyle("-fx-text-fill: " + colorTitulo + "; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;");
+        lbl_TituloMensaje.setStyle("-fx-text-fill: " + colorTitulo
+                + "; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;");
     }
 
     private String getButtonStyle(ButtonType bt) {
         String baseStyle = "-fx-font-size: 12px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 6 14; -fx-min-width: 75; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.06), 2, 0, 0, 1);";
-        
+
         if (bt == ButtonType.OK || bt == ButtonType.YES) {
-            return baseStyle + " -fx-background-color: linear-gradient(to bottom, #64748b, #475569); -fx-text-fill: white; -fx-border-color: transparent;";
+            return baseStyle
+                    + " -fx-background-color: linear-gradient(to bottom, #64748b, #475569); -fx-text-fill: white; -fx-border-color: transparent;";
         } else if (bt == ButtonType.NO) {
-            return baseStyle + " -fx-background-color: linear-gradient(to bottom, #e53e3e, #c53030); -fx-text-fill: white; -fx-border-color: transparent;";
+            return baseStyle
+                    + " -fx-background-color: linear-gradient(to bottom, #e53e3e, #c53030); -fx-text-fill: white; -fx-border-color: transparent;";
         } else {
-            return baseStyle + " -fx-background-color: linear-gradient(to bottom, #f8fafc, #f1f5f9); -fx-text-fill: #475569; -fx-border-color: #cbd5e1; -fx-border-width: 1;";
+            return baseStyle
+                    + " -fx-background-color: linear-gradient(to bottom, #f8fafc, #f1f5f9); -fx-text-fill: #475569; -fx-border-color: #cbd5e1; -fx-border-width: 1;";
         }
     }
 
     private String getButtonHoverStyle(ButtonType bt) {
         String baseStyle = "-fx-font-size: 12px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-background-radius: 6; -fx-border-radius: 6; -fx-padding: 6 14; -fx-min-width: 75; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 4, 0, 0, 2);";
-        
+
         if (bt == ButtonType.OK || bt == ButtonType.YES) {
-            return baseStyle + " -fx-background-color: linear-gradient(to bottom, #475569, #334155); -fx-text-fill: white; -fx-border-color: transparent;";
+            return baseStyle
+                    + " -fx-background-color: linear-gradient(to bottom, #475569, #334155); -fx-text-fill: white; -fx-border-color: transparent;";
         } else if (bt == ButtonType.NO) {
-            return baseStyle + " -fx-background-color: linear-gradient(to bottom, #c53030, #9c2626); -fx-text-fill: white; -fx-border-color: transparent;";
+            return baseStyle
+                    + " -fx-background-color: linear-gradient(to bottom, #c53030, #9c2626); -fx-text-fill: white; -fx-border-color: transparent;";
         } else {
-            return baseStyle + " -fx-background-color: linear-gradient(to bottom, #f1f5f9, #e2e8f0); -fx-text-fill: #475569; -fx-border-color: #94a3b8; -fx-border-width: 1;";
+            return baseStyle
+                    + " -fx-background-color: linear-gradient(to bottom, #f1f5f9, #e2e8f0); -fx-text-fill: #475569; -fx-border-color: #94a3b8; -fx-border-width: 1;";
         }
     }
 
@@ -167,11 +190,13 @@ public class DialogoPersonalizadoController {
 
     @FXML
     private void onCerrarHover() {
-        btn_Cerrar.setStyle("-fx-background-color: #e53e3e; -fx-text-fill: #fff; -fx-font-size: 22px; -fx-font-weight: bold; -fx-background-radius: 16; -fx-border-color: #c53030; -fx-border-width: 2; -fx-border-radius: 16; -fx-cursor: hand; -fx-min-width: 36; -fx-min-height: 36; -fx-max-width: 36; -fx-max-height: 36;");
+        btn_Cerrar.setStyle(
+                "-fx-background-color: #e53e3e; -fx-text-fill: #fff; -fx-font-size: 22px; -fx-font-weight: bold; -fx-background-radius: 16; -fx-border-color: #c53030; -fx-border-width: 2; -fx-border-radius: 16; -fx-cursor: hand; -fx-min-width: 36; -fx-min-height: 36; -fx-max-width: 36; -fx-max-height: 36;");
     }
 
     @FXML
     private void onCerrarExit() {
-        btn_Cerrar.setStyle("-fx-background-color: #e53e3e; -fx-text-fill: #fff; -fx-font-size: 22px; -fx-font-weight: bold; -fx-background-radius: 16; -fx-border-color: #c53030; -fx-border-width: 2; -fx-border-radius: 16; -fx-cursor: hand; -fx-min-width: 36; -fx-min-height: 36; -fx-max-width: 36; -fx-max-height: 36;");
+        btn_Cerrar.setStyle(
+                "-fx-background-color: #e53e3e; -fx-text-fill: #fff; -fx-font-size: 22px; -fx-font-weight: bold; -fx-background-radius: 16; -fx-border-color: #c53030; -fx-border-width: 2; -fx-border-radius: 16; -fx-cursor: hand; -fx-min-width: 36; -fx-min-height: 36; -fx-max-width: 36; -fx-max-height: 36;");
     }
 }

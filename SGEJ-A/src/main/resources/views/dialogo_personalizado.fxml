@@ -48,11 +48,12 @@
                         <!-- Contenedor del icono con fondo -->
                         <HBox alignment="CENTER" spacing="0">
                             <children>
-                                <Pane fx:id="iconContainer" styleClass="dialog-icon-container" prefWidth="45" prefHeight="45">
-                                    <children>
-                                        <ImageView fx:id="img_IconoContenido" styleClass="dialog-icon-image" alignment="CENTER"/>
-                                    </children>
-                                </Pane>
+                                <StackPane fx:id="iconContainer" styleClass="dialog-icon-container" prefWidth="45" prefHeight="45">
+    <children>
+        <ImageView fx:id="img_IconoContenido" styleClass="dialog-icon-image"/>
+    </children>
+</StackPane>
+
                             </children>
                         </HBox>
                         <!-- Mensaje -->

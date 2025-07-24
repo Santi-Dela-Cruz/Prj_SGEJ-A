@@ -1,20 +1,11 @@
 /* Estilos para el icono de advertencia y su contenedor circular */
 
 .dialog-icon-container {
-  -fx-background-color: #fffbe6;
-  -fx-background-radius: 50;
-  -fx-border-radius: 50;
-  -fx-border-color: #facc15;
-  -fx-border-width: 2;
-  -fx-pref-width: 45;
-  -fx-pref-height: 45;
-  -fx-max-width: 45;
-  -fx-max-height: 45;
-  -fx-min-width: 45;
-  -fx-min-height: 45;
-  -fx-padding: 0;
+  -fx-background-color: #fef3c7;
+  -fx-background-radius: 50%;
+  -fx-border-radius: 50%;
   -fx-alignment: center;
-  -fx-position: relative;
+  -fx-padding: 5;
 }
 
 .dialog-icon-image {

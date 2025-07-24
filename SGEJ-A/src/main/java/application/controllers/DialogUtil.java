@@ -15,7 +15,8 @@ import java.util.Optional;
 
 public class DialogUtil {
 
-    public static Optional<ButtonType> mostrarDialogo(String titulo, String mensaje, String tipo, List<ButtonType> botones) {
+    public static Optional<ButtonType> mostrarDialogo(String titulo, String mensaje, String tipo,
+            List<ButtonType> botones) {
         try {
             FXMLLoader loader = new FXMLLoader(DialogUtil.class.getResource("/views/dialogo_personalizado.fxml"));
             Parent root = loader.load();

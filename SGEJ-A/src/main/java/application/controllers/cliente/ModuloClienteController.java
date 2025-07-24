@@ -18,37 +18,81 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-
+import java.net.URL;
+import java.util.ResourceBundle;
 
 public class ModuloClienteController {
 
-    @FXML private Button btn_Nuevo;
-    @FXML private Button btn_Buscar;
-    @FXML private Button btn_LimpiarFiltro;
-    @FXML private TextField txt_Busqueda;
-    @FXML private Label lbl_TotalClientes;
-    
+    @FXML
+    private Button btn_Nuevo;
+    @FXML
+    private Button btn_Buscar;
+    @FXML
+    private Button btn_LimpiarFiltro;
+    @FXML
+    private TextField txt_Busqueda;
+    @FXML
+    private Label lbl_TotalClientes;
+
     // Filtro de estado (solo para administradores)
-    @FXML private VBox vbox_FiltroEstado;
-    @FXML private ComboBox<String> cmb_FiltroEstado;
+    @FXML
+    private VBox vbox_FiltroEstado;
+    @FXML
+    private ComboBox<String> cmb_FiltroEstado;
 
-    @FXML private TableView<Cliente> tb_Clientes;
-    @FXML private TableColumn<Cliente, String> tbc_Nombres;
-    @FXML private TableColumn<Cliente, String> tbc_NumeroI;
-    @FXML private TableColumn<Cliente, String> tbc_TipoIdentificacion;
-    @FXML private TableColumn<Cliente, String> tbc_Telefono;
-    @FXML private TableColumn<Cliente, String> tbc_Correo;
-    @FXML private TableColumn<Cliente, String> tbc_Estado;
+    @FXML
+    private TableView<Cliente> tb_Clientes;
+    @FXML
+    private TableColumn<Cliente, String> tbc_Nombres;
+    @FXML
+    private TableColumn<Cliente, String> tbc_NumeroI;
+    @FXML
+    private TableColumn<Cliente, String> tbc_TipoIdentificacion;
+    @FXML
+    private TableColumn<Cliente, String> tbc_Telefono;
+    @FXML
+    private TableColumn<Cliente, String> tbc_Correo;
+    @FXML
+    private TableColumn<Cliente, String> tbc_Estado;
 
-    @FXML private TableColumn<Cliente, Void> tbc_BotonEditar;
-    @FXML private TableColumn<Cliente, Void> tbc_BotonVer;
+    @FXML
+    private TableColumn<Cliente, Void> tbc_BotonEditar;
+    @FXML
+    private TableColumn<Cliente, Void> tbc_BotonVer;
 
     private Pane pnl_Forms;
     private ClienteService clienteService;
     private String tipoUsuario; // Para saber si es administrador
-    
+
     // Flag para evitar múltiples ejecuciones
     private boolean formularioAbierto = false;
+
+    // Variables para paginación
+    private int paginaActual = 1;
+    private int registrosPorPagina = 10;
+    private int totalRegistros = 0;
+    private int totalPaginas = 0;
+    private ObservableList<Cliente> todosLosClientes = FXCollections.observableArrayList();
+
+    // Elementos de paginación del FXML
+    @FXML
+    private Label lbl_InfoPaginacion;
+    @FXML
+    private Label lbl_PaginaActual;
+    @FXML
+    private Label lbl_TotalPaginas;
+    @FXML
+    private TextField txt_PaginaActual;
+    @FXML
+    private Button btn_PrimeraPagina;
+    @FXML
+    private Button btn_PaginaAnterior;
+    @FXML
+    private Button btn_PaginaSiguiente;
+    @FXML
+    private Button btn_UltimaPagina;
+    @FXML
+    private ComboBox<Integer> cmb_RegistrosPorPagina;
 
     public void setFormularioContainer(Pane pnl_Forms) {
         this.pnl_Forms = pnl_Forms;
@@ -57,14 +101,14 @@ public class ModuloClienteController {
     @FXML
     private void initialize() {
         clienteService = new ClienteService();
-        
+
         btn_Nuevo.setOnAction(_ -> mostrarFormulario(null, "NUEVO"));
         btn_Buscar.setOnAction(_ -> buscarClientes());
         btn_LimpiarFiltro.setOnAction(_ -> limpiarFiltro());
 
         // Configurar ComboBox de filtro
         configurarFiltroEstado();
-        
+
         configurarColumnasTexto();
         inicializarColumnasDeBotones();
         cargarClientesDesdeBaseDatos();
@@ -73,11 +117,16 @@ public class ModuloClienteController {
 
         tbc_BotonEditar.getStyleClass().add("column-action");
         tbc_BotonVer.getStyleClass().add("column-action");
+
+        // Configurar paginación
+        configurarPaginacion();
     }
 
     private void ocultarEncabezadosColumnasDeAccion() {
         tb_Clientes.widthProperty().addListener((_, _, _) -> {
-            double anchoOcupadoPorColumnasVisibles = tbc_Nombres.getWidth() + tbc_NumeroI.getWidth() + tbc_TipoIdentificacion.getWidth() + tbc_Telefono.getWidth() + tbc_Correo.getWidth() + tbc_Estado.getWidth();
+            double anchoOcupadoPorColumnasVisibles = tbc_Nombres.getWidth() + tbc_NumeroI.getWidth()
+                    + tbc_TipoIdentificacion.getWidth() + tbc_Telefono.getWidth() + tbc_Correo.getWidth()
+                    + tbc_Estado.getWidth();
             double anchoDispobibleParaColumnaDeAccion = tb_Clientes.getWidth() - anchoOcupadoPorColumnasVisibles;
             double anchoParaCadaColumnaDeAccion = anchoDispobibleParaColumnaDeAccion / 2;
             tbc_BotonEditar.setPrefWidth(anchoParaCadaColumnaDeAccion);
@@ -88,7 +137,8 @@ public class ModuloClienteController {
     private void configurarColumnasTexto() {
         tbc_Nombres.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNombreCompleto()));
         tbc_NumeroI.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNumeroIdentificacion()));
-        tbc_TipoIdentificacion.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTipoIdentificacion().name()));
+        tbc_TipoIdentificacion
+                .setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTipoIdentificacion().name()));
         tbc_Telefono.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTelefono()));
         tbc_Correo.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getCorreoElectronico()));
         tbc_Estado.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getEstado().name()));
@@ -101,7 +151,7 @@ public class ModuloClienteController {
         // Eliminar encabezados de las columnas de acciones
         tbc_BotonEditar.setText("");
         tbc_BotonVer.setText("");
-        
+
         tbc_BotonEditar.setPrefWidth(40);
         tbc_BotonVer.setPrefWidth(40);
     }
@@ -117,18 +167,18 @@ public class ModuloClienteController {
                 btn.getStyleClass().add("table-button");
                 setStyle("-fx-alignment: CENTER; -fx-padding: 2;");
                 btn.setTooltip(new Tooltip(tooltip));
-                
+
                 // Estilos específicos según el tipo de botón
                 if ("Editar".equals(tooltip)) {
                     btn.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-background-radius: 4; " +
-                               "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
-                               "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
+                            "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
+                            "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
                 } else if ("Ver".equals(tooltip)) {
                     btn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-background-radius: 4; " +
-                               "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
-                               "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
+                            "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
+                            "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
                 }
-                
+
                 // Efectos hover
                 btn.setOnMouseEntered(_ -> {
                     if ("Editar".equals(tooltip)) {
@@ -137,19 +187,19 @@ public class ModuloClienteController {
                         btn.setStyle(btn.getStyle() + "-fx-background-color: #2563eb;");
                     }
                 });
-                
+
                 btn.setOnMouseExited(_ -> {
                     if ("Editar".equals(tooltip)) {
                         btn.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-background-radius: 4; " +
-                                   "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
-                                   "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
+                                "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
+                                "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
                     } else if ("Ver".equals(tooltip)) {
                         btn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-background-radius: 4; " +
-                                   "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
-                                   "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
+                                "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
+                                "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
                     }
                 });
-                
+
                 btn.setOnAction(_ -> {
                     Cliente cliente = getTableView().getItems().get(getIndex());
                     if ("Editar".equals(tooltip)) {
@@ -169,84 +219,209 @@ public class ModuloClienteController {
     }
 
     /**
-     * Cargar clientes desde la base de datos (considera filtro de estado para administradores)
+     * Cargar clientes desde la base de datos (considera filtro de estado para
+     * administradores)
      */
     private void cargarClientesDesdeBaseDatos() {
         try {
-            ObservableList<Cliente> clientes;
-            
-            // Si es administrador y hay un filtro de estado seleccionado
+            // Cargar todos los clientes según filtros
             if ("Administrador".equals(tipoUsuario) && cmb_FiltroEstado != null && cmb_FiltroEstado.isVisible()) {
                 String filtroEstado = cmb_FiltroEstado.getSelectionModel().getSelectedItem();
-                
+
                 if ("Todos".equals(filtroEstado)) {
-                    // Cargar todos los clientes (incluidos inactivos)
-                    clientes = clienteService.obtenerTodosLosClientesIncluirInactivos();
+                    todosLosClientes = clienteService.obtenerTodosLosClientesIncluirInactivos();
                 } else if ("Inactivos".equals(filtroEstado)) {
-                    // Cargar solo clientes inactivos
-                    clientes = clienteService.obtenerClientesPorEstado(Cliente.Estado.INACTIVO);
+                    todosLosClientes = clienteService.obtenerClientesPorEstado(Cliente.Estado.INACTIVO);
                 } else {
-                    // Cargar solo clientes activos (opción por defecto)
-                    clientes = clienteService.obtenerClientesActivos();
+                    todosLosClientes = clienteService.obtenerClientesActivos();
                 }
             } else {
-                // Para usuarios no administradores, cargar solo activos
-                clientes = clienteService.obtenerClientesActivos();
+                todosLosClientes = clienteService.obtenerClientesActivos();
             }
-            
-            tb_Clientes.setItems(clientes);
-            actualizarContadorClientes();
-            System.out.println("Clientes cargados: " + clientes.size());
+
+            totalRegistros = todosLosClientes.size();
+            calcularTotalPaginas();
+            mostrarPaginaActual();
+            actualizarInfoPaginacion();
+            actualizarEstadoBotones();
+
         } catch (Exception e) {
             System.err.println("Error al cargar clientes: " + e.getMessage());
             e.printStackTrace();
-            tb_Clientes.setItems(FXCollections.observableArrayList());
-            actualizarContadorClientes();
+            todosLosClientes = FXCollections.observableArrayList();
+            totalRegistros = 0;
+            mostrarPaginaActual();
+            actualizarInfoPaginacion();
         }
     }
 
     /**
-     * Buscar clientes según el texto ingresado (considera filtro de estado para administradores)
+     * Mostrar solo los registros de la página actual
+     */
+    private void mostrarPaginaActual() {
+        int inicio = (paginaActual - 1) * registrosPorPagina;
+        int fin = Math.min(inicio + registrosPorPagina, totalRegistros);
+
+        ObservableList<Cliente> clientesPagina = FXCollections.observableArrayList();
+
+        if (inicio < totalRegistros) {
+            for (int i = inicio; i < fin; i++) {
+                clientesPagina.add(todosLosClientes.get(i));
+            }
+        }
+
+        tb_Clientes.setItems(clientesPagina);
+        actualizarContadorClientes();
+    }
+
+    /**
+     * Calcular total de páginas
+     */
+    private void calcularTotalPaginas() {
+        totalPaginas = (int) Math.ceil((double) totalRegistros / registrosPorPagina);
+        if (totalPaginas == 0)
+            totalPaginas = 1;
+    }
+
+    /**
+     * Actualizar información de paginación
+     */
+    private void actualizarInfoPaginacion() {
+        int inicio = totalRegistros > 0 ? (paginaActual - 1) * registrosPorPagina + 1 : 0;
+        int fin = Math.min(paginaActual * registrosPorPagina, totalRegistros);
+
+        if (lbl_InfoPaginacion != null) {
+            lbl_InfoPaginacion.setText(inicio + "-" + fin + " de " + totalRegistros);
+        }
+
+        if (lbl_PaginaActual != null) {
+            lbl_PaginaActual.setText("Página " + paginaActual + " de " + totalPaginas);
+        }
+
+        if (lbl_TotalPaginas != null) {
+            lbl_TotalPaginas.setText(String.valueOf(totalPaginas));
+        }
+
+        if (txt_PaginaActual != null) {
+            txt_PaginaActual.setText(String.valueOf(paginaActual));
+        }
+    }
+
+    /**
+     * Actualizar estado de botones de navegación
+     */
+    private void actualizarEstadoBotones() {
+        if (btn_PrimeraPagina != null) {
+            btn_PrimeraPagina.setDisable(paginaActual <= 1);
+        }
+        if (btn_PaginaAnterior != null) {
+            btn_PaginaAnterior.setDisable(paginaActual <= 1);
+        }
+        if (btn_PaginaSiguiente != null) {
+            btn_PaginaSiguiente.setDisable(paginaActual >= totalPaginas);
+        }
+        if (btn_UltimaPagina != null) {
+            btn_UltimaPagina.setDisable(paginaActual >= totalPaginas);
+        }
+    }
+
+    // Métodos de navegación
+    private void irAPrimeraPagina() {
+        paginaActual = 1;
+        mostrarPaginaActual();
+        actualizarInfoPaginacion();
+        actualizarEstadoBotones();
+    }
+
+    private void irAPaginaAnterior() {
+        if (paginaActual > 1) {
+            paginaActual--;
+            mostrarPaginaActual();
+            actualizarInfoPaginacion();
+            actualizarEstadoBotones();
+        }
+    }
+
+    private void irAPaginaSiguiente() {
+        if (paginaActual < totalPaginas) {
+            paginaActual++;
+            mostrarPaginaActual();
+            actualizarInfoPaginacion();
+            actualizarEstadoBotones();
+        }
+    }
+
+    private void irAUltimaPagina() {
+        paginaActual = totalPaginas;
+        mostrarPaginaActual();
+        actualizarInfoPaginacion();
+        actualizarEstadoBotones();
+    }
+
+    private void irAPaginaEspecifica() {
+        try {
+            int nuevaPagina = Integer.parseInt(txt_PaginaActual.getText());
+            if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+                paginaActual = nuevaPagina;
+                mostrarPaginaActual();
+                actualizarInfoPaginacion();
+                actualizarEstadoBotones();
+            } else {
+                txt_PaginaActual.setText(String.valueOf(paginaActual));
+            }
+        } catch (NumberFormatException e) {
+            txt_PaginaActual.setText(String.valueOf(paginaActual));
+        }
+    }
+
+    private void cambiarRegistrosPorPagina() {
+        registrosPorPagina = cmb_RegistrosPorPagina.getValue();
+        paginaActual = 1; // Volver a la primera página
+        calcularTotalPaginas();
+        mostrarPaginaActual();
+        actualizarInfoPaginacion();
+        actualizarEstadoBotones();
+    }
+
+    /**
+     * Buscar clientes con paginación
      */
     private void buscarClientes() {
         String textoBusqueda = txt_Busqueda.getText().trim();
-        
-        if (textoBusqueda.isEmpty()) {
-            cargarClientesDesdeBaseDatos();
-            return;
-        }
-        
+
         try {
-            ObservableList<Cliente> clientes;
-            
-            // Si es administrador y hay un filtro de estado seleccionado
+            if (textoBusqueda.isEmpty()) {
+                cargarClientesDesdeBaseDatos();
+                return;
+            }
+
+            // Buscar en todos los clientes según filtros
             if ("Administrador".equals(tipoUsuario) && cmb_FiltroEstado != null && cmb_FiltroEstado.isVisible()) {
                 String filtroEstado = cmb_FiltroEstado.getSelectionModel().getSelectedItem();
-                
+
                 if ("Todos".equals(filtroEstado)) {
-                    // Buscar en todos los clientes (incluidos inactivos)
-                    clientes = clienteService.buscarClientesPorNombre(textoBusqueda);
+                    todosLosClientes = clienteService.buscarClientesPorNombre(textoBusqueda);
                 } else if ("Inactivos".equals(filtroEstado)) {
-                    // Buscar solo en clientes inactivos
-                    clientes = clienteService.buscarClientesPorNombre(textoBusqueda);
-                    clientes = clientes.filtered(cliente -> cliente.getEstado() == Cliente.Estado.INACTIVO);
+                    todosLosClientes = clienteService.buscarClientesPorNombre(textoBusqueda);
+                    todosLosClientes = todosLosClientes
+                            .filtered(cliente -> cliente.getEstado() == Cliente.Estado.INACTIVO);
                 } else {
-                    // Buscar solo en clientes activos (opción por defecto)
-                    clientes = clienteService.buscarClientesActivosPorNombre(textoBusqueda);
+                    todosLosClientes = clienteService.buscarClientesActivosPorNombre(textoBusqueda);
                 }
             } else {
-                // Para usuarios no administradores, buscar solo activos
-                clientes = clienteService.buscarClientesActivosPorNombre(textoBusqueda);
+                todosLosClientes = clienteService.buscarClientesActivosPorNombre(textoBusqueda);
             }
-            
-            tb_Clientes.setItems(clientes);
-            actualizarContadorClientes();
-            System.out.println("Clientes encontrados: " + clientes.size());
+
+            totalRegistros = todosLosClientes.size();
+            paginaActual = 1; // Volver a la primera página
+            calcularTotalPaginas();
+            mostrarPaginaActual();
+            actualizarInfoPaginacion();
+            actualizarEstadoBotones();
+
         } catch (Exception e) {
             System.err.println("Error al buscar clientes: " + e.getMessage());
             e.printStackTrace();
-            tb_Clientes.setItems(FXCollections.observableArrayList());
-            actualizarContadorClientes();
         }
     }
 
@@ -258,19 +433,19 @@ public class ModuloClienteController {
             System.out.println("🔧 Formulario ya está abierto, ignorando solicitud");
             return;
         }
-        
+
         try {
             formularioAbierto = true;
             System.out.println("🔧 Iniciando mostrarFormulario con modo: " + modo);
             System.out.println("🔧 Cliente: " + (cliente != null ? cliente.getNombreCompleto() : "null"));
             System.out.println("🔧 Panel Forms: " + (pnl_Forms != null ? "OK" : "NULL"));
-            
+
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/cliente/form_cliente.fxml"));
             Node nodo = fxmlLoader.load();
             FormClienteController controller = fxmlLoader.getController();
 
             controller.setModo(modo);
-            
+
             if (cliente != null) {
                 controller.cargarCliente(cliente);
             }
@@ -301,7 +476,7 @@ public class ModuloClienteController {
                 // Hacer visible el panel de formularios
                 pnl_Forms.setVisible(true);
                 pnl_Forms.setManaged(true);
-                
+
                 pnl_Forms.getChildren().clear();
                 pnl_Forms.getChildren().add(nodo);
                 AnchorPane.setTopAnchor(nodo, 0.0);
@@ -314,17 +489,17 @@ public class ModuloClienteController {
                 System.out.println("🔧 Abriendo formulario en ventana nueva");
                 Stage stage = new Stage();
                 Scene scene = new Scene((Parent) nodo);
-                
+
                 // Agregar estilos CSS
                 scene.getStylesheets().add(getClass().getResource("/styles/app.css").toExternalForm());
-                
+
                 stage.setScene(scene);
                 stage.setTitle("Cliente - " + modo);
                 stage.initModality(Modality.WINDOW_MODAL);
-                
+
                 // Configurar evento de cierre
                 stage.setOnHiding(_ -> formularioAbierto = false);
-                
+
                 stage.show();
             }
         } catch (IOException e) {
@@ -337,14 +512,14 @@ public class ModuloClienteController {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Método público para refrescar la tabla desde otros controladores
      */
     public void refrescarTabla() {
         cargarClientesDesdeBaseDatos();
     }
-    
+
     /**
      * Método para resetear el estado del formulario
      */
@@ -356,7 +531,7 @@ public class ModuloClienteController {
             pnl_Forms.setManaged(false);
         }
     }
-    
+
     /**
      * Limpiar filtro de búsqueda y mostrar todos los clientes
      */
@@ -368,7 +543,7 @@ public class ModuloClienteController {
         }
         cargarClientesDesdeBaseDatos();
     }
-    
+
     /**
      * Configurar el ComboBox de filtro de estado
      */
@@ -377,14 +552,14 @@ public class ModuloClienteController {
             // Limpiar items existentes para evitar duplicados
             cmb_FiltroEstado.getItems().clear();
             cmb_FiltroEstado.getItems().addAll("Todos", "Activos", "Inactivos");
-            
+
             // Para administradores, seleccionar "Todos" por defecto
             if ("Administrador".equals(tipoUsuario)) {
                 cmb_FiltroEstado.getSelectionModel().selectFirst(); // Seleccionar "Todos"
             } else {
                 cmb_FiltroEstado.getSelectionModel().select("Activos"); // Seleccionar "Activos" para otros
             }
-            
+
             // Listener para cuando cambie la selección
             cmb_FiltroEstado.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
                 if (newValue != null) {
@@ -393,13 +568,13 @@ public class ModuloClienteController {
             });
         }
     }
-    
+
     /**
      * Filtrar clientes por estado
      */
     private void filtrarPorEstado(String filtro) {
         ObservableList<Cliente> clientesFiltrados;
-        
+
         switch (filtro) {
             case "Activos":
                 clientesFiltrados = clienteService.obtenerClientesActivos();
@@ -412,17 +587,17 @@ public class ModuloClienteController {
                 clientesFiltrados = clienteService.obtenerTodosLosClientesIncluirInactivos();
                 break;
         }
-        
+
         tb_Clientes.setItems(clientesFiltrados);
         actualizarContadorClientes();
     }
-    
+
     /**
      * Configurar el módulo según el tipo de usuario
      */
     public void configurarPorRol(String tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
-        
+
         // Mostrar filtro de estado solo para administradores
         if ("Administrador".equals(tipoUsuario)) {
             if (vbox_FiltroEstado != null) {
@@ -437,11 +612,11 @@ public class ModuloClienteController {
                 vbox_FiltroEstado.setManaged(false);
             }
         }
-        
+
         // Recargar datos después de configurar el rol
         cargarClientesDesdeBaseDatos();
     }
-    
+
     /**
      * Actualizar el contador de clientes en la interfaz
      */
@@ -449,6 +624,37 @@ public class ModuloClienteController {
         if (lbl_TotalClientes != null) {
             int totalClientes = tb_Clientes.getItems().size();
             lbl_TotalClientes.setText("Total: " + totalClientes + " clientes");
+        }
+    }
+
+    /**
+     * Configurar elementos de paginación
+     */
+    private void configurarPaginacion() {
+        // Configurar ComboBox de registros por página
+        if (cmb_RegistrosPorPagina != null) {
+            cmb_RegistrosPorPagina.getItems().addAll(5, 10, 15, 20, 25, 50);
+            cmb_RegistrosPorPagina.setValue(registrosPorPagina);
+            cmb_RegistrosPorPagina.setOnAction(e -> cambiarRegistrosPorPagina());
+        }
+
+        // Configurar eventos de botones de paginación
+        if (btn_PrimeraPagina != null) {
+            btn_PrimeraPagina.setOnAction(e -> irAPrimeraPagina());
+        }
+        if (btn_PaginaAnterior != null) {
+            btn_PaginaAnterior.setOnAction(e -> irAPaginaAnterior());
+        }
+        if (btn_PaginaSiguiente != null) {
+            btn_PaginaSiguiente.setOnAction(e -> irAPaginaSiguiente());
+        }
+        if (btn_UltimaPagina != null) {
+            btn_UltimaPagina.setOnAction(e -> irAUltimaPagina());
+        }
+
+        // Configurar campo de página actual
+        if (txt_PaginaActual != null) {
+            txt_PaginaActual.setOnAction(e -> irAPaginaEspecifica());
         }
     }
 }
