@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.casos_documentacion.FormBitacoraController"
+            prefWidth="400.0" prefHeight="340.0"
+            style="-fx-background-color: white; -fx-background-radius: 8;" layoutX="85" layoutY="55">
+
+    <children>
+        <!-- Title in a colored panel -->
+        <StackPane layoutX="0" layoutY="0" prefHeight="50" prefWidth="400"
+                   style="-fx-background-color: #90caf9; -fx-background-radius: 8;" alignment="CENTER">
+            <Label fx:id="lbl_TituloFormulario"
+                  text="Nueva Entrada"
+                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
+        </StackPane>
+
+        <Label text="Fecha actual:" layoutX="20" layoutY="80"/>
+        <Label fx:id="lbl_FechaActual" layoutX="150" layoutY="80" prefWidth="220" 
+               style="-fx-font-weight: bold;" text="(Se asignará automáticamente)"/>
+
+        <Label fx:id="lbl_Accion" text="Tipo de acción: *" layoutX="20" layoutY="140"/>
+        <TextField fx:id="txtf_Accion" layoutX="150" layoutY="136" prefWidth="220"/>
+        <Label fx:id="lbl_ErrorAccion" layoutX="150" layoutY="162" 
+               style="-fx-text-fill: red; -fx-font-size: 11px;" 
+               text="Este campo es obligatorio" visible="false"/>
+
+        <Label fx:id="lbl_Descripcion" text="Descripción: *" layoutX="20" layoutY="200"/>
+        <TextArea fx:id="txta_Descripcion" layoutX="150" layoutY="196"
+                  prefWidth="220" prefHeight="80"/>
+        <Label fx:id="lbl_ErrorDescripcion" layoutX="150" layoutY="280" 
+               style="-fx-text-fill: red; -fx-font-size: 11px;" 
+               text="Este campo es obligatorio" visible="false"/>
+
+        <Button fx:id="btn_Guardar" text="Guardar" layoutX="150" layoutY="300"
+                styleClass="button-windows,button-windows-green"/>
+        <Button fx:id="btn_Cancelar" text="Cancelar" layoutX="250" layoutY="300"
+                styleClass="button-windows,button-windows-red"/>
+    </children>
+</AnchorPane>

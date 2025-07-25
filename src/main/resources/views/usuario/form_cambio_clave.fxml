@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.administracion_sistema.FormCambioClaveController"
+            prefWidth="420.0" prefHeight="320.0"
+            style="-fx-background-color: transparent;">
+
+    <VBox spacing="22.0"
+          AnchorPane.topAnchor="10.0" AnchorPane.bottomAnchor="10.0"
+          AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0"
+          style="-fx-background-color: #f0f8ff; -fx-background-radius: 16; -fx-border-radius: 16;">
+        <padding>
+            <Insets top="18" right="18" bottom="18" left="18"/>
+        </padding>
+
+        <!-- Title in colored panel -->
+        <StackPane prefHeight="50" alignment="CENTER"
+                   style="-fx-background-color: #90caf9; -fx-background-radius: 12;">
+            <Text fx:id="lbl_Titulo"
+                  text="Cambiar Contraseña"
+                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
+        </StackPane>
+
+        <!-- Fields -->
+        <VBox spacing="14.0">
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Label fx:id="lbl_Actual" text="Contraseña actual:" prefWidth="150"/>
+                <PasswordField fx:id="txt_Actual" prefWidth="200"/>
+            </HBox>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Label text="Nueva contraseña:" prefWidth="150"/>
+                <PasswordField fx:id="txt_Nueva" prefWidth="200"/>
+            </HBox>
+            <HBox spacing="10.0" alignment="CENTER_LEFT">
+                <Label text="Confirmar nueva contraseña:" prefWidth="150"/>
+                <PasswordField fx:id="txt_Confirmar" prefWidth="200"/>
+            </HBox>
+            <Label fx:id="lbl_Error"
+                   text=""
+                   textFill="red"
+                   style="-fx-font-size: 12px;" />
+        </VBox>
+
+        <!-- Buttons -->
+        <HBox spacing="20.0" alignment="CENTER_RIGHT">
+            <Button fx:id="btn_Guardar" text="Guardar"
+                    styleClass="button-windows, button-windows-green" prefWidth="120"/>
+            <Button fx:id="btn_Cancelar" text="Cancelar"
+                    styleClass="button-windows, button-windows-red" prefWidth="120"/>
+        </HBox>
+    </VBox>
+</AnchorPane>

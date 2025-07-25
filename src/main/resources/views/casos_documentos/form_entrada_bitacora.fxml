@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.casos_documentacion.FormBitacoraController"
+            prefWidth="400.0" prefHeight="360.0"
+            style="-fx-background-color: white; -fx-background-radius: 8;" layoutX="85" layoutY="55">
+
+    <children>
+        <!-- Title in a colored panel -->
+        <StackPane layoutX="0" layoutY="0" prefHeight="50" prefWidth="400"
+                   style="-fx-background-color: #90caf9; -fx-background-radius: 8;" alignment="CENTER">
+            <Label fx:id="lbl_TituloFormulario"
+                  text="Nueva Bitácora"
+                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
+        </StackPane>
+
+        <Label fx:id="lbl_Expediente" text="N° de Expediente:" layoutX="20" layoutY="80"/>
+        <TextField fx:id="txtf_Expediente" layoutX="150" layoutY="76" prefWidth="220"/>
+
+        <Label fx:id="lbl_Responsable" text="Responsable:" layoutX="20" layoutY="140"/>
+        <TextField fx:id="txtf_Responsable" layoutX="150" layoutY="136" prefWidth="220"/>
+
+        <Label fx:id="lbl_FechaCreacion" text="Fecha de creación:" layoutX="20" layoutY="200"/>
+        <DatePicker fx:id="dp_FechaCreacion" layoutX="150" layoutY="196" prefWidth="220"/>
+
+        <Button fx:id="btn_Guardar" text="Guardar" layoutX="150" layoutY="280"
+                styleClass="button-windows,button-windows-green"/>
+        <Button fx:id="btn_Cancelar" text="Cancelar" layoutX="250" layoutY="280"
+                styleClass="button-windows,button-windows-red"/>
+    </children>
+</AnchorPane>

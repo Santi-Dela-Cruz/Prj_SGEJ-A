@@ -1,0 +1,312 @@
+@startuml
+!define LAYOUT top to bottom direction
+skinparam packageStyle rectangle
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+skinparam nodesep 10
+skinparam ranksep 20
+
+'======================= Fila Superior =======================
+package "Base" {
+  interface IDAO {
+    + crear(entidad): void
+    + consultar(filtro): List
+    + actualizar(entidad): void
+    + eliminar(entidad): void
+  }
+
+  interface IService {
+    + registrar(entidad): void
+    + consultar(filtro): List
+    + actualizar(entidad): void
+    + eliminar(entidad): void
+  }
+
+  abstract class FormController {
+    + mostrarFormulario(): void
+    + validarDatos(): boolean
+    + bloquearFondo(): void
+    + desbloquearFondo(): void
+  }
+
+  abstract class PersonaBase {
+    - String nombreCompleto
+    - String direccion
+    - String telefono
+    - String correo
+  }
+
+  abstract class EntidadAuditable {
+    - boolean activo
+    - Date fechaRegistro
+  }
+}
+
+package "Sistema" together {
+  class UsuarioDAO implements IDAO
+  class UsuarioService implements IService
+  class Usuario extends PersonaBase
+  class Rol
+  class Permiso
+  class FormUsuarioController
+}
+
+package "Cliente" together {
+  class ClienteDAO implements IDAO
+  class ClienteService implements IService
+  abstract class Cliente extends PersonaBase
+  class PersonaNatural extends Cliente
+  class PersonaJuridica extends Cliente
+  class FormClienteController
+}
+
+'======================= Fila Media =======================
+package "Facturacion" together {
+  class FacturaDAO implements IDAO
+  class FacturaService implements IService
+  class Factura
+  class DetalleServicio
+  class FormaPago
+  class FormFacturaController
+}
+
+package "Personal" together {
+  class EmpleadoDAO implements IDAO
+  class EmpleadoService implements IService
+  class Empleado extends PersonaBase
+  class FormEmpleadoController
+}
+
+package "Casos y Documentos" together {
+  class CasoDAO implements IDAO
+  class CasoService implements IService
+  class Caso
+  class Documento
+  class DocumentoDAO implements IDAO
+  class DocumentoService implements IService
+  class FormCasosController
+  class FormDocumentoController
+}
+
+'======================= Fila Inferior =======================
+package "Utilidades" together {
+  class App
+  class DatabaseConnection
+  class IconUtil
+  class ConfiguracionGlobal
+  class Reporte
+  class Estadistica
+}
+
+'======================= Relaciones Principales =======================
+FormUsuarioController --|> FormController
+FormClienteController --|> FormController
+FormFacturaController --|> FormController
+FormEmpleadoController --|> FormController
+FormCasosController --|> FormController
+FormDocumentoController --|> FormController
+
+Cliente --> EntidadAuditable
+Empleado --> EntidadAuditable
+
+Usuario --> Rol
+Rol --> Permiso
+Factura --> Cliente
+Factura --> Usuario
+
+App --> UsuarioService
+App --> ClienteService
+App --> FacturaService
+App --> EmpleadoService
+App --> CasoService
+
+DatabaseConnection --> UsuarioDAO
+DatabaseConnection --> ClienteDAO
+DatabaseConnection --> FacturaDAO
+DatabaseConnection --> EmpleadoDAO
+DatabaseConnection --> CasoDAO
+DatabaseConnection --> DocumentoDAO
+
+@enduml
+    + calcular(): void
+  }
+}
+
+'======================= Cliente =======================
+package "Cliente" {
+  class ClienteDAO implements IDAO
+  class ClienteService implements IService
+
+  abstract class Cliente extends PersonaBase {
+    - String tipoIdentificacion
+    - String numeroIdentificacion
+    + consultar(filtro): List
+    + actualizar(): void
+  }
+
+  Cliente --> EntidadAuditable
+
+  class PersonaNatural extends Cliente {
+    - String estadoCivil
+  }
+
+  class PersonaJuridica extends Cliente {
+    - String representanteLegal
+    - String direccionFiscal
+  }
+
+  class ModuloClienteController {
+    + registrarCliente(Cliente): void
+    + consultarCliente(filtro): List
+    + actualizarCliente(Cliente): void
+  }
+
+  class FormClienteController
+}
+
+'======================= Facturacion =======================
+package "Facturacion" {
+  class FacturaDAO implements IDAO
+  class FacturaService implements IService
+
+  class Factura {
+    - String numeroFactura
+    - Date fechaEmision
+    - Cliente cliente
+    - List detalles
+    - double subtotal
+    - double descuento
+    - double iva
+    - double total
+    - List formasPago
+    - Caso caso
+    - Usuario usuarioAcceso
+    - Date fechaAcceso
+    + generar(): void
+    + controlarPagos(): void
+    + descargarPDF(): void
+    + enviarPorCorreo(): void
+  }
+
+  class DetalleServicio
+  class FormaPago
+
+  class ModuloFacturaController
+  class FormFacturaController
+}
+
+'======================= Personal =======================
+package "Personal" {
+  class EmpleadoDAO implements IDAO
+  class EmpleadoService implements IService
+
+  class Empleado extends PersonaBase {
+    - String cedula
+    - Rol rol
+    + actualizar(): void
+    + cambiarRol(Rol): void
+    + cambiarEstado(boolean): void
+  }
+
+  Empleado --> EntidadAuditable
+
+  class ModuloEmpleadoController
+  class FormEmpleadoController
+}
+
+'======================= Casos y Documentos =======================
+package "Casos y Documentos" {
+  class CasoDAO implements IDAO
+  class CasoService implements IService
+
+  class Caso {
+    - String numeroExpediente
+    - String titulo
+    - String tipo
+    - Date fechaInicio
+    - String descripcion
+    - List abogados
+    - String estado
+    - List documentos
+    - List bitacora
+    - List historialComunicaciones
+    + registrar(): void
+    + actualizar(): void
+    + asignarAbogado(AbogadoAsignado): void
+    + agregarDocumento(Documento): void
+    + agregarBitacora(Bitacora): void
+    + generarReporte(): Reporte
+  }
+
+  class AbogadoAsignado
+  class Bitacora
+  class Documento
+  class Comunicacion
+
+  class DocumentoDAO implements IDAO
+  class DocumentoService implements IService
+
+  class ModuloCasosController
+  class ModuloDocumentosController
+  class FormCasosController
+  class FormDocumentoController
+}
+
+'======================= Utilidades =======================
+class App {
+  + iniciar(): void
+  + cerrar(): void
+}
+
+class DatabaseConnection {
+  + conectar(): void
+  + desconectar(): void
+}
+
+class IconUtil {
+  + cargarIcono(String): Object
+}
+
+'======================= Relaciones =======================
+FormUsuarioController --|> FormController
+FormClienteController --|> FormController
+FormParametroController --|> FormController
+FormFacturaController --|> FormController
+FormEmpleadoController --|> FormController
+FormCasosController --|> FormController
+FormDocumentoController --|> FormController
+
+ClienteDAO --> Cliente
+EmpleadoDAO --> Empleado
+UsuarioDAO --> Usuario
+FacturaDAO --> Factura
+CasoDAO --> Caso
+DocumentoDAO --> Documento
+ParametroDAO --> Parametro
+
+Usuario --> Rol
+Rol --> Permiso
+Factura --> Cliente
+Factura --> Usuario
+Factura --> Caso
+Documento --> Caso
+Documento --> Usuario
+
+App --> ModuloUsuarioController
+App --> ModuloClienteController
+App --> ModuloFacturaController
+App --> ModuloEmpleadoController
+App --> ModuloCasosController
+
+DatabaseConnection --> UsuarioDAO
+DatabaseConnection --> ClienteDAO
+DatabaseConnection --> FacturaDAO
+DatabaseConnection --> EmpleadoDAO
+DatabaseConnection --> DocumentoDAO
+DatabaseConnection --> ParametroDAO
+DatabaseConnection --> CasoDAO
+DatabaseConnection --> ConfiguracionGlobal
+
+IconUtil --> App
+
+@enduml
