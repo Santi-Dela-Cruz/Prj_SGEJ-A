@@ -1,6 +1,10 @@
 package application.controllers.administracion_sistema;
 
+import application.dao.ParametroDAO;
+import application.model.Parametro;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -9,6 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+import java.util.List;
 
 public class ModuloParametrosController {
 
@@ -26,6 +31,7 @@ public class ModuloParametrosController {
     @FXML private TableColumn<ParametroDemo, Void> tbc_BotonEliminar;
 
     private Pane pnl_Forms;
+    private ObservableList<ParametroDemo> parametros = FXCollections.observableArrayList();
 
     public void setFormularioContainer(Pane pnl_Forms) {
         this.pnl_Forms = pnl_Forms;
@@ -38,13 +44,13 @@ public class ModuloParametrosController {
 
         configurarColumnasTexto();
         inicializarColumnasDeBotones();
-        cargarDatosEjemplo();
+        cargarParametrosDesdeBaseDatos();
         ocultarEncabezadosColumnasDeAccion();
 
         tbc_BotonEditar.getStyleClass().add("column-action");
         tbc_BotonEliminar.getStyleClass().add("column-action");
     }
-    
+
     private void configurarColumnasTexto() {
         tbc_Codigo.setCellValueFactory(new PropertyValueFactory<>("codigo"));
         tbc_Nombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -87,48 +93,41 @@ public class ModuloParametrosController {
         });
     }
 
-    private void cargarDatosEjemplo() {
-        tb_Parametros.getItems().clear();
-        
-        // Datos de ejemplo
-        tb_Parametros.getItems().addAll(
-            new ParametroDemo("SYS001", "Timeout Session", "Tiempo de sesión en minutos", "30", "Numérico"),
-            new ParametroDemo("SYS002", "Max File Size", "Tamaño máximo de archivo en MB", "10", "Numérico"),
-            new ParametroDemo("SYS003", "Email Server", "Servidor de correo electrónico", "smtp.gmail.com", "Texto"),
-            new ParametroDemo("SYS004", "Email Port", "Puerto del servidor de correo", "587", "Numérico"),
-            new ParametroDemo("SYS005", "Backup Schedule", "Horario de respaldo automático", "02:00", "Tiempo"),
-            new ParametroDemo("SYS006", "Currency Symbol", "Símbolo de moneda", "$", "Texto"),
-            new ParametroDemo("SYS007", "Date Format", "Formato de fecha", "dd/MM/yyyy", "Texto"),
-            new ParametroDemo("SYS008", "Max Login Attempts", "Intentos máximos de login", "3", "Numérico"),
-            new ParametroDemo("SYS009", "System Language", "Idioma del sistema", "es-ES", "Texto"),
-            new ParametroDemo("SYS010", "Debug Mode", "Modo de depuración", "false", "Booleano")
-        );
+    private void cargarParametrosDesdeBaseDatos() {
+        parametros.clear();
+        ParametroDAO dao = new ParametroDAO();
+        List<Parametro> lista = dao.obtenerTodos();
+        for (Parametro p : lista) {
+            parametros.add(new ParametroDemo(
+                p.getCodigo(),
+                p.getNombre(),
+                p.getDescripcion(),
+                p.getValor(),
+                p.getTipo().name()
+            ));
+        }
+        tb_Parametros.setItems(parametros);
     }
 
-    private void cargarDatos() {
-        // Aquí se cargarían los datos desde la base de datos
-        cargarDatosEjemplo();
-    }
-
-    
     private void buscarParametros() {
         String termino = txt_Busqueda.getText();
         if (termino == null || termino.trim().isEmpty()) {
-            cargarDatos();
+            cargarParametrosDesdeBaseDatos();
             return;
         }
-        
-        // Filtrar por término de búsqueda
-        tb_Parametros.getItems().clear();
-        cargarDatosEjemplo();
-        
-        String terminoBusqueda = termino.toLowerCase();
-        tb_Parametros.getItems().removeIf(parametro -> 
-            !parametro.getCodigo().toLowerCase().contains(terminoBusqueda) &&
-            !parametro.getNombre().toLowerCase().contains(terminoBusqueda) &&
-            !parametro.getDescripcion().toLowerCase().contains(terminoBusqueda) &&
-            !parametro.getValor().toLowerCase().contains(terminoBusqueda)
-        );
+        ParametroDAO dao = new ParametroDAO();
+        List<Parametro> filtrados = dao.buscarPorTexto(termino.trim());
+        ObservableList<ParametroDemo> resultado = FXCollections.observableArrayList();
+        for (Parametro p : filtrados) {
+            resultado.add(new ParametroDemo(
+                p.getCodigo(),
+                p.getNombre(),
+                p.getDescripcion(),
+                p.getValor(),
+                p.getTipo().name()
+            ));
+        }
+        tb_Parametros.setItems(resultado);
     }
 
     private void eliminarParametro(ParametroDemo parametro) {
@@ -138,8 +137,14 @@ public class ModuloParametrosController {
         alert.setContentText("Parámetro: " + parametro.getNombre());
 
         if (alert.showAndWait().orElse(ButtonType.CANCEL) == ButtonType.OK) {
-            tb_Parametros.getItems().remove(parametro);
-            mostrarMensaje("Parámetro eliminado exitosamente", "success");
+            ParametroDAO dao = new ParametroDAO();
+            boolean exito = dao.eliminarParametro(parametro.getCodigo());
+            if (exito) {
+                mostrarMensaje("Parámetro eliminado exitosamente", "success");
+                cargarParametrosDesdeBaseDatos();
+            } else {
+                mostrarMensaje("No se pudo eliminar el parámetro", "error");
+            }
         }
     }
 
@@ -169,7 +174,7 @@ public class ModuloParametrosController {
     }
 
     public void actualizarTabla() {
-        cargarDatos();
+        cargarParametrosDesdeBaseDatos();
     }
 
     private void mostrarMensaje(String mensaje, String tipo) {

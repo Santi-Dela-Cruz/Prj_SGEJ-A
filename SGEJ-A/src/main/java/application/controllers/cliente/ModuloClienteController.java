@@ -64,17 +64,17 @@ public class ModuloClienteController {
     private ClienteService clienteService;
     private String tipoUsuario; // Para saber si es administrador
 
-    // Flag para evitar múltiples ejecuciones
+    // Flag para evitar mÃºltiples ejecuciones
     private boolean formularioAbierto = false;
 
-    // Variables para paginación
+    // Variables para paginaciÃ³n
     private int paginaActual = 1;
     private int registrosPorPagina = 10;
     private int totalRegistros = 0;
     private int totalPaginas = 0;
     private ObservableList<Cliente> todosLosClientes = FXCollections.observableArrayList();
 
-    // Elementos de paginación del FXML
+    // Elementos de paginaciÃ³n del FXML
     @FXML
     private Label lbl_InfoPaginacion;
     @FXML
@@ -118,7 +118,7 @@ public class ModuloClienteController {
         tbc_BotonEditar.getStyleClass().add("column-action");
         tbc_BotonVer.getStyleClass().add("column-action");
 
-        // Configurar paginación
+        // Configurar paginaciÃ³n
         configurarPaginacion();
     }
 
@@ -145,8 +145,8 @@ public class ModuloClienteController {
     }
 
     private void inicializarColumnasDeBotones() {
-        agregarBotonPorColumna(tbc_BotonEditar, "✎", "Editar");
-        agregarBotonPorColumna(tbc_BotonVer, "👁", "Ver");
+        agregarBotonPorColumna(tbc_BotonEditar, "âœŽ", "Editar");
+        agregarBotonPorColumna(tbc_BotonVer, "ðŸ‘�", "Ver");
 
         // Eliminar encabezados de las columnas de acciones
         tbc_BotonEditar.setText("");
@@ -163,12 +163,12 @@ public class ModuloClienteController {
             private final Button btn = new Button(texto);
 
             {
-                // Estilos mejorados para botones más compactos y profesionales
+                // Estilos mejorados para botones mÃ¡s compactos y profesionales
                 btn.getStyleClass().add("table-button");
                 setStyle("-fx-alignment: CENTER; -fx-padding: 2;");
                 btn.setTooltip(new Tooltip(tooltip));
 
-                // Estilos específicos según el tipo de botón
+                // Estilos especÃ­ficos segÃºn el tipo de botÃ³n
                 if ("Editar".equals(tooltip)) {
                     btn.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-background-radius: 4; " +
                             "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
@@ -224,7 +224,7 @@ public class ModuloClienteController {
      */
     private void cargarClientesDesdeBaseDatos() {
         try {
-            // Cargar todos los clientes según filtros
+            // Cargar todos los clientes segÃºn filtros
             if ("Administrador".equals(tipoUsuario) && cmb_FiltroEstado != null && cmb_FiltroEstado.isVisible()) {
                 String filtroEstado = cmb_FiltroEstado.getSelectionModel().getSelectedItem();
 
@@ -256,7 +256,7 @@ public class ModuloClienteController {
     }
 
     /**
-     * Mostrar solo los registros de la página actual
+     * Mostrar solo los registros de la pÃ¡gina actual
      */
     private void mostrarPaginaActual() {
         int inicio = (paginaActual - 1) * registrosPorPagina;
@@ -275,7 +275,7 @@ public class ModuloClienteController {
     }
 
     /**
-     * Calcular total de páginas
+     * Calcular total de pÃ¡ginas
      */
     private void calcularTotalPaginas() {
         totalPaginas = (int) Math.ceil((double) totalRegistros / registrosPorPagina);
@@ -284,7 +284,7 @@ public class ModuloClienteController {
     }
 
     /**
-     * Actualizar información de paginación
+     * Actualizar informaciÃ³n de paginaciÃ³n
      */
     private void actualizarInfoPaginacion() {
         int inicio = totalRegistros > 0 ? (paginaActual - 1) * registrosPorPagina + 1 : 0;
@@ -295,7 +295,7 @@ public class ModuloClienteController {
         }
 
         if (lbl_PaginaActual != null) {
-            lbl_PaginaActual.setText("Página " + paginaActual + " de " + totalPaginas);
+            lbl_PaginaActual.setText("PÃ¡gina " + paginaActual + " de " + totalPaginas);
         }
 
         if (lbl_TotalPaginas != null) {
@@ -308,7 +308,7 @@ public class ModuloClienteController {
     }
 
     /**
-     * Actualizar estado de botones de navegación
+     * Actualizar estado de botones de navegaciÃ³n
      */
     private void actualizarEstadoBotones() {
         if (btn_PrimeraPagina != null) {
@@ -325,7 +325,7 @@ public class ModuloClienteController {
         }
     }
 
-    // Métodos de navegación
+    // MÃ©todos de navegaciÃ³n
     private void irAPrimeraPagina() {
         paginaActual = 1;
         mostrarPaginaActual();
@@ -376,7 +376,7 @@ public class ModuloClienteController {
 
     private void cambiarRegistrosPorPagina() {
         registrosPorPagina = cmb_RegistrosPorPagina.getValue();
-        paginaActual = 1; // Volver a la primera página
+        paginaActual = 1; // Volver a la primera pÃ¡gina
         calcularTotalPaginas();
         mostrarPaginaActual();
         actualizarInfoPaginacion();
@@ -384,7 +384,7 @@ public class ModuloClienteController {
     }
 
     /**
-     * Buscar clientes con paginación
+     * Buscar clientes con paginaciÃ³n
      */
     private void buscarClientes() {
         String textoBusqueda = txt_Busqueda.getText().trim();
@@ -395,7 +395,7 @@ public class ModuloClienteController {
                 return;
             }
 
-            // Buscar en todos los clientes según filtros
+            // Buscar en todos los clientes segÃºn filtros
             if ("Administrador".equals(tipoUsuario) && cmb_FiltroEstado != null && cmb_FiltroEstado.isVisible()) {
                 String filtroEstado = cmb_FiltroEstado.getSelectionModel().getSelectedItem();
 
@@ -413,7 +413,7 @@ public class ModuloClienteController {
             }
 
             totalRegistros = todosLosClientes.size();
-            paginaActual = 1; // Volver a la primera página
+            paginaActual = 1; // Volver a la primera pÃ¡gina
             calcularTotalPaginas();
             mostrarPaginaActual();
             actualizarInfoPaginacion();
@@ -430,15 +430,15 @@ public class ModuloClienteController {
      */
     private void mostrarFormulario(Cliente cliente, String modo) {
         if (formularioAbierto) {
-            System.out.println("🔧 Formulario ya está abierto, ignorando solicitud");
+            System.out.println("ðŸ”§ Formulario ya estÃ¡ abierto, ignorando solicitud");
             return;
         }
 
         try {
             formularioAbierto = true;
-            System.out.println("🔧 Iniciando mostrarFormulario con modo: " + modo);
-            System.out.println("🔧 Cliente: " + (cliente != null ? cliente.getNombreCompleto() : "null"));
-            System.out.println("🔧 Panel Forms: " + (pnl_Forms != null ? "OK" : "NULL"));
+            System.out.println("ðŸ”§ Iniciando mostrarFormulario con modo: " + modo);
+            System.out.println("ðŸ”§ Cliente: " + (cliente != null ? cliente.getNombreCompleto() : "null"));
+            System.out.println("ðŸ”§ Panel Forms: " + (pnl_Forms != null ? "OK" : "NULL"));
 
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/cliente/form_cliente.fxml"));
             Node nodo = fxmlLoader.load();
@@ -452,7 +452,7 @@ public class ModuloClienteController {
 
             // Configurar callbacks para refrescar la tabla
             controller.setOnGuardar(() -> {
-                System.out.println("🔧 Callback onGuardar ejecutado");
+                System.out.println("ðŸ”§ Callback onGuardar ejecutado");
                 cargarClientesDesdeBaseDatos();
                 formularioAbierto = false;
                 if (pnl_Forms != null) {
@@ -463,7 +463,7 @@ public class ModuloClienteController {
             });
 
             controller.setOnCancelar(() -> {
-                System.out.println("🔧 Callback onCancelar ejecutado");
+                System.out.println("ðŸ”§ Callback onCancelar ejecutado");
                 formularioAbierto = false;
                 if (pnl_Forms != null) {
                     pnl_Forms.getChildren().clear();
@@ -483,10 +483,10 @@ public class ModuloClienteController {
                 AnchorPane.setBottomAnchor(nodo, 0.0);
                 AnchorPane.setLeftAnchor(nodo, 0.0);
                 AnchorPane.setRightAnchor(nodo, 0.0);
-                System.out.println("🔧 Formulario cargado exitosamente");
+                System.out.println("ðŸ”§ Formulario cargado exitosamente");
             } else {
                 // Si no hay panel de formularios, abrir en ventana nueva
-                System.out.println("🔧 Abriendo formulario en ventana nueva");
+                System.out.println("ðŸ”§ Abriendo formulario en ventana nueva");
                 Stage stage = new Stage();
                 Scene scene = new Scene((Parent) nodo);
 
@@ -504,24 +504,24 @@ public class ModuloClienteController {
             }
         } catch (IOException e) {
             formularioAbierto = false;
-            System.err.println("🔧 ERROR al cargar formulario: " + e.getMessage());
+            System.err.println("ðŸ”§ ERROR al cargar formulario: " + e.getMessage());
             e.printStackTrace();
         } catch (Exception e) {
             formularioAbierto = false;
-            System.err.println("🔧 ERROR general: " + e.getMessage());
+            System.err.println("ðŸ”§ ERROR general: " + e.getMessage());
             e.printStackTrace();
         }
     }
 
     /**
-     * Método público para refrescar la tabla desde otros controladores
+     * MÃ©todo pÃºblico para refrescar la tabla desde otros controladores
      */
     public void refrescarTabla() {
         cargarClientesDesdeBaseDatos();
     }
 
     /**
-     * Método para resetear el estado del formulario
+     * MÃ©todo para resetear el estado del formulario
      */
     public void resetearFormulario() {
         formularioAbierto = false;
@@ -533,7 +533,7 @@ public class ModuloClienteController {
     }
 
     /**
-     * Limpiar filtro de búsqueda y mostrar todos los clientes
+     * Limpiar filtro de bÃºsqueda y mostrar todos los clientes
      */
     private void limpiarFiltro() {
         txt_Busqueda.clear();
@@ -560,7 +560,7 @@ public class ModuloClienteController {
                 cmb_FiltroEstado.getSelectionModel().select("Activos"); // Seleccionar "Activos" para otros
             }
 
-            // Listener para cuando cambie la selección
+            // Listener para cuando cambie la selecciÃ³n
             cmb_FiltroEstado.getSelectionModel().selectedItemProperty().addListener((_, _, newValue) -> {
                 if (newValue != null) {
                     filtrarPorEstado(newValue);
@@ -593,7 +593,7 @@ public class ModuloClienteController {
     }
 
     /**
-     * Configurar el módulo según el tipo de usuario
+     * Configurar el mÃ³dulo segÃºn el tipo de usuario
      */
     public void configurarPorRol(String tipoUsuario) {
         this.tipoUsuario = tipoUsuario;
@@ -613,7 +613,7 @@ public class ModuloClienteController {
             }
         }
 
-        // Recargar datos después de configurar el rol
+        // Recargar datos despuÃ©s de configurar el rol
         cargarClientesDesdeBaseDatos();
     }
 
@@ -628,17 +628,17 @@ public class ModuloClienteController {
     }
 
     /**
-     * Configurar elementos de paginación
+     * Configurar elementos de paginaciÃ³n
      */
     private void configurarPaginacion() {
-        // Configurar ComboBox de registros por página
+        // Configurar ComboBox de registros por pÃ¡gina
         if (cmb_RegistrosPorPagina != null) {
             cmb_RegistrosPorPagina.getItems().addAll(5, 10, 15, 20, 25, 50);
             cmb_RegistrosPorPagina.setValue(registrosPorPagina);
             cmb_RegistrosPorPagina.setOnAction(e -> cambiarRegistrosPorPagina());
         }
 
-        // Configurar eventos de botones de paginación
+        // Configurar eventos de botones de paginaciÃ³n
         if (btn_PrimeraPagina != null) {
             btn_PrimeraPagina.setOnAction(e -> irAPrimeraPagina());
         }
@@ -652,7 +652,7 @@ public class ModuloClienteController {
             btn_UltimaPagina.setOnAction(e -> irAUltimaPagina());
         }
 
-        // Configurar campo de página actual
+        // Configurar campo de pÃ¡gina actual
         if (txt_PaginaActual != null) {
             txt_PaginaActual.setOnAction(e -> irAPaginaEspecifica());
         }

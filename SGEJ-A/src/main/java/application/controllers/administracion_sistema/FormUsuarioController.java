@@ -27,76 +27,123 @@ public class FormUsuarioController {
         this.onCancelar = handler;
     }
 
-    @FXML
-    private void initialize() {
-        cbx_Estado.getItems().addAll("Activo", "Inactivo");
-        cbx_TipoIdentificacion.getItems().addAll("Cédula", "RUC", "Pasaporte");
-        cbx_Rol.getItems().addAll("Administrador", "Usuario", "Invitado");
+@FXML
+private void initialize() {
+    cbx_Estado.getItems().addAll("ACTIVO", "INACTIVO");
+    cbx_TipoIdentificacion.getItems().addAll("CEDULA", "RUC", "PASAPORTE"); // <-- Enum exacto
+    cbx_Rol.getItems().addAll("Administrador", "Usuario", "Invitado");
+    
+    btn_Guardar.setOnAction(e -> {
+    String nombres = txtf_NombresCompletos.getText().trim();
+    String usuario = txtf_NombreUsuario.getText().trim();
+    String identificacion = txtf_NumeroIdentificacion.getText().trim();
 
-        btn_Guardar.setOnAction(e -> {
-            if (txtf_NombresCompletos.getText().isEmpty() ||
-                    txtf_NombreUsuario.getText().isEmpty() ||
-                    txtf_NumeroIdentificacion.getText().isEmpty() ||
-                    cbx_TipoIdentificacion.getValue() == null ||
-                    cbx_Rol.getValue() == null ||
-                    cbx_Estado.getValue() == null ||
-                    dt_FechaIngreso.getValue() == null ||
-                    txtf_Contrasena.getText().isEmpty() ||
-                    txtf_ConfirmarContrasena.getText().isEmpty()) {
+    // LOG para depuración
+    System.out.println("Guardando usuario: " +
+        nombres + ", " +
+        usuario + ", " +
+        identificacion + ", " +
+        cbx_TipoIdentificacion.getValue() + ", " +
+        txtf_Telefono.getText() + ", " +
+        txtf_Correo.getText() + ", " +
+        cbx_Estado.getValue() + ", " +
+        txtf_Direccion.getText() + ", " +
+        dt_FechaIngreso.getValue() + ", " +
+        cbx_Rol.getValue() + ", " +
+        txtf_Contrasena.getText());
 
-                DialogUtil.mostrarDialogo(
-                        "Campos requeridos",
-                        "Por favor, complete los campos obligatorios:\n" +
-                                " - Nombres Completos\n" +
-                                " - Nombre de Usuario\n" +
-                                " - Número de Identificación\n" +
-                                " - Tipo de Identificación\n" +
-                                " - Rol\n" +
-                                " - Estado\n" +
-                                " - Fecha de Ingreso\n" +
-                                " - Contraseña y Confirmación",
-                        "warning",
-                        List.of(ButtonType.OK)
-                );
-                return;
-            }
+    if (nombres.isEmpty() ||
+        usuario.isEmpty() ||
+        identificacion.isEmpty() ||
+        cbx_TipoIdentificacion.getValue() == null ||
+        cbx_Rol.getValue() == null ||
+        cbx_Estado.getValue() == null ||
+        dt_FechaIngreso.getValue() == null ||
+        txtf_Contrasena.getText().isEmpty() ||
+        txtf_ConfirmarContrasena.getText().isEmpty()) {
 
-            if (!txtf_Contrasena.getText().equals(txtf_ConfirmarContrasena.getText())) {
-                DialogUtil.mostrarDialogo(
-                        "Contraseña incorrecta",
-                        "La contraseña y la confirmación no coinciden.",
-                        "error",
-                        List.of(ButtonType.OK)
-                );
-                return;
-            }
-
-            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
-                    "Confirmación",
-                    "¿Está seguro que desea guardar este usuario?",
-                    "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO)
-            );
-
-            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-                if (onGuardar != null) onGuardar.run();
-            }
-        });
-
-        btn_Cancelar.setOnAction(e -> {
-            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
-                    "Confirmación",
-                    "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
-                    "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO)
-            );
-
-            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-                if (onCancelar != null) onCancelar.run();
-            }
-        });
-
+        DialogUtil.mostrarDialogo(
+            "Campos requeridos",
+            "Por favor, complete los campos obligatorios:\n" +
+            " - Nombres Completos (actual: '" + nombres + "')\n" +
+            " - Nombre de Usuario (actual: '" + usuario + "')\n" +
+            " - Número de Identificación (actual: '" + identificacion + "')\n" +
+            " - Tipo de Identificación\n" +
+            " - Rol\n" +
+            " - Estado\n" +
+            " - Fecha de Ingreso\n" +
+            " - Contraseña y Confirmación",
+            "warning",
+            List.of(ButtonType.OK)
+        );
+        return;
     }
+
+
+
+    if (!txtf_Contrasena.getText().equals(txtf_ConfirmarContrasena.getText())) {
+        DialogUtil.mostrarDialogo(
+            "Contraseña incorrecta",
+            "La contraseña y la confirmación no coinciden.",
+            "error",
+            List.of(ButtonType.OK)
+        );
+        return;
+    }
+
+    Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+        "Confirmación",
+        "¿Está seguro que desea guardar este usuario?",
+        "confirm",
+        List.of(ButtonType.YES, ButtonType.NO)
+    );
+
+    if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+        try {
+            application.model.Usuario usuarioObj = new application.model.Usuario(
+                nombres,
+                usuario,
+                identificacion,
+                application.model.Usuario.TipoIdentificacion.valueOf(cbx_TipoIdentificacion.getValue()),
+                txtf_Telefono.getText(),
+                txtf_Correo.getText(),
+                application.model.Usuario.Estado.valueOf(cbx_Estado.getValue()),
+                txtf_Direccion.getText(),
+                dt_FechaIngreso.getValue(),
+                application.model.Usuario.TipoUsuario.NATURAL,
+                cbx_Rol.getValue(),
+                txtf_Contrasena.getText()
+            );
+
+            application.dao.UsuarioDAO usuarioDAO = new application.dao.UsuarioDAO();
+            boolean exito = usuarioDAO.insertarUsuario(usuarioObj);
+
+            if (exito) {
+                DialogUtil.mostrarDialogo("Éxito", "Usuario guardado correctamente.", "info", List.of(ButtonType.OK));
+                if (onGuardar != null) onGuardar.run();
+            } else {
+                DialogUtil.mostrarDialogo("Error", "No se pudo guardar el usuario. Verifique que el nombre de usuario y número de identificación no estén repetidos.", "error", List.of(ButtonType.OK));
+            }
+        } catch (Exception ex) {
+            DialogUtil.mostrarDialogo("Error", "Error al guardar usuario: " + ex.getMessage(), "error", List.of(ButtonType.OK));
+            ex.printStackTrace();
+        }
+    }
+});
+
+    btn_Cancelar.setOnAction(e -> {
+        Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+            "Confirmación",
+            "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
+            "confirm",
+            List.of(ButtonType.YES, ButtonType.NO)
+        );
+
+        if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+            if (onCancelar != null) onCancelar.run();
+        }
+    });
+}
 
     public void cargarUsuario(ModuloUsuarioController.UsuarioDemo usuario) {
         txtf_NombresCompletos.setText(usuario.nombresCompletos());

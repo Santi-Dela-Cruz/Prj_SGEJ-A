@@ -18,7 +18,7 @@
                AnchorPane.topAnchor="10.0"
                alignment="CENTER"
                style="-fx-background-color: #90caf9; -fx-background-radius: 16;">
-        <Text fx:id="lbl_Titulo"
+        <Label fx:id="lbl_Titulo"
               text="Nuevo Parámetro"
               style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
     </StackPane>

@@ -1,6 +1,8 @@
 package application.controllers.administracion_sistema;
 
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -10,6 +12,8 @@ import javafx.scene.layout.Pane;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ModuloUsuarioController {
 
@@ -36,6 +40,8 @@ public class ModuloUsuarioController {
 
     private Pane pnl_Forms;
 
+    private ObservableList<UsuarioDemo> todosLosUsuarios = FXCollections.observableArrayList();
+
     public void setFormularioContainer(Pane pnl_Forms) {
         this.pnl_Forms = pnl_Forms;
     }
@@ -43,9 +49,10 @@ public class ModuloUsuarioController {
     @FXML
     private void initialize() {
         btn_Nuevo.setOnAction(e -> mostrarFormulario(null, "NUEVO"));
+        btn_Buscar.setOnAction(e -> buscarUsuarios());
         configurarColumnasTexto();
         inicializarColumnasDeBotones();
-        cargarDatosEjemplo();
+        cargarUsuariosDesdeBaseDatos();
     }
 
     private void mostrarFormulario(UsuarioDemo usuario, String modo) {
@@ -55,7 +62,10 @@ public class ModuloUsuarioController {
 
             FormUsuarioController controller = loader.getController();
             controller.setOnCancelar(this::cerrarFormulario);
-            controller.setOnGuardar(this::cerrarFormulario);
+            controller.setOnGuardar(() -> {
+                cargarUsuariosDesdeBaseDatos();
+                cerrarFormulario();
+            });
 
             if (usuario != null) {
                 controller.cargarUsuario(usuario);
@@ -116,8 +126,8 @@ public class ModuloUsuarioController {
     private void inicializarColumnasDeBotones() {
         agregarBotonPorColumna(tbc_BotonEditar, "✎", "Editar");
         agregarBotonPorColumna(tbc_BotonVer, "👁", "Ver");
-        agregarBotonPorColumna(tbc_BotonReset, "🔁", "Restablecer");
-        agregarBotonPorColumna(tbc_BotonCambiarClave, "🔒", "CambiarClave");
+        agregarBotonPorColumna(tbc_BotonReset, "🔄", "Restablecer");
+        agregarBotonPorColumna(tbc_BotonCambiarClave, "🔑", "CambiarClave");
 
         tbc_BotonEditar.setPrefWidth(40);
         tbc_BotonVer.setPrefWidth(40);
@@ -152,12 +162,52 @@ public class ModuloUsuarioController {
         });
     }
 
-    private void cargarDatosEjemplo() {
-        tb_Usuarios.getItems().addAll(
-                new UsuarioDemo("Ana Mora", "anaMora", "0102030405", "Cédula", "0991234567", "ana@correo.com", "Activo", "Av. Siempre Viva 123", LocalDate.of(2023, 1, 10), "Natural", "Administrador"),
-                new UsuarioDemo("Luis Pérez", "luisPerez", "1102233445", "Pasaporte", "0987654321", "luis@correo.com", "Activo", "Calle Falsa 456", LocalDate.of(2022, 5, 20), "Jurídica", "Usuario"),
-                new UsuarioDemo("María Salas", "mariaSalas", "2223334445", "RUC", "0970001122", "maria@correo.com", "Inactivo", "Calle Real 789", LocalDate.of(2021, 8, 15), "Natural", "Administrador")
-        );
+    private void cargarUsuariosDesdeBaseDatos() {
+    try {
+        // Instancia el DAO y obtiene la lista de usuarios
+        application.dao.UsuarioDAO usuarioDAO = new application.dao.UsuarioDAO();
+        List<application.model.Usuario> listaUsuarios = usuarioDAO.obtenerTodosLosUsuarios();
+
+        // Mapea los usuarios reales al record UsuarioDemo para la tabla
+        List<UsuarioDemo> usuariosDemo = listaUsuarios.stream().map(u -> new UsuarioDemo(
+                u.getNombresCompletos(),
+                u.getNombreUsuario(),
+                u.getNumeroIdentificacion(),
+                u.getTipoIdentificacion().name(),
+                u.getTelefono(),
+                u.getCorreo(),
+                u.getEstado().name(),
+                u.getDireccion(),
+                u.getFechaIngreso(),
+                u.getTipoUsuario().name(),
+                u.getRol()
+        )).collect(Collectors.toList());
+
+        todosLosUsuarios.setAll(usuariosDemo);
+        tb_Usuarios.setItems(todosLosUsuarios);
+    } catch (Exception e) {
+        System.err.println("Error al cargar usuarios: " + e.getMessage());
+        tb_Usuarios.setItems(FXCollections.observableArrayList());
+    }
+}
+
+    private void buscarUsuarios() {
+        String textoBusqueda = txt_Busqueda.getText().trim().toLowerCase();
+        if (textoBusqueda.isEmpty()) {
+            tb_Usuarios.setItems(todosLosUsuarios);
+            return;
+        }
+        List<UsuarioDemo> filtrados = todosLosUsuarios.stream()
+            .filter(u -> u.nombresCompletos().toLowerCase().contains(textoBusqueda)
+                      || u.nombreUsuario().toLowerCase().contains(textoBusqueda)
+                      || u.numeroIdentificacion().toLowerCase().contains(textoBusqueda)
+                      || u.correo().toLowerCase().contains(textoBusqueda))
+            .collect(Collectors.toList());
+        tb_Usuarios.setItems(FXCollections.observableArrayList(filtrados));
+    }
+
+    public void refrescarTabla() {
+        cargarUsuariosDesdeBaseDatos();
     }
 
     public record UsuarioDemo(
