@@ -54,12 +54,122 @@ public class DatabaseConnection {
                     """;
 
             stmt.execute(createClientesTable);
-            
+
+            String createUsuariosTable = """
+            CREATE TABLE IF NOT EXISTS usuarios (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                nombres_completos TEXT NOT NULL,
+                nombre_usuario TEXT NOT NULL UNIQUE,
+                numero_identificacion TEXT NOT NULL UNIQUE,
+                tipo_identificacion TEXT NOT NULL CHECK (tipo_identificacion IN ('CEDULA', 'RUC', 'PASAPORTE')),
+            telefono TEXT NOT NULL,
+            correo TEXT NOT NULL,
+            estado TEXT NOT NULL CHECK (estado IN ('ACTIVO', 'INACTIVO')),
+            direccion TEXT,
+            fecha_ingreso TEXT,
+            tipo_usuario TEXT NOT NULL CHECK (tipo_usuario IN ('NATURAL',   'JURIDICA')),
+            rol TEXT NOT NULL,
+            clave TEXT NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+        """;
+        stmt.execute(createUsuariosTable);
+
+        // Crear tabla de parámetros del sistema
+   String createParametrosTable = """
+    CREATE TABLE IF NOT EXISTS parametros (
+        codigo TEXT PRIMARY KEY,
+        nombre TEXT NOT NULL,
+        descripcion TEXT,
+        valor TEXT NOT NULL,
+        tipo TEXT NOT NULL CHECK (tipo IN ('NUMERICO', 'TEXTO', 'TIEMPO')),
+        estado TEXT NOT NULL CHECK (estado IN ('ACTIVO', 'INACTIVO')),
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+    """;
+stmt.execute(createParametrosTable);
+
             // Crear índices para mejorar el rendimiento
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_numero_identificacion ON clientes(numero_identificacion)");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_nombre_completo ON clientes(nombre_completo)");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_estado ON clientes(estado)");
-            
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_usuario_identificacion ON usuarios(numero_identificacion)");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_usuario_nombre ON          usuarios(nombre_usuario)");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_usuario_estado ON          usuarios(estado)");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_parametro_nombre ON parametros(nombre)");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_parametro_estado ON            parametros(estado)");
+
+            // Crear tabla de casos legales
+            String createCasoTable = """
+                    CREATE TABLE IF NOT EXISTS caso (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        cliente_id INTEGER,
+                        numero_expediente TEXT,
+                        titulo TEXT,
+                        tipo TEXT,
+                        fecha_inicio DATE,
+                        descripcion TEXT,
+                        estado TEXT,
+                        FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+                    )
+                    """;
+            stmt.execute(createCasoTable);
+
+            // Crear tabla de bitácoras de caso
+            String createBitacoraTable = """
+                    CREATE TABLE IF NOT EXISTS bitacora_caso (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        caso_id INTEGER,
+                        fecha_entrada DATE,
+                        usuario TEXT,
+                        tipo_accion TEXT,
+                        descripcion TEXT,
+                        FOREIGN KEY (caso_id) REFERENCES caso(id)
+                    )
+                    """;
+            stmt.execute(createBitacoraTable);
+
+            // Crear tabla de abogados asignados a caso
+            String createAbogadoCasoTable = """
+                    CREATE TABLE IF NOT EXISTS abogado_caso (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        caso_id INTEGER,
+                        abogado_id INTEGER,
+                        rol TEXT,
+                        fecha_asignacion DATE,
+                        FOREIGN KEY (caso_id) REFERENCES caso(id)
+                    )
+                    """;
+            stmt.execute(createAbogadoCasoTable);
+
+            // Crear tabla de documentos de caso
+            String createDocumentoCasoTable = """
+                    CREATE TABLE IF NOT EXISTS documento_caso (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        caso_id INTEGER,
+                        nombre TEXT,
+                        ruta TEXT,
+                        fecha_subida DATE,
+                        FOREIGN KEY (caso_id) REFERENCES caso(id)
+                    )
+                    """;
+            stmt.execute(createDocumentoCasoTable);
+
+            // Crear tabla de historial de comunicaciones
+            String createHistorialComTable = """
+                    CREATE TABLE IF NOT EXISTS historial_comunicacion (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        caso_id INTEGER,
+                        tipo TEXT,
+                        fecha DATE,
+                        descripcion TEXT,
+                        FOREIGN KEY (caso_id) REFERENCES caso(id)
+                    )
+                    """;
+            stmt.execute(createHistorialComTable);
+
             System.out.println("Base de datos inicializada correctamente");
 
         } catch (SQLException e) {
