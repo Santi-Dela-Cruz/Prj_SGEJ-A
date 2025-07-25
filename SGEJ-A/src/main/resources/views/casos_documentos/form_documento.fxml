@@ -3,72 +3,75 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
 
-<ScrollPane fitToWidth="true" fitToHeight="true"
+<AnchorPane fx:id="formContainer" prefWidth="550" prefHeight="650" 
+            style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, -5, 5); -fx-background-radius: 8;"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="application.controllers.casos_documentacion.FormDocumentoController"
-            styleClass="scroll-form">
+            stylesheets="@/styles/combobox-custom.css">
 
-    <VBox spacing="20" styleClass="form-panel" alignment="TOP_LEFT">
+    <VBox spacing="18" AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0" 
+        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
         <padding>
             <Insets top="20" right="20" bottom="20" left="20"/>
         </padding>
 
-        <!-- Title in a light panel with white text -->
+        <!-- Título -->
         <StackPane fx:id="pnl_Titulo" prefHeight="50"
-                   alignment="CENTER"
                    style="-fx-background-color: #90caf9; -fx-background-radius: 8;">
-            <Text fx:id="txt_TituloForm"
+            <Label fx:id="txt_TituloForm"
                   text="REGISTRAR DOCUMENTO"
-                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
+                  style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"/>
         </StackPane>
 
-        <!-- Form -->
-        <GridPane hgap="20" vgap="12">
-            <columnConstraints>
-                <ColumnConstraints prefWidth="250"/>
-                <ColumnConstraints prefWidth="250"/>
-            </columnConstraints>
+        <!-- ScrollPane para permitir desplazamiento -->
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
+                    style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
+            <!-- Formulario - reorganizado -->
+            <VBox spacing="15" style="-fx-padding: 5 10;">
+                <!-- Primero: Selección de archivo -->
+            <Label text="Archivo:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <HBox spacing="8" alignment="CENTER_LEFT">
+                <TextField fx:id="txtf_RutaArchivo" editable="false" HBox.hgrow="ALWAYS" 
+                           style="-fx-background-color: #f8f9fa; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px; -fx-pref-height: 35;"/>
+                <Button fx:id="btn_SeleccionarArchivo" text="Seleccionar" 
+                        prefWidth="100" prefHeight="35" 
+                        style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;"/>
+            </HBox>            <!-- Nombre documento - autogenerado pero modificable -->
+            <Label text="Nombre del documento:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <TextField fx:id="txtf_NombreDocumento" styleClass="text-field"
+                      style="-fx-background-color: white; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px; -fx-pref-height: 35;"/>
+            
+            <!-- Tipo de documento -->
+            <Label text="Tipo de documento:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <ComboBox fx:id="cbx_TipoDocumento" maxWidth="Infinity" 
+                     promptText="Seleccione un tipo..." styleClass="combo-box"/>
+            
+            <!-- Número expediente -->
+            <Label text="Número de expediente:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <TextField fx:id="txtf_NumeroExpediente" styleClass="text-field"
+                      style="-fx-background-color: white; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px; -fx-pref-height: 35;"/>
+            
+            <!-- Fecha (automática) -->
+            <Label text="Fecha de carga:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <DatePicker fx:id="dtp_FechaCarga" maxWidth="Infinity"
+                      style="-fx-background-color: white; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px; -fx-pref-height: 35;"/>
+            
+            <!-- Descripción -->
+            <Label text="Descripción:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
+            <TextArea fx:id="txta_Descripcion" prefHeight="120" minHeight="120"
+                      wrapText="true" VBox.vgrow="ALWAYS"
+                      style="-fx-background-color: white; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px;"/>
+        </VBox>
+        </ScrollPane>
 
-            <!-- Row 0 -->
-            <Label text="Número de expediente:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
-            <TextField fx:id="txtf_NumeroExpediente" prefWidth="180.0" styleClass="text-field"
-                       GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-
-            <Label text="Nombre del documento:" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="label"/>
-            <TextField fx:id="txtf_NombreDocumento" prefWidth="180.0" styleClass="text-field"
-                       GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-            <!-- Row 2 -->
-            <Label text="Tipo de documento:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
-            <ComboBox fx:id="cbx_TipoDocumento" prefWidth="180.0" styleClass="combo-box"
-                      GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-
-            <Label text="Fecha de carga:" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="label"/>
-            <DatePicker fx:id="dtp_FechaCarga" prefWidth="180.0"
-                        GridPane.rowIndex="3" GridPane.columnIndex="1"/>
-
-            <!-- Row 4 - Description -->
-            <Label text="Descripción del documento:" GridPane.rowIndex="4" GridPane.columnIndex="0"
-                   GridPane.columnSpan="2" styleClass="label"/>
-            <TextArea fx:id="txta_Descripcion" prefWidth="460.0" prefHeight="100.0"
-                      GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.columnSpan="2"
-                      VBox.vgrow="ALWAYS" styleClass="text-field"/>
-
-            <!-- Row 6 - File selector -->
-            <Label text="Archivo adjunto:" GridPane.rowIndex="6" GridPane.columnIndex="0" styleClass="label"/>
-            <HBox spacing="10" GridPane.rowIndex="7" GridPane.columnIndex="0" GridPane.columnSpan="2">
-                <TextField fx:id="txtf_RutaArchivo" editable="false" prefWidth="340.0" styleClass="text-field"/>
-                <Button fx:id="btn_SeleccionarArchivo" text="Seleccionar" styleClass="button-windows,button-windows-blue"/>
-            </HBox>
-        </GridPane>
-
-        <!-- Buttons -->
-        <HBox spacing="20" alignment="CENTER">
-            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="100.0" styleClass="button-windows,button-windows-green"/>
-            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="100.0" styleClass="button-windows,button-windows-red"/>
+        <!-- Botones -->
+        <HBox spacing="20" alignment="CENTER_RIGHT" style="-fx-padding: 15 0 0 0;">
+            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="120" prefHeight="40" 
+                    style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="120" prefHeight="40" 
+                    style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5;"/>
         </HBox>
     </VBox>
-</ScrollPane>
+</AnchorPane>

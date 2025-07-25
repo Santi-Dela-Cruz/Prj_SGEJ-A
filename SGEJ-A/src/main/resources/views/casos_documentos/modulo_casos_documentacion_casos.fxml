@@ -60,6 +60,7 @@
                     <TableColumn fx:id="tbc_Estado" text="Estado" />
                     <TableColumn fx:id="tbc_BotonEditar" styleClass="column-action" text=" " prefWidth="40"/>
                     <TableColumn fx:id="tbc_ButonVisualizar" styleClass="column-action" text=" " prefWidth="40"/>
+                    <TableColumn fx:id="tbc_BotonDocumentos" styleClass="column-action" text=" " prefWidth="40"/>
                 </columns>
                 <columnResizePolicy>
                     <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>

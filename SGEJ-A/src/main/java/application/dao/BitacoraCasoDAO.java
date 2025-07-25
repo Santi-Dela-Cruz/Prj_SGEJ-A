@@ -13,13 +13,13 @@ public class BitacoraCasoDAO {
     }
 
     public void insertarBitacora(BitacoraCaso bitacora) throws SQLException {
-        String sql = "INSERT INTO bitacora_caso (caso_id, fecha_entrada, usuario, tipo_accion, descripcion) VALUES (?, ?, ?, ?, ?)";
+        // Eliminamos el campo usuario de la consulta SQL
+        String sql = "INSERT INTO bitacora_caso (caso_id, fecha_entrada, tipo_accion, descripcion) VALUES (?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, bitacora.getCasoId());
             stmt.setDate(2, new java.sql.Date(bitacora.getFechaEntrada().getTime()));
-            stmt.setString(3, bitacora.getUsuario());
-            stmt.setString(4, bitacora.getTipoAccion());
-            stmt.setString(5, bitacora.getDescripcion());
+            stmt.setString(3, bitacora.getTipoAccion());
+            stmt.setString(4, bitacora.getDescripcion());
             stmt.executeUpdate();
         }
     }
@@ -35,7 +35,7 @@ public class BitacoraCasoDAO {
                 b.setId(rs.getInt("id"));
                 b.setCasoId(rs.getInt("caso_id"));
                 b.setFechaEntrada(rs.getDate("fecha_entrada"));
-                b.setUsuario(rs.getString("usuario"));
+                // Incluso si la columna usuario existe en la base de datos, no la utilizamos
                 b.setTipoAccion(rs.getString("tipo_accion"));
                 b.setDescripcion(rs.getString("descripcion"));
                 bitacoras.add(b);

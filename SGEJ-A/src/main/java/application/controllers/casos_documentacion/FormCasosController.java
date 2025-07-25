@@ -16,12 +16,11 @@ import java.util.Optional;
 
 public class FormCasosController {
     @FXML
-    private TextField txtf_CedulaCliente;
-
-    @FXML
     private TextField txtf_NumeroExpediente;
     @FXML
     private TextField txtf_TituloCaso;
+    @FXML
+    private TextField txtf_IdentificacionCliente; // Nuevo campo de identificación del cliente
     @FXML
     private ComboBox<String> cbx_TipoCaso;
     @FXML
@@ -50,15 +49,16 @@ public class FormCasosController {
     private Button btn_Guardar;
     @FXML
     private Button btn_Cancelar;
-
-    private Runnable onGuardar, onCancelar;
+    
+    private Runnable onGuardar;
+    private Runnable onCancelar;
 
     private final ObservableList<String> roles = FXCollections.observableArrayList(
             "Principal", "Asistente", "Apoderado", "Consultor");
 
     @FXML
     private void initialize() {
-        // Campo de cédula para cliente, no se pobla ComboBox
+        // Configurar los tipos de casos y estados
         cbx_TipoCaso.getItems().addAll("Civil", "Laboral", "Penal", "Familiar");
         cbx_Estado.getItems().addAll("Abierto", "En proceso", "Archivado");
 
@@ -67,10 +67,11 @@ public class FormCasosController {
 
         btn_Guardar.setOnAction(e -> {
             if (txtf_NumeroExpediente.getText().isEmpty() || txtf_TituloCaso.getText().isEmpty()
-                    || cbx_TipoCaso.getItems().isEmpty() || cbx_Estado.getItems().isEmpty()) {
+                    || cbx_TipoCaso.getValue() == null || cbx_Estado.getValue() == null
+                    || txtf_IdentificacionCliente.getText().isEmpty()) {
                 DialogUtil.mostrarDialogo(
                         "Campos requeridos",
-                        "Por favor, complete los campos obligatorios: \n - Número Expediente \n - Título del Caso \n - Tipo de Caso de Identificación \n - Estado del Caso",
+                        "Por favor, complete los campos obligatorios: \n - Número Expediente \n - Título del Caso \n - Tipo de Caso \n - Estado del Caso \n - Identificación del Cliente",
                         "warning",
                         List.of(ButtonType.OK));
                 return;
@@ -83,8 +84,12 @@ public class FormCasosController {
                     List.of(ButtonType.YES, ButtonType.NO));
 
             if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-                if (onGuardar != null)
-                    onGuardar.run();
+                // Guardar el caso en la base de datos
+                if (guardarCasoEnBaseDeDatos()) {
+                    // Si el guardado fue exitoso, cerrar el formulario
+                    if (onGuardar != null)
+                        onGuardar.run();
+                }
             }
         });
 
@@ -171,39 +176,65 @@ public class FormCasosController {
                 new AbogadoDemo("José", "Ruiz", "87654321", "Elegir rol", false),
                 new AbogadoDemo("María", "León", "11223344", "Elegir rol", false)));
     }
-
-    private void guardarCaso() {
-        String expediente = txtf_NumeroExpediente.getText();
-        String titulo = txtf_TituloCaso.getText();
-        String tipo = cbx_TipoCaso.getValue();
-        String estado = cbx_Estado.getValue();
-        String descripcion = txtb_DescripcionCaso.getText();
-        String fecha = (dt_FechaInicio.getValue() != null) ? dt_FechaInicio.getValue().toString() : "";
-        String cedulaCliente = txtf_CedulaCliente.getText();
-
-        // Buscar cliente por cédula
-        application.dao.ClienteDAO clienteDAO = new application.dao.ClienteDAO();
-        application.model.Cliente cliente = clienteDAO.obtenerClientePorIdentificacion(cedulaCliente);
-        if (cliente == null) {
-            DialogUtil.mostrarDialogo("Error", "No se encontró un cliente con la cédula ingresada.", "error",
+    
+    /**
+     * Guarda el caso en la base de datos.
+     * @return true si el guardado fue exitoso, false en caso contrario
+     */
+    private boolean guardarCasoEnBaseDeDatos() {
+        try {
+            // Obtener los datos del formulario
+            String numeroExpediente = txtf_NumeroExpediente.getText();
+            String titulo = txtf_TituloCaso.getText();
+            String tipo = cbx_TipoCaso.getValue();
+            String estado = cbx_Estado.getValue();
+            String descripcion = txtb_DescripcionCaso.getText();
+            java.util.Date fechaInicio = java.sql.Date.valueOf(dt_FechaInicio.getValue());
+            String identificacionCliente = txtf_IdentificacionCliente.getText();
+            
+            // Buscar el cliente por su identificación
+            application.dao.ClienteDAO clienteDAO = new application.dao.ClienteDAO();
+            application.model.Cliente cliente = clienteDAO.obtenerClientePorIdentificacion(identificacionCliente);
+            
+            if (cliente == null) {
+                DialogUtil.mostrarDialogo("Error", 
+                    "No se encontró un cliente con la identificación: " + identificacionCliente, 
+                    "error", 
                     List.of(ButtonType.OK));
-            return;
-        }
-
-        System.out.println("Guardando caso:");
-        System.out.println("Expediente: " + expediente);
-        System.out.println("Título: " + titulo);
-        System.out.println("Tipo: " + tipo);
-        System.out.println("Estado: " + estado);
-        System.out.println("Fecha inicio: " + fecha);
-        System.out.println("Descripción: " + descripcion);
-        System.out.println("Cliente: " + cliente.getNombreCompleto() + " (ID: " + cliente.getId() + ")");
-
-        for (AbogadoDemo abogado : tb_Abogados.getItems()) {
-            if (abogado.asignadoProperty().get()) {
-                System.out.println("Abogado asignado: " + abogado.nombresProperty().get() + " " +
-                        abogado.apellidosProperty().get() + " - " + abogado.rolProperty().get());
+                return false;
             }
+            
+            // Crear el objeto Caso
+            application.model.Caso caso = new application.model.Caso();
+            caso.setNumeroExpediente(numeroExpediente);
+            caso.setTitulo(titulo);
+            caso.setTipo(tipo);
+            caso.setEstado(estado);
+            caso.setDescripcion(descripcion);
+            caso.setFechaInicio(fechaInicio);
+            caso.setClienteId(cliente.getId());
+            
+            // Guardar el caso en la base de datos
+            try (java.sql.Connection conn = application.database.DatabaseConnection.getConnection()) {
+                application.service.CasoService casoService = new application.service.CasoService(conn);
+                casoService.registrarCaso(caso);
+                casoService.registrarCaso(caso);
+                
+                // Mostrar mensaje de éxito
+                DialogUtil.mostrarDialogo("Éxito", 
+                    "El caso ha sido guardado correctamente.", 
+                    "info", 
+                    List.of(ButtonType.OK));
+                
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtil.mostrarDialogo("Error", 
+                "Ocurrió un error al guardar el caso: " + e.getMessage(), 
+                "error", 
+                List.of(ButtonType.OK));
+            return false;
         }
     }
 
