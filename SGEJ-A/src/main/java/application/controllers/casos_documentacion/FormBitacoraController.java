@@ -103,20 +103,20 @@ public class FormBitacoraController {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
             lbl_FechaActual.setText(LocalDate.now().format(formatter));
         }
-        
+
         // Configurar validación en tiempo real
         if (txtf_Accion != null) {
             txtf_Accion.textProperty().addListener((observable, oldValue, newValue) -> {
                 lbl_ErrorAccion.setVisible(newValue.trim().isEmpty());
             });
         }
-        
+
         if (txta_Descripcion != null) {
             txta_Descripcion.textProperty().addListener((observable, oldValue, newValue) -> {
                 lbl_ErrorDescripcion.setVisible(newValue.trim().isEmpty());
             });
         }
-        
+
         // Configurar acciones de botones
         if (btn_Guardar != null)
             btn_Guardar.setOnAction(e -> {
@@ -134,23 +134,23 @@ public class FormBitacoraController {
             // Reiniciar mensajes de error
             lbl_ErrorAccion.setVisible(false);
             lbl_ErrorDescripcion.setVisible(false);
-            
+
             boolean hayErrores = false;
-            
+
             // Validar que el caso ID sea válido
             if (casoId == -1) {
                 DialogUtil.mostrarDialogo("Error", "No se ha seleccionado un caso válido.", "error",
                         List.of(ButtonType.OK));
                 return;
             }
-            
+
             // Validar que los campos obligatorios estén completos
             if (txtf_Accion.getText().trim().isEmpty()) {
                 lbl_ErrorAccion.setVisible(true);
                 txtf_Accion.requestFocus();
                 hayErrores = true;
             }
-            
+
             if (txta_Descripcion.getText().trim().isEmpty()) {
                 lbl_ErrorDescripcion.setVisible(true);
                 if (!hayErrores) {
@@ -158,25 +158,24 @@ public class FormBitacoraController {
                 }
                 hayErrores = true;
             }
-            
+
             if (hayErrores) {
                 // No continuamos con el proceso de guardado
                 return;
             }
-            
+
             // Mostrar diálogo de confirmación antes de guardar
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
-                "Confirmar guardado", 
-                "¿Está seguro que desea guardar esta entrada en la bitácora?", 
-                "confirm",
-                List.of(ButtonType.YES, ButtonType.NO)
-            );
-            
+                    "Confirmar guardado",
+                    "¿Está seguro que desea guardar esta entrada en la bitácora?",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO));
+
             // Si el usuario no confirma, cancelamos la operación
             if (!respuesta.isPresent() || respuesta.get() != ButtonType.YES) {
                 return;
             }
-            
+
             // Crear el objeto bitácora
             application.model.BitacoraCaso entrada = new application.model.BitacoraCaso();
             entrada.setCasoId(casoId);
@@ -184,7 +183,7 @@ public class FormBitacoraController {
             entrada.setFechaEntrada(new java.sql.Date(System.currentTimeMillis()));
             entrada.setTipoAccion(txtf_Accion.getText().trim());
             entrada.setDescripcion(txta_Descripcion.getText().trim());
-            
+
             // Guardar en la base de datos
             java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
             if (conn == null) {
@@ -192,39 +191,44 @@ public class FormBitacoraController {
                         List.of(ButtonType.OK));
                 return;
             }
-            
+
             application.dao.BitacoraCasoDAO dao = new application.dao.BitacoraCasoDAO(conn);
             dao.insertarBitacora(entrada);
-            
+
             // Notificar al usuario que se guardó correctamente
             DialogUtil.mostrarDialogo("Éxito", "La entrada de bitácora se guardó correctamente.", "confirm",
                     List.of(ButtonType.OK));
-            
+
             // Limpiar los campos del formulario para una nueva entrada
             limpiarFormulario();
-            
+
             // Notificar al controlador padre que se guardó correctamente
             if (onGuardar != null) {
                 onGuardar.accept(null);
             }
-            
+
         } catch (Exception ex) {
             ex.printStackTrace();
             DialogUtil.mostrarDialogo("Error", "Ocurrió un error al guardar: " + ex.getMessage(), "error",
                     List.of(ButtonType.OK));
         }
     }
-    
+
     private void limpiarFormulario() {
         // Limpiar los campos de texto
-        if (txtf_Accion != null) txtf_Accion.clear();
-        if (txta_Descripcion != null) txta_Descripcion.clear();
-        
+        if (txtf_Accion != null)
+            txtf_Accion.clear();
+        if (txta_Descripcion != null)
+            txta_Descripcion.clear();
+
         // Ocultar mensajes de error
-        if (lbl_ErrorAccion != null) lbl_ErrorAccion.setVisible(false);
-        if (lbl_ErrorDescripcion != null) lbl_ErrorDescripcion.setVisible(false);
-        
+        if (lbl_ErrorAccion != null)
+            lbl_ErrorAccion.setVisible(false);
+        if (lbl_ErrorDescripcion != null)
+            lbl_ErrorDescripcion.setVisible(false);
+
         // Volver a poner el foco en el campo de acción
-        if (txtf_Accion != null) txtf_Accion.requestFocus();
+        if (txtf_Accion != null)
+            txtf_Accion.requestFocus();
     }
 }

@@ -27,17 +27,27 @@ import java.util.Optional;
 
 public class FormDocumentoController {
 
-    @FXML private TextField txtf_NombreDocumento;
-    @FXML private ComboBox<String> cbx_TipoDocumento;
-    @FXML private TextArea txta_Descripcion;
-    @FXML private DatePicker dtp_FechaCarga;
-    @FXML private TextField txtf_NumeroExpediente;
-    @FXML private TextField txtf_RutaArchivo;
-    @FXML private Label txt_TituloForm;
+    @FXML
+    private TextField txtf_NombreDocumento;
+    @FXML
+    private ComboBox<String> cbx_TipoDocumento;
+    @FXML
+    private TextArea txta_Descripcion;
+    @FXML
+    private DatePicker dtp_FechaCarga;
+    @FXML
+    private TextField txtf_NumeroExpediente;
+    @FXML
+    private TextField txtf_RutaArchivo;
+    @FXML
+    private Label txt_TituloForm;
 
-    @FXML private Button btn_SeleccionarArchivo;
-    @FXML private Button btn_Guardar;
-    @FXML private Button btn_Cancelar;
+    @FXML
+    private Button btn_SeleccionarArchivo;
+    @FXML
+    private Button btn_Guardar;
+    @FXML
+    private Button btn_Cancelar;
 
     private Runnable onCancelar;
     private Runnable onGuardar;
@@ -45,16 +55,15 @@ public class FormDocumentoController {
     @FXML
     private void initialize() {
         cbx_TipoDocumento.getItems().addAll(
-            "PDF", 
-            "Word", 
-            "Imagen", 
-            "Texto", 
-            "Excel",
-            "PowerPoint",
-            "Comprimido",
-            "Otro"
-        );
-        
+                "PDF",
+                "Word",
+                "Imagen",
+                "Texto",
+                "Excel",
+                "PowerPoint",
+                "Comprimido",
+                "Otro");
+
         // Establecer fecha actual por defecto
         dtp_FechaCarga.setValue(LocalDate.now());
 
@@ -76,8 +85,7 @@ public class FormDocumentoController {
                                 " - Fecha de Carga\n" +
                                 " - Seleccione un archivo",
                         "warning",
-                        List.of(ButtonType.OK)
-                );
+                        List.of(ButtonType.OK));
                 return;
             }
 
@@ -85,55 +93,56 @@ public class FormDocumentoController {
                     "Confirmación",
                     "¿Está seguro que desea guardar este documento?",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO)
-            );
+                    List.of(ButtonType.YES, ButtonType.NO));
 
             if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
                 try {
                     // Guardar el archivo en la carpeta de uploads
                     File archivoOrigen = new File(txtf_RutaArchivo.getText());
                     String numeroExpediente = txtf_NumeroExpediente.getText();
-                    
+
                     // Crear el directorio para los documentos del caso si no existe
                     Path directorioDestino = Paths.get("src/main/resources/uploads/documentos/" + numeroExpediente);
                     if (!Files.exists(directorioDestino)) {
                         Files.createDirectories(directorioDestino);
                     }
-                    
+
                     // Generar nombre único para el archivo
                     String nombreArchivo = System.currentTimeMillis() + "_" + archivoOrigen.getName();
                     Path rutaDestino = directorioDestino.resolve(nombreArchivo);
-                    
+
                     // Copiar el archivo a la carpeta de uploads
                     Files.copy(archivoOrigen.toPath(), rutaDestino, StandardCopyOption.REPLACE_EXISTING);
-                    
+
                     // Crear el objeto DocumentoCaso
                     DocumentoCaso documento = new DocumentoCaso();
-                    
+
                     // Obtener el ID del caso desde el número de expediente
                     int casoId = obtenerCasoIdDesdeNumeroExpediente(numeroExpediente);
                     if (casoId == -1) {
-                        throw new SQLException("No se encontró el caso con el número de expediente: " + numeroExpediente);
+                        throw new SQLException(
+                                "No se encontró el caso con el número de expediente: " + numeroExpediente);
                     }
-                    
+
                     documento.setCasoId(casoId);
                     documento.setNombre(txtf_NombreDocumento.getText() + " (" + cbx_TipoDocumento.getValue() + ")");
                     documento.setRuta(rutaDestino.toString());
-                    documento.setFechaSubida(Date.from(dtp_FechaCarga.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
-                    
+                    documento.setFechaSubida(
+                            Date.from(dtp_FechaCarga.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+
                     // Guardar en la base de datos
                     try (Connection conn = DatabaseConnection.getConnection()) {
                         DocumentoCasoService service = new DocumentoCasoService(conn);
                         service.registrarDocumento(documento);
-                        
+
                         DialogUtil.mostrarDialogo(
                                 "Éxito",
                                 "Documento guardado correctamente.",
                                 "info",
-                                List.of(ButtonType.OK)
-                        );
-                        
-                        if (onGuardar != null) onGuardar.run();
+                                List.of(ButtonType.OK));
+
+                        if (onGuardar != null)
+                            onGuardar.run();
                     }
                 } catch (IOException e1) {
                     e1.printStackTrace();
@@ -141,16 +150,14 @@ public class FormDocumentoController {
                             "Error",
                             "Error al guardar el archivo: " + e1.getMessage(),
                             "error",
-                            List.of(ButtonType.OK)
-                    );
+                            List.of(ButtonType.OK));
                 } catch (SQLException e2) {
                     e2.printStackTrace();
                     DialogUtil.mostrarDialogo(
                             "Error",
                             "Error de base de datos: " + e2.getMessage(),
                             "error",
-                            List.of(ButtonType.OK)
-                    );
+                            List.of(ButtonType.OK));
                 }
             }
         });
@@ -160,11 +167,11 @@ public class FormDocumentoController {
                     "Confirmación",
                     "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO)
-            );
+                    List.of(ButtonType.YES, ButtonType.NO));
 
             if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-                if (onCancelar != null) onCancelar.run();
+                if (onCancelar != null)
+                    onCancelar.run();
             }
         });
     }
@@ -177,19 +184,19 @@ public class FormDocumentoController {
                 new FileChooser.ExtensionFilter("Todos los archivos", "*.*"),
                 new FileChooser.ExtensionFilter("Documentos PDF", "*.pdf"),
                 new FileChooser.ExtensionFilter("Documentos Word", "*.docx", "*.doc", "*.rtf", "*.odt"),
-                new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp", "*.tif", "*.tiff"),
+                new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp", "*.tif",
+                        "*.tiff"),
                 new FileChooser.ExtensionFilter("Textos", "*.txt", "*.md", "*.csv"),
                 new FileChooser.ExtensionFilter("Excel", "*.xls", "*.xlsx"),
                 new FileChooser.ExtensionFilter("PowerPoint", "*.ppt", "*.pptx"),
-                new FileChooser.ExtensionFilter("Archivos Comprimidos", "*.zip", "*.rar", "*.7z")
-        );
+                new FileChooser.ExtensionFilter("Archivos Comprimidos", "*.zip", "*.rar", "*.7z"));
 
         Window window = btn_SeleccionarArchivo.getScene().getWindow();
         File archivo = fileChooser.showOpenDialog(window);
 
         if (archivo != null) {
             txtf_RutaArchivo.setText(archivo.getAbsolutePath());
-            
+
             // Extraer y autocompletar nombre del documento basado en el archivo
             String nombreArchivo = archivo.getName();
             // Quitar la extensión para un nombre más limpio
@@ -198,7 +205,7 @@ public class FormDocumentoController {
                 nombreArchivo = nombreArchivo.substring(0, puntoIndex);
             }
             txtf_NombreDocumento.setText(nombreArchivo);
-            
+
             // Intentar determinar el tipo de documento basado en la extensión
             String extension = "";
             if (puntoIndex > 0) {
@@ -255,11 +262,11 @@ public class FormDocumentoController {
     public void setOnGuardar(Runnable callback) {
         this.onGuardar = callback;
     }
-    
+
     public void asignarExpediente(String expediente) {
         if (txtf_NumeroExpediente != null) {
             txtf_NumeroExpediente.setText(expediente);
-            txtf_NumeroExpediente.setDisable(true);  // Deshabilitar para evitar cambios
+            txtf_NumeroExpediente.setDisable(true); // Deshabilitar para evitar cambios
         }
     }
 
@@ -288,7 +295,8 @@ public class FormDocumentoController {
         btn_Guardar.setDisable(esVer);
     }
 
-    public void cargarDatosDocumento(String nombre, String tipo, String fecha, String descripcion, String expediente, String archivo) {
+    public void cargarDatosDocumento(String nombre, String tipo, String fecha, String descripcion, String expediente,
+            String archivo) {
         txtf_NombreDocumento.setText(nombre);
         cbx_TipoDocumento.setValue(tipo);
         txtf_RutaArchivo.setText(archivo);
@@ -303,9 +311,10 @@ public class FormDocumentoController {
             }
         }
     }
-    
+
     /**
      * Obtiene el ID del caso a partir del número de expediente
+     * 
      * @param numeroExpediente el número de expediente
      * @return el ID del caso, o -1 si no se encuentra
      */
@@ -319,13 +328,14 @@ public class FormDocumentoController {
                     if (rsCount.next() && rsCount.getInt("total") == 0) {
                         // Si no existe, creamos uno temporal para pruebas
                         String sqlInsert = "INSERT INTO caso (numero_expediente, titulo, tipo, estado) VALUES (?, ?, ?, ?)";
-                        try (java.sql.PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                        try (java.sql.PreparedStatement stmtInsert = conn.prepareStatement(sqlInsert,
+                                java.sql.Statement.RETURN_GENERATED_KEYS)) {
                             stmtInsert.setString(1, numeroExpediente);
                             stmtInsert.setString(2, "Caso " + numeroExpediente);
                             stmtInsert.setString(3, "Civil");
                             stmtInsert.setString(4, "Activo");
                             stmtInsert.executeUpdate();
-                            
+
                             // Obtenemos el ID generado
                             try (java.sql.ResultSet generatedKeys = stmtInsert.getGeneratedKeys()) {
                                 if (generatedKeys.next()) {
@@ -337,7 +347,7 @@ public class FormDocumentoController {
                     }
                 }
             }
-            
+
             // Buscamos el caso normalmente
             String sql = "SELECT id FROM caso WHERE numero_expediente = ?";
             try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {

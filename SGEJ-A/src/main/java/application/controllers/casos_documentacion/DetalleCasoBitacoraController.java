@@ -13,14 +13,20 @@ import java.util.Optional;
 import application.controllers.DialogUtil;
 
 public class DetalleCasoBitacoraController {
-    @FXML private Label lblExpediente, lblTitulo, lblTipo, lblFecha, lblAbogado, lblEstado;
-    @FXML private TableView<application.model.BitacoraCaso> tbBitacora;
+    @FXML
+    private Label lblExpediente, lblTitulo, lblTipo, lblFecha, lblAbogado, lblEstado;
+    @FXML
+    private TableView<application.model.BitacoraCaso> tbBitacora;
     // Eliminamos la columna tbcUsuario
-    @FXML private TableColumn<application.model.BitacoraCaso, String> tbcFecha, tbcTipoAccion, tbcDescripcion;
-    @FXML private Button btnAgregarEntrada;
-    @FXML private Button btnRegresar;
-    @FXML private AnchorPane panelPrincipal;
-    
+    @FXML
+    private TableColumn<application.model.BitacoraCaso, String> tbcFecha, tbcTipoAccion, tbcDescripcion;
+    @FXML
+    private Button btnAgregarEntrada;
+    @FXML
+    private Button btnRegresar;
+    @FXML
+    private AnchorPane panelPrincipal;
+
     private Runnable onRegresar;
     private int casoId;
     private AnchorPane panelSobrepuesto;
@@ -33,13 +39,13 @@ public class DetalleCasoBitacoraController {
             String fechaStr = fecha != null ? new java.text.SimpleDateFormat("dd/MM/yyyy").format(fecha) : "";
             return new javafx.beans.property.SimpleStringProperty(fechaStr);
         });
-        
-        tbcTipoAccion.setCellValueFactory(cellData -> 
-            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTipoAccion()));
-            
-        tbcDescripcion.setCellValueFactory(cellData -> 
-            new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDescripcion()));
-        
+
+        tbcTipoAccion.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getTipoAccion()));
+
+        tbcDescripcion.setCellValueFactory(
+                cellData -> new javafx.beans.property.SimpleStringProperty(cellData.getValue().getDescripcion()));
+
         // Configurar los botones
         btnAgregarEntrada.setOnAction(e -> mostrarFormularioBitacora());
         btnRegresar.setOnAction(e -> {
@@ -53,7 +59,7 @@ public class DetalleCasoBitacoraController {
             }
         });
     }
-    
+
     private void mostrarFormularioBitacora() {
         try {
             // Creamos un panel sobrepuesto si no existe
@@ -61,27 +67,28 @@ public class DetalleCasoBitacoraController {
                 panelSobrepuesto = new AnchorPane();
                 panelSobrepuesto.setPrefWidth(400);
                 panelSobrepuesto.setStyle("-fx-background-color: transparent;");
-                
+
                 // Añadimos el panel sobrepuesto al panel principal
                 AnchorPane.setTopAnchor(panelSobrepuesto, 0.0);
                 AnchorPane.setBottomAnchor(panelSobrepuesto, 0.0);
                 AnchorPane.setRightAnchor(panelSobrepuesto, 0.0);
-                
+
                 // Lo hacemos visible inicialmente
                 panelSobrepuesto.setVisible(false);
-                
+
                 // Añadimos al panel principal
                 panelPrincipal.getChildren().add(panelSobrepuesto);
             }
-            
+
             // Cargamos el formulario
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/casos_documentos/form_nueva_bitacora.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/casos_documentos/form_nueva_bitacora.fxml"));
             AnchorPane form = loader.load();
             FormBitacoraController controller = loader.getController();
-            
+
             if (controller != null) {
                 controller.setCasoId(casoId);
-                
+
                 // Aplicamos efecto de sombra para destacar el panel
                 DropShadow shadow = new DropShadow();
                 shadow.setRadius(10.0);
@@ -89,24 +96,24 @@ public class DetalleCasoBitacoraController {
                 shadow.setOffsetY(5.0);
                 shadow.setColor(Color.rgb(0, 0, 0, 0.3));
                 form.setEffect(shadow);
-                
+
                 // Configuramos el formulario dentro del panel sobrepuesto
                 panelSobrepuesto.getChildren().setAll(form);
-                
+
                 // Posicionamos el formulario dentro del panel
-                AnchorPane.setTopAnchor(form, 60.0);  // Espacio desde arriba
-                AnchorPane.setRightAnchor(form, 30.0);  // Espacio desde la derecha
-                
+                AnchorPane.setTopAnchor(form, 60.0); // Espacio desde arriba
+                AnchorPane.setRightAnchor(form, 30.0); // Espacio desde la derecha
+
                 // Hacemos visible el panel
                 panelSobrepuesto.setVisible(true);
-                
+
                 // Configuramos los eventos
                 controller.setOnGuardar(v -> {
                     panelSobrepuesto.setVisible(false);
                     panelSobrepuesto.getChildren().clear();
                     cargarBitacoraDesdeBD();
                 });
-                
+
                 controller.setOnCancelar(v -> {
                     panelSobrepuesto.setVisible(false);
                     panelSobrepuesto.getChildren().clear();
