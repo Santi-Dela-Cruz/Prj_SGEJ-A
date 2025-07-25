@@ -151,7 +151,10 @@ public class FormCasosController {
         this.onCancelar = handler;
     }
 
-    public void cargarDatosCaso(String numeroExpediente, String titulo, String tipo, String fecha, String estado) {
+    public void cargarDatosCaso(String numeroExpediente, String titulo, String tipo, String fecha, String estado,
+            String descripcion) {
+        System.out.println("INFO: Cargando datos del caso: " + numeroExpediente);
+
         // El número de expediente se establece pero no es editable
         txtf_NumeroExpediente.setText(numeroExpediente);
         txtf_NumeroExpediente.setEditable(false);
@@ -160,8 +163,14 @@ public class FormCasosController {
         cbx_TipoCaso.setValue(tipo);
         cbx_Estado.setValue(estado);
 
+        // Establecer la descripción si está disponible
+        if (descripcion != null) {
+            txtb_DescripcionCaso.setText(descripcion);
+        }
+
         // Buscar el cliente asociado a este caso para obtener su identificación
         try {
+            System.out.println("DEBUG: Buscando identificación del cliente para caso: " + numeroExpediente);
             java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
             if (conn != null) {
                 // Primero verificamos si existe la tabla cliente
@@ -175,28 +184,61 @@ public class FormCasosController {
 
                 if (tablaClienteExiste) {
                     // La tabla existe, podemos continuar con la consulta
-                    String sql = "SELECT c.identificacion FROM cliente c " +
-                            "INNER JOIN caso ca ON c.id = ca.cliente_id " +
-                            "WHERE ca.numero_expediente = ?";
+                    // Obtenemos el cliente_id de la tabla caso primero
+                    String sql = "SELECT cliente_id FROM caso WHERE numero_expediente = ?";
                     java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
                     stmt.setString(1, numeroExpediente);
                     java.sql.ResultSet rs = stmt.executeQuery();
 
                     if (rs.next()) {
-                        String identificacionCliente = rs.getString("identificacion");
-                        txtf_IdentificacionCliente.setText(identificacionCliente);
-                        System.out.println("INFO: Cargada identificación del cliente: " + identificacionCliente);
-                    } else {
-                        System.out.println("WARN: No se encontró el cliente asociado al caso: " + numeroExpediente);
-                    }
+                        int clienteId = rs.getInt("cliente_id");
+                        rs.close();
+                        stmt.close();
 
-                    rs.close();
-                    stmt.close();
+                        // Ahora buscamos la identificación del cliente usando el cliente_id
+                        sql = "SELECT identificacion FROM cliente WHERE id = ?";
+                        stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, clienteId);
+                        rs = stmt.executeQuery();
+
+                        if (rs.next()) {
+                            String identificacionCliente = rs.getString("identificacion");
+                            txtf_IdentificacionCliente.setText(identificacionCliente);
+                            System.out.println("INFO: Cargada identificación del cliente: " + identificacionCliente);
+                        } else {
+                            System.out
+                                    .println("WARN: No se encontró la identificación para el cliente id: " + clienteId);
+                            txtf_IdentificacionCliente.setText("[Cliente ID: " + clienteId + "]");
+                        }
+
+                        rs.close();
+                        stmt.close();
+                    } else {
+                        System.out.println("WARN: No se encontró el cliente_id para el caso: " + numeroExpediente);
+                        txtf_IdentificacionCliente.setText("[Cliente no asignado]");
+                    }
                 } else {
                     System.out.println("WARN: La tabla 'cliente' no existe en la base de datos");
+                    // Diagnóstico adicional - listar tablas existentes
+                    try {
+                        System.out.println("DEBUG: Listando tablas existentes en la base de datos:");
+                        String listTablesSql = "SELECT name FROM sqlite_master WHERE type='table'";
+                        java.sql.Statement listStmt = conn.createStatement();
+                        java.sql.ResultSet listRs = listStmt.executeQuery(listTablesSql);
+
+                        while (listRs.next()) {
+                            System.out.println(" - " + listRs.getString("name"));
+                        }
+
+                        listRs.close();
+                        listStmt.close();
+                    } catch (Exception ex) {
+                        System.err.println("ERROR al listar tablas: " + ex.getMessage());
+                    }
+
                     // Como no podemos obtener la identificación, dejamos el campo vacío o con un
                     // mensaje
-                    txtf_IdentificacionCliente.setText("[No disponible]");
+                    txtf_IdentificacionCliente.setText("[No disponible - Tabla cliente no existe]");
                 }
 
                 conn.close();
@@ -204,8 +246,12 @@ public class FormCasosController {
         } catch (Exception e) {
             System.err.println("ERROR al cargar identificación del cliente: " + e.getMessage());
             e.printStackTrace();
-            // En caso de error, dejamos el campo vacío o con un mensaje
-            txtf_IdentificacionCliente.setText("[Error de carga]");
+
+            // Información adicional para diagnóstico
+            System.out.println("DEBUG: Número de expediente que causó el error: " + numeroExpediente);
+
+            // En caso de error, dejamos el campo con un mensaje indicando el problema
+            txtf_IdentificacionCliente.setText("[Error: " + e.getMessage() + "]");
         }
 
         if (fecha != null && !fecha.isEmpty()) {
@@ -395,6 +441,8 @@ public class FormCasosController {
             String numeroExpediente = txtf_NumeroExpediente.getText();
             String estado = cbx_Estado.getValue();
 
+            System.out.println("INFO: Actualizando estado del caso " + numeroExpediente + " a: " + estado);
+
             // Inicializar el servicio
             CasoService casoService = new CasoService();
 
@@ -403,12 +451,15 @@ public class FormCasosController {
 
             if (actualizado) {
                 // Mostrar mensaje de éxito
+                System.out.println("INFO: Estado del caso actualizado exitosamente");
                 DialogUtil.mostrarDialogo("Éxito",
                         "El estado del caso ha sido actualizado correctamente.",
                         "info",
                         List.of(ButtonType.OK));
                 return true;
             } else {
+                System.err.println("ERROR: No se pudo actualizar el estado. No se encontró el caso con expediente: "
+                        + numeroExpediente);
                 DialogUtil.mostrarDialogo("Error",
                         "No se pudo actualizar el estado del caso. Verifique el número de expediente.",
                         "error",
@@ -416,7 +467,14 @@ public class FormCasosController {
                 return false;
             }
         } catch (Exception e) {
+            System.err.println("ERROR GRAVE al actualizar estado del caso: " + e.getMessage());
             e.printStackTrace();
+
+            // Información detallada del error
+            System.err.println("Detalles del caso que causó el error:");
+            System.err.println(" - Número de expediente: " + txtf_NumeroExpediente.getText());
+            System.err.println(" - Estado a actualizar: " + cbx_Estado.getValue());
+
             DialogUtil.mostrarDialogo("Error",
                     "Ocurrió un error al actualizar el estado del caso: " + e.getMessage(),
                     "error",

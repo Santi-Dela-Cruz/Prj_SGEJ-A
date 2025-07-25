@@ -77,12 +77,20 @@ public class CasoDAO {
      * @return true si la actualización fue exitosa, false en caso contrario
      */
     public boolean actualizarEstadoCaso(String numeroExpediente, String nuevoEstado) throws SQLException {
+        System.out.println("DEBUG: Actualizando estado para caso " + numeroExpediente + " a: " + nuevoEstado);
+
         String sql = "UPDATE caso SET estado=? WHERE numero_expediente=?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nuevoEstado);
             stmt.setString(2, numeroExpediente);
             int filasAfectadas = stmt.executeUpdate();
+
+            System.out.println("DEBUG: Actualización de estado completada. Filas afectadas: " + filasAfectadas);
             return filasAfectadas > 0;
+        } catch (SQLException e) {
+            System.err.println("ERROR al actualizar estado del caso: " + e.getMessage());
+            System.err.println("Número de expediente: " + numeroExpediente + ", Nuevo estado: " + nuevoEstado);
+            throw e;
         }
     }
 }
