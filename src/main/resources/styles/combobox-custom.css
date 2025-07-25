@@ -1,0 +1,114 @@
+/* Estilo principal ComboBox - Mejorado */
+.combo-box {
+    -fx-background-color: white !important;
+    -fx-border-color: #cbd5e0 !important;
+    -fx-border-radius: 6px !important;
+    -fx-background-radius: 6px !important;
+    -fx-padding: 4 8 !important;
+    -fx-font-size: 13px !important;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif !important;
+    -fx-pref-height: 35px !important;
+    -fx-max-height: 35px !important;
+}
+
+.combo-box:focused {
+    -fx-border-color: #4299e1 !important;
+    -fx-effect: dropshadow(gaussian, rgba(66,153,225,0.2), 4, 0, 0, 1) !important;
+}
+
+.combo-box:hover {
+    -fx-border-color: #90caf9 !important;
+}
+
+/* Botón de la flecha */
+.combo-box .arrow-button {
+    -fx-background-color: transparent !important;
+    -fx-padding: 0 6 0 6 !important;
+    -fx-max-width: 28px !important;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #4a5568 !important;
+    -fx-shape: "M 0 0 L 4 4 L 8 0 Z" !important;
+    -fx-scale-shape: false !important;
+    -fx-pref-width: 8px !important;
+    -fx-pref-height: 4px !important;
+}
+
+/* Texto seleccionado (área visible) - CRÍTICO PARA VISIBILIDAD */
+.combo-box .list-cell {
+    -fx-background-color: white !important;
+    -fx-text-fill: #1a202c !important;
+    -fx-padding: 0 8 !important;
+    -fx-alignment: center-left !important;
+    -fx-font-size: 13px !important;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif !important;
+    -fx-font-weight: normal !important;
+}
+
+/* Selección visible cuando está cerrado */
+.combo-box .list-cell:filled:selected,
+.combo-box .list-cell:filled:selected:hover {
+    -fx-background-color: white !important;
+    -fx-text-fill: #1a202c !important;
+    -fx-font-weight: normal !important;
+}
+
+/* Estilo desplegable (popup) - TAMAÑO COMPACTO */
+.combo-box-popup .list-view {
+    -fx-background-color: white !important;
+    -fx-border-color: #cbd5e0 !important;
+    -fx-border-radius: 6px !important;
+    -fx-background-radius: 6px !important;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 8, 0, 0, 2) !important;
+    -fx-padding: 2 0 !important;
+    -fx-pref-height: 100px !important;
+    -fx-max-height: 120px !important;
+}
+
+/* Celdas dentro del popup */
+.combo-box-popup .list-view .list-cell {
+    -fx-padding: 5 12 !important;
+    -fx-background-color: white !important;
+    -fx-text-fill: #1a202c !important;
+    -fx-font-size: 13px !important;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif !important;
+    -fx-alignment: center-left !important;
+}
+
+/* CRÍTICO: Forzar visibilidad del texto seleccionado */
+.combo-box > .list-cell {
+    -fx-text-fill: #1a202c !important;
+    -fx-background-color: transparent !important;
+    -fx-font-size: 13px !important;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif !important;
+    -fx-padding: 0 8 !important;
+    -fx-alignment: center-left !important;
+}
+
+.combo-box > .list-cell:filled {
+    -fx-text-fill: #1a202c !important;
+    -fx-background-color: transparent !important;
+}
+
+.combo-box > .list-cell:filled:selected {
+    -fx-text-fill: #1a202c !important;
+    -fx-background-color: transparent !important;
+}
+
+.combo-box > .list-cell:filled:selected:hover {
+    -fx-text-fill: #1a202c !important;
+    -fx-background-color: transparent !important;
+}
+
+/* HOVER Y SELECCIÓN EN POPUP */
+.combo-box-popup .list-view .list-cell:filled:hover {
+    -fx-background-color: #f7fafc !important;
+    -fx-text-fill: #2d3748 !important;
+}
+
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: #edf2f7 !important;
+    -fx-text-fill: #1a202c !important;
+    -fx-font-weight: normal !important;
+}
