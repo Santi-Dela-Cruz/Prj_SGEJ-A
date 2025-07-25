@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<VBox xmlns:fx="http://javafx.com/fxml" spacing="16" alignment="CENTER" style="-fx-background-color: #f8f9fa; -fx-background-radius: 12; -fx-padding: 24;"
+      fx:controller="application.controllers.casos_documentacion.FormBitacoraController">
+    <Label text="Nueva entrada de Bitácora" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #14213d;" />
+    <GridPane hgap="10" vgap="10">
+        <Label text="Usuario:" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+        <TextField fx:id="txtf_Usuario" GridPane.rowIndex="0" GridPane.columnIndex="1" />
+        <Label text="Tipo de acción:" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+        <TextField fx:id="txtf_Accion" GridPane.rowIndex="1" GridPane.columnIndex="1" />
+        <Label text="Descripción:" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+        <TextArea fx:id="txta_Descripcion" GridPane.rowIndex="2" GridPane.columnIndex="1" prefRowCount="3" />
+    </GridPane>
+    <HBox spacing="10" alignment="CENTER">
+        <Button fx:id="btn_Guardar" text="Guardar" styleClass="button-windows,button-windows-green" />
+        <Button fx:id="btn_Cancelar" text="Cancelar" styleClass="button-windows,button-windows-blue" />
+    </HBox>
+</VBox>
