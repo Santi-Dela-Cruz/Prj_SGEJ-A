@@ -25,16 +25,24 @@ import java.io.IOException;
 
 public class MainController {
 
-    @FXML private HBox titleBar;
-    @FXML private Button closeButton, minimizeButton;
-    @FXML private Button md_Clientes, md_CasosDocumentacion, md_Facturacion, md_Personal, md_Sistema, dashboard;
-    @FXML private Button btn_modo, md_Usuario;
+    @FXML
+    private HBox titleBar;
+    @FXML
+    private Button closeButton, minimizeButton;
+    @FXML
+    private Button md_Clientes, md_CasosDocumentacion, md_Facturacion, md_Personal, md_Sistema, dashboard;
+    @FXML
+    private Button btn_modo, md_Usuario;
 
-    @FXML private Button btn_Casos, btn_Documentos, btn_HistorialComunicaciones, btn_Bitacora, btn_GenerarReporte;
-    @FXML private Button btn_AdministracionUsuarios, btn_Parametros;
+    @FXML
+    private Button btn_Casos, btn_Documentos, btn_HistorialComunicaciones, btn_Bitacora, btn_GenerarReporte;
+    @FXML
+    private Button btn_AdministracionUsuarios, btn_Parametros;
 
-    @FXML private VBox vpnl_DesplegableCasosDocumentacion, vpnl_DesplegableSistema;
-    @FXML private AnchorPane pnl_Modulos, pnl_Forms;
+    @FXML
+    private VBox vpnl_DesplegableCasosDocumentacion, vpnl_DesplegableSistema;
+    @FXML
+    private AnchorPane pnl_Modulos, pnl_Forms;
 
     private double xOffset = 0;
     private double yOffset = 0;
@@ -84,16 +92,18 @@ public class MainController {
 
         // Submódulos Casos y Documentación
         btn_Casos.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml"));
-        btn_Documentos.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_documentos.fxml"));
-        btn_HistorialComunicaciones.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_historial_comunicaciones.fxml"));
-        btn_Bitacora.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_bitacora_caso.fxml"));
-        btn_GenerarReporte.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_generar_reportes.fxml"));
+        btn_Documentos
+                .setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_documentos.fxml"));
+        btn_HistorialComunicaciones.setOnAction(
+                e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_historial_comunicaciones.fxml"));
+        btn_Bitacora.setOnAction(
+                e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_bitacora_caso.fxml"));
+        btn_GenerarReporte.setOnAction(
+                e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_generar_reportes.fxml"));
 
         // Submódulos Sistema
         btn_AdministracionUsuarios.setOnAction(e -> cargarModulo("/views/usuario/modulo_usuario.fxml"));
         btn_Parametros.setOnAction(e -> cargarModulo("/views/sistema/modulo_parametros.fxml"));
-
-
 
         // Ocultar formulario lateral al cargar
         pnl_Forms.setVisible(false);
@@ -146,14 +156,20 @@ public class MainController {
             case "Administrador":
                 break;
             case "Asistente Legal":
-                md_Facturacion.setVisible(false); md_Facturacion.setManaged(false);
-                md_Personal.setVisible(false); md_Personal.setManaged(false);
-                md_Sistema.setVisible(false); md_Sistema.setManaged(false);
+                md_Facturacion.setVisible(false);
+                md_Facturacion.setManaged(false);
+                md_Personal.setVisible(false);
+                md_Personal.setManaged(false);
+                md_Sistema.setVisible(false);
+                md_Sistema.setManaged(false);
                 break;
             case "Contador":
-                md_CasosDocumentacion.setVisible(false); md_CasosDocumentacion.setManaged(false);
-                md_Personal.setVisible(false); md_Personal.setManaged(false);
-                md_Sistema.setVisible(false); md_Sistema.setManaged(false);
+                md_CasosDocumentacion.setVisible(false);
+                md_CasosDocumentacion.setManaged(false);
+                md_Personal.setVisible(false);
+                md_Personal.setManaged(false);
+                md_Sistema.setVisible(false);
+                md_Sistema.setManaged(false);
                 break;
         }
 
@@ -169,21 +185,32 @@ public class MainController {
             Object controller = loader.getController();
             if (controller instanceof ModuloClienteController c) {
                 c.setFormularioContainer(pnl_Forms);
-                if (tipoUsuario != null) c.configurarPorRol(tipoUsuario);
+                if (tipoUsuario != null)
+                    c.configurarPorRol(tipoUsuario);
             }
-            if (controller instanceof ModuloCasosController c) c.setFormularioContainer(pnl_Forms);
-            if (controller instanceof ModuloDocumentosController c) c.setFormularioContainer(pnl_Forms);
-            if (controller instanceof ModuloHistorialController c) c.setFormularioContainer(pnl_Forms);
-            if (controller instanceof ModuloBitacoraController c) c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloCasosController c) {
+                c.setPanelModulos(pnl_Modulos);
+            }
+            if (controller instanceof ModuloDocumentosController c)
+                c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloHistorialController c)
+                c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloBitacoraController c)
+                c.setFormularioContainer(pnl_Forms);
             if (controller instanceof DashboardController c) {
                 c.setFormularioContainer(pnl_Forms);
                 c.setMainController(this);
-                if (tipoUsuario != null) c.configurarPorRol(tipoUsuario);
+                if (tipoUsuario != null)
+                    c.configurarPorRol(tipoUsuario);
             }
-            if (controller instanceof  ModuloEmpleadoController c) c.setFormularioContainer(pnl_Forms);
-            if (controller instanceof ModuloUsuarioController c) c.setFormularioContainer(pnl_Forms);
-            if (controller instanceof ModuloFacturaController c) c.setFormularioContainer(pnl_Forms);
-            if (controller instanceof ModuloParametrosController c) c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloEmpleadoController c)
+                c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloUsuarioController c)
+                c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloFacturaController c)
+                c.setFormularioContainer(pnl_Forms);
+            if (controller instanceof ModuloParametrosController c)
+                c.setFormularioContainer(pnl_Forms);
 
             AnchorPane.setTopAnchor(modulo, 0.0);
             AnchorPane.setBottomAnchor(modulo, 0.0);

@@ -1,3 +1,4 @@
+
 package application.controllers.casos_documentacion;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -5,111 +6,154 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import java.io.IOException;
 
 public class ModuloBitacoraController {
+    @FXML
+    private TableView<application.model.Caso> tb_Casos;
+    @FXML
+    private TableColumn<application.model.Caso, String> tbc_NumExpediente, tbc_Cliente, tbc_Estado, tbc_Titulo;
+    @FXML
+    private Label lbl_InfoCaso;
 
-    @FXML private StackPane root;
-    @FXML private AnchorPane pnl_ListView;
-    @FXML private TableView<BitacoraResumen> tb_BitacorasList;
-    @FXML private TableColumn<BitacoraResumen, String> tbc_Expediente, tbc_Responsable, tbc_FechaCreacion;
-    @FXML private Button btn_AnadirBitacora;
-    @FXML private AnchorPane pnl_EntriesView;
-    @FXML private Button btn_Back;
-    @FXML private Label lbl_NumeroBitacora;
-    @FXML private TableView<BitacoraDemo> tb_BitacoraEntries;
-    @FXML private TableColumn<BitacoraDemo, String> tbc_Fecha, tbc_Usuario, tbc_TipoAccion, tbc_Descripcion;
-    @FXML private Button btn_AnadirEntrada;
+    @FXML
+    private StackPane root;
+    // Eliminados: tabla de bitácoras independientes y botones relacionados
+    @FXML
+    private TableView<BitacoraDemo> tb_BitacoraEntries;
+    @FXML
+    private TableColumn<BitacoraDemo, String> tbc_Fecha, tbc_Usuario, tbc_TipoAccion, tbc_Descripcion;
+    @FXML
+    private Button btn_AnadirEntrada;
 
     private Pane pnl_Forms;
-    private BitacoraResumen bitacoraSeleccionada;
+    private application.model.Caso casoSeleccionado;
 
-    public void setFormularioContainer(Pane pnl_Forms) { this.pnl_Forms = pnl_Forms; }
+    public void setFormularioContainer(Pane pnl_Forms) {
+        this.pnl_Forms = pnl_Forms;
+    }
 
     @FXML
     private void initialize() {
-        tbc_Expediente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().numeroExpediente()));
-        tbc_Responsable.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().responsable()));
-        tbc_FechaCreacion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().fechaCreacion()));
-        tbc_Fecha.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().fecha()));
-        tbc_Usuario.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().usuario()));
-        tbc_TipoAccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().accion()));
-        tbc_Descripcion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().descripcion()));
+        // Configurar tabla de casos
+        tbc_NumExpediente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNumeroExpediente()));
+        tbc_Cliente.setCellValueFactory(d -> {
+            application.model.Cliente cliente = d.getValue().getCliente();
+            return new SimpleStringProperty(cliente != null ? cliente.getNombreCompleto() : "Desconocido");
+        });
+        tbc_Estado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEstado()));
+        tbc_Titulo.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTitulo()));
 
-        tb_BitacorasList.getItems().addAll(
-                new BitacoraResumen("EXP-001", "Laura Ortiz", "01/07/2024"),
-                new BitacoraResumen("EXP-002", "Carlos Pérez", "02/07/2024")
-        );
-
-        tb_BitacorasList.setRowFactory(tv -> {
-            TableRow<BitacoraResumen> row = new TableRow<>();
+        tb_Casos.setRowFactory(tv -> {
+            TableRow<application.model.Caso> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
-                if (!row.isEmpty() && event.getClickCount() == 2) {
-                    mostrarEntradasBitacora(row.getItem());
+                if (event.getClickCount() == 2 && (!row.isEmpty())) {
+                    casoSeleccionado = row.getItem();
+                    mostrarVistaDetalleCaso(casoSeleccionado);
                 }
             });
             return row;
         });
-
-        btn_Back.setOnAction(e -> mostrarListaBitacoras());
-        if (btn_AnadirBitacora != null) btn_AnadirBitacora.setOnAction(e -> mostrarFormularioBitacora());
-        if (btn_AnadirEntrada != null) btn_AnadirEntrada.setOnAction(e -> mostrarFormularioEntrada());
-
-        mostrarListaBitacoras();
     }
 
-    private void mostrarListaBitacoras() {
-        pnl_ListView.setVisible(true); pnl_ListView.setManaged(true);
-        pnl_EntriesView.setVisible(false); pnl_EntriesView.setManaged(false);
-        bitacoraSeleccionada = null;
-    }
+    // Muestra la vista de detalle de caso y su bitácora
+    private void mostrarVistaDetalleCaso(application.model.Caso caso) {
+        // Mostrar info del caso
+        String info = "Expediente: " + caso.getNumeroExpediente() + " | Cliente: ";
+        application.model.Cliente cliente = caso.getCliente();
+        info += (cliente != null ? cliente.getNombreCompleto() : "Desconocido");
+        info += " | Estado: " + caso.getEstado() + " | Título: " + caso.getTitulo();
+        lbl_InfoCaso.setText(info);
 
-    private void mostrarEntradasBitacora(BitacoraResumen resumen) {
-        bitacoraSeleccionada = resumen;
-        lbl_NumeroBitacora.setText("Expediente N° " + resumen.numeroExpediente());
+        // Mostrar entradas de bitácora
         tb_BitacoraEntries.getItems().clear();
-
-        if (resumen.numeroExpediente().equalsIgnoreCase("EXP-001")) {
-            tb_BitacoraEntries.getItems().addAll(
-                    new BitacoraDemo("01/07/2024", "Laura Ortiz", "Reunión", "Revisión inicial del caso."),
-                    new BitacoraDemo("03/07/2024", "Laura Ortiz", "Correo", "Envió informe al cliente.")
-            );
-        } else if (resumen.numeroExpediente().equalsIgnoreCase("EXP-002")) {
-            tb_BitacoraEntries.getItems().addAll(
-                    new BitacoraDemo("02/07/2024", "Carlos Pérez", "Llamada", "Cliente solicitó nueva audiencia."),
-                    new BitacoraDemo("04/07/2024", "Carlos Pérez", "Visita", "Firma de documentos en oficina.")
-            );
+        try {
+            java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+            application.dao.BitacoraCasoDAO bitacoraDAO = new application.dao.BitacoraCasoDAO(conn);
+            java.util.List<application.model.BitacoraCaso> entradas = bitacoraDAO
+                    .consultarBitacorasPorCaso(caso.getId());
+            for (application.model.BitacoraCaso entrada : entradas) {
+                tb_BitacoraEntries.getItems().add(new BitacoraDemo(
+                        entrada.getFechaEntrada().toString(),
+                        entrada.getUsuario(),
+                        entrada.getTipoAccion(),
+                        entrada.getDescripcion()));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-
-        pnl_ListView.setVisible(false); pnl_ListView.setManaged(false);
-        pnl_EntriesView.setVisible(true); pnl_EntriesView.setManaged(true);
     }
 
-    private void mostrarFormularioBitacora() {
+    private void mostrarInfoCasoYBitacora(application.model.Caso caso) {
+        // Mostrar info del caso
+        String info = "Expediente: " + caso.getNumeroExpediente() + " | Cliente: ";
+        application.model.Cliente cliente = caso.getCliente();
+        info += (cliente != null ? cliente.getNombreCompleto() : "Desconocido");
+        info += " | Estado: " + caso.getEstado() + " | Título: " + caso.getTitulo();
+        lbl_InfoCaso.setText(info);
+
+        // Mostrar entradas de bitácora
+        tb_BitacoraEntries.getItems().clear();
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/casos_documentos/form_entrada_bitacora.fxml"));
-            Node form = loader.load();
-            FormBitacoraController controller = loader.getController();
-            controller.setModoFormulario("BITACORA");
-            controller.setOnCancelar(v -> cerrarFormulario());
-            controller.setOnGuardar(v -> { cerrarFormulario(); /* refresh list if needed */ });
-            mostrarFormulario(form);
-        } catch (IOException e) { e.printStackTrace(); }
+            java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+            application.dao.BitacoraCasoDAO bitacoraDAO = new application.dao.BitacoraCasoDAO(conn);
+            java.util.List<application.model.BitacoraCaso> entradas = bitacoraDAO
+                    .consultarBitacorasPorCaso(caso.getId());
+            for (application.model.BitacoraCaso entrada : entradas) {
+                tb_BitacoraEntries.getItems().add(new BitacoraDemo(
+                        entrada.getFechaEntrada().toString(),
+                        entrada.getUsuario(),
+                        entrada.getTipoAccion(),
+                        entrada.getDescripcion()));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private void cargarCasosEnTabla() {
+        try {
+            java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+            application.service.CasoService casoService = new application.service.CasoService(conn);
+            java.util.List<application.model.Caso> casos = casoService.consultarCasos("");
+            tb_Casos.getItems().setAll(casos);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     private void mostrarFormularioEntrada() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/casos_documentos/form_nueva_bitacora.fxml"));
+            FXMLLoader loader = new FXMLLoader(
+                    getClass().getResource("/views/casos_documentos/form_nueva_bitacora.fxml"));
             Node form = loader.load();
             FormBitacoraController controller = loader.getController();
             controller.setModoFormulario("ENTRADA");
             controller.setOnCancelar(v -> cerrarFormulario());
-            controller.setOnGuardar(v -> { cerrarFormulario(); /* refresh entries if needed */ });
+            controller.setOnGuardar(v -> {
+                // Guardar nueva entrada en la BD
+                try {
+                    java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+                    application.dao.BitacoraCasoDAO bitacoraDAO = new application.dao.BitacoraCasoDAO(conn);
+                    int casoId = casoSeleccionado != null ? casoSeleccionado.getId() : -1;
+                    if (casoId != -1) {
+                        application.model.BitacoraCaso nueva = controller.obtenerBitacoraDesdeFormulario(casoId);
+                        bitacoraDAO.insertarBitacora(nueva);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                cerrarFormulario();
+                // Refrescar la tabla de bitácora
+                if (casoSeleccionado != null)
+                    mostrarInfoCasoYBitacora(casoSeleccionado);
+            });
             mostrarFormulario(form);
-        } catch (IOException e) { e.printStackTrace(); }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void mostrarFormulario(Node form) {
@@ -124,6 +168,6 @@ public class ModuloBitacoraController {
         pnl_Forms.setManaged(false);
     }
 
-    public record BitacoraResumen(String numeroExpediente, String responsable, String fechaCreacion) {}
-    public record BitacoraDemo(String fecha, String usuario, String accion, String descripcion) {}
+    public record BitacoraDemo(String fecha, String usuario, String accion, String descripcion) {
+    }
 }
