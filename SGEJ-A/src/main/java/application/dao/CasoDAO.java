@@ -68,4 +68,21 @@ public class CasoDAO {
     }
 
     // Otros métodos según necesidades
+
+    /**
+     * Actualiza solo el estado de un caso en la base de datos.
+     * 
+     * @param numeroExpediente El número de expediente del caso a actualizar
+     * @param nuevoEstado      El nuevo estado del caso
+     * @return true si la actualización fue exitosa, false en caso contrario
+     */
+    public boolean actualizarEstadoCaso(String numeroExpediente, String nuevoEstado) throws SQLException {
+        String sql = "UPDATE caso SET estado=? WHERE numero_expediente=?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nuevoEstado);
+            stmt.setString(2, numeroExpediente);
+            int filasAfectadas = stmt.executeUpdate();
+            return filasAfectadas > 0;
+        }
+    }
 }

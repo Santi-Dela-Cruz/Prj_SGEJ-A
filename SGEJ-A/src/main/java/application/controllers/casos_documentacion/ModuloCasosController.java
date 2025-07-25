@@ -275,7 +275,13 @@ public class ModuloCasosController {
                 btn.setTooltip(new Tooltip(tooltip));
                 btn.setOnAction(e -> {
                     CasoDemo caso = getTableView().getItems().get(getIndex());
-                    mostrarDetalleYBitacora(caso);
+                    if ("✎".equals(texto)) {
+                        // Si es el botón de editar, abrir el formulario de edición
+                        mostrarFormulario(caso, "EDITAR");
+                    } else {
+                        // Si es cualquier otro botón, mostrar el detalle
+                        mostrarDetalleYBitacora(caso);
+                    }
                 });
             }
 
