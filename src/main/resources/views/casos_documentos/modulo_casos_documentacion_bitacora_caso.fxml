@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<StackPane xmlns="http://javafx.com/javafx/23.0.1"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="application.controllers.casos_documentacion.ModuloBitacoraController"
+           prefWidth="800.0" prefHeight="500.0">
+
+    <!-- List View -->
+    <AnchorPane fx:id="pnl_ListView" visible="true" managed="true"
+                AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <children>
+            <Pane prefHeight="44.0"
+                  AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="4.0">
+                <children>
+                    <Text layoutX="20.0" layoutY="28.0"
+                          text="Lista de bitácoras"
+                          fill="WHITE"
+                          style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                </children>
+                <style>
+                    -fx-background-color: #14213d; -fx-background-radius: 16; -fx-border-radius: 16;
+                </style>
+            </Pane>
+            <TextField fx:id="txtf_Buscar"
+                       promptText="Buscar expediente..."
+                       AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="54.0"
+                       prefWidth="250.0"/>
+            <Button fx:id="btn_Buscar"
+                    text="Buscar"
+                    AnchorPane.leftAnchor="270.0" AnchorPane.topAnchor="54.0" maxWidth="100" styleClass="button-windows,button-windows-blue"/>
+            <Button fx:id="btn_AnadirBitacora"
+                    text="Añadir Bitácora"
+                    AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="54.0" maxWidth="150" styleClass="button-windows,button-windows-blue"/>
+            <TableView fx:id="tb_BitacorasList"
+                       AnchorPane.topAnchor="105.0" AnchorPane.leftAnchor="14.0"
+                       AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
+                <columns>
+                    <TableColumn fx:id="tbc_Expediente" text="Número de Expediente" prefWidth="200.0" />
+                    <TableColumn fx:id="tbc_Responsable" text="Responsable" prefWidth="200.0" />
+                    <TableColumn fx:id="tbc_FechaCreacion" text="Fecha de Creación" prefWidth="150.0" />
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
+            </TableView>
+        </children>
+    </AnchorPane>
+
+    <!-- Entries View -->
+    <AnchorPane fx:id="pnl_EntriesView" visible="false" managed="false"
+                AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+                AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <children>
+            <Pane prefHeight="44.0"
+                  AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="4.0">
+                <children>
+                    <Text layoutX="20.0" layoutY="28.0"
+                          text="Bitácora del Caso"
+                          fill="WHITE"
+                          style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                </children>
+                <style>
+                    -fx-background-color: #14213d; -fx-background-radius: 16; -fx-border-radius: 16;
+                </style>
+            </Pane>
+            <Button fx:id="btn_Back"
+                    text="Regresar"
+                    AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="54.0" maxWidth="100" styleClass="button-windows,button-windows-blue"/>
+            <Label fx:id="lbl_NumeroBitacora"
+                   text="Expediente N°"
+                   AnchorPane.leftAnchor="120.0" AnchorPane.topAnchor="54.0"
+                   style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+            <Button fx:id="btn_AnadirEntrada"
+                    text="Añadir entrada"
+                    AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="54.0" maxWidth="160" styleClass="button-windows,button-windows-blue"/>
+            <TableView fx:id="tb_BitacoraEntries"
+                       AnchorPane.topAnchor="105.0" AnchorPane.leftAnchor="14.0"
+                       AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
+                <columns>
+                    <TableColumn fx:id="tbc_Fecha" text="Fecha" />
+                    <TableColumn fx:id="tbc_Usuario" text="Usuario" />
+                    <TableColumn fx:id="tbc_TipoAccion" text="Tipo de acción" />
+                    <TableColumn fx:id="tbc_Descripcion" text="Descripción" />
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </children>
+    </AnchorPane>
+</StackPane>

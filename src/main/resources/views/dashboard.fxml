@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<ScrollPane fx:id="scrollPane" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="application.controllers.DashboardController"
+            fitToWidth="true" styleClass="scroll-form">
+
+    <VBox spacing="36">
+        <padding>
+            <Insets top="32" right="32" bottom="32" left="32"/>
+        </padding>
+
+        <!-- Welcome Title -->
+        <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #023047; -fx-background-radius: 20; -fx-text-fill: white;" >
+            <Label fx:id="lblBienvenida" text="Bienvenido, Nombre del usuario" styleClass="section-title" style="-fx-text-fill: white;"/>
+        </StackPane>
+
+        <!-- Summary Cards -->
+        <HBox spacing="24" alignment="CENTER">
+            <VBox styleClass="card" alignment="CENTER">
+                <Label text="📂 Casos Activos" styleClass="card-title"/>
+                <Label fx:id="lblCasosActivos" text="32" styleClass="card-value"/>
+            </VBox>
+            <VBox styleClass="card" alignment="CENTER">
+                <Label text="👤 Clientes" styleClass="card-title"/>
+                <Label fx:id="lblClientes" text="124" styleClass="card-value"/>
+            </VBox>
+            <VBox styleClass="card" alignment="CENTER">
+                <Label text="💰 Facturas Pendientes" styleClass="card-title"/>
+                <Label fx:id="lblFacturas" text="5" styleClass="card-value"/>
+            </VBox>
+            <VBox styleClass="card" alignment="CENTER">
+                <Label text="📅 Actividades Hoy" styleClass="card-title"/>
+                <Label fx:id="lblActividades" text="2" styleClass="card-value"/>
+            </VBox>
+        </HBox>
+
+        <!-- Últimos Casos Modificados -->
+        <VBox fx:id="seccionCasos" spacing="12" style="-fx-background-color: #e5e9ec; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #669bbc; -fx-background-radius: 20; -fx-text-fill: white;">
+                <Label text="Últimos Casos Modificados" styleClass="section-title" style="-fx-text-fill: white;"/>
+            </StackPane>
+            <TableView fx:id="tableCasosRecientes" prefHeight="360" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colCasoId" text="ID" prefWidth="60"/>
+                    <TableColumn fx:id="colCasoNombre" text="Caso" prefWidth="180"/>
+                    <TableColumn fx:id="colCasoEstado" text="Estado" prefWidth="100"/>
+                    <TableColumn fx:id="colCasoFecha" text="Fecha" prefWidth="80"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </VBox>
+
+        <!-- Facturas Pendientes -->
+        <VBox fx:id="seccionFacturas" spacing="12" style="-fx-background-color:  #e5e9ec; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #669bbc; -fx-background-radius: 20; -fx-text-fill: white;">
+                <Label text="Facturas Pendientes" styleClass="section-title" style="-fx-text-fill: white;" />
+            </StackPane>
+            <TableView fx:id="tableFacturasPendientes" prefHeight="360" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colFacturaId" text="ID" prefWidth="60"/>
+                    <TableColumn fx:id="colFacturaCliente" text="Cliente" prefWidth="180"/>
+                    <TableColumn fx:id="colFacturaMonto" text="Monto" prefWidth="100"/>
+                    <TableColumn fx:id="colFacturaEstado" text="Estado" prefWidth="100"/>
+                    <TableColumn fx:id="colFacturaVencimiento" text="Vencimiento" prefWidth="100"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </VBox>
+
+        <!-- Tareas del día -->
+        <VBox fx:id="seccionTareas" spacing="12" style="-fx-background-color:  #e5e9ec; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #669bbc; -fx-background-radius: 20; -fx-text-fill: white;">
+                <Label text="Tareas del día" styleClass="section-title" style="-fx-text-fill: white;"/>
+            </StackPane>
+            <TableView fx:id="tableTareasDia" prefHeight="360" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colTarea" text="Tarea" prefWidth="200"/>
+                    <TableColumn fx:id="colTareaResponsable" text="Responsable" prefWidth="120"/>
+                    <TableColumn fx:id="colTareaHora" text="Hora" prefWidth="80"/>
+                    <TableColumn fx:id="colTareaEstado" text="Estado" prefWidth="100"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </VBox>
+
+        <!-- Próximas Audiencias -->
+        <VBox fx:id="seccionAudiencias" spacing="12" style="-fx-background-color:  #e5e9ec; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #669bbc; -fx-background-radius: 20; -fx-text-fill: white;">
+                <Label text="Próximas Audiencias" styleClass="section-title" style="-fx-text-fill: white;"/>
+            </StackPane>
+            <TableView fx:id="tableAudiencias" prefHeight="360" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colAudienciaCaso" text="Caso" prefWidth="180"/>
+                    <TableColumn fx:id="colAudienciaFecha" text="Fecha" prefWidth="100"/>
+                    <TableColumn fx:id="colAudienciaHora" text="Hora" prefWidth="80"/>
+                    <TableColumn fx:id="colAudienciaLugar" text="Lugar" prefWidth="120"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </VBox>
+
+        <!-- Documentos recientes -->
+        <VBox fx:id="seccionDocumentos" spacing="12" style="-fx-background-color:  #e5e9ec; -fx-background-radius: 20; -fx-border-radius: 20; -fx-effect: dropshadow(gaussian, #b6d7e8, 6, 0, 0, 3);">
+            <padding>
+                <Insets top="20" right="20" bottom="20" left="20"/>
+            </padding>
+            <StackPane alignment="CENTER" prefHeight="56" styleClass="title-panel" style="-fx-background-color: #669bbc; -fx-background-radius: 20; -fx-text-fill: white;">
+                <Label text="Documentos Recientes" styleClass="section-title" style="-fx-text-fill: white;"/>
+            </StackPane>
+            <TableView fx:id="tableDocumentosRecientes" prefHeight="360" styleClass="table-view">
+                <columns>
+                    <TableColumn fx:id="colDocNombre" text="Documento" prefWidth="220"/>
+                    <TableColumn fx:id="colDocFecha" text="Fecha" prefWidth="100"/>
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                </columnResizePolicy>
+            </TableView>
+        </VBox>
+
+        <!-- Accesos rápidos -->
+        <HBox spacing="28" alignment="CENTER">
+            <Button text="⚙️ Clientes" onAction="#irClientes" styleClass="button-windows, button-windows-gray"/>
+            <Button text="⚖️ Casos" onAction="#irCasos" styleClass="button-windows, button-windows-gray"/>
+            <Button text="💳 Facturación" onAction="#irFacturacion" styleClass="button-windows, button-windows-gray"/>
+            <Button text="🔐 Sistema" onAction="#irSistema" styleClass="button-windows, button-windows-gray"/>
+        </HBox>
+    </VBox>
+</ScrollPane>
