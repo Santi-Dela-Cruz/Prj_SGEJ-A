@@ -1,6 +1,7 @@
 package application.controllers.casos_documentacion;
 
 import application.controllers.DialogUtil;
+import application.service.CasoService;
 import javafx.beans.property.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -52,6 +53,7 @@ public class FormCasosController {
 
     private Runnable onGuardar;
     private Runnable onCancelar;
+    private String modo; // Variable para almacenar el modo actual
 
     private final ObservableList<String> roles = FXCollections.observableArrayList(
             "Principal", "Asistente", "Apoderado", "Consultor");
@@ -72,29 +74,57 @@ public class FormCasosController {
         cargarAbogadosEjemplo();
 
         btn_Guardar.setOnAction(e -> {
-            if (txtf_TituloCaso.getText().isEmpty()
-                    || cbx_TipoCaso.getValue() == null || cbx_Estado.getValue() == null
-                    || txtf_IdentificacionCliente.getText().isEmpty()) {
-                DialogUtil.mostrarDialogo(
-                        "Campos requeridos",
-                        "Por favor, complete los campos obligatorios: \n - Título del Caso \n - Tipo de Caso \n - Estado del Caso \n - Identificación del Cliente",
-                        "warning",
-                        List.of(ButtonType.OK));
-                return;
-            }
+            if (modo != null && "EDITAR".equals(modo)) {
+                // En modo edición, solo verificamos que el estado esté seleccionado
+                if (cbx_Estado.getValue() == null) {
+                    DialogUtil.mostrarDialogo(
+                            "Campo requerido",
+                            "Por favor, seleccione el estado del caso.",
+                            "warning",
+                            List.of(ButtonType.OK));
+                    return;
+                }
 
-            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
-                    "Confirmación",
-                    "¿Está seguro que desea guardar este caso?",
-                    "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO));
+                Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                        "Confirmación",
+                        "¿Está seguro que desea actualizar el estado de este caso?",
+                        "confirm",
+                        List.of(ButtonType.YES, ButtonType.NO));
 
-            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-                // Guardar el caso en la base de datos
-                if (guardarCasoEnBaseDeDatos()) {
-                    // Si el guardado fue exitoso, cerrar el formulario
-                    if (onGuardar != null)
-                        onGuardar.run();
+                if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                    // Actualizar solo el estado del caso en la base de datos
+                    if (actualizarEstadoCasoEnBaseDeDatos()) {
+                        // Si la actualización fue exitosa, cerrar el formulario
+                        if (onGuardar != null)
+                            onGuardar.run();
+                    }
+                }
+            } else {
+                // Modo nuevo caso - verificar todos los campos requeridos
+                if (txtf_TituloCaso.getText().isEmpty()
+                        || cbx_TipoCaso.getValue() == null || cbx_Estado.getValue() == null
+                        || txtf_IdentificacionCliente.getText().isEmpty()) {
+                    DialogUtil.mostrarDialogo(
+                            "Campos requeridos",
+                            "Por favor, complete los campos obligatorios: \n - Título del Caso \n - Tipo de Caso \n - Estado del Caso \n - Identificación del Cliente",
+                            "warning",
+                            List.of(ButtonType.OK));
+                    return;
+                }
+
+                Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                        "Confirmación",
+                        "¿Está seguro que desea guardar este caso?",
+                        "confirm",
+                        List.of(ButtonType.YES, ButtonType.NO));
+
+                if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                    // Guardar el caso en la base de datos
+                    if (guardarCasoEnBaseDeDatos()) {
+                        // Si el guardado fue exitoso, cerrar el formulario
+                        if (onGuardar != null)
+                            onGuardar.run();
+                    }
                 }
             }
         });
@@ -121,7 +151,10 @@ public class FormCasosController {
         this.onCancelar = handler;
     }
 
-    public void cargarDatosCaso(String numeroExpediente, String titulo, String tipo, String fecha, String estado) {
+    public void cargarDatosCaso(String numeroExpediente, String titulo, String tipo, String fecha, String estado,
+            String descripcion) {
+        System.out.println("INFO: Cargando datos del caso: " + numeroExpediente);
+
         // El número de expediente se establece pero no es editable
         txtf_NumeroExpediente.setText(numeroExpediente);
         txtf_NumeroExpediente.setEditable(false);
@@ -129,6 +162,98 @@ public class FormCasosController {
         txtf_TituloCaso.setText(titulo);
         cbx_TipoCaso.setValue(tipo);
         cbx_Estado.setValue(estado);
+
+        // Establecer la descripción si está disponible
+        if (descripcion != null) {
+            txtb_DescripcionCaso.setText(descripcion);
+        }
+
+        // Buscar el cliente asociado a este caso para obtener su identificación
+        try {
+            System.out.println("DEBUG: Buscando identificación del cliente para caso: " + numeroExpediente);
+            java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+            if (conn != null) {
+                // Primero verificamos si existe la tabla cliente
+                String checkTableSql = "SELECT name FROM sqlite_master WHERE type='table' AND name='cliente'";
+                java.sql.PreparedStatement checkStmt = conn.prepareStatement(checkTableSql);
+                java.sql.ResultSet checkRs = checkStmt.executeQuery();
+
+                boolean tablaClienteExiste = checkRs.next();
+                checkRs.close();
+                checkStmt.close();
+
+                if (tablaClienteExiste) {
+                    // La tabla existe, podemos continuar con la consulta
+                    // Obtenemos el cliente_id de la tabla caso primero
+                    String sql = "SELECT cliente_id FROM caso WHERE numero_expediente = ?";
+                    java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, numeroExpediente);
+                    java.sql.ResultSet rs = stmt.executeQuery();
+
+                    if (rs.next()) {
+                        int clienteId = rs.getInt("cliente_id");
+                        rs.close();
+                        stmt.close();
+
+                        // Ahora buscamos la identificación del cliente usando el cliente_id
+                        sql = "SELECT identificacion FROM cliente WHERE id = ?";
+                        stmt = conn.prepareStatement(sql);
+                        stmt.setInt(1, clienteId);
+                        rs = stmt.executeQuery();
+
+                        if (rs.next()) {
+                            String identificacionCliente = rs.getString("identificacion");
+                            txtf_IdentificacionCliente.setText(identificacionCliente);
+                            System.out.println("INFO: Cargada identificación del cliente: " + identificacionCliente);
+                        } else {
+                            System.out
+                                    .println("WARN: No se encontró la identificación para el cliente id: " + clienteId);
+                            txtf_IdentificacionCliente.setText("[Cliente ID: " + clienteId + "]");
+                        }
+
+                        rs.close();
+                        stmt.close();
+                    } else {
+                        System.out.println("WARN: No se encontró el cliente_id para el caso: " + numeroExpediente);
+                        txtf_IdentificacionCliente.setText("[Cliente no asignado]");
+                    }
+                } else {
+                    System.out.println("WARN: La tabla 'cliente' no existe en la base de datos");
+                    // Diagnóstico adicional - listar tablas existentes
+                    try {
+                        System.out.println("DEBUG: Listando tablas existentes en la base de datos:");
+                        String listTablesSql = "SELECT name FROM sqlite_master WHERE type='table'";
+                        java.sql.Statement listStmt = conn.createStatement();
+                        java.sql.ResultSet listRs = listStmt.executeQuery(listTablesSql);
+
+                        while (listRs.next()) {
+                            System.out.println(" - " + listRs.getString("name"));
+                        }
+
+                        listRs.close();
+                        listStmt.close();
+                    } catch (Exception ex) {
+                        System.err.println("ERROR al listar tablas: " + ex.getMessage());
+                    }
+
+                    // Como no podemos obtener la identificación, dejamos el campo vacío o con un
+                    // mensaje
+                    txtf_IdentificacionCliente.setText("[No disponible - Tabla cliente no existe]");
+                }
+
+                conn.close();
+            }
+        } catch (Exception e) {
+            System.err.println("ERROR al cargar identificación del cliente: " + e.getMessage());
+            e.printStackTrace();
+
+            // Información adicional para diagnóstico
+            System.out.println("DEBUG: Número de expediente que causó el error: " + numeroExpediente);
+
+            // En caso de error, dejamos el campo con un mensaje indicando el problema
+            txtf_IdentificacionCliente.setText("[Error: " + e.getMessage() + "]");
+        }
+
         if (fecha != null && !fecha.isEmpty()) {
             try {
                 // Intentar parsear la fecha que podría venir en formato dd/MM/yyyy
@@ -150,6 +275,7 @@ public class FormCasosController {
     }
 
     public void setModo(String modo) {
+        this.modo = modo; // Guardar el modo actual
         boolean esNuevo = "NUEVO".equals(modo);
         boolean esEditar = "EDITAR".equals(modo);
         boolean esVer = "VER".equals(modo);
@@ -157,19 +283,32 @@ public class FormCasosController {
         if (esNuevo) {
             txt_TituloForm.setText("Registrar nuevo Caso");
         } else if (esEditar) {
-            txt_TituloForm.setText("Editar Caso");
+            txt_TituloForm.setText("Editar Estado del Caso");
         } else if (esVer) {
             txt_TituloForm.setText("Visualizar Caso");
         }
 
         // El número de expediente nunca es editable, se genera automáticamente
         txtf_NumeroExpediente.setEditable(false);
-        txtf_TituloCaso.setEditable(esNuevo || esEditar);
-        cbx_TipoCaso.setDisable(esVer);
-        cbx_Estado.setDisable(esVer);
-        dt_FechaInicio.setDisable(esVer);
-        txtb_DescripcionCaso.setEditable(esNuevo || esEditar);
-        tb_Abogados.setDisable(esVer);
+
+        // En modo editar, solo el estado es editable
+        if (esEditar) {
+            txtf_TituloCaso.setEditable(false);
+            txtf_IdentificacionCliente.setEditable(false);
+            cbx_TipoCaso.setDisable(true);
+            cbx_Estado.setDisable(false); // Solo el estado es editable
+            dt_FechaInicio.setDisable(true);
+            txtb_DescripcionCaso.setEditable(false);
+            tb_Abogados.setDisable(true);
+        } else {
+            txtf_TituloCaso.setEditable(esNuevo);
+            txtf_IdentificacionCliente.setEditable(esNuevo);
+            cbx_TipoCaso.setDisable(!esNuevo || esVer);
+            cbx_Estado.setDisable(esVer);
+            dt_FechaInicio.setDisable(!esNuevo || esVer);
+            txtb_DescripcionCaso.setEditable(esNuevo);
+            tb_Abogados.setDisable(!esNuevo || esVer);
+        }
 
         btn_Guardar.setVisible(!esVer);
         btn_Guardar.setDisable(esVer);
@@ -216,6 +355,30 @@ public class FormCasosController {
             java.util.Date fechaInicio = java.sql.Date.valueOf(dt_FechaInicio.getValue());
             String identificacionCliente = txtf_IdentificacionCliente.getText();
 
+            // Verificar si la tabla cliente existe antes de buscar el cliente
+            java.sql.Connection checkConn = application.database.DatabaseConnection.getConnection();
+            if (checkConn == null) {
+                throw new Exception("Error al conectar con la base de datos");
+            }
+
+            // Verificar si la tabla cliente existe
+            String checkTableSql = "SELECT name FROM sqlite_master WHERE type='table' AND name='cliente'";
+            java.sql.PreparedStatement checkStmt = checkConn.prepareStatement(checkTableSql);
+            java.sql.ResultSet checkRs = checkStmt.executeQuery();
+
+            boolean tablaClienteExiste = checkRs.next();
+            checkRs.close();
+            checkStmt.close();
+            checkConn.close();
+
+            if (!tablaClienteExiste) {
+                DialogUtil.mostrarDialogo("Error",
+                        "La tabla 'cliente' no existe en la base de datos. No se puede continuar.",
+                        "error",
+                        List.of(ButtonType.OK));
+                return false;
+            }
+
             // Buscar el cliente por su identificación
             application.dao.ClienteDAO clienteDAO = new application.dao.ClienteDAO();
             application.model.Cliente cliente = clienteDAO.obtenerClientePorIdentificacion(identificacionCliente);
@@ -261,6 +424,59 @@ public class FormCasosController {
             e.printStackTrace();
             DialogUtil.mostrarDialogo("Error",
                     "Ocurrió un error al guardar el caso: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK));
+            return false;
+        }
+    }
+
+    /**
+     * Actualiza solo el estado del caso en la base de datos.
+     * 
+     * @return true si la actualización fue exitosa, false en caso contrario
+     */
+    private boolean actualizarEstadoCasoEnBaseDeDatos() {
+        try {
+            // Obtener los datos necesarios del formulario
+            String numeroExpediente = txtf_NumeroExpediente.getText();
+            String estado = cbx_Estado.getValue();
+
+            System.out.println("INFO: Actualizando estado del caso " + numeroExpediente + " a: " + estado);
+
+            // Inicializar el servicio
+            CasoService casoService = new CasoService();
+
+            // Actualizar el estado del caso en la base de datos
+            boolean actualizado = casoService.actualizarEstadoCaso(numeroExpediente, estado);
+
+            if (actualizado) {
+                // Mostrar mensaje de éxito
+                System.out.println("INFO: Estado del caso actualizado exitosamente");
+                DialogUtil.mostrarDialogo("Éxito",
+                        "El estado del caso ha sido actualizado correctamente.",
+                        "info",
+                        List.of(ButtonType.OK));
+                return true;
+            } else {
+                System.err.println("ERROR: No se pudo actualizar el estado. No se encontró el caso con expediente: "
+                        + numeroExpediente);
+                DialogUtil.mostrarDialogo("Error",
+                        "No se pudo actualizar el estado del caso. Verifique el número de expediente.",
+                        "error",
+                        List.of(ButtonType.OK));
+                return false;
+            }
+        } catch (Exception e) {
+            System.err.println("ERROR GRAVE al actualizar estado del caso: " + e.getMessage());
+            e.printStackTrace();
+
+            // Información detallada del error
+            System.err.println("Detalles del caso que causó el error:");
+            System.err.println(" - Número de expediente: " + txtf_NumeroExpediente.getText());
+            System.err.println(" - Estado a actualizar: " + cbx_Estado.getValue());
+
+            DialogUtil.mostrarDialogo("Error",
+                    "Ocurrió un error al actualizar el estado del caso: " + e.getMessage(),
                     "error",
                     List.of(ButtonType.OK));
             return false;

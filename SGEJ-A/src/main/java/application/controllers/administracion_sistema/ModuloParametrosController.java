@@ -17,18 +17,35 @@ import java.util.List;
 
 public class ModuloParametrosController {
 
-    @FXML private Button btn_Nuevo;
-    @FXML private Button btn_Buscar;
-    @FXML private TextField txt_Busqueda;
+    @FXML
+    private Button btn_Nuevo;
+    @FXML
+    private Button btn_Buscar;
+    @FXML
+    private Button btn_Refrescar;
+    @FXML
+    private TextField txt_Busqueda;
+    @FXML
+    private Label lbl_TotalParametros;
 
-    @FXML private TableView<ParametroDemo> tb_Parametros;
-    @FXML private TableColumn<ParametroDemo, String> tbc_Codigo;
-    @FXML private TableColumn<ParametroDemo, String> tbc_Nombre;
-    @FXML private TableColumn<ParametroDemo, String> tbc_Descripcion;
-    @FXML private TableColumn<ParametroDemo, String> tbc_Valor;
-    @FXML private TableColumn<ParametroDemo, String> tbc_Tipo;
-    @FXML private TableColumn<ParametroDemo, Void> tbc_BotonEditar;
-    @FXML private TableColumn<ParametroDemo, Void> tbc_BotonEliminar;
+    @FXML
+    private TableView<ParametroDemo> tb_Parametros;
+    @FXML
+    private TableColumn<ParametroDemo, String> tbc_Codigo;
+    @FXML
+    private TableColumn<ParametroDemo, String> tbc_Nombre;
+    @FXML
+    private TableColumn<ParametroDemo, String> tbc_Descripcion;
+    @FXML
+    private TableColumn<ParametroDemo, String> tbc_Valor;
+    @FXML
+    private TableColumn<ParametroDemo, String> tbc_Tipo;
+    @FXML
+    private TableColumn<ParametroDemo, String> tbc_Estado;
+    @FXML
+    private TableColumn<ParametroDemo, Void> tbc_BotonEditar;
+    @FXML
+    private TableColumn<ParametroDemo, Void> tbc_BotonEliminar;
 
     private Pane pnl_Forms;
     private ObservableList<ParametroDemo> parametros = FXCollections.observableArrayList();
@@ -41,6 +58,7 @@ public class ModuloParametrosController {
     private void initialize() {
         btn_Nuevo.setOnAction(e -> mostrarFormulario(null, "NUEVO"));
         btn_Buscar.setOnAction(e -> buscarParametros());
+        btn_Refrescar.setOnAction(e -> cargarParametrosDesdeBaseDatos());
 
         configurarColumnasTexto();
         inicializarColumnasDeBotones();
@@ -57,6 +75,7 @@ public class ModuloParametrosController {
         tbc_Descripcion.setCellValueFactory(new PropertyValueFactory<>("descripcion"));
         tbc_Valor.setCellValueFactory(new PropertyValueFactory<>("valor"));
         tbc_Tipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
+        tbc_Estado.setCellValueFactory(new PropertyValueFactory<>("estado"));
     }
 
     private void inicializarColumnasDeBotones() {
@@ -99,14 +118,19 @@ public class ModuloParametrosController {
         List<Parametro> lista = dao.obtenerTodos();
         for (Parametro p : lista) {
             parametros.add(new ParametroDemo(
-                p.getCodigo(),
-                p.getNombre(),
-                p.getDescripcion(),
-                p.getValor(),
-                p.getTipo().name()
-            ));
+                    p.getCodigo(),
+                    p.getNombre(),
+                    p.getDescripcion(),
+                    p.getValor(),
+                    p.getTipo().name(),
+                    p.getEstado().name().equals("ACTIVO") ? "Activo" : "Inactivo"));
         }
         tb_Parametros.setItems(parametros);
+
+        // Actualizar contador de parámetros
+        int totalParametros = parametros.size();
+        lbl_TotalParametros
+                .setText("Total: " + totalParametros + (totalParametros == 1 ? " parámetro" : " parámetros"));
     }
 
     private void buscarParametros() {
@@ -120,14 +144,19 @@ public class ModuloParametrosController {
         ObservableList<ParametroDemo> resultado = FXCollections.observableArrayList();
         for (Parametro p : filtrados) {
             resultado.add(new ParametroDemo(
-                p.getCodigo(),
-                p.getNombre(),
-                p.getDescripcion(),
-                p.getValor(),
-                p.getTipo().name()
-            ));
+                    p.getCodigo(),
+                    p.getNombre(),
+                    p.getDescripcion(),
+                    p.getValor(),
+                    p.getTipo().name(),
+                    p.getEstado().name().equals("ACTIVO") ? "Activo" : "Inactivo"));
         }
         tb_Parametros.setItems(resultado);
+
+        // Actualizar contador de parámetros encontrados
+        int totalParametros = resultado.size();
+        lbl_TotalParametros
+                .setText("Encontrados: " + totalParametros + (totalParametros == 1 ? " parámetro" : " parámetros"));
     }
 
     private void eliminarParametro(ParametroDemo parametro) {
@@ -179,8 +208,7 @@ public class ModuloParametrosController {
 
     private void mostrarMensaje(String mensaje, String tipo) {
         Alert alert = new Alert(
-            "error".equals(tipo) ? Alert.AlertType.ERROR : Alert.AlertType.INFORMATION
-        );
+                "error".equals(tipo) ? Alert.AlertType.ERROR : Alert.AlertType.INFORMATION);
         alert.setTitle("error".equals(tipo) ? "Error" : "Información");
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
@@ -199,27 +227,70 @@ public class ModuloParametrosController {
         private final SimpleStringProperty descripcion;
         private final SimpleStringProperty valor;
         private final SimpleStringProperty tipo;
+        private final SimpleStringProperty estado;
 
-        public ParametroDemo(String codigo, String nombre, String descripcion, String valor, String tipo) {
+        public ParametroDemo(String codigo, String nombre, String descripcion, String valor, String tipo,
+                String estado) {
             this.codigo = new SimpleStringProperty(codigo);
             this.nombre = new SimpleStringProperty(nombre);
             this.descripcion = new SimpleStringProperty(descripcion);
             this.valor = new SimpleStringProperty(valor);
             this.tipo = new SimpleStringProperty(tipo);
+            this.estado = new SimpleStringProperty(estado);
+        }
+
+        public ParametroDemo(String codigo, String nombre, String descripcion, String valor, String tipo) {
+            this(codigo, nombre, descripcion, valor, tipo, "");
         }
 
         // Getters
-        public String getCodigo() { return codigo.get(); }
-        public String getNombre() { return nombre.get(); }
-        public String getDescripcion() { return descripcion.get(); }
-        public String getValor() { return valor.get(); }
-        public String getTipo() { return tipo.get(); }
+        public String getCodigo() {
+            return codigo.get();
+        }
+
+        public String getNombre() {
+            return nombre.get();
+        }
+
+        public String getDescripcion() {
+            return descripcion.get();
+        }
+
+        public String getValor() {
+            return valor.get();
+        }
+
+        public String getTipo() {
+            return tipo.get();
+        }
+
+        public String getEstado() {
+            return estado.get();
+        }
 
         // Property getters para TableView
-        public SimpleStringProperty codigoProperty() { return codigo; }
-        public SimpleStringProperty nombreProperty() { return nombre; }
-        public SimpleStringProperty descripcionProperty() { return descripcion; }
-        public SimpleStringProperty valorProperty() { return valor; }
-        public SimpleStringProperty tipoProperty() { return tipo; }
+        public SimpleStringProperty codigoProperty() {
+            return codigo;
+        }
+
+        public SimpleStringProperty nombreProperty() {
+            return nombre;
+        }
+
+        public SimpleStringProperty descripcionProperty() {
+            return descripcion;
+        }
+
+        public SimpleStringProperty valorProperty() {
+            return valor;
+        }
+
+        public SimpleStringProperty tipoProperty() {
+            return tipo;
+        }
+
+        public SimpleStringProperty estadoProperty() {
+            return estado;
+        }
     }
 }

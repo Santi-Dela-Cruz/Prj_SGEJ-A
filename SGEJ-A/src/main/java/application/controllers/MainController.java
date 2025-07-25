@@ -30,12 +30,12 @@ public class MainController {
     @FXML
     private Button closeButton, minimizeButton;
     @FXML
-    private Button md_Clientes, md_CasosDocumentacion, md_Facturacion, md_Personal, md_Sistema, dashboard;
+    private Button md_Clientes, md_CasosDocumentacion, md_Facturacion, md_Personal, md_Sistema;
     @FXML
     private Button btn_modo, md_Usuario;
 
     @FXML
-    private Button btn_Casos, btn_Documentos, btn_HistorialComunicaciones, btn_Bitacora, btn_GenerarReporte;
+    private Button btn_Casos, btn_HistorialComunicaciones, btn_GenerarReporte;
     @FXML
     private Button btn_AdministracionUsuarios, btn_Parametros;
 
@@ -83,8 +83,8 @@ public class MainController {
         vpnl_DesplegableSistema.setOnMouseEntered(e -> showDropdownSistema());
         vpnl_DesplegableSistema.setOnMouseExited(e -> hideDropdownSistema());
 
-        // Módulo inicial
-        dashboard.setOnAction(e -> cargarModulo("/views/dashboard.fxml"));
+        // Cargar dashboard al iniciar
+        cargarModulo("/views/dashboard.fxml");
 
         md_Clientes.setOnAction(e -> cargarModulo("/views/cliente/modulo_cliente.fxml"));
         md_Personal.setOnAction(e -> cargarModulo("/views/personal/modulo_empleado.fxml"));
@@ -92,12 +92,9 @@ public class MainController {
 
         // Submódulos Casos y Documentación
         btn_Casos.setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml"));
-        btn_Documentos
-                .setOnAction(e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_documentos.fxml"));
+        // btn_Documentos y btn_Bitacora fueron eliminados del FXML
         btn_HistorialComunicaciones.setOnAction(
                 e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_historial_comunicaciones.fxml"));
-        btn_Bitacora.setOnAction(
-                e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_bitacora_caso.fxml"));
         btn_GenerarReporte.setOnAction(
                 e -> cargarModulo("/views/casos_documentos/modulo_casos_documentacion_generar_reportes.fxml"));
 

@@ -16,6 +16,8 @@ public class DetalleCasoBitacoraController {
     @FXML
     private Label lblExpediente, lblTitulo, lblTipo, lblFecha, lblAbogado, lblEstado;
     @FXML
+    private Label lblTotalEntradas;
+    @FXML
     private TableView<application.model.BitacoraCaso> tbBitacora;
     // Eliminamos la columna tbcUsuario
     @FXML
@@ -33,6 +35,9 @@ public class DetalleCasoBitacoraController {
 
     @FXML
     public void initialize() {
+        // Inicializar el contador de entradas
+        lblTotalEntradas.setText("Total: 0 entradas");
+
         // Configurar las columnas de la tabla
         tbcFecha.setCellValueFactory(cellData -> {
             Date fecha = cellData.getValue().getFechaEntrada();
@@ -147,6 +152,10 @@ public class DetalleCasoBitacoraController {
             application.dao.BitacoraCasoDAO dao = new application.dao.BitacoraCasoDAO(conn);
             java.util.List<application.model.BitacoraCaso> lista = dao.consultarBitacorasPorCaso(casoId);
             tbBitacora.getItems().setAll(lista);
+
+            // Actualizar el contador de entradas
+            int totalEntradas = lista.size();
+            lblTotalEntradas.setText("Total: " + totalEntradas + (totalEntradas == 1 ? " entrada" : " entradas"));
         } catch (Exception ex) {
             ex.printStackTrace();
         }

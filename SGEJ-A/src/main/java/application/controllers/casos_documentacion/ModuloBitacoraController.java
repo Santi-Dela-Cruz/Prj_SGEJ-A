@@ -26,13 +26,23 @@ public class ModuloBitacoraController {
     @FXML
     private TableColumn<BitacoraDemo, String> tbc_Fecha, tbc_Usuario, tbc_TipoAccion, tbc_Descripcion;
     @FXML
-    private Button btn_AnadirEntrada;
+    private Button btn_AnadirEntrada, btn_Regresar;
 
     private Pane pnl_Forms;
     private application.model.Caso casoSeleccionado;
+    private Runnable onRegresar;
 
     public void setFormularioContainer(Pane pnl_Forms) {
         this.pnl_Forms = pnl_Forms;
+    }
+
+    /**
+     * Establece la acción a ejecutar cuando se presiona el botón de regresar
+     * 
+     * @param onRegresar La acción a ejecutar
+     */
+    public void setOnRegresar(Runnable onRegresar) {
+        this.onRegresar = onRegresar;
     }
 
     @FXML
@@ -56,6 +66,30 @@ public class ModuloBitacoraController {
             });
             return row;
         });
+
+        // Configurar el botón de regresar
+        btn_Regresar.setOnAction(e -> {
+            if (onRegresar != null) {
+                onRegresar.run();
+            }
+        });
+
+        // Configurar el botón de añadir entrada
+        btn_AnadirEntrada.setOnAction(e -> {
+            if (casoSeleccionado != null) {
+                mostrarFormularioEntrada();
+            } else {
+                // Mostrar alerta de que debe seleccionar un caso primero
+                Alert alert = new Alert(Alert.AlertType.WARNING);
+                alert.setTitle("Advertencia");
+                alert.setHeaderText("Caso no seleccionado");
+                alert.setContentText("Debe seleccionar un caso antes de añadir una entrada.");
+                alert.showAndWait();
+            }
+        });
+
+        // Cargar los casos desde la base de datos
+        cargarCasosEnTabla();
     }
 
     // Muestra la vista de detalle de caso y su bitácora

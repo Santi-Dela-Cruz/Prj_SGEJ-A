@@ -10,9 +10,19 @@
            prefWidth="800.0" prefHeight="500.0">
 
     <VBox spacing="10" alignment="TOP_LEFT" style="-fx-background-color: #f8f9fa;" prefWidth="800.0" prefHeight="500.0">
-        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-            <Label text="Casos legales:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+        <!-- Barra superior con título y botones -->
+        <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10;">
+            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+                <Button fx:id="btn_Regresar" text="Regresar" styleClass="button-windows,button-windows-blue" />
+            </HBox>
+            <Label text="Bitácora de Casos" style="-fx-font-size: 18px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" alignment="CENTER" />
+            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
+                <Button fx:id="btn_AnadirEntrada" text="Nueva entrada" styleClass="button-windows,button-windows-blue" />
+            </HBox>
         </HBox>
+        
+        <!-- Tabla de casos -->
+        <Label text="Casos legales:" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 0 0 0 10;" />
         <TableView fx:id="tb_Casos" prefHeight="120.0">
             <columns>
                 <TableColumn fx:id="tbc_NumExpediente" text="Expediente" prefWidth="120.0" />
@@ -21,10 +31,12 @@
                 <TableColumn fx:id="tbc_Titulo" text="Título" prefWidth="180.0" />
             </columns>
         </TableView>
+        
+        <!-- Información del caso seleccionado -->
         <Label fx:id="lbl_InfoCaso" text="Seleccione un caso para ver detalles..." style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-padding: 8;" />
-        <HBox spacing="10" alignment="CENTER_LEFT" style="-fx-padding: 10;">
-            <Button fx:id="btn_AnadirEntrada" text="Añadir entrada" styleClass="button-windows,button-windows-blue" />
-        </HBox>
+        
+        <!-- Tabla de entradas de bitácora -->
+        <Label text="Entradas de bitácora:" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 0 0 0 10;" />
         <TableView fx:id="tb_BitacoraEntries" prefHeight="220.0">
             <columns>
                 <TableColumn fx:id="tbc_Fecha" text="Fecha" />
