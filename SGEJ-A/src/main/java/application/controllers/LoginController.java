@@ -107,9 +107,16 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/main_panel.fxml"));
             Parent root = loader.load();
 
-            // Pass userType to MainController
+            // Convertir enum a string esperado por MainController
+            String tipoUsuarioStr = userType;
+            // Si el parámetro es un enum, conviértelo
+            if (autenticacionService.getUsuarioActual() != null) {
+                tipoUsuarioStr = MainController
+                        .tipoUsuarioToString(autenticacionService.getUsuarioActual().getTipoUsuario());
+            }
+
             MainController mainController = loader.getController();
-            mainController.setUserType(userType);
+            mainController.setUserType(tipoUsuarioStr);
 
             // Crear la escena para el panel principal
             Scene scene = new Scene(root);
