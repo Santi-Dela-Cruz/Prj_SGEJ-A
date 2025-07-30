@@ -1,6 +1,5 @@
 package application.model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -9,117 +8,158 @@ import java.time.LocalDateTime;
 public class Usuario {
 
     // Enumeraciones para tipos
-    public enum TipoIdentificacion {
-        CEDULA, RUC, PASAPORTE
-    }
-
     public enum TipoUsuario {
-        NATURAL, JURIDICA
+        NATURAL, JURIDICA, INTERNO, EXTERNO, OTRO
     }
 
-    public enum Estado {
-        ACTIVO, INACTIVO
+    public enum EstadoUsuario {
+        ACTIVO, INACTIVO, SUSPENDIDO
     }
 
     // Atributos
-    private int id;
-    private String nombresCompletos;
+    private Integer id;
+    private String nombres;
+    private String apellidos;
+    private String identificacion;
+    private String email;
     private String nombreUsuario;
-    private String numeroIdentificacion;
-    private TipoIdentificacion tipoIdentificacion;
-    private String telefono;
-    private String correo;
-    private Estado estado;
-    private String direccion;
-    private LocalDate fechaIngreso;
-    private TipoUsuario tipoUsuario;
-    private String rol;
     private String clave;
-
-    // Metadatos
+    private TipoUsuario tipoUsuario;
+    private EstadoUsuario estadoUsuario;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     // Constructor vacío
     public Usuario() {
-        this.fechaIngreso = LocalDate.now();
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.estadoUsuario = EstadoUsuario.ACTIVO;
+        this.tipoUsuario = TipoUsuario.INTERNO;
     }
 
     // Constructor completo
-    public Usuario(String nombresCompletos, String nombreUsuario, String numeroIdentificacion,
-                   TipoIdentificacion tipoIdentificacion, String telefono, String correo,
-                   Estado estado, String direccion, LocalDate fechaIngreso,
-                   TipoUsuario tipoUsuario, String rol, String clave) {
+    public Usuario(Integer id, String nombres, String apellidos, String identificacion, String email,
+            String nombreUsuario, String clave, TipoUsuario tipoUsuario, EstadoUsuario estadoUsuario) {
         this();
-        this.nombresCompletos = nombresCompletos;
+        this.id = id;
+        this.nombres = nombres;
+        this.apellidos = apellidos;
+        this.identificacion = identificacion;
+        this.email = email;
         this.nombreUsuario = nombreUsuario;
-        this.numeroIdentificacion = numeroIdentificacion;
-        this.tipoIdentificacion = tipoIdentificacion;
-        this.telefono = telefono;
-        this.correo = correo;
-        this.estado = estado;
-        this.direccion = direccion;
-        this.fechaIngreso = fechaIngreso;
-        this.tipoUsuario = tipoUsuario;
-        this.rol = rol;
         this.clave = clave;
+        this.tipoUsuario = tipoUsuario;
+        this.estadoUsuario = estadoUsuario;
     }
 
     // Getters y Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public Integer getId() {
+        return id;
+    }
 
-    public String getNombresCompletos() { return nombresCompletos; }
-    public void setNombresCompletos(String nombresCompletos) { this.nombresCompletos = nombresCompletos; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public String getNombreUsuario() { return nombreUsuario; }
-    public void setNombreUsuario(String nombreUsuario) { this.nombreUsuario = nombreUsuario; }
+    public String getNombres() {
+        return nombres;
+    }
 
-    public String getNumeroIdentificacion() { return numeroIdentificacion; }
-    public void setNumeroIdentificacion(String numeroIdentificacion) { this.numeroIdentificacion = numeroIdentificacion; }
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
 
-    public TipoIdentificacion getTipoIdentificacion() { return tipoIdentificacion; }
-    public void setTipoIdentificacion(TipoIdentificacion tipoIdentificacion) { this.tipoIdentificacion = tipoIdentificacion; }
+    public String getApellidos() {
+        return apellidos;
+    }
 
-    public String getTelefono() { return telefono; }
-    public void setTelefono(String telefono) { this.telefono = telefono; }
+    public void setApellidos(String apellidos) {
+        this.apellidos = apellidos;
+    }
 
-    public String getCorreo() { return correo; }
-    public void setCorreo(String correo) { this.correo = correo; }
+    public String getIdentificacion() {
+        return identificacion;
+    }
 
-    public Estado getEstado() { return estado; }
-    public void setEstado(Estado estado) { this.estado = estado; }
+    public void setIdentificacion(String identificacion) {
+        this.identificacion = identificacion;
+    }
 
-    public String getDireccion() { return direccion; }
-    public void setDireccion(String direccion) { this.direccion = direccion; }
+    public String getEmail() {
+        return email;
+    }
 
-    public LocalDate getFechaIngreso() { return fechaIngreso; }
-    public void setFechaIngreso(LocalDate fechaIngreso) { this.fechaIngreso = fechaIngreso; }
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-    public TipoUsuario getTipoUsuario() { return tipoUsuario; }
-    public void setTipoUsuario(TipoUsuario tipoUsuario) { this.tipoUsuario = tipoUsuario; }
+    public String getNombreUsuario() {
+        return nombreUsuario;
+    }
 
-    public String getRol() { return rol; }
-    public void setRol(String rol) { this.rol = rol; }
+    public void setNombreUsuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
+    }
 
-    public String getClave() { return clave; }
-    public void setClave(String clave) { this.clave = clave; }
+    public String getClave() {
+        return clave;
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public void setClave(String clave) {
+        this.clave = clave;
+    }
 
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
-    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
+    public TipoUsuario getTipoUsuario() {
+        return tipoUsuario;
+    }
+
+    public void setTipoUsuario(TipoUsuario tipoUsuario) {
+        this.tipoUsuario = tipoUsuario;
+    }
+
+    public EstadoUsuario getEstadoUsuario() {
+        return estadoUsuario;
+    }
+
+    public void setEstadoUsuario(EstadoUsuario estadoUsuario) {
+        this.estadoUsuario = estadoUsuario;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     // Métodos de utilidad
+    public String getNombreCompleto() {
+        return nombres + " " + apellidos;
+    }
+
+    public String getTipoUsuarioString() {
+        return tipoUsuario != null ? tipoUsuario.toString() : "";
+    }
+
+    public String getEstadoUsuarioString() {
+        return estadoUsuario != null ? estadoUsuario.toString() : "";
+    }
+
     public boolean esActivo() {
-        return estado == Estado.ACTIVO;
+        return estadoUsuario == EstadoUsuario.ACTIVO;
     }
 
     @Override
     public String toString() {
-        return String.format("%s - %s (%s)", nombresCompletos, nombreUsuario, rol);
+        return String.format("%s (%s)", getNombreCompleto(), nombreUsuario);
     }
 }

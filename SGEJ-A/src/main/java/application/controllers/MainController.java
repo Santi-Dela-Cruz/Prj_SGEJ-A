@@ -151,22 +151,41 @@ public class MainController {
         this.tipoUsuario = userType;
         switch (userType) {
             case "Administrador":
+                // Administrador tiene acceso a todo, no necesita restricciones
                 break;
             case "Asistente Legal":
+                // Ocultar módulos no relevantes para Asistente Legal
                 md_Facturacion.setVisible(false);
                 md_Facturacion.setManaged(false);
                 md_Personal.setVisible(false);
                 md_Personal.setManaged(false);
-                md_Sistema.setVisible(false);
-                md_Sistema.setManaged(false);
+                // Garantizar acceso a la base de datos de usuarios
+                md_Sistema.setVisible(true);
+                md_Sistema.setManaged(true);
+                md_Usuario.setVisible(true);
+                md_Usuario.setManaged(true);
                 break;
             case "Contador":
+                // Ocultar módulos no relevantes para Contador
                 md_CasosDocumentacion.setVisible(false);
                 md_CasosDocumentacion.setManaged(false);
                 md_Personal.setVisible(false);
                 md_Personal.setManaged(false);
-                md_Sistema.setVisible(false);
-                md_Sistema.setManaged(false);
+                // Mantener acceso a la base de datos de usuarios
+                md_Sistema.setVisible(true);
+                md_Sistema.setManaged(true);
+                md_Usuario.setVisible(true);
+                md_Usuario.setManaged(true);
+                break;
+            case "Abogado":
+                // Ocultar módulos no relevantes para Abogado
+                md_Facturacion.setVisible(false);
+                md_Facturacion.setManaged(false);
+                // Mantener acceso a la base de datos de usuarios
+                md_Sistema.setVisible(true);
+                md_Sistema.setManaged(true);
+                md_Usuario.setVisible(true);
+                md_Usuario.setManaged(true);
                 break;
         }
 
@@ -202,8 +221,10 @@ public class MainController {
             }
             if (controller instanceof ModuloEmpleadoController c)
                 c.setFormularioContainer(pnl_Forms);
-            if (controller instanceof ModuloUsuarioController c)
+            if (controller instanceof ModuloUsuarioController c) {
                 c.setFormularioContainer(pnl_Forms);
+                System.out.println("Se configuró el contenedor de formularios para ModuloUsuarioController");
+            }
             if (controller instanceof ModuloFacturaController c)
                 c.setFormularioContainer(pnl_Forms);
             if (controller instanceof ModuloParametrosController c)

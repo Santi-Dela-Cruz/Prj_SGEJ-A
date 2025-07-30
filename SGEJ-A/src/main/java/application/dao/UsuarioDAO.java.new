@@ -16,20 +16,19 @@ public class UsuarioDAO {
 
     /**
      * Agrega un nuevo usuario en la base de datos
-     * 
      * @param usuario el usuario a insertar
      * @return true si se insertó correctamente, false en caso contrario
      */
     public boolean agregarUsuario(Usuario usuario) {
         String sql = """
-                INSERT INTO usuarios (nombres, apellidos, identificacion, email,
-                                      nombre_usuario, clave, tipo_usuario, estado_usuario,
-                                      created_at, updated_at)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """;
+            INSERT INTO usuarios (nombres, apellidos, identificacion, email,
+                                  nombre_usuario, clave, tipo_usuario, estado_usuario,
+                                  created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """;
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pstmt.setString(1, usuario.getNombres());
             pstmt.setString(2, usuario.getApellidos());
@@ -43,7 +42,7 @@ public class UsuarioDAO {
             pstmt.setString(10, LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
 
             int affectedRows = pstmt.executeUpdate();
-
+            
             if (affectedRows > 0) {
                 try (ResultSet generatedKeys = pstmt.getGeneratedKeys()) {
                     if (generatedKeys.next()) {
@@ -59,30 +58,29 @@ public class UsuarioDAO {
             return false;
         }
     }
-
+    
     /**
      * Actualiza un usuario existente en la base de datos
-     * 
      * @param usuario el usuario a actualizar
      * @return true si se actualizó correctamente, false en caso contrario
      */
     public boolean actualizarUsuario(Usuario usuario) {
         String sql = """
-                UPDATE usuarios SET
-                    nombres = ?,
-                    apellidos = ?,
-                    identificacion = ?,
-                    email = ?,
-                    nombre_usuario = ?,
-                    clave = ?,
-                    tipo_usuario = ?,
-                    estado_usuario = ?,
-                    updated_at = ?
-                WHERE id = ?
-                """;
+            UPDATE usuarios SET 
+                nombres = ?, 
+                apellidos = ?, 
+                identificacion = ?, 
+                email = ?,
+                nombre_usuario = ?, 
+                clave = ?, 
+                tipo_usuario = ?, 
+                estado_usuario = ?, 
+                updated_at = ?
+            WHERE id = ?
+            """;
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, usuario.getNombres());
             pstmt.setString(2, usuario.getApellidos());
@@ -103,10 +101,9 @@ public class UsuarioDAO {
             return false;
         }
     }
-
+    
     /**
      * Elimina un usuario por su ID
-     * 
      * @param id ID del usuario a eliminar
      * @return true si se eliminó correctamente, false en caso contrario
      */
@@ -114,7 +111,7 @@ public class UsuarioDAO {
         String sql = "DELETE FROM usuarios WHERE id = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, id);
             int affectedRows = pstmt.executeUpdate();
@@ -125,10 +122,9 @@ public class UsuarioDAO {
             return false;
         }
     }
-
+    
     /**
      * Obtiene todos los usuarios de la base de datos
-     * 
      * @return lista de usuarios
      */
     public List<Usuario> obtenerTodosLosUsuarios() throws SQLException {
@@ -136,8 +132,8 @@ public class UsuarioDAO {
         String sql = "SELECT * FROM usuarios";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                Statement stmt = conn.createStatement();
-                ResultSet rs = stmt.executeQuery(sql)) {
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 Usuario usuario = mapResultSetToUsuario(rs);
@@ -146,25 +142,24 @@ public class UsuarioDAO {
         }
         return usuarios;
     }
-
+    
     /**
      * Busca usuarios por nombre, nombre de usuario o identificación
-     * 
      * @param termino término de búsqueda
      * @return lista de usuarios que coinciden con el término
      */
     public List<Usuario> buscarUsuarios(String termino) throws SQLException {
         List<Usuario> usuarios = new ArrayList<>();
         String sql = """
-                SELECT * FROM usuarios
-                WHERE nombres LIKE ?
-                   OR apellidos LIKE ?
-                   OR identificacion LIKE ?
-                   OR nombre_usuario LIKE ?
-                """;
+            SELECT * FROM usuarios 
+            WHERE nombres LIKE ? 
+               OR apellidos LIKE ? 
+               OR identificacion LIKE ?
+               OR nombre_usuario LIKE ?
+            """;
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             String searchTerm = "%" + termino + "%";
             pstmt.setString(1, searchTerm);
@@ -181,10 +176,9 @@ public class UsuarioDAO {
         }
         return usuarios;
     }
-
+    
     /**
      * Obtiene un usuario por su nombre de usuario
-     * 
      * @param nombreUsuario nombre de usuario
      * @return usuario encontrado o null si no existe
      */
@@ -192,10 +186,10 @@ public class UsuarioDAO {
         String sql = "SELECT * FROM usuarios WHERE nombre_usuario = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, nombreUsuario);
-
+            
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return mapResultSetToUsuario(rs);
@@ -204,29 +198,28 @@ public class UsuarioDAO {
         }
         return null;
     }
-
+    
     /**
      * Obtiene un usuario por su nombre (método equivalente para compatibilidad)
      */
     public Usuario obtenerUsuarioPorNombre(String nombreUsuario) throws SQLException {
         return obtenerUsuarioPorNombreUsuario(nombreUsuario);
     }
-
+    
     /**
      * Verifica si la clave de un usuario es correcta
-     * 
      * @param nombreUsuario nombre de usuario
-     * @param clave         clave a verificar
+     * @param clave clave a verificar
      * @return true si la clave es correcta, false en caso contrario
      */
     public boolean verificarClave(String nombreUsuario, String clave) throws SQLException {
         String sql = "SELECT clave FROM usuarios WHERE nombre_usuario = ?";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setString(1, nombreUsuario);
-
+            
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     String claveAlmacenada = rs.getString("clave");
@@ -236,16 +229,15 @@ public class UsuarioDAO {
         }
         return false;
     }
-
+    
     /**
      * Mapea un ResultSet a un objeto Usuario
-     * 
      * @param rs ResultSet
      * @return objeto Usuario
      */
     private Usuario mapResultSetToUsuario(ResultSet rs) throws SQLException {
         Usuario usuario = new Usuario();
-
+        
         usuario.setId(rs.getInt("id"));
         usuario.setNombres(rs.getString("nombres"));
         usuario.setApellidos(rs.getString("apellidos"));
@@ -253,41 +245,41 @@ public class UsuarioDAO {
         usuario.setEmail(rs.getString("email"));
         usuario.setNombreUsuario(rs.getString("nombre_usuario"));
         usuario.setClave(rs.getString("clave"));
-
+        
         // Manejar enums
         try {
             usuario.setTipoUsuario(Usuario.TipoUsuario.valueOf(rs.getString("tipo_usuario")));
         } catch (Exception e) {
             usuario.setTipoUsuario(Usuario.TipoUsuario.INTERNO);
         }
-
+        
         try {
             usuario.setEstadoUsuario(Usuario.EstadoUsuario.valueOf(rs.getString("estado_usuario")));
         } catch (Exception e) {
             usuario.setEstadoUsuario(Usuario.EstadoUsuario.ACTIVO);
         }
-
+        
         // Fechas
         String createdAt = rs.getString("created_at");
         if (createdAt != null) {
             try {
-                usuario.setCreatedAt(LocalDateTime.parse(createdAt,
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                usuario.setCreatedAt(LocalDateTime.parse(createdAt, 
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             } catch (Exception e) {
                 usuario.setCreatedAt(LocalDateTime.now());
             }
         }
-
+        
         String updatedAt = rs.getString("updated_at");
         if (updatedAt != null) {
             try {
-                usuario.setUpdatedAt(LocalDateTime.parse(updatedAt,
-                        DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                usuario.setUpdatedAt(LocalDateTime.parse(updatedAt, 
+                    DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
             } catch (Exception e) {
                 usuario.setUpdatedAt(LocalDateTime.now());
             }
         }
-
+        
         return usuario;
     }
 }

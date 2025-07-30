@@ -1,0 +1,264 @@
+package application.controllers.administracion_sistema;
+
+import application.controllers.DialogUtil;
+import application.dao.UsuarioDAO;
+import application.model.Usuario;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.AnchorPane;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+
+public class ModuloUsuarioController {
+
+    @FXML private TableView<Usuario> tblUsuarios;
+    @FXML private TableColumn<Usuario, String> colNombres, colIdentificacion, colUsuario, colTipo, colEstado;
+    @FXML private TextField txtBuscar;
+    @FXML private Button btnAgregar, btnEditar, btnEliminar, btnResetClave;
+    @FXML private AnchorPane containerForm;
+
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
+    private ObservableList<Usuario> listaUsuarios = FXCollections.observableArrayList();
+    
+    private FormUsuarioController formUsuarioController;
+    private FormCambioClaveController formCambioClaveController;
+    
+    @FXML
+    private void initialize() {
+        inicializarTabla();
+        configurarBotones();
+        cargarUsuarios();
+        
+        // Configurar búsqueda
+        txtBuscar.textProperty().addListener((observable, oldValue, newValue) -> {
+            filtrarUsuarios(newValue);
+        });
+    }
+    
+    /**
+     * Inicializa la tabla y sus columnas
+     */
+    private void inicializarTabla() {
+        // Configurar columnas
+        colNombres.setCellValueFactory(new PropertyValueFactory<>("nombreCompleto"));
+        colIdentificacion.setCellValueFactory(new PropertyValueFactory<>("identificacion"));
+        colUsuario.setCellValueFactory(new PropertyValueFactory<>("nombreUsuario"));
+        colTipo.setCellValueFactory(new PropertyValueFactory<>("tipoUsuarioString"));
+        colEstado.setCellValueFactory(new PropertyValueFactory<>("estadoUsuarioString"));
+        
+        // Configurar selección de tabla
+        tblUsuarios.getSelectionModel().selectedItemProperty().addListener(
+            (observable, oldValue, newValue) -> actualizarEstadoBotones(newValue != null)
+        );
+    }
+    
+    /**
+     * Configura los botones de acción
+     */
+    private void configurarBotones() {
+        // Inicialmente deshabilitados hasta que se seleccione un usuario
+        btnEditar.setDisable(true);
+        btnEliminar.setDisable(true);
+        btnResetClave.setDisable(true);
+        
+        // Acciones de los botones
+        btnAgregar.setOnAction(e -> mostrarFormularioUsuario(null));
+        btnEditar.setOnAction(e -> mostrarFormularioUsuario(tblUsuarios.getSelectionModel().getSelectedItem()));
+        btnEliminar.setOnAction(e -> eliminarUsuario());
+        btnResetClave.setOnAction(e -> mostrarFormularioCambioClave());
+    }
+    
+    /**
+     * Actualiza el estado de los botones según si hay un usuario seleccionado
+     * @param haySeleccion true si hay un usuario seleccionado
+     */
+    private void actualizarEstadoBotones(boolean haySeleccion) {
+        btnEditar.setDisable(!haySeleccion);
+        btnEliminar.setDisable(!haySeleccion);
+        btnResetClave.setDisable(!haySeleccion);
+    }
+    
+    /**
+     * Carga los usuarios desde la base de datos
+     */
+    private void cargarUsuarios() {
+        try {
+            List<Usuario> usuarios = usuarioDAO.obtenerTodosLosUsuarios();
+            listaUsuarios.clear();
+            listaUsuarios.addAll(usuarios);
+            tblUsuarios.setItems(listaUsuarios);
+        } catch (Exception e) {
+            DialogUtil.mostrarDialogo(
+                "Error",
+                "Error al cargar usuarios: " + e.getMessage(),
+                "error",
+                List.of(ButtonType.OK)
+            );
+        }
+    }
+    
+    /**
+     * Filtra los usuarios según el texto de búsqueda
+     * @param texto Texto a buscar
+     */
+    private void filtrarUsuarios(String texto) {
+        if (texto == null || texto.isEmpty()) {
+            tblUsuarios.setItems(listaUsuarios);
+            return;
+        }
+        
+        String textoLower = texto.toLowerCase();
+        ObservableList<Usuario> listaFiltrada = FXCollections.observableArrayList();
+        
+        for (Usuario usuario : listaUsuarios) {
+            if (usuario.getNombreCompleto().toLowerCase().contains(textoLower) ||
+                usuario.getIdentificacion().toLowerCase().contains(textoLower) ||
+                usuario.getNombreUsuario().toLowerCase().contains(textoLower)) {
+                listaFiltrada.add(usuario);
+            }
+        }
+        
+        tblUsuarios.setItems(listaFiltrada);
+    }
+    
+    /**
+     * Muestra el formulario de usuario para crear o editar
+     * @param usuario Usuario a editar, null para crear uno nuevo
+     */
+    private void mostrarFormularioUsuario(Usuario usuario) {
+        try {
+            // Limpiar contenedor
+            containerForm.getChildren().clear();
+            
+            // Cargar formulario
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                getClass().getResource("/views/usuario/form_usuario.fxml")
+            );
+            AnchorPane formPane = loader.load();
+            formUsuarioController = loader.getController();
+            
+            // Configurar formulario
+            formUsuarioController.setUsuario(usuario);
+            formUsuarioController.setOnGuardar(() -> {
+                cargarUsuarios();
+                containerForm.getChildren().clear();
+            });
+            formUsuarioController.setOnCancelar(() -> containerForm.getChildren().clear());
+            
+            // Mostrar formulario
+            AnchorPane.setTopAnchor(formPane, 0.0);
+            AnchorPane.setRightAnchor(formPane, 0.0);
+            AnchorPane.setBottomAnchor(formPane, 0.0);
+            AnchorPane.setLeftAnchor(formPane, 0.0);
+            containerForm.getChildren().add(formPane);
+            
+        } catch (IOException e) {
+            DialogUtil.mostrarDialogo(
+                "Error",
+                "Error al cargar formulario: " + e.getMessage(),
+                "error",
+                List.of(ButtonType.OK)
+            );
+        }
+    }
+    
+    /**
+     * Muestra el formulario de cambio de clave
+     */
+    private void mostrarFormularioCambioClave() {
+        Usuario usuarioSeleccionado = tblUsuarios.getSelectionModel().getSelectedItem();
+        if (usuarioSeleccionado == null) {
+            return;
+        }
+        
+        try {
+            // Limpiar contenedor
+            containerForm.getChildren().clear();
+            
+            // Cargar formulario
+            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
+                getClass().getResource("/views/usuario/form_cambio_clave.fxml")
+            );
+            AnchorPane formPane = loader.load();
+            formCambioClaveController = loader.getController();
+            
+            // Configurar formulario
+            formCambioClaveController.setUsuario(usuarioSeleccionado);
+            formCambioClaveController.setModo("RESET"); // Modo RESET (no solicita clave actual)
+            formCambioClaveController.setOnGuardar(() -> {
+                cargarUsuarios();
+                containerForm.getChildren().clear();
+            });
+            formCambioClaveController.setOnCancelar(() -> containerForm.getChildren().clear());
+            
+            // Mostrar formulario
+            AnchorPane.setTopAnchor(formPane, 0.0);
+            AnchorPane.setRightAnchor(formPane, 0.0);
+            AnchorPane.setBottomAnchor(formPane, 0.0);
+            AnchorPane.setLeftAnchor(formPane, 0.0);
+            containerForm.getChildren().add(formPane);
+            
+        } catch (IOException e) {
+            DialogUtil.mostrarDialogo(
+                "Error",
+                "Error al cargar formulario: " + e.getMessage(),
+                "error",
+                List.of(ButtonType.OK)
+            );
+        }
+    }
+    
+    /**
+     * Elimina el usuario seleccionado
+     */
+    private void eliminarUsuario() {
+        Usuario usuarioSeleccionado = tblUsuarios.getSelectionModel().getSelectedItem();
+        if (usuarioSeleccionado == null) {
+            return;
+        }
+        
+        // Confirmar con el usuario
+        Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+            "Confirmación",
+            "¿Está seguro de eliminar el usuario " + usuarioSeleccionado.getNombreUsuario() + "?",
+            "confirm",
+            List.of(ButtonType.YES, ButtonType.NO)
+        );
+        
+        if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+            try {
+                boolean exito = usuarioDAO.eliminarUsuario(usuarioSeleccionado.getId());
+                
+                if (exito) {
+                    cargarUsuarios();
+                    DialogUtil.mostrarDialogo(
+                        "Éxito",
+                        "Usuario eliminado correctamente",
+                        "info",
+                        List.of(ButtonType.OK)
+                    );
+                } else {
+                    DialogUtil.mostrarDialogo(
+                        "Error",
+                        "No se pudo eliminar el usuario",
+                        "error",
+                        List.of(ButtonType.OK)
+                    );
+                }
+            } catch (Exception e) {
+                DialogUtil.mostrarDialogo(
+                    "Error",
+                    "Error al eliminar usuario: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK)
+                );
+            }
+        }
+    }
+}
