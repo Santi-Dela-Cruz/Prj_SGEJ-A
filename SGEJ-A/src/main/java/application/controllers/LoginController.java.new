@@ -34,13 +34,13 @@ public class LoginController {
 
     @FXML
     private ComboBox<String> userTypeBox;
-
+    
     @FXML
     private Label errorLabel;
 
     private double xOffset = 0;
     private double yOffset = 0;
-
+    
     private final AutenticacionService autenticacionService = AutenticacionService.getInstancia();
 
     @FXML
@@ -66,9 +66,9 @@ public class LoginController {
             stage.setIconified(true);
         });
 
-        userTypeBox.getItems().addAll("Administrador", "Asistente Legal", "Contador", "Abogado");
+        userTypeBox.getItems().addAll("Administrador", "Asistente Legal", "Contador");
         userTypeBox.getSelectionModel().selectFirst();
-
+        
         // Ocultar el error al inicio
         if (errorLabel != null) {
             errorLabel.setVisible(false);
@@ -79,29 +79,30 @@ public class LoginController {
     private void handleLogin() {
         String username = usernameField.getText().trim();
         String password = passwordField.getText();
-
-        // Validar que se hayan ingresado credenciales
-        if (username.isEmpty() || password.isEmpty()) {
-            if (errorLabel != null) {
-                errorLabel.setText("Por favor ingrese nombre de usuario y contraseña.");
-                errorLabel.setVisible(true);
+        
+        // Primero intentamos autenticar con credenciales
+        if (!username.isEmpty() && !password.isEmpty()) {
+            if (autenticacionService.autenticar(username, password)) {
+                String rol = autenticacionService.getRolUsuarioActual();
+                abrirPanelPrincipal(rol);
+                return;
             }
+        }
+        
+        // Si no hay autenticación con credenciales, usamos el modo tradicional por tipo
+        String userType = userTypeBox.getValue();
+        if (userType != null && !userType.isEmpty()) {
+            abrirPanelPrincipal(userType);
             return;
         }
-
-        // Intentar autenticar con las credenciales
-        if (autenticacionService.autenticar(username, password)) {
-            String rol = autenticacionService.getRolUsuarioActual();
-            abrirPanelPrincipal(rol);
-        } else {
-            // Mostrar error si la autenticación falla
-            if (errorLabel != null) {
-                errorLabel.setText("Credenciales incorrectas. Por favor intente nuevamente.");
-                errorLabel.setVisible(true);
-            }
+        
+        // Mostrar error si llegamos aquí
+        if (errorLabel != null) {
+            errorLabel.setText("Credenciales incorrectas. Por favor intente nuevamente.");
+            errorLabel.setVisible(true);
         }
     }
-
+    
     private void abrirPanelPrincipal(String userType) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/main_panel.fxml"));

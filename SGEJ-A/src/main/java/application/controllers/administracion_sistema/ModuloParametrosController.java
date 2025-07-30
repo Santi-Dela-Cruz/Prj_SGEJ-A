@@ -24,6 +24,8 @@ public class ModuloParametrosController {
     @FXML
     private Button btn_Refrescar;
     @FXML
+    private Button btn_LimpiarBD;
+    @FXML
     private TextField txt_Busqueda;
     @FXML
     private Label lbl_TotalParametros;
@@ -59,6 +61,7 @@ public class ModuloParametrosController {
         btn_Nuevo.setOnAction(e -> mostrarFormulario(null, "NUEVO"));
         btn_Buscar.setOnAction(e -> buscarParametros());
         btn_Refrescar.setOnAction(e -> cargarParametrosDesdeBaseDatos());
+        btn_LimpiarBD.setOnAction(e -> mostrarFormularioLimpiarBD());
 
         configurarColumnasTexto();
         inicializarColumnasDeBotones();
@@ -213,6 +216,38 @@ public class ModuloParametrosController {
         alert.setHeaderText(null);
         alert.setContentText(mensaje);
         alert.showAndWait();
+    }
+
+    /**
+     * Muestra el formulario para limpiar la base de datos
+     */
+    private void mostrarFormularioLimpiarBD() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/sistema/form_limpiar_bd.fxml"));
+            Node formulario = loader.load();
+
+            FormLimpiarBDController controller = loader.getController();
+            controller.setOnCancelar(() -> {
+                pnl_Forms.getChildren().clear();
+                pnl_Forms.setVisible(false);
+                pnl_Forms.setManaged(false);
+            });
+
+            controller.setOnLimpiar(() -> {
+                pnl_Forms.getChildren().clear();
+                pnl_Forms.setVisible(false);
+                pnl_Forms.setManaged(false);
+                cargarParametrosDesdeBaseDatos();
+            });
+
+            pnl_Forms.getChildren().setAll(formulario);
+            pnl_Forms.setVisible(true);
+            pnl_Forms.setManaged(true);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            mostrarMensaje("Error al cargar el formulario de limpieza", "error");
+        }
     }
 
     private void ocultarEncabezadosColumnasDeAccion() {

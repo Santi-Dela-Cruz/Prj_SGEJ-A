@@ -1,189 +1,295 @@
 package application.controllers.administracion_sistema;
 
 import application.controllers.DialogUtil;
+import application.dao.UsuarioDAO;
+import application.model.Usuario;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class FormUsuarioController {
 
-    @FXML private Button btn_Guardar, btn_Cancelar;
-    @FXML private TextField txtf_NombresCompletos, txtf_NombreUsuario, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Telefono;
-    @FXML private PasswordField txtf_Contrasena, txtf_ConfirmarContrasena;
-    @FXML private ComboBox<String> cbx_Rol, cbx_TipoIdentificacion, cbx_Estado;
-    @FXML private DatePicker dt_FechaIngreso;
-    @FXML private Text txt_TituloForm;
+    @FXML
+    private TextField txt_Nombres, txt_Apellidos, txt_Identificacion, txt_Email, txt_Usuario;
+    @FXML
+    private PasswordField txt_Clave, txt_ConfirmarClave;
+    @FXML
+    private ComboBox<String> cmb_TipoUsuario, cmb_EstadoUsuario;
+    @FXML
+    private Label lbl_Error;
+    @FXML
+    private Button btn_Guardar, btn_Cancelar;
+    @FXML
+    private Label lbl_Titulo;
 
-    private Runnable onGuardar, onCancelar;
+    private Runnable onCancelar, onGuardar;
+    private Usuario usuario;
+    private String modo = "CREAR"; // "CREAR" o "EDITAR"
+
+    // DAO para operaciones con la base de datos
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+    // Patrones para validación
+    private final Pattern emailPattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
+    private final Pattern cedulaPattern = Pattern.compile("^[0-9]{10}$");
+    private final Pattern rucPattern = Pattern.compile("^[0-9]{13}$");
 
     public void setOnGuardar(Runnable handler) {
         this.onGuardar = handler;
     }
 
-    public void setOnCancelar(Runnable handler) {
-        this.onCancelar = handler;
+    public void setOnCancelar(Runnable onCancelar) {
+        this.onCancelar = onCancelar;
     }
 
-@FXML
-private void initialize() {
-    cbx_Estado.getItems().addAll("ACTIVO", "INACTIVO");
-    cbx_TipoIdentificacion.getItems().addAll("CEDULA", "RUC", "PASAPORTE"); // <-- Enum exacto
-    cbx_Rol.getItems().addAll("Administrador", "Usuario", "Invitado");
-    
-    btn_Guardar.setOnAction(e -> {
-    String nombres = txtf_NombresCompletos.getText().trim();
-    String usuario = txtf_NombreUsuario.getText().trim();
-    String identificacion = txtf_NumeroIdentificacion.getText().trim();
+    /**
+     * Establece el usuario a editar o crea uno nuevo si es null
+     * 
+     * @param usuario Usuario a editar, null para crear uno nuevo
+     */
+    public void setUsuario(Usuario usuario) {
+        if (usuario != null) {
+            this.usuario = usuario;
+            modo = "EDITAR";
 
-    // LOG para depuración
-    System.out.println("Guardando usuario: " +
-        nombres + ", " +
-        usuario + ", " +
-        identificacion + ", " +
-        cbx_TipoIdentificacion.getValue() + ", " +
-        txtf_Telefono.getText() + ", " +
-        txtf_Correo.getText() + ", " +
-        cbx_Estado.getValue() + ", " +
-        txtf_Direccion.getText() + ", " +
-        dt_FechaIngreso.getValue() + ", " +
-        cbx_Rol.getValue() + ", " +
-        txtf_Contrasena.getText());
+            // Mostrar datos del usuario en el formulario
+            txt_Nombres.setText(usuario.getNombres());
+            txt_Apellidos.setText(usuario.getApellidos());
+            txt_Identificacion.setText(usuario.getIdentificacion());
+            txt_Email.setText(usuario.getEmail());
+            txt_Usuario.setText(usuario.getNombreUsuario());
 
-    if (nombres.isEmpty() ||
-        usuario.isEmpty() ||
-        identificacion.isEmpty() ||
-        cbx_TipoIdentificacion.getValue() == null ||
-        cbx_Rol.getValue() == null ||
-        cbx_Estado.getValue() == null ||
-        dt_FechaIngreso.getValue() == null ||
-        txtf_Contrasena.getText().isEmpty() ||
-        txtf_ConfirmarContrasena.getText().isEmpty()) {
+            // No mostrar la clave en modo edición
+            ocultarCamposClaves(true);
 
-        DialogUtil.mostrarDialogo(
-            "Campos requeridos",
-            "Por favor, complete los campos obligatorios:\n" +
-            " - Nombres Completos (actual: '" + nombres + "')\n" +
-            " - Nombre de Usuario (actual: '" + usuario + "')\n" +
-            " - Número de Identificación (actual: '" + identificacion + "')\n" +
-            " - Tipo de Identificación\n" +
-            " - Rol\n" +
-            " - Estado\n" +
-            " - Fecha de Ingreso\n" +
-            " - Contraseña y Confirmación",
-            "warning",
-            List.of(ButtonType.OK)
-        );
-        return;
-    }
-
-
-
-    if (!txtf_Contrasena.getText().equals(txtf_ConfirmarContrasena.getText())) {
-        DialogUtil.mostrarDialogo(
-            "Contraseña incorrecta",
-            "La contraseña y la confirmación no coinciden.",
-            "error",
-            List.of(ButtonType.OK)
-        );
-        return;
-    }
-
-    Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
-        "Confirmación",
-        "¿Está seguro que desea guardar este usuario?",
-        "confirm",
-        List.of(ButtonType.YES, ButtonType.NO)
-    );
-
-    if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-        try {
-            application.model.Usuario usuarioObj = new application.model.Usuario(
-                nombres,
-                usuario,
-                identificacion,
-                application.model.Usuario.TipoIdentificacion.valueOf(cbx_TipoIdentificacion.getValue()),
-                txtf_Telefono.getText(),
-                txtf_Correo.getText(),
-                application.model.Usuario.Estado.valueOf(cbx_Estado.getValue()),
-                txtf_Direccion.getText(),
-                dt_FechaIngreso.getValue(),
-                application.model.Usuario.TipoUsuario.NATURAL,
-                cbx_Rol.getValue(),
-                txtf_Contrasena.getText()
-            );
-
-            application.dao.UsuarioDAO usuarioDAO = new application.dao.UsuarioDAO();
-            boolean exito = usuarioDAO.insertarUsuario(usuarioObj);
-
-            if (exito) {
-                DialogUtil.mostrarDialogo("Éxito", "Usuario guardado correctamente.", "info", List.of(ButtonType.OK));
-                if (onGuardar != null) onGuardar.run();
-            } else {
-                DialogUtil.mostrarDialogo("Error", "No se pudo guardar el usuario. Verifique que el nombre de usuario y número de identificación no estén repetidos.", "error", List.of(ButtonType.OK));
+            // Seleccionar rol basado en el tipo de usuario
+            if (usuario.getTipoUsuario() != null) {
+                String rol = "";
+                switch (usuario.getTipoUsuario()) {
+                    case INTERNO -> rol = "Administrador";
+                    case NATURAL -> rol = "Abogado";
+                    case JURIDICA -> rol = "Contador";
+                    case EXTERNO -> rol = "Asistente Legal";
+                    default -> rol = "Administrador";
+                }
+                cmb_TipoUsuario.getSelectionModel().select(rol);
             }
-        } catch (Exception ex) {
-            DialogUtil.mostrarDialogo("Error", "Error al guardar usuario: " + ex.getMessage(), "error", List.of(ButtonType.OK));
-            ex.printStackTrace();
+
+            if (usuario.getEstadoUsuario() != null) {
+                String estadoStr = usuario.getEstadoUsuario().toString();
+                cmb_EstadoUsuario.getSelectionModel().select(estadoStr);
+            }
+
+            lbl_Titulo.setText("Editar Usuario");
+        } else {
+            this.usuario = new Usuario();
+            modo = "CREAR";
+
+            // Mostrar campos de clave en modo crear
+            ocultarCamposClaves(false);
+
+            lbl_Titulo.setText("Crear Usuario");
         }
     }
-});
 
-    btn_Cancelar.setOnAction(e -> {
+    /**
+     * Oculta o muestra los campos de clave
+     * 
+     * @param ocultar true para ocultar, false para mostrar
+     */
+    private void ocultarCamposClaves(boolean ocultar) {
+        if (txt_Clave != null && txt_Clave.getParent() != null) {
+            txt_Clave.setVisible(!ocultar);
+            txt_Clave.setManaged(!ocultar);
+            txt_ConfirmarClave.setVisible(!ocultar);
+            txt_ConfirmarClave.setManaged(!ocultar);
+
+            // También las etiquetas asociadas
+            if (txt_Clave.getParent().getChildrenUnmodifiable().size() > 0) {
+                txt_Clave.getParent().getChildrenUnmodifiable().get(0).setVisible(!ocultar);
+                txt_Clave.getParent().getChildrenUnmodifiable().get(0).setManaged(!ocultar);
+            }
+
+            if (txt_ConfirmarClave.getParent().getChildrenUnmodifiable().size() > 0) {
+                txt_ConfirmarClave.getParent().getChildrenUnmodifiable().get(0).setVisible(!ocultar);
+                txt_ConfirmarClave.getParent().getChildrenUnmodifiable().get(0).setManaged(!ocultar);
+            }
+        }
+    }
+
+    @FXML
+    private void initialize() {
+        lbl_Error.setText("");
+
+        // Inicializar combos con los roles directamente
+        cmb_TipoUsuario.setItems(FXCollections.observableArrayList(
+                "Administrador", "Abogado", "Contador", "Asistente Legal"));
+
+        cmb_EstadoUsuario.setItems(FXCollections.observableArrayList(
+                "ACTIVO", "INACTIVO", "SUSPENDIDO"));
+
+        // Seleccionar valores predeterminados
+        cmb_TipoUsuario.getSelectionModel().select("Administrador");
+        cmb_EstadoUsuario.getSelectionModel().select("ACTIVO");
+
+        // Configurar botones
+        btn_Guardar.setOnAction(e -> guardarUsuario());
+        btn_Cancelar.setOnAction(e -> {
+            if (onCancelar != null) {
+                onCancelar.run();
+            }
+        });
+    }
+
+    /**
+     * Valida los campos del formulario
+     * 
+     * @return true si los campos son válidos, false en caso contrario
+     */
+    private boolean validarFormulario() {
+        lbl_Error.setText(""); // limpiar errores previos
+
+        // Validar campos obligatorios
+        if (txt_Nombres.getText().trim().isEmpty() ||
+                txt_Apellidos.getText().trim().isEmpty() ||
+                txt_Identificacion.getText().trim().isEmpty() ||
+                txt_Email.getText().trim().isEmpty() ||
+                txt_Usuario.getText().trim().isEmpty()) {
+
+            lbl_Error.setText("Todos los campos son obligatorios");
+            return false;
+        }
+
+        // Validar email
+        if (!emailPattern.matcher(txt_Email.getText().trim()).matches()) {
+            lbl_Error.setText("El correo electrónico no es válido");
+            return false;
+        }
+
+        // Validar identificación (cédula o RUC)
+        String identificacion = txt_Identificacion.getText().trim();
+        if (!cedulaPattern.matcher(identificacion).matches() && !rucPattern.matcher(identificacion).matches()) {
+            lbl_Error.setText("La identificación debe ser una cédula (10 dígitos) o RUC (13 dígitos)");
+            return false;
+        }
+
+        // Validar claves en modo CREAR
+        if (modo.equals("CREAR")) {
+            if (txt_Clave.getText().trim().isEmpty() || txt_ConfirmarClave.getText().trim().isEmpty()) {
+                lbl_Error.setText("Debe ingresar y confirmar la contraseña");
+                return false;
+            }
+
+            if (!txt_Clave.getText().equals(txt_ConfirmarClave.getText())) {
+                lbl_Error.setText("Las contraseñas no coinciden");
+                return false;
+            }
+
+            if (txt_Clave.getText().length() < 6) {
+                lbl_Error.setText("La contraseña debe tener al menos 6 caracteres");
+                return false;
+            }
+        }
+
+        // Validar que el nombre de usuario sea único (excepto para el mismo usuario en
+        // edición)
+        try {
+            Usuario usuarioExistente = usuarioDAO.obtenerUsuarioPorNombreUsuario(txt_Usuario.getText().trim());
+            if (usuarioExistente != null
+                    && (modo.equals("CREAR") || !usuarioExistente.getId().equals(usuario.getId()))) {
+                lbl_Error.setText("El nombre de usuario ya existe");
+                return false;
+            }
+        } catch (Exception e) {
+            System.err.println("Error al verificar usuario: " + e.getMessage());
+            lbl_Error.setText("Error al verificar disponibilidad del usuario");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Guarda el usuario en la base de datos
+     */
+    private void guardarUsuario() {
+        if (!validarFormulario()) {
+            return;
+        }
+
+        // Actualizar datos del usuario
+        usuario.setNombres(txt_Nombres.getText().trim());
+        usuario.setApellidos(txt_Apellidos.getText().trim());
+        usuario.setIdentificacion(txt_Identificacion.getText().trim());
+        usuario.setEmail(txt_Email.getText().trim());
+        usuario.setNombreUsuario(txt_Usuario.getText().trim());
+
+        // Establecer clave solo en modo CREAR
+        if (modo.equals("CREAR")) {
+            usuario.setClave(txt_Clave.getText());
+        }
+
+        // Convertir el rol seleccionado al tipo de usuario correspondiente
+        String rolSeleccionado = cmb_TipoUsuario.getValue();
+        Usuario.TipoUsuario tipoUsuario = switch (rolSeleccionado) {
+            case "Administrador" -> Usuario.TipoUsuario.INTERNO;
+            case "Abogado" -> Usuario.TipoUsuario.NATURAL;
+            case "Contador" -> Usuario.TipoUsuario.JURIDICA;
+            case "Asistente Legal" -> Usuario.TipoUsuario.EXTERNO;
+            default -> Usuario.TipoUsuario.OTRO;
+        };
+
+        // Establecer tipo y estado
+        usuario.setTipoUsuario(tipoUsuario);
+        usuario.setEstadoUsuario(Usuario.EstadoUsuario.valueOf(cmb_EstadoUsuario.getValue()));
+
+        // Confirmar con el usuario
+        String mensaje = modo.equals("CREAR")
+                ? "¿Está seguro de crear el usuario?"
+                : "¿Está seguro de guardar los cambios?";
+
         Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
-            "Confirmación",
-            "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
-            "confirm",
-            List.of(ButtonType.YES, ButtonType.NO)
-        );
+                "Confirmación",
+                mensaje,
+                "confirm",
+                List.of(ButtonType.YES, ButtonType.NO));
 
         if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-            if (onCancelar != null) onCancelar.run();
+            try {
+                boolean exito;
+
+                if (modo.equals("CREAR")) {
+                    exito = usuarioDAO.agregarUsuario(usuario);
+                } else {
+                    exito = usuarioDAO.actualizarUsuario(usuario);
+                }
+
+                if (exito) {
+                    String mensajeExito = modo.equals("CREAR")
+                            ? "Usuario creado correctamente"
+                            : "Usuario actualizado correctamente";
+
+                    DialogUtil.mostrarDialogo(
+                            "Éxito",
+                            mensajeExito,
+                            "info",
+                            List.of(ButtonType.OK));
+
+                    if (onGuardar != null) {
+                        onGuardar.run();
+                    }
+                } else {
+                    lbl_Error.setText("No se pudo guardar el usuario. Intente nuevamente.");
+                }
+            } catch (Exception e) {
+                System.err.println("Error al guardar usuario: " + e.getMessage());
+                lbl_Error.setText("Error al guardar el usuario: " + e.getMessage());
+            }
         }
-    });
-}
-
-    public void cargarUsuario(ModuloUsuarioController.UsuarioDemo usuario) {
-        txtf_NombresCompletos.setText(usuario.nombresCompletos());
-        txtf_NombreUsuario.setText(usuario.nombreUsuario());
-        txtf_NumeroIdentificacion.setText(usuario.numeroIdentificacion());
-        txtf_Direccion.setText(usuario.direccion());
-        dt_FechaIngreso.setValue(usuario.fechaIngreso());
-        txtf_Telefono.setText(usuario.telefono());
-        txtf_Correo.setText(usuario.correo());
-        cbx_Rol.setValue(usuario.rol());
-        cbx_TipoIdentificacion.setValue(usuario.tipoIdentificacion());
-        cbx_Estado.setValue(usuario.estado());
-        // Password fields are not loaded for security reasons
-    }
-
-    public void setModo(String modo) {
-        boolean esEditar = "EDITAR".equalsIgnoreCase(modo);
-        boolean esVer = "VER".equalsIgnoreCase(modo);
-
-        if (esEditar) {
-            txt_TituloForm.setText("Editar Usuario");
-        } else if (esVer) {
-            txt_TituloForm.setText("Ver Usuario");
-        } else {
-            txt_TituloForm.setText("Registrar nuevo Usuario");
-        }
-
-        boolean editable = !esVer;
-        txtf_NombresCompletos.setEditable(editable);
-        txtf_NombreUsuario.setEditable(editable);
-        txtf_NumeroIdentificacion.setEditable(!esEditar && !esVer);
-        cbx_TipoIdentificacion.setDisable(esEditar || esVer);
-        txtf_Telefono.setEditable(editable);
-        txtf_Correo.setEditable(editable);
-        cbx_Estado.setDisable(esVer);
-        txtf_Direccion.setEditable(editable);
-        cbx_Rol.setDisable(esVer);
-        dt_FechaIngreso.setDisable(esVer);
-        txtf_Contrasena.setEditable(editable);
-        txtf_ConfirmarContrasena.setEditable(editable);
-        btn_Guardar.setDisable(esVer);
     }
 }

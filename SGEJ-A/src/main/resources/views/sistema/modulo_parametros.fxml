@@ -61,6 +61,7 @@
                         <Separator orientation="VERTICAL" prefHeight="40.0" style="-fx-background-color: #e2e8f0;" />
                         <!-- Spacer para empujar el botón Nuevo a la derecha -->
                         <Pane HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btn_LimpiarBD" mnemonicParsing="false" prefHeight="40.0" prefWidth="240.0" style="-fx-background-color: linear-gradient(to bottom, #ef4444, #b91c1c); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(239, 68, 68, 0.4), 4, 0, 0, 2);" text="🗑️ Limpiar Base de Datos" />
                         <Button fx:id="btn_Nuevo" mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0" style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);" text="➕ Nuevo Parámetro" />
                     </children>
                 </HBox>

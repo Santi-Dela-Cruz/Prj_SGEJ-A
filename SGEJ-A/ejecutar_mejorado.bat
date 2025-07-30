@@ -1,21 +1,22 @@
 @echo off
-echo ====================================
-echo 🚀 EJECUTANDO SISTEMA JURIDICO
-echo ====================================
-echo.
+REM Batch para ejecutar la aplicación SGEJ-A de manera más robusta
 
-echo 📋 Compilando todas las clases...
-javac -cp "target\classes;C:\Program Files\Java\javafx-sdk-22.0.1\lib\*;C:\Program Files\Java\sqlite-jdbc-3.45.0.0.jar" -d target\classes src\main\java\application\*.java src\main\java\application\model\*.java src\main\java\application\dao\*.java src\main\java\application\service\*.java src\main\java\application\controllers\*.java src\main\java\application\controllers\cliente\*.java
+echo ===========================================
+echo EJECUTANDO SISTEMA SGEJ-A (Versión Mejorada)
+echo ===========================================
+
+REM Compilar el proyecto con Maven
+echo Compilando el proyecto...
+call mvn clean compile
+
+REM Crear la base de datos o verificar que existe
+echo Verificando base de datos...
+sqlite3 sgej_database.db ".tables"
+
+REM Ejecutar la aplicación
+echo Ejecutando la aplicacion JavaFX...
+call mvn javafx:run
 
 echo.
-echo 📋 Copiando recursos...
-xcopy "src\main\resources\*" "target\classes\" /E /Y /I > nul 2>&1
-
-echo.
-echo 🚀 Iniciando aplicación...
-echo.
-java --module-path "C:\Program Files\Java\javafx-sdk-22.0.1\lib" --add-modules javafx.controls,javafx.fxml -cp "target\classes;C:\Program Files\Java\sqlite-jdbc-3.45.0.0.jar" application.App
-
-echo.
-echo 📋 Aplicación finalizada.
-pause
+echo Presiona cualquier tecla para salir...
+pause > nul
