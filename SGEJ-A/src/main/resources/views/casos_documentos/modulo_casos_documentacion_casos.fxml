@@ -72,8 +72,8 @@
                         <children>
                             <VBox alignment="CENTER_LEFT" spacing="2.0">
                                 <children>
-                                    <Label text="📋 Expedientes Jurídicos" textFill="#1e40af" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
-                                    <Label text="Gestión completa de casos y procesos legales" textFill="#6b7280" style="-fx-font-size: 12px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                    <Label fx:id="lbl_NombreCliente" text="📋 Expedientes Jurídicos" textFill="#1e40af" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                    <Label fx:id="lbl_IdentificacionCliente" text="Gestión completa de casos y procesos legales" textFill="#6b7280" style="-fx-font-size: 12px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
                                 </children>
                             </VBox>
                             
@@ -87,6 +87,7 @@
                                     <Label fx:id="lbl_TotalCasos" layoutX="15.0" layoutY="25.0" text="Total: 0 casos" textFill="#d1fae5" style="-fx-font-size: 10px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
                                 </children>
                             </Pane>
+                            <Button fx:id="btn_Regresar" text="⏪ Regresar" style="-fx-background-color: linear-gradient(to bottom, #f59e0b, #fbbf24); -fx-text-fill: #1e3a8a; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 18; -fx-cursor: hand;" />
                         </children>
                     </HBox>
                     

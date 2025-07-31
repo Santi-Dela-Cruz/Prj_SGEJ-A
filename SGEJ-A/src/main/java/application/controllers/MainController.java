@@ -24,6 +24,15 @@ import javafx.util.Duration;
 import java.io.IOException;
 
 public class MainController {
+    private static MainController instance;
+
+    public MainController() {
+        instance = this;
+    }
+
+    public static MainController getInstance() {
+        return instance;
+    }
 
     @FXML
     private HBox titleBar;
@@ -195,7 +204,7 @@ public class MainController {
         cargarModulo("/views/dashboard.fxml");
     }
 
-    void cargarModulo(String rutaFXML) {
+    public void cargarModulo(String rutaFXML) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
             Node modulo = loader.load();
@@ -237,6 +246,7 @@ public class MainController {
             AnchorPane.setLeftAnchor(modulo, 0.0);
             AnchorPane.setRightAnchor(modulo, 0.0);
 
+            modulo.setUserData(controller);
             pnl_Modulos.getChildren().setAll(modulo);
 
             pnl_Forms.getChildren().clear();

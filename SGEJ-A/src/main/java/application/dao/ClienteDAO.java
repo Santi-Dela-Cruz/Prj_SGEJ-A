@@ -220,7 +220,7 @@ public class ClienteDAO {
      */
     public List<Cliente> obtenerClientesPorEstado(Cliente.Estado estado) {
         List<Cliente> clientes = new ArrayList<>();
-        String sql = "SELECT * FROM clientes WHERE estado = ? ORDER BY nombre_completo";
+        String sql = "SELECT * FROM cliente WHERE estado = ? ORDER BY nombre_completo";
 
         try (Connection conn = DatabaseConnection.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {

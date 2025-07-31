@@ -1,5 +1,7 @@
 package application.controllers.cliente;
 
+import application.controllers.casos_documentacion.ModuloCasosController;
+
 import application.model.Cliente;
 import application.service.ClienteService;
 import application.controllers.administracion_sistema.FormUsuarioModalLauncher;
@@ -121,6 +123,18 @@ public class ModuloClienteController {
 
         // Configurar paginaciÃ³n
         configurarPaginacion();
+
+        // Evento doble clic en fila para abrir casos del cliente
+        tb_Clientes.setRowFactory(tv -> {
+            TableRow<Cliente> row = new TableRow<>();
+            row.setOnMouseClicked(event -> {
+                if (event.getClickCount() == 2 && !row.isEmpty()) {
+                    Cliente cliente = row.getItem();
+                    abrirVistaCasosDeCliente(cliente);
+                }
+            });
+            return row;
+        });
     }
 
     private void ocultarEncabezadosColumnasDeAccion() {
@@ -159,17 +173,12 @@ public class ModuloClienteController {
 
     private void agregarBotonPorColumna(TableColumn<Cliente, Void> columna, String texto, String tooltip) {
         columna.getStyleClass().add("column-action");
-
-        columna.setCellFactory(_ -> new TableCell<>() {
+        columna.setCellFactory(_ -> new TableCell<Cliente, Void>() {
             private final Button btn = new Button(texto);
-
             {
-                // Estilos mejorados para botones ligeramente más grandes
                 btn.getStyleClass().add("table-button");
                 setStyle("-fx-alignment: CENTER; -fx-padding: 2;");
                 btn.setTooltip(new Tooltip(tooltip));
-
-                // Estilos específicos según el tipo de botón
                 if ("Editar".equals(tooltip)) {
                     btn.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-background-radius: 4; " +
                             "-fx-font-size: 11px; -fx-font-weight: bold; -fx-min-width: 65; -fx-max-width: 65; " +
@@ -179,8 +188,6 @@ public class ModuloClienteController {
                             "-fx-font-size: 11px; -fx-font-weight: bold; -fx-min-width: 65; -fx-max-width: 65; " +
                             "-fx-min-height: 30; -fx-max-height: 30; -fx-cursor: hand; -fx-padding: 0;");
                 }
-
-                // Efectos hover
                 btn.setOnMouseEntered(_ -> {
                     if ("Editar".equals(tooltip)) {
                         btn.setStyle(btn.getStyle() + "-fx-background-color: #d97706;");
@@ -188,7 +195,6 @@ public class ModuloClienteController {
                         btn.setStyle(btn.getStyle() + "-fx-background-color: #2563eb;");
                     }
                 });
-
                 btn.setOnMouseExited(_ -> {
                     if ("Editar".equals(tooltip)) {
                         btn.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-background-radius: 4; " +
@@ -200,13 +206,12 @@ public class ModuloClienteController {
                                 "-fx-min-height: 30; -fx-max-height: 30; -fx-cursor: hand; -fx-padding: 0;");
                     }
                 });
-
                 btn.setOnAction(_ -> {
                     Cliente cliente = getTableView().getItems().get(getIndex());
                     if ("Editar".equals(tooltip)) {
                         mostrarFormulario(cliente, "EDITAR");
                     } else if ("Ver".equals(tooltip)) {
-                        mostrarFormulario(cliente, "VER");
+                        abrirVistaCasosDeCliente(cliente);
                     }
                 });
             }
@@ -217,6 +222,36 @@ public class ModuloClienteController {
                 setGraphic(empty ? null : btn);
             }
         });
+    }
+
+    /**
+     * Abre la vista de casos filtrada por el cliente seleccionado.
+     */
+    private void abrirVistaCasosDeCliente(Cliente cliente) {
+        // Usar el singleton MainController para cargar el módulo de casos y pasar el
+        // cliente
+        try {
+            application.controllers.MainController mainController = application.controllers.MainController
+                    .getInstance();
+            if (mainController != null) {
+                // Cargar el módulo de casos
+                mainController.cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                // Obtener el AnchorPane de módulos
+                java.lang.reflect.Field field = mainController.getClass().getDeclaredField("pnl_Modulos");
+                field.setAccessible(true);
+                AnchorPane pnl_Modulos = (AnchorPane) field.get(mainController);
+                if (pnl_Modulos != null && !pnl_Modulos.getChildren().isEmpty()) {
+                    Node modulo = pnl_Modulos.getChildren().get(0);
+                    // Obtener el controlador del módulo de casos
+                    ModuloCasosController casosController = (ModuloCasosController) modulo.getUserData();
+                    if (casosController != null) {
+                        casosController.mostrarCasosDeCliente(cliente);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**

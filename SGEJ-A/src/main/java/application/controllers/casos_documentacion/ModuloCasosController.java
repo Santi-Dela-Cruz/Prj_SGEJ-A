@@ -1,18 +1,81 @@
+
 package application.controllers.casos_documentacion;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
-import javafx.event.ActionEvent;
-
 import java.io.IOException;
+import application.model.Caso;
+import java.util.List;
 
 public class ModuloCasosController {
+    private application.model.Cliente clienteActual;
+    @FXML
+    private Label lbl_NombreCliente;
+    @FXML
+    private Label lbl_IdentificacionCliente;
+
+    /**
+     * Permite establecer el cliente actual y filtrar los casos por ese cliente.
+     */
+    public void mostrarCasosDeCliente(application.model.Cliente cliente) {
+        this.clienteActual = cliente;
+        if (lbl_NombreCliente != null) {
+            lbl_NombreCliente.setText(cliente.getNombreCompleto());
+        }
+        if (lbl_IdentificacionCliente != null) {
+            lbl_IdentificacionCliente.setText(cliente.getNumeroIdentificacion());
+        }
+        // Filtrar solo los casos del cliente seleccionado
+        cargarCasosPorCliente(cliente.getId());
+    }
+
+    @FXML
+    private Button btn_Regresar;
+
+    /**
+     * Carga los casos filtrados por el id del cliente.
+     */
+    private void cargarCasosPorCliente(int clienteId) {
+        try {
+            tb_Casos.getItems().clear();
+            java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+            if (conn == null)
+                return;
+            String sql = "SELECT * FROM caso WHERE cliente_id = ?";
+            java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setInt(1, clienteId);
+            java.sql.ResultSet rs = stmt.executeQuery();
+            int count = 0;
+            while (rs.next()) {
+                count++;
+                Caso caso = new Caso();
+                caso.setNumeroExpediente(rs.getString("numero_expediente"));
+                caso.setTitulo(rs.getString("titulo"));
+                caso.setTipo(rs.getString("tipo"));
+                caso.setEstado(rs.getString("estado"));
+                java.sql.Date fechaSQL = rs.getDate("fecha_inicio");
+                if (fechaSQL != null) {
+                    caso.setFechaInicio(new java.util.Date(fechaSQL.getTime()));
+                }
+                caso.setDescripcion(rs.getString("descripcion"));
+                caso.setCliente(clienteActual);
+                caso.setClienteId(clienteActual.getId());
+                tb_Casos.getItems().add(caso);
+            }
+            lbl_TotalCasos.setText("Total: " + count + (count == 1 ? " caso" : " casos"));
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            lbl_TotalCasos.setText("Error al cargar casos del cliente");
+        }
+    }
+
     // Referencia al panel principal de módulos
     private AnchorPane pnl_Modulos;
 
@@ -32,19 +95,19 @@ public class ModuloCasosController {
     @FXML
     private Label lbl_TotalCasos;
     @FXML
-    private TableColumn<CasoDemo, String> tbc_NumeroExpediente, tbc_TituloCaso, tbc_TipoCaso, tbc_FechaInicio,
+    private TableColumn<Caso, String> tbc_NumeroExpediente, tbc_TituloCaso, tbc_TipoCaso, tbc_FechaInicio,
             tbc_AbogadoAsignado, tbc_Estado;
     @FXML
-    private TableColumn<CasoDemo, Void> tbc_BotonEditar, tbc_ButonVisualizar, tbc_BotonDocumentos;
+    private TableColumn<Caso, Void> tbc_BotonEditar, tbc_ButonVisualizar, tbc_BotonDocumentos;
     @FXML
     private AnchorPane pnl_ListView;
     @FXML
     private AnchorPane pnl_DetalleView;
     @FXML
-    private TableView<CasoDemo> tb_Casos;
+    private TableView<Caso> tb_Casos;
 
     // Muestra la vista de detalle y la bitácora del caso seleccionado
-    private void mostrarDetalleYBitacora(CasoDemo caso) {
+    private void mostrarDetalleYBitacora(Caso caso) {
         try {
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/views/casos_documentos/detalle_caso_bitacora.fxml"));
@@ -90,6 +153,7 @@ public class ModuloCasosController {
                     ModuloCasosController controller = loader.getController();
                     if (controller != null) {
                         controller.setPanelModulos(pnl_Modulos);
+                        vista.setUserData(controller);
                     }
 
                     // Configuración crucial: establecer los constraints de anclaje para que la
@@ -119,7 +183,7 @@ public class ModuloCasosController {
                         lblInfo.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
                         Button btnRecargar = new Button("Recargar módulo");
-                        btnRecargar.setOnAction(e -> cerrarDetalleYMostrarCasos());
+                        btnRecargar.setOnAction(_ -> cerrarDetalleYMostrarCasos());
 
                         vistaSencilla.getChildren().addAll(lblInfo, new javafx.scene.control.Separator(), btnRecargar);
                         vistaSencilla.setSpacing(15);
@@ -151,247 +215,202 @@ public class ModuloCasosController {
         }
     }
 
+    // Cambiar la lógica para que solo se muestren los casos del cliente
+    // seleccionado al navegar desde el módulo de clientes
+    // --- NUEVA LÓGICA DE INICIALIZACIÓN ---
+    /**
+     * Devuelve true si hay un cliente seleccionado
+     */
+    private boolean hayClienteSeleccionado() {
+        return clienteActual != null && clienteActual.getId() > 0;
+    }
+
+    /**
+     * Carga los casos según el contexto: si hay cliente, solo sus casos; si no,
+     * todos
+     */
+    private void cargarCasosContexto() {
+        if (hayClienteSeleccionado()) {
+            System.out.println("DEBUG: Cliente seleccionado: " + clienteActual.getNombreCompleto() + " (ID: "
+                    + clienteActual.getId() + ")");
+            cargarCasosPorCliente(clienteActual.getId());
+        } else {
+            System.out.println("DEBUG: No hay cliente seleccionado, mostrando todos los casos");
+            cargarCasosDesdeBD();
+        }
+    }
+
     @FXML
     private void initialize() {
-        // Inicializar contador de casos
         lbl_TotalCasos.setText("Total: 0 casos");
-
-        // Configurar doble clic en fila para ver detalles
-        tb_Casos.setRowFactory(tv -> {
-            TableRow<CasoDemo> row = new TableRow<>();
+        tb_Casos.setRowFactory(_ -> {
+            TableRow<Caso> row = new TableRow<>();
             row.setOnMouseClicked(event -> {
                 if (event.getClickCount() == 2 && (!row.isEmpty())) {
-                    CasoDemo caso = row.getItem();
+                    Caso caso = row.getItem();
                     mostrarDetalleYBitacora(caso);
                 }
             });
             return row;
         });
-
-        // Configurar columnas y botones
         configurarColumnas();
         inicializarColumnasDeBotones();
-
-        // Cargar datos iniciales
-        cargarCasosDesdeBD();
-
-        // Configurar acciones de botones
-        btn_Nuevo.setOnAction(e -> mostrarFormulario(null, "NUEVO"));
-        btn_Buscar.setOnAction(e -> buscarCasos());
-        btn_Limpiar.setOnAction(e -> {
+        cargarCasosContexto();
+        if (btn_Regresar != null)
+            btn_Regresar.setVisible(hayClienteSeleccionado());
+        btn_Nuevo.setOnAction(_ -> mostrarFormulario(null, "NUEVO"));
+        btn_Buscar.setOnAction(_ -> buscarCasos());
+        btn_Limpiar.setOnAction(_ -> {
             txtf_Buscar.clear();
-            cargarCasosDesdeBD();
+            cargarCasosContexto();
+            if (btn_Regresar != null)
+                btn_Regresar.setVisible(hayClienteSeleccionado());
         });
+        if (btn_Regresar != null) {
+            btn_Regresar.setOnAction(_ -> {
+                application.controllers.MainController mainController = application.controllers.MainController
+                        .getInstance();
+                if (mainController != null) {
+                    mainController.cargarModulo("/views/cliente/modulo_cliente.fxml");
+                }
+            });
+        }
     }
 
     /**
      * Busca casos según el texto introducido en el campo de búsqueda
      */
+    // --- MODIFICAR BUSQUEDA PARA RESPETAR EL CONTEXTO ---
     private void buscarCasos() {
         String termino = txtf_Buscar.getText().trim();
         if (termino == null || termino.isEmpty()) {
-            cargarCasosDesdeBD();
+            cargarCasosContexto();
+            if (btn_Regresar != null)
+                btn_Regresar.setVisible(hayClienteSeleccionado());
             return;
         }
-
         try {
-            System.out.println("INFO: Buscando casos con término: '" + termino + "'");
-
-            // Limpiar la tabla primero
             tb_Casos.getItems().clear();
-
-            try {
-                // Conectar a la base de datos
-                java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
-                if (conn == null) {
-                    System.err.println("ERROR: No se pudo conectar a la base de datos");
-                    throw new Exception("Conexión a base de datos nula");
-                }
-
-                // Consulta SQL con búsqueda
-                String sql = "SELECT * FROM caso WHERE " +
-                        "numero_expediente LIKE ? OR " +
-                        "titulo LIKE ? OR " +
-                        "tipo LIKE ? OR " +
-                        "estado LIKE ? OR " +
-                        "descripcion LIKE ?";
-
+            java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+            if (conn == null) {
+                throw new Exception("Conexión a base de datos nula");
+            }
+            String sql;
+            java.sql.PreparedStatement stmt;
+            if (hayClienteSeleccionado()) {
+                System.out.println("DEBUG: Buscando casos para cliente: " + clienteActual.getNombreCompleto() + " (ID: "
+                        + clienteActual.getId() + ")");
+                sql = "SELECT * FROM caso WHERE cliente_id = ? AND (numero_expediente LIKE ? OR titulo LIKE ? OR tipo LIKE ? OR estado LIKE ? OR descripcion LIKE ?)";
+                stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, clienteActual.getId());
                 String busqueda = "%" + termino + "%";
-                java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+                for (int i = 2; i <= 6; i++) {
+                    stmt.setString(i, busqueda);
+                }
+            } else {
+                System.out.println("DEBUG: Buscando casos para todos los clientes");
+                sql = "SELECT * FROM caso WHERE numero_expediente LIKE ? OR titulo LIKE ? OR tipo LIKE ? OR estado LIKE ? OR descripcion LIKE ?";
+                stmt = conn.prepareStatement(sql);
+                String busqueda = "%" + termino + "%";
                 for (int i = 1; i <= 5; i++) {
                     stmt.setString(i, busqueda);
                 }
-
-                java.sql.ResultSet rs = stmt.executeQuery();
-
-                int count = 0;
-                while (rs.next()) {
-                    count++;
-                    int id = rs.getInt("id");
-                    String numeroExpediente = rs.getString("numero_expediente");
-                    String titulo = rs.getString("titulo");
-                    String tipo = rs.getString("tipo");
-                    String estado = rs.getString("estado");
-
-                    // Si no hay número de expediente, usar el ID
-                    if (numeroExpediente == null || numeroExpediente.isEmpty()) {
-                        numeroExpediente = "EXP-" + id;
-                    }
-
-                    // Formatear la fecha
-                    String fecha = "Sin fecha";
-                    java.sql.Date fechaSQL = rs.getDate("fecha_inicio");
-                    if (fechaSQL != null) {
-                        fecha = new java.text.SimpleDateFormat("dd/MM/yyyy").format(fechaSQL);
-                    }
-
-                    // Intentar obtener la descripción
-                    String descripcion = rs.getString("descripcion");
-
-                    // Añadir a la tabla
-                    tb_Casos.getItems().add(new CasoDemo(
-                            numeroExpediente,
-                            titulo,
-                            tipo,
-                            fecha,
-                            "Cliente " + id, // Placeholder para el cliente
-                            estado,
-                            descripcion));
-                }
-
-                // Actualizar contador de resultados
-                lbl_TotalCasos.setText("Encontrados: " + count + (count == 1 ? " caso" : " casos"));
-
-                System.out.println("INFO: Se encontraron " + count + " casos con el término '" + termino + "'");
-
-                // Cerrar recursos
-                rs.close();
-                stmt.close();
-                conn.close();
-
-                if (count == 0) {
-                    Label lblNoData = new Label("No se encontraron casos con el término: '" + termino + "'");
-                    lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
-                    tb_Casos.setPlaceholder(lblNoData);
-                }
-            } catch (Exception e) {
-                System.err.println("ERROR en búsqueda: " + e.getMessage());
-                e.printStackTrace();
-
-                // Mostrar mensaje de error
-                Label lblError = new Label("Error al buscar casos: " + e.getMessage());
-                lblError.setStyle("-fx-font-size: 14px; -fx-text-fill: #c0392b;");
-                tb_Casos.setPlaceholder(lblError);
             }
-        } catch (Exception ex) {
-            System.err.println("ERROR general en búsqueda: " + ex.getMessage());
-            ex.printStackTrace();
-        }
-    }
-
-    private void cargarCasosDesdeBD() {
-        try {
-            System.out.println("INFO: Iniciando carga de casos desde la base de datos...");
-
-            // Limpiar la tabla primero
-            tb_Casos.getItems().clear();
-
-            try {
-                // Conectar a la base de datos
-                java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
-                if (conn == null) {
-                    System.err.println("ERROR: No se pudo conectar a la base de datos");
-                    throw new Exception("Conexión a base de datos nula");
+            java.sql.ResultSet rs = stmt.executeQuery();
+            int count = 0;
+            while (rs.next()) {
+                count++;
+                Caso caso = new Caso();
+                caso.setNumeroExpediente(rs.getString("numero_expediente"));
+                caso.setTitulo(rs.getString("titulo"));
+                caso.setTipo(rs.getString("tipo"));
+                caso.setEstado(rs.getString("estado"));
+                java.sql.Date fechaSQL = rs.getDate("fecha_inicio");
+                if (fechaSQL != null) {
+                    caso.setFechaInicio(new java.util.Date(fechaSQL.getTime()));
                 }
-
-                System.out.println("INFO: Conexión a base de datos establecida");
-
-                // Consulta SQL simplificada
-                String sql = "SELECT * FROM caso";
-
-                java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
-                java.sql.ResultSet rs = stmt.executeQuery();
-
-                int count = 0;
-                while (rs.next()) {
-                    count++;
-                    int id = rs.getInt("id");
-                    String numeroExpediente = rs.getString("numero_expediente");
-                    String titulo = rs.getString("titulo");
-                    String tipo = rs.getString("tipo");
-                    String estado = rs.getString("estado");
-
-                    // Si no hay número de expediente, usar el ID
-                    if (numeroExpediente == null || numeroExpediente.isEmpty()) {
-                        numeroExpediente = "EXP-" + id;
-                    }
-
-                    // Formatear la fecha
-                    String fecha = "Sin fecha";
-                    java.sql.Date fechaSQL = rs.getDate("fecha_inicio");
-                    if (fechaSQL != null) {
-                        fecha = new java.text.SimpleDateFormat("dd/MM/yyyy").format(fechaSQL);
-                    }
-
-                    System.out.println("INFO: Cargando caso #" + id + ": " + numeroExpediente + " - " + titulo);
-
-                    // Intentar obtener la descripción (puede ser null en algunos casos)
-                    String descripcion = rs.getString("descripcion");
-
-                    // Añadir a la tabla
-                    tb_Casos.getItems().add(new CasoDemo(
-                            numeroExpediente,
-                            titulo,
-                            tipo,
-                            fecha,
-                            "Cliente " + id, // Placeholder para el cliente
-                            estado,
-                            descripcion)); // Agregar descripción
+                caso.setDescripcion(rs.getString("descripcion"));
+                if (hayClienteSeleccionado()) {
+                    caso.setCliente(clienteActual);
+                    caso.setClienteId(clienteActual.getId());
                 }
-
-                System.out.println("INFO: Se cargaron " + count + " casos desde la base de datos");
-
-                // Cerrar recursos
-                rs.close();
-                stmt.close();
-                conn.close();
-
-                if (count == 0) {
-                    System.out.println("ADVERTENCIA: No se encontraron casos en la base de datos");
-                    // Ya no cargamos datos de ejemplo si la base de datos está vacía
-                    Label lblNoData = new Label("No hay casos registrados en la base de datos");
-                    lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
-                    tb_Casos.setPlaceholder(lblNoData);
-                }
-
-                // Actualizar contador de casos
-                lbl_TotalCasos.setText("Total: " + count + (count == 1 ? " caso" : " casos"));
-
-            } catch (Exception e) {
-                System.err.println("ERROR en conexión o consulta SQL: " + e.getMessage());
-                e.printStackTrace();
-
-                // Configurar un mensaje de error en la tabla
-                Label lblError = new Label("Error al conectar con la base de datos");
-                lblError.setStyle("-fx-font-size: 14px; -fx-text-fill: #d32f2f;");
-                tb_Casos.setPlaceholder(lblError);
+                tb_Casos.getItems().add(caso);
             }
-
-            System.out.println("INFO: Cargados " + tb_Casos.getItems().size() + " casos desde la base de datos");
-
-            // Si no hay casos, mostrar un mensaje informativo
-            if (tb_Casos.getItems().isEmpty()) {
-                System.out.println("INFO: No se encontraron casos en la base de datos");
-                // Configurar un mensaje en la tabla vacía
-                Label lblNoData = new Label("No hay casos registrados en el sistema");
+            System.out.println("DEBUG: Casos encontrados: " + count);
+            lbl_TotalCasos.setText((hayClienteSeleccionado() ? "Encontrados: " : "Total: ") + count
+                    + (count == 1 ? " caso" : " casos"));
+            rs.close();
+            stmt.close();
+            conn.close();
+            if (btn_Regresar != null)
+                btn_Regresar.setVisible(hayClienteSeleccionado());
+            if (count == 0) {
+                Label lblNoData = new Label("No se encontraron casos con el término: '" + termino + "'");
                 lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
                 tb_Casos.setPlaceholder(lblNoData);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("ERROR al cargar casos desde la BD: " + e.getMessage());
+            Label lblError = new Label("Error al buscar casos: " + e.getMessage());
+            lblError.setStyle("-fx-font-size: 14px; -fx-text-fill: #c0392b;");
+            tb_Casos.setPlaceholder(lblError);
+        }
+    }
 
-            // Mostrar mensaje de error en la tabla
+    // --- CORREGIR: Solo cargar todos los casos si NO hay cliente seleccionado ---
+    private void cargarCasosDesdeBD() {
+        try {
+            tb_Casos.getItems().clear();
+            java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+            if (conn == null) {
+                throw new Exception("Conexión a base de datos nula");
+            }
+            String sql;
+            java.sql.PreparedStatement stmt;
+            if (clienteActual == null) {
+                sql = "SELECT * FROM caso";
+                stmt = conn.prepareStatement(sql);
+            } else {
+                sql = "SELECT * FROM caso WHERE cliente_id = ?";
+                stmt = conn.prepareStatement(sql);
+                stmt.setInt(1, clienteActual.getId());
+            }
+            java.sql.ResultSet rs = stmt.executeQuery();
+            int count = 0;
+            while (rs.next()) {
+                count++;
+                Caso caso = new Caso();
+                caso.setId(rs.getInt("id"));
+                String numeroExpediente = rs.getString("numero_expediente");
+                if (numeroExpediente == null || numeroExpediente.isEmpty()) {
+                    numeroExpediente = "EXP-" + caso.getId();
+                }
+                caso.setNumeroExpediente(numeroExpediente);
+                caso.setTitulo(rs.getString("titulo"));
+                caso.setTipo(rs.getString("tipo"));
+                caso.setEstado(rs.getString("estado"));
+                java.sql.Date fechaSQL = rs.getDate("fecha_inicio");
+                if (fechaSQL != null) {
+                    caso.setFechaInicio(new java.util.Date(fechaSQL.getTime()));
+                }
+                caso.setDescripcion(rs.getString("descripcion"));
+                if (clienteActual != null) {
+                    caso.setCliente(clienteActual);
+                    caso.setClienteId(clienteActual.getId());
+                }
+                tb_Casos.getItems().add(caso);
+            }
+            lbl_TotalCasos.setText("Total: " + count + (count == 1 ? " caso" : " casos"));
+            rs.close();
+            stmt.close();
+            conn.close();
+            if (count == 0) {
+                Label lblNoData = new Label("No hay casos registrados en la base de datos");
+                lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
+                tb_Casos.setPlaceholder(lblNoData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
             Label lblError = new Label("Error al cargar casos. Verifique la conexión a la base de datos.");
             lblError.setStyle("-fx-font-size: 14px; -fx-text-fill: #d32f2f;");
             tb_Casos.setPlaceholder(lblError);
@@ -399,12 +418,22 @@ public class ModuloCasosController {
     }
 
     private void configurarColumnas() {
-        tbc_NumeroExpediente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().numeroExpediente()));
-        tbc_TituloCaso.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().titulo()));
-        tbc_TipoCaso.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().tipo()));
-        tbc_FechaInicio.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().fecha()));
-        tbc_AbogadoAsignado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().abogado()));
-        tbc_Estado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().estado()));
+        tbc_NumeroExpediente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNumeroExpediente()));
+        tbc_TituloCaso.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTitulo()));
+        tbc_TipoCaso.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTipo()));
+        tbc_FechaInicio.setCellValueFactory(d -> {
+            java.util.Date fecha = d.getValue().getFechaInicio();
+            String fechaStr = (fecha != null) ? new java.text.SimpleDateFormat("dd/MM/yyyy").format(fecha)
+                    : "Sin fecha";
+            return new SimpleStringProperty(fechaStr);
+        });
+        tbc_AbogadoAsignado.setCellValueFactory(d -> {
+            List<application.model.AbogadoCaso> abogados = d.getValue().getAbogados();
+            String nombreAbogado = (abogados != null && !abogados.isEmpty() && abogados.get(0) != null
+                    && abogados.get(0).getNombre() != null) ? abogados.get(0).getNombre() : "";
+            return new SimpleStringProperty(nombreAbogado);
+        });
+        tbc_Estado.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getEstado()));
     }
 
     private void inicializarColumnasDeBotones() {
@@ -413,24 +442,22 @@ public class ModuloCasosController {
         agregarBotonDocumentos(tbc_BotonDocumentos, "📄", "Ver Documentos");
     }
 
-    private void agregarBoton(TableColumn<CasoDemo, Void> columna, String texto, String tooltip) {
-        columna.setCellFactory(param -> new TableCell<>() {
+    private void agregarBoton(TableColumn<Caso, Void> columna, String texto, String tooltip) {
+        columna.setCellFactory(tc -> new TableCell<Caso, Void>() {
             final Button btn = new Button(texto);
-
             {
                 btn.setTooltip(new Tooltip(tooltip));
-                btn.setOnAction(e -> {
-                    if (getIndex() >= 0 && getIndex() < getTableView().getItems().size()) {
-                        CasoDemo caso = getTableView().getItems().get(getIndex());
+                btn.setOnAction(_ -> {
+                    int idx = getIndex();
+                    if (idx >= 0 && idx < getTableView().getItems().size()) {
+                        Caso caso = getTableView().getItems().get(idx);
                         if ("✎".equals(texto)) {
-                            // Si es el botón de editar, abrir el formulario de edición
                             System.out.println(
-                                    "DEBUG: Abriendo formulario de edición para caso: " + caso.numeroExpediente());
+                                    "DEBUG: Abriendo formulario de edición para caso: " + caso.getNumeroExpediente());
                             mostrarFormulario(caso, "EDITAR");
                         } else {
-                            // Si es cualquier otro botón, mostrar el detalle
-                            System.out
-                                    .println("DEBUG: Abriendo vista de detalle para caso: " + caso.numeroExpediente());
+                            System.out.println(
+                                    "DEBUG: Abriendo vista de detalle para caso: " + caso.getNumeroExpediente());
                             mostrarDetalleYBitacora(caso);
                         }
                     }
@@ -446,15 +473,17 @@ public class ModuloCasosController {
         });
     }
 
-    private void agregarBotonDocumentos(TableColumn<CasoDemo, Void> columna, String texto, String tooltip) {
-        columna.setCellFactory(param -> new TableCell<>() {
+    private void agregarBotonDocumentos(TableColumn<Caso, Void> columna, String texto, String tooltip) {
+        columna.setCellFactory(tc -> new TableCell<Caso, Void>() {
             final Button btn = new Button(texto);
-
             {
                 btn.setTooltip(new Tooltip(tooltip));
-                btn.setOnAction(e -> {
-                    CasoDemo caso = getTableView().getItems().get(getIndex());
-                    mostrarDocumentosCaso(caso);
+                btn.setOnAction(_ -> {
+                    int idx = getIndex();
+                    if (idx >= 0 && idx < getTableView().getItems().size()) {
+                        Caso caso = getTableView().getItems().get(idx);
+                        mostrarDocumentosCaso(caso);
+                    }
                 });
             }
 
@@ -467,7 +496,7 @@ public class ModuloCasosController {
         });
     }
 
-    private void mostrarDocumentosCaso(CasoDemo caso) {
+    private void mostrarDocumentosCaso(Caso caso) {
         try {
             // Cargar la vista de documentos
             FXMLLoader loader = new FXMLLoader(
@@ -478,7 +507,7 @@ public class ModuloCasosController {
             ModuloDocumentosController controller = loader.getController();
 
             // Establecer el número de expediente del caso seleccionado
-            controller.setNumeroExpediente(caso.numeroExpediente());
+            controller.setNumeroExpediente(caso.getNumeroExpediente());
 
             // Configurar la acción para regresar a la lista de casos
             controller.setOnRegresar(() -> cerrarDetalleYMostrarCasos());
@@ -493,7 +522,7 @@ public class ModuloCasosController {
                 // Limpiar y mostrar la vista
                 pnl_Modulos.getChildren().clear();
                 pnl_Modulos.getChildren().add(documentosView);
-                System.out.println("DEBUG: Vista de documentos cargada para el caso: " + caso.numeroExpediente());
+                System.out.println("DEBUG: Vista de documentos cargada para el caso: " + caso.getNumeroExpediente());
             } else if (pnl_DetalleView != null) {
                 // Alternativa si estamos usando el panel de detalle
                 pnl_ListView.setVisible(false);
@@ -512,7 +541,8 @@ public class ModuloCasosController {
                 AnchorPane.setRightAnchor(documentosView, 0.0);
 
                 System.out.println(
-                        "DEBUG: Vista de documentos cargada en panel de detalle para caso: " + caso.numeroExpediente());
+                        "DEBUG: Vista de documentos cargada en panel de detalle para caso: "
+                                + caso.getNumeroExpediente());
             } else {
                 System.err.println("ERROR: No se encontró un panel para mostrar la vista de documentos");
             }
@@ -522,7 +552,7 @@ public class ModuloCasosController {
         }
     }
 
-    private void mostrarFormulario(CasoDemo caso, String modo) {
+    private void mostrarFormulario(Caso caso, String modo) {
         try {
             System.out.println("DEBUG: Iniciando mostrarFormulario con modo: " + modo);
 
@@ -551,14 +581,18 @@ public class ModuloCasosController {
             System.out.println("DEBUG: Modo establecido en el controlador: " + modo);
 
             if (caso != null && !modo.equals("NUEVO")) {
-                System.out.println("DEBUG: Cargando datos del caso para " + modo + ": " + caso.numeroExpediente());
+                System.out.println("DEBUG: Cargando datos del caso para " + modo + ": " + caso.getNumeroExpediente());
+                String fechaStr = "Sin fecha";
+                if (caso.getFechaInicio() != null) {
+                    fechaStr = new java.text.SimpleDateFormat("dd/MM/yyyy").format(caso.getFechaInicio());
+                }
                 controller.cargarDatosCaso(
-                        caso.numeroExpediente(),
-                        caso.titulo(),
-                        caso.tipo(),
-                        caso.fecha(),
-                        caso.estado(),
-                        caso.descripcion());
+                        caso.getNumeroExpediente(),
+                        caso.getTitulo(),
+                        caso.getTipo(),
+                        fechaStr,
+                        caso.getEstado(),
+                        caso.getDescripcion());
                 System.out.println("DEBUG: Datos del caso cargados exitosamente");
             }
 
@@ -622,7 +656,7 @@ public class ModuloCasosController {
             javafx.animation.ParallelTransition parallelTransition = new javafx.animation.ParallelTransition(
                     translateOut, fadeOut);
 
-            parallelTransition.setOnFinished(event -> {
+            parallelTransition.setOnFinished(_ -> {
                 pnl_DetalleView.getChildren().clear();
                 pnl_DetalleView.setVisible(false);
                 pnl_DetalleView.setManaged(false);
@@ -644,37 +678,27 @@ public class ModuloCasosController {
         }
     }
 
-    private void cargarDatosEjemplo() {
-        // En lugar de cargar datos de ejemplo, mostramos la tabla vacía o un mensaje
-        System.out.println("INFO: No se pudieron cargar datos desde la base de datos");
-
-        // Mostrar un mensaje en la tabla si está vacía
-        if (tb_Casos.getItems().isEmpty()) {
-            Label lblNoData = new Label("No hay casos disponibles");
-            lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
-            tb_Casos.setPlaceholder(lblNoData);
-        }
-
-        // Opcionalmente, podrías mostrar un diálogo al usuario
-        /*
-         * javafx.application.Platform.runLater(() -> {
-         * Alert alert = new Alert(Alert.AlertType.INFORMATION);
-         * alert.setTitle("Información");
-         * alert.setHeaderText("No hay datos disponibles");
-         * alert.
-         * setContentText("No se pudieron cargar los casos desde la base de datos.");
-         * alert.showAndWait();
-         * });
-         */
-    }
-
-    public record CasoDemo(
-            String numeroExpediente,
-            String titulo,
-            String tipo,
-            String fecha,
-            String abogado,
-            String estado,
-            String descripcion) {
-    }
+    // Método cargarDatosEjemplo() comentado porque no se usa
+    // private void cargarDatosEjemplo() {
+    // // En lugar de cargar datos de ejemplo, mostramos la tabla vacía o un mensaje
+    // System.out.println("INFO: No se pudieron cargar datos desde la base de
+    // datos");
+    // // Mostrar un mensaje en la tabla si está vacía
+    // if (tb_Casos.getItems().isEmpty()) {
+    // Label lblNoData = new Label("No hay casos disponibles");
+    // lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
+    // tb_Casos.setPlaceholder(lblNoData);
+    // }
+    // // Opcionalmente, podrías mostrar un diálogo al usuario
+    // /*
+    // * javafx.application.Platform.runLater(() -> {
+    // * Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    // * alert.setTitle("Información");
+    // * alert.setHeaderText("No hay datos disponibles");
+    // * alert.
+    // * setContentText("No se pudieron cargar los casos desde la base de datos.");
+    // * alert.showAndWait();
+    // * });
+    // */
+    // }
 }
