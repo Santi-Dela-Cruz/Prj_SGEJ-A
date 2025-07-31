@@ -209,63 +209,9 @@ public class ModuloUsuarioController {
      * @param usuario Usuario a editar, null para crear uno nuevo
      */
     private void mostrarFormularioUsuario(Usuario usuario) {
-        try {
-            // Usar el contenedor externo si está disponible
-            AnchorPane container = formularioContainer != null ? formularioContainer : containerForm;
-
-            System.out.println("Usando contenedor: " + (container == formularioContainer ? "externo" : "interno"));
-            System.out.println("Contenedor nulo: " + (container == null ? "SI" : "NO"));
-
-            if (container == null) {
-                System.err.println("Error: No hay contenedor disponible para mostrar el formulario");
-                return;
-            }
-
-            // Limpiar contenedor
-            container.getChildren().clear();
-
-            // Mostrar el contenedor
-            container.setVisible(true);
-            container.setManaged(true);
-
-            // Cargar formulario
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/views/usuario/form_usuario.fxml"));
-            AnchorPane formPane = loader.load();
-            formUsuarioController = loader.getController();
-
-            // Configurar formulario
-            formUsuarioController.setUsuario(usuario);
-            formUsuarioController.setOnGuardar(() -> {
-                cargarUsuarios();
-                container.getChildren().clear();
-                container.setVisible(false);
-                container.setManaged(false);
-            });
-            formUsuarioController.setOnCancelar(() -> {
-                container.getChildren().clear();
-                container.setVisible(false);
-                container.setManaged(false);
-            });
-
-            // Mostrar formulario
-            AnchorPane.setTopAnchor(formPane, 0.0);
-            AnchorPane.setRightAnchor(formPane, 0.0);
-            AnchorPane.setBottomAnchor(formPane, 0.0);
-            AnchorPane.setLeftAnchor(formPane, 0.0);
-            container.getChildren().add(formPane);
-
-            System.out.println("Formulario de usuario cargado correctamente");
-
-        } catch (IOException e) {
-            System.err.println("Error al cargar formulario: " + e.getMessage());
-            e.printStackTrace();
-            DialogUtil.mostrarDialogo(
-                    "Error",
-                    "Error al cargar formulario: " + e.getMessage(),
-                    "error",
-                    List.of(ButtonType.OK));
-        }
+        // Mostrar el panel flotante independiente
+        FormUsuarioModalLauncher.mostrarPanelUsuarioIndependiente(
+                tb_Usuarios.getScene(), usuario, this::cargarUsuarios);
     }
 
     /**
