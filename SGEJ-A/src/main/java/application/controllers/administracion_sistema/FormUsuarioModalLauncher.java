@@ -14,59 +14,36 @@ public class FormUsuarioModalLauncher {
      */
     public static void mostrarPanelCambioClaveIndependiente(javafx.scene.Scene scene, application.model.Usuario usuario,
             String modo, Runnable onGuardar) {
-        try {
-            FXMLLoader loader = new FXMLLoader(
-                    FormUsuarioModalLauncher.class.getResource("/views/usuario/form_cambio_clave.fxml"));
-            final javafx.scene.layout.AnchorPane formPane = loader.load();
-
-            formPane.setPrefWidth(320);
-            formPane.setMaxWidth(320);
-            formPane.setPrefHeight(320);
-            formPane.setMaxHeight(320);
-            formPane.setStyle(
-                    "-fx-background-color: rgba(255,255,255,0.98);" +
-                            "-fx-background-radius: 18 0 0 18;" +
-                            "-fx-effect: dropshadow(gaussian, #222, 32, 0.18, -8, 0);");
-
-            javafx.scene.layout.AnchorPane rootPane = (javafx.scene.layout.AnchorPane) scene.getRoot();
-            double rootHeight = rootPane.getHeight();
-            double y = (rootHeight - 320) / 2;
-            javafx.scene.layout.AnchorPane.setTopAnchor(formPane, y);
-            javafx.scene.layout.AnchorPane.setRightAnchor(formPane, 0.0);
-
-            // Eliminar panel igual si ya existe
-            for (javafx.scene.Node child : rootPane.getChildren()) {
-                if (child.getClass() == formPane.getClass() && child != formPane && child.getId() == null) {
-                    rootPane.getChildren().remove(child);
-                    break;
-                }
-            }
-
-            formPane.setTranslateX(320);
-            javafx.animation.TranslateTransition tt = new javafx.animation.TranslateTransition(
-                    javafx.util.Duration.millis(320), formPane);
-            tt.setFromX(320);
-            tt.setToX(0);
-            tt.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
-            tt.play();
-
-            rootPane.getChildren().add(formPane);
-
-            FormCambioClaveController controller = loader.getController();
-            controller.setUsuario(usuario);
-            controller.setModo(modo);
-            if (onGuardar != null) {
-                controller.setOnGuardar(() -> {
-                    onGuardar.run();
-                    rootPane.getChildren().remove(formPane);
+        mostrarPanelFlotanteGenerico(
+                scene,
+                "/views/usuario/form_cambio_clave.fxml",
+                320,
+                320,
+                controllerObj -> {
+                    FormCambioClaveController controller = (FormCambioClaveController) controllerObj;
+                    controller.setUsuario(usuario);
+                    controller.setModo(modo);
+                    javafx.scene.layout.AnchorPane rootPane = (javafx.scene.layout.AnchorPane) scene.getRoot();
+                    if (onGuardar != null) {
+                        controller.setOnGuardar(() -> {
+                            onGuardar.run();
+                            javafx.scene.Node panel = rootPane.lookup("#panel_flotante");
+                            if (panel != null)
+                                rootPane.getChildren().remove(panel);
+                        });
+                    } else {
+                        controller.setOnGuardar(() -> {
+                            javafx.scene.Node panel = rootPane.lookup("#panel_flotante");
+                            if (panel != null)
+                                rootPane.getChildren().remove(panel);
+                        });
+                    }
+                    controller.setOnCancelar(() -> {
+                        javafx.scene.Node panel = rootPane.lookup("#panel_flotante");
+                        if (panel != null)
+                            rootPane.getChildren().remove(panel);
+                    });
                 });
-            } else {
-                controller.setOnGuardar(() -> rootPane.getChildren().remove(formPane));
-            }
-            controller.setOnCancelar(() -> rootPane.getChildren().remove(formPane));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     public static void mostrarFormularioCambioClave(javafx.scene.layout.AnchorPane parentPane,

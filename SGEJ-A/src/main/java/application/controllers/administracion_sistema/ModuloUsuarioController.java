@@ -222,60 +222,12 @@ public class ModuloUsuarioController {
         if (usuarioSeleccionado == null) {
             return;
         }
-
-        try {
-            // Usar el contenedor externo si está disponible
-            AnchorPane container = formularioContainer != null ? formularioContainer : containerForm;
-
-            // Limpiar contenedor
-            container.getChildren().clear();
-
-            // Mostrar el contenedor
-            container.setVisible(true);
-            container.setManaged(true);
-
-            // Cargar formulario
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/views/usuario/form_cambio_clave.fxml"));
-            AnchorPane formPane = loader.load();
-            formCambioClaveController = loader.getController();
-
-            // Configurar formulario
-            formCambioClaveController.setUsuario(usuarioSeleccionado);
-            formCambioClaveController.setModo("RESET"); // Modo RESET (no solicita clave actual)
-            formCambioClaveController.setOnGuardar(() -> {
-                cargarUsuarios();
-                container.getChildren().clear();
-                container.setVisible(false);
-                container.setManaged(false);
-            });
-            formCambioClaveController.setOnCancelar(() -> {
-                container.getChildren().clear();
-                container.setVisible(false);
-                container.setManaged(false);
-            });
-
-            // Mostrar formulario
-            AnchorPane.setTopAnchor(formPane, 0.0);
-            AnchorPane.setRightAnchor(formPane, 0.0);
-            AnchorPane.setBottomAnchor(formPane, 0.0);
-            AnchorPane.setLeftAnchor(formPane, 0.0);
-            container.getChildren().add(formPane);
-
-            // Mostrar formulario
-            AnchorPane.setTopAnchor(formPane, 0.0);
-            AnchorPane.setRightAnchor(formPane, 0.0);
-            AnchorPane.setBottomAnchor(formPane, 0.0);
-            AnchorPane.setLeftAnchor(formPane, 0.0);
-            container.getChildren().add(formPane);
-
-        } catch (IOException e) {
-            DialogUtil.mostrarDialogo(
-                    "Error",
-                    "Error al cargar formulario: " + e.getMessage(),
-                    "error",
-                    List.of(ButtonType.OK));
-        }
+        // Mostrar como panel flotante independiente
+        FormUsuarioModalLauncher.mostrarPanelCambioClaveIndependiente(
+                tb_Usuarios.getScene(),
+                usuarioSeleccionado,
+                "RESET",
+                () -> cargarUsuarios());
     }
 
     /**
