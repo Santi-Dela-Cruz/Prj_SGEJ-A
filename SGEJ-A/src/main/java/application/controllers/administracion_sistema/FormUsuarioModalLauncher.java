@@ -193,45 +193,75 @@ public class FormUsuarioModalLauncher {
             double height, java.util.function.Consumer<Object> controllerSetter) {
         try {
             FXMLLoader loader = new FXMLLoader(FormUsuarioModalLauncher.class.getResource(fxmlPath));
-            final javafx.scene.layout.AnchorPane formPane = loader.load();
+            javafx.scene.Parent loadedForm = loader.load();
 
-            formPane.setId("panel_flotante"); // id único para el panel flotante
-            formPane.setPrefWidth(width);
-            formPane.setMaxWidth(width);
-            formPane.setPrefHeight(height);
-            formPane.setMaxHeight(height);
-            formPane.setStyle(
+            // El panel flotante debe ser un Node, no necesariamente un Pane
+            javafx.scene.Node formPanel = loadedForm;
+            formPanel.setId("panel_flotante");
+            formPanel.setStyle(
                     "-fx-background-color: rgba(255,255,255,0.98);" +
                             "-fx-background-radius: 18 0 0 18;" +
                             "-fx-effect: dropshadow(gaussian, #222, 32, 0.18, -8, 0);");
+            if (formPanel instanceof javafx.scene.layout.Region) {
+                ((javafx.scene.layout.Region) formPanel).setPrefWidth(width);
+                ((javafx.scene.layout.Region) formPanel).setMaxWidth(width);
+                ((javafx.scene.layout.Region) formPanel).setPrefHeight(height);
+                ((javafx.scene.layout.Region) formPanel).setMaxHeight(height);
+            }
 
-            javafx.scene.layout.AnchorPane rootPane = (javafx.scene.layout.AnchorPane) scene.getRoot();
-            double rootHeight = rootPane.getHeight();
+            javafx.scene.Parent root = scene.getRoot();
+            double rootHeight = 0;
+            javafx.collections.ObservableList<javafx.scene.Node> children = null;
+            if (root instanceof javafx.scene.layout.Pane) {
+                children = ((javafx.scene.layout.Pane) root).getChildren();
+                rootHeight = ((javafx.scene.layout.Pane) root).getHeight();
+            } else if (root instanceof javafx.scene.control.ScrollPane) {
+                javafx.scene.control.ScrollPane scrollPane = (javafx.scene.control.ScrollPane) root;
+                javafx.scene.Node content = scrollPane.getContent();
+                if (content instanceof javafx.scene.layout.Pane) {
+                    children = ((javafx.scene.layout.Pane) content).getChildren();
+                    rootHeight = ((javafx.scene.layout.Pane) content).getHeight();
+                } else if (content instanceof javafx.scene.layout.VBox) {
+                    children = ((javafx.scene.layout.VBox) content).getChildren();
+                    rootHeight = ((javafx.scene.layout.VBox) content).getHeight();
+                } else {
+                    System.err.println(
+                            "El contenido del ScrollPane no es un Pane ni VBox. No se puede mostrar el panel flotante.");
+                    return;
+                }
+            } else {
+                System.err.println("No se encontró un contenedor adecuado para el panel flotante");
+                return;
+            }
+
             double y = (rootHeight - height) / 2;
-            javafx.scene.layout.AnchorPane.setTopAnchor(formPane, y);
-            javafx.scene.layout.AnchorPane.setRightAnchor(formPane, 0.0);
+            if (root instanceof javafx.scene.layout.AnchorPane) {
+                javafx.scene.layout.AnchorPane.setTopAnchor(formPanel, y);
+                javafx.scene.layout.AnchorPane.setRightAnchor(formPanel, 0.0);
+            }
 
             // Eliminar panel flotante previo si existe
             javafx.scene.Node panelPrevio = null;
-            for (javafx.scene.Node child : rootPane.getChildren()) {
+            for (javafx.scene.Node child : children) {
                 if ("panel_flotante".equals(child.getId())) {
                     panelPrevio = child;
                     break;
                 }
             }
             if (panelPrevio != null) {
-                rootPane.getChildren().remove(panelPrevio);
+                children.remove(panelPrevio);
             }
 
-            formPane.setTranslateX(width);
+            formPanel.setTranslateX(width);
             javafx.animation.TranslateTransition tt = new javafx.animation.TranslateTransition(
-                    javafx.util.Duration.millis(320), formPane);
+                    javafx.util.Duration.millis(320), formPanel);
             tt.setFromX(width);
             tt.setToX(0);
             tt.setInterpolator(javafx.animation.Interpolator.EASE_OUT);
             tt.play();
 
-            rootPane.getChildren().add(formPane);
+            // Agregar el panel flotante al contenedor adecuado
+            children.add(formPanel);
 
             Object controller = loader.getController();
             if (controllerSetter != null) {

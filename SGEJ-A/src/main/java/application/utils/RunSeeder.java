@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 
 public class RunSeeder {
     public static void main(String[] args) {
-        String url = "jdbc:sqlite:sgej_database.db"; // Cambia esta ruta si usas otro archivo .db
+        String url = "jdbc:sqlite:src/main/resources/database/sgej_database.db"; // Ruta centralizada
 
         try (Connection conn = DriverManager.getConnection(url)) {
             ClienteSeeder.seed(conn);

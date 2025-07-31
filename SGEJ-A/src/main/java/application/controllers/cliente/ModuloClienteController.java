@@ -2,6 +2,7 @@ package application.controllers.cliente;
 
 import application.model.Cliente;
 import application.service.ClienteService;
+import application.controllers.administracion_sistema.FormUsuarioModalLauncher;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -152,8 +153,8 @@ public class ModuloClienteController {
         tbc_BotonEditar.setText("");
         tbc_BotonVer.setText("");
 
-        tbc_BotonEditar.setPrefWidth(40);
-        tbc_BotonVer.setPrefWidth(40);
+        tbc_BotonEditar.setPrefWidth(50);
+        tbc_BotonVer.setPrefWidth(50);
     }
 
     private void agregarBotonPorColumna(TableColumn<Cliente, Void> columna, String texto, String tooltip) {
@@ -163,20 +164,20 @@ public class ModuloClienteController {
             private final Button btn = new Button(texto);
 
             {
-                // Estilos mejorados para botones mÃ¡s compactos y profesionales
+                // Estilos mejorados para botones ligeramente más grandes
                 btn.getStyleClass().add("table-button");
                 setStyle("-fx-alignment: CENTER; -fx-padding: 2;");
                 btn.setTooltip(new Tooltip(tooltip));
 
-                // Estilos especÃ­ficos segÃºn el tipo de botÃ³n
+                // Estilos específicos según el tipo de botón
                 if ("Editar".equals(tooltip)) {
                     btn.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-background-radius: 4; " +
-                            "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
-                            "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
+                            "-fx-font-size: 11px; -fx-font-weight: bold; -fx-min-width: 65; -fx-max-width: 65; " +
+                            "-fx-min-height: 30; -fx-max-height: 30; -fx-cursor: hand; -fx-padding: 0;");
                 } else if ("Ver".equals(tooltip)) {
                     btn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-background-radius: 4; " +
-                            "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
-                            "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
+                            "-fx-font-size: 11px; -fx-font-weight: bold; -fx-min-width: 65; -fx-max-width: 65; " +
+                            "-fx-min-height: 30; -fx-max-height: 30; -fx-cursor: hand; -fx-padding: 0;");
                 }
 
                 // Efectos hover
@@ -191,12 +192,12 @@ public class ModuloClienteController {
                 btn.setOnMouseExited(_ -> {
                     if ("Editar".equals(tooltip)) {
                         btn.setStyle("-fx-background-color: #f59e0b; -fx-text-fill: white; -fx-background-radius: 4; " +
-                                "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
-                                "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
+                                "-fx-font-size: 11px; -fx-font-weight: bold; -fx-min-width: 65; -fx-max-width: 65; " +
+                                "-fx-min-height: 30; -fx-max-height: 30; -fx-cursor: hand; -fx-padding: 0;");
                     } else if ("Ver".equals(tooltip)) {
                         btn.setStyle("-fx-background-color: #3b82f6; -fx-text-fill: white; -fx-background-radius: 4; " +
-                                "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
-                                "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
+                                "-fx-font-size: 11px; -fx-font-weight: bold; -fx-min-width: 65; -fx-max-width: 65; " +
+                                "-fx-min-height: 30; -fx-max-height: 30; -fx-cursor: hand; -fx-padding: 0;");
                     }
                 });
 
@@ -429,88 +430,37 @@ public class ModuloClienteController {
      * Mostrar formulario de cliente
      */
     private void mostrarFormulario(Cliente cliente, String modo) {
-        if (formularioAbierto) {
-            System.out.println("ðŸ”§ Formulario ya estÃ¡ abierto, ignorando solicitud");
-            return;
-        }
-
-        try {
-            formularioAbierto = true;
-            System.out.println("ðŸ”§ Iniciando mostrarFormulario con modo: " + modo);
-            System.out.println("ðŸ”§ Cliente: " + (cliente != null ? cliente.getNombreCompleto() : "null"));
-            System.out.println("ðŸ”§ Panel Forms: " + (pnl_Forms != null ? "OK" : "NULL"));
-
-            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/views/cliente/form_cliente.fxml"));
-            Node nodo = fxmlLoader.load();
-            FormClienteController controller = fxmlLoader.getController();
-
-            controller.setModo(modo);
-
-            if (cliente != null) {
-                controller.cargarCliente(cliente);
-            }
-
-            // Configurar callbacks para refrescar la tabla
-            controller.setOnGuardar(() -> {
-                System.out.println("ðŸ”§ Callback onGuardar ejecutado");
-                cargarClientesDesdeBaseDatos();
-                formularioAbierto = false;
-                if (pnl_Forms != null) {
-                    pnl_Forms.getChildren().clear();
-                    pnl_Forms.setVisible(false);
-                    pnl_Forms.setManaged(false);
-                }
-            });
-
-            controller.setOnCancelar(() -> {
-                System.out.println("ðŸ”§ Callback onCancelar ejecutado");
-                formularioAbierto = false;
-                if (pnl_Forms != null) {
-                    pnl_Forms.getChildren().clear();
-                    pnl_Forms.setVisible(false);
-                    pnl_Forms.setManaged(false);
-                }
-            });
-
-            if (pnl_Forms != null) {
-                // Hacer visible el panel de formularios
-                pnl_Forms.setVisible(true);
-                pnl_Forms.setManaged(true);
-
-                pnl_Forms.getChildren().clear();
-                pnl_Forms.getChildren().add(nodo);
-                AnchorPane.setTopAnchor(nodo, 0.0);
-                AnchorPane.setBottomAnchor(nodo, 0.0);
-                AnchorPane.setLeftAnchor(nodo, 0.0);
-                AnchorPane.setRightAnchor(nodo, 0.0);
-                System.out.println("ðŸ”§ Formulario cargado exitosamente");
-            } else {
-                // Si no hay panel de formularios, abrir en ventana nueva
-                System.out.println("ðŸ”§ Abriendo formulario en ventana nueva");
-                Stage stage = new Stage();
-                Scene scene = new Scene((Parent) nodo);
-
-                // Agregar estilos CSS
-                scene.getStylesheets().add(getClass().getResource("/styles/app.css").toExternalForm());
-
-                stage.setScene(scene);
-                stage.setTitle("Cliente - " + modo);
-                stage.initModality(Modality.WINDOW_MODAL);
-
-                // Configurar evento de cierre
-                stage.setOnHiding(_ -> formularioAbierto = false);
-
-                stage.show();
-            }
-        } catch (IOException e) {
-            formularioAbierto = false;
-            System.err.println("ðŸ”§ ERROR al cargar formulario: " + e.getMessage());
-            e.printStackTrace();
-        } catch (Exception e) {
-            formularioAbierto = false;
-            System.err.println("ðŸ”§ ERROR general: " + e.getMessage());
-            e.printStackTrace();
-        }
+        // Mostrar el formulario como panel flotante moderno
+        formularioAbierto = true;
+        FormUsuarioModalLauncher.mostrarPanelFlotanteGenerico(
+                tb_Clientes.getScene(),
+                "/views/cliente/form_cliente.fxml",
+                900, // ancho (aún más amplio)
+                650, // alto
+                controllerObj -> {
+                    FormClienteController controller = (FormClienteController) controllerObj;
+                    controller.setModo(modo);
+                    if (cliente != null) {
+                        controller.cargarCliente(cliente);
+                    }
+                    controller.setOnGuardar(() -> {
+                        cargarClientesDesdeBaseDatos();
+                        formularioAbierto = false;
+                        // Buscar el panel flotante y su contenedor
+                        javafx.scene.Node panel = tb_Clientes.getScene().getRoot().lookup("#panel_flotante");
+                        if (panel != null && panel.getParent() instanceof javafx.scene.layout.Pane) {
+                            ((javafx.scene.layout.Pane) panel.getParent()).getChildren().remove(panel);
+                        }
+                    });
+                    controller.setOnCancelar(() -> {
+                        formularioAbierto = false;
+                        javafx.scene.Node panel = tb_Clientes.getScene().getRoot().lookup("#panel_flotante");
+                        if (panel != null && panel.getParent() instanceof javafx.scene.layout.Pane) {
+                            ((javafx.scene.layout.Pane) panel.getParent()).getChildren().remove(panel);
+                        }
+                    });
+                });
+        // ...existing code...
     }
 
     /**
