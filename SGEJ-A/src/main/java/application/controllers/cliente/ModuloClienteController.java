@@ -228,13 +228,15 @@ public class ModuloClienteController {
      * Abre la vista de casos filtrada por el cliente seleccionado.
      */
     private void abrirVistaCasosDeCliente(Cliente cliente) {
-        // Usar el singleton MainController para cargar el módulo de casos y pasar el
-        // cliente
+        // Usar el singleton MainController para cargar el módulo de casos y pasar el cliente
         try {
-            application.controllers.MainController mainController = application.controllers.MainController
-                    .getInstance();
+            if (cliente != null) {
+                System.out.println("DEBUG: Cliente seleccionado: " + cliente.getNombreCompleto() + " (" + cliente.getNumeroIdentificacion() + ")");
+            } else {
+                System.out.println("DEBUG: No hay cliente seleccionado (cliente es null)");
+            }
+            application.controllers.MainController mainController = application.controllers.MainController.getInstance();
             if (mainController != null) {
-                // Cargar el módulo de casos
                 mainController.cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml");
                 // Obtener el AnchorPane de módulos
                 java.lang.reflect.Field field = mainController.getClass().getDeclaredField("pnl_Modulos");

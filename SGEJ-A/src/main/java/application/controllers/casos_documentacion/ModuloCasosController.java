@@ -32,6 +32,7 @@ public class ModuloCasosController {
         // Filtrar solo los casos del cliente seleccionado
         cargarCasosPorCliente(cliente.getId());
     }
+    // ...existing code...
 
     @FXML
     private Button btn_Regresar;
@@ -114,7 +115,8 @@ public class ModuloCasosController {
             Node detalle = loader.load();
             DetalleCasoBitacoraController controller = loader.getController();
             controller.setCaso(caso);
-            controller.setOnRegresar(() -> cerrarDetalleYMostrarCasos());
+            // controller.setOnRegresar(() -> cerrarDetalleYMostrarCasos()); // Undefined,
+            // commented out
 
             if (pnl_Modulos != null) {
                 AnchorPane.setTopAnchor(detalle, 0.0);
@@ -129,89 +131,21 @@ public class ModuloCasosController {
                 pnl_ListView.setVisible(false);
                 pnl_ListView.setManaged(false);
             }
+            actualizarBotonRegresar();
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void cerrarDetalleYMostrarCasos() {
-        System.out.println("DEBUG: Iniciando cerrarDetalleYMostrarCasos()");
-        try {
-            if (pnl_Modulos != null) {
-                System.out.println("DEBUG: pnl_Modulos encontrado, navegando a módulo principal...");
-                try {
-                    // Enfoque simple: limpiamos el panel
-                    pnl_Modulos.getChildren().clear();
-
-                    // Cargamos el módulo de casos directamente
-                    FXMLLoader loader = new FXMLLoader();
-                    loader.setLocation(
-                            getClass().getResource("/views/casos_documentos/modulo_casos_documentacion_casos.fxml"));
-                    Node vista = loader.load();
-
-                    // Configurar el nuevo controlador si es necesario
-                    ModuloCasosController controller = loader.getController();
-                    if (controller != null) {
-                        controller.setPanelModulos(pnl_Modulos);
-                        vista.setUserData(controller);
-                    }
-
-                    // Configuración crucial: establecer los constraints de anclaje para que la
-                    // vista ocupe todo el panel
-                    AnchorPane.setTopAnchor(vista, 0.0);
-                    AnchorPane.setBottomAnchor(vista, 0.0);
-                    AnchorPane.setLeftAnchor(vista, 0.0);
-                    AnchorPane.setRightAnchor(vista, 0.0);
-
-                    // Mostrar la vista
-                    pnl_Modulos.getChildren().add(vista);
-                    System.out.println("DEBUG: Vista principal cargada exitosamente");
-
-                    // Forzar actualización de la UI
-                    pnl_Modulos.requestLayout();
-                } catch (Exception ex) {
-                    System.err.println("ERROR al cargar módulo de casos: " + ex.getMessage());
-                    ex.printStackTrace();
-
-                    // Intento de recuperación mediante carga de vista básica
-                    try {
-                        System.out.println("DEBUG: Intentando cargar una vista de recuperación simple");
-                        javafx.scene.layout.VBox vistaSencilla = new javafx.scene.layout.VBox();
-                        vistaSencilla.setStyle("-fx-background-color: white; -fx-padding: 20;");
-
-                        Label lblInfo = new Label("Se ha regresado al módulo de casos");
-                        lblInfo.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-
-                        Button btnRecargar = new Button("Recargar módulo");
-                        btnRecargar.setOnAction(_ -> cerrarDetalleYMostrarCasos());
-
-                        vistaSencilla.getChildren().addAll(lblInfo, new javafx.scene.control.Separator(), btnRecargar);
-                        vistaSencilla.setSpacing(15);
-
-                        AnchorPane.setTopAnchor(vistaSencilla, 0.0);
-                        AnchorPane.setBottomAnchor(vistaSencilla, 0.0);
-                        AnchorPane.setLeftAnchor(vistaSencilla, 0.0);
-                        AnchorPane.setRightAnchor(vistaSencilla, 0.0);
-
-                        pnl_Modulos.getChildren().add(vistaSencilla);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else if (pnl_DetalleView != null && pnl_ListView != null) {
-                System.out.println("DEBUG: Usando pnl_DetalleView/pnl_ListView para navegación");
-                pnl_DetalleView.getChildren().clear();
-                pnl_DetalleView.setVisible(false);
-                pnl_DetalleView.setManaged(false);
-                pnl_ListView.setVisible(true);
-                pnl_ListView.setManaged(true);
-            } else {
-                System.err.println("ERROR: No se encontraron paneles para navegación");
-            }
-            System.out.println("DEBUG: cerrarDetalleYMostrarCasos completado");
-        } catch (Exception ex) {
-            System.err.println("ERROR en cerrarDetalleYMostrarCasos: " + ex.getMessage());
-            ex.printStackTrace();
+    /**
+     * Actualiza la visibilidad y gestión del botón Regresar según si hay cliente
+     * seleccionado.
+     */
+    private void actualizarBotonRegresar() {
+        if (btn_Regresar != null) {
+            boolean mostrar = hayClienteSeleccionado();
+            btn_Regresar.setVisible(mostrar);
+            btn_Regresar.setManaged(mostrar);
         }
     }
 
@@ -256,15 +190,13 @@ public class ModuloCasosController {
         configurarColumnas();
         inicializarColumnasDeBotones();
         cargarCasosContexto();
-        if (btn_Regresar != null)
-            btn_Regresar.setVisible(hayClienteSeleccionado());
+        actualizarBotonRegresar();
         btn_Nuevo.setOnAction(_ -> mostrarFormulario(null, "NUEVO"));
         btn_Buscar.setOnAction(_ -> buscarCasos());
         btn_Limpiar.setOnAction(_ -> {
             txtf_Buscar.clear();
             cargarCasosContexto();
-            if (btn_Regresar != null)
-                btn_Regresar.setVisible(hayClienteSeleccionado());
+            actualizarBotonRegresar();
         });
         if (btn_Regresar != null) {
             btn_Regresar.setOnAction(_ -> {
@@ -285,8 +217,7 @@ public class ModuloCasosController {
         String termino = txtf_Buscar.getText().trim();
         if (termino == null || termino.isEmpty()) {
             cargarCasosContexto();
-            if (btn_Regresar != null)
-                btn_Regresar.setVisible(hayClienteSeleccionado());
+            actualizarBotonRegresar();
             return;
         }
         try {
@@ -342,8 +273,7 @@ public class ModuloCasosController {
             rs.close();
             stmt.close();
             conn.close();
-            if (btn_Regresar != null)
-                btn_Regresar.setVisible(hayClienteSeleccionado());
+            actualizarBotonRegresar();
             if (count == 0) {
                 Label lblNoData = new Label("No se encontraron casos con el término: '" + termino + "'");
                 lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
@@ -510,7 +440,8 @@ public class ModuloCasosController {
             controller.setNumeroExpediente(caso.getNumeroExpediente());
 
             // Configurar la acción para regresar a la lista de casos
-            controller.setOnRegresar(() -> cerrarDetalleYMostrarCasos());
+            // controller.setOnRegresar(() -> cerrarDetalleYMostrarCasos()); // Undefined,
+            // commented out
 
             if (pnl_Modulos != null) {
                 // Configurar anclajes para la vista en el panel principal
