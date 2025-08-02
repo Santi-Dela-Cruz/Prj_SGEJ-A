@@ -13,6 +13,7 @@ import java.util.Optional;
 import application.controllers.DialogUtil;
 
 public class DetalleCasoBitacoraController {
+    private application.model.Caso caso;
     @FXML
     private Label lblExpediente, lblTitulo, lblTipo, lblFecha, lblAbogado, lblEstado;
     @FXML
@@ -131,15 +132,24 @@ public class DetalleCasoBitacoraController {
         }
     }
 
-    public void setCaso(ModuloCasosController.CasoDemo caso) {
-        lblExpediente.setText(caso.numeroExpediente());
-        lblTitulo.setText(caso.titulo());
-        lblTipo.setText(caso.tipo());
-        lblFecha.setText(caso.fecha());
-        lblAbogado.setText(caso.abogado());
-        lblEstado.setText(caso.estado());
+    public void setCaso(application.model.Caso caso) {
+        this.caso = caso;
+        lblExpediente.setText(caso.getNumeroExpediente());
+        lblTitulo.setText(caso.getTitulo());
+        lblTipo.setText(caso.getTipo());
+        String fechaStr = "";
+        if (caso.getFechaInicio() != null) {
+            fechaStr = new java.text.SimpleDateFormat("dd/MM/yyyy").format(caso.getFechaInicio());
+        }
+        lblFecha.setText(fechaStr);
+        String abogadoStr = "";
+        if (caso.getAbogados() != null && !caso.getAbogados().isEmpty()) {
+            abogadoStr = caso.getAbogados().get(0).getNombre();
+        }
+        lblAbogado.setText(abogadoStr);
+        lblEstado.setText(caso.getEstado());
         try {
-            casoId = Integer.parseInt(caso.numeroExpediente().replaceAll("[^0-9]", ""));
+            casoId = Integer.parseInt(caso.getNumeroExpediente().replaceAll("[^0-9]", ""));
         } catch (Exception ex) {
             casoId = -1;
         }

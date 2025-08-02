@@ -24,6 +24,15 @@ import javafx.util.Duration;
 import java.io.IOException;
 
 public class MainController {
+    private static MainController instance;
+
+    public MainController() {
+        instance = this;
+    }
+
+    public static MainController getInstance() {
+        return instance;
+    }
 
     @FXML
     private HBox titleBar;
@@ -48,6 +57,19 @@ public class MainController {
     private double yOffset = 0;
 
     private String tipoUsuario;
+
+    /**
+     * Convierte el enum TipoUsuario a string para el switch de módulos.
+     * No incluye el caso EXTERNO ("Asistente Legal").
+     */
+    public static String tipoUsuarioToString(application.model.Usuario.TipoUsuario tipoUsuario) {
+        return switch (tipoUsuario) {
+            case INTERNO -> "Administrador";
+            case NATURAL -> "Abogado";
+            case JURIDICA -> "Contador";
+            default -> "Otro";
+        };
+    }
 
     @FXML
     private void initialize() {
@@ -153,27 +175,10 @@ public class MainController {
             case "Administrador":
                 // Administrador tiene acceso a todo, no necesita restricciones
                 break;
-            case "Asistente Legal":
-                // Ocultar módulos no relevantes para Asistente Legal
-                md_Facturacion.setVisible(false);
-                md_Facturacion.setManaged(false);
-                md_Personal.setVisible(false);
-                md_Personal.setManaged(false);
-                // Garantizar acceso a la base de datos de usuarios
-                md_Sistema.setVisible(true);
-                md_Sistema.setManaged(true);
-                md_Usuario.setVisible(true);
-                md_Usuario.setManaged(true);
-                break;
             case "Contador":
                 // Ocultar módulos no relevantes para Contador
                 md_CasosDocumentacion.setVisible(false);
                 md_CasosDocumentacion.setManaged(false);
-                md_Personal.setVisible(false);
-                md_Personal.setManaged(false);
-                // Mantener acceso a la base de datos de usuarios
-                md_Sistema.setVisible(true);
-                md_Sistema.setManaged(true);
                 md_Usuario.setVisible(true);
                 md_Usuario.setManaged(true);
                 break;
@@ -181,11 +186,17 @@ public class MainController {
                 // Ocultar módulos no relevantes para Abogado
                 md_Facturacion.setVisible(false);
                 md_Facturacion.setManaged(false);
+                md_Sistema.setVisible(false);
+                md_Sistema.setManaged(false);
+                md_Personal.setVisible(false);
+                md_Personal.setManaged(false);
                 // Mantener acceso a la base de datos de usuarios
-                md_Sistema.setVisible(true);
-                md_Sistema.setManaged(true);
+
                 md_Usuario.setVisible(true);
                 md_Usuario.setManaged(true);
+                md_CasosDocumentacion.setVisible(true);
+                md_CasosDocumentacion.setManaged(true);
+
                 break;
         }
 
@@ -193,7 +204,7 @@ public class MainController {
         cargarModulo("/views/dashboard.fxml");
     }
 
-    void cargarModulo(String rutaFXML) {
+    public void cargarModulo(String rutaFXML) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
             Node modulo = loader.load();
@@ -235,6 +246,7 @@ public class MainController {
             AnchorPane.setLeftAnchor(modulo, 0.0);
             AnchorPane.setRightAnchor(modulo, 0.0);
 
+            modulo.setUserData(controller);
             pnl_Modulos.getChildren().setAll(modulo);
 
             pnl_Forms.getChildren().clear();

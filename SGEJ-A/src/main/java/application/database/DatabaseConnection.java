@@ -9,7 +9,7 @@ import java.sql.Statement;
  * Clase para gestionar la conexión a la base de datos SQLite
  */
 public class DatabaseConnection {
-    private static final String DATABASE_URL = "jdbc:sqlite:sgej_database.db";
+    private static final String DATABASE_URL = "jdbc:sqlite:src/main/resources/database/sgej_database.db";
     private static Connection connection = null;
 
     /**
@@ -33,8 +33,8 @@ public class DatabaseConnection {
                 Statement stmt = conn.createStatement()) {
 
             // Crear tabla de clientes
-            String createClientesTable = """
-                    CREATE TABLE IF NOT EXISTS clientes (
+            String createClienteTable = """
+                    CREATE TABLE IF NOT EXISTS cliente (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
                         nombre_completo TEXT NOT NULL,
                         tipo_identificacion TEXT NOT NULL CHECK (tipo_identificacion IN ('CEDULA', 'RUC', 'PASAPORTE')),
@@ -53,48 +53,48 @@ public class DatabaseConnection {
                     )
                     """;
 
-            stmt.execute(createClientesTable);
+            stmt.execute(createClienteTable);
 
             String createUsuariosTable = """
-            CREATE TABLE IF NOT EXISTS usuarios (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nombres_completos TEXT NOT NULL,
-                nombre_usuario TEXT NOT NULL UNIQUE,
-                numero_identificacion TEXT NOT NULL UNIQUE,
-                tipo_identificacion TEXT NOT NULL CHECK (tipo_identificacion IN ('CEDULA', 'RUC', 'PASAPORTE')),
-            telefono TEXT NOT NULL,
-            correo TEXT NOT NULL,
-            estado TEXT NOT NULL CHECK (estado IN ('ACTIVO', 'INACTIVO')),
-            direccion TEXT,
-            fecha_ingreso TEXT,
-            tipo_usuario TEXT NOT NULL CHECK (tipo_usuario IN ('NATURAL',   'JURIDICA')),
-            rol TEXT NOT NULL,
-            clave TEXT NOT NULL,
-            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-        )
-        """;
-        stmt.execute(createUsuariosTable);
+                        CREATE TABLE IF NOT EXISTS usuarios (
+                            id INTEGER PRIMARY KEY AUTOINCREMENT,
+                            nombres_completos TEXT NOT NULL,
+                            nombre_usuario TEXT NOT NULL UNIQUE,
+                            numero_identificacion TEXT NOT NULL UNIQUE,
+                            tipo_identificacion TEXT NOT NULL CHECK (tipo_identificacion IN ('CEDULA', 'RUC', 'PASAPORTE')),
+                        telefono TEXT NOT NULL,
+                        correo TEXT NOT NULL,
+                        estado TEXT NOT NULL CHECK (estado IN ('ACTIVO', 'INACTIVO')),
+                        direccion TEXT,
+                        fecha_ingreso TEXT,
+                        tipo_usuario TEXT NOT NULL CHECK (tipo_usuario IN ('NATURAL',   'JURIDICA')),
+                        rol TEXT NOT NULL,
+                        clave TEXT NOT NULL,
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )
+                    """;
+            stmt.execute(createUsuariosTable);
 
-        // Crear tabla de parámetros del sistema
-   String createParametrosTable = """
-    CREATE TABLE IF NOT EXISTS parametros (
-        codigo TEXT PRIMARY KEY,
-        nombre TEXT NOT NULL,
-        descripcion TEXT,
-        valor TEXT NOT NULL,
-        tipo TEXT NOT NULL CHECK (tipo IN ('NUMERICO', 'TEXTO', 'TIEMPO')),
-        estado TEXT NOT NULL CHECK (estado IN ('ACTIVO', 'INACTIVO')),
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-    """;
-stmt.execute(createParametrosTable);
+            // Crear tabla de parámetros del sistema
+            String createParametrosTable = """
+                    CREATE TABLE IF NOT EXISTS parametros (
+                        codigo TEXT PRIMARY KEY,
+                        nombre TEXT NOT NULL,
+                        descripcion TEXT,
+                        valor TEXT NOT NULL,
+                        tipo TEXT NOT NULL CHECK (tipo IN ('NUMERICO', 'TEXTO', 'TIEMPO')),
+                        estado TEXT NOT NULL CHECK (estado IN ('ACTIVO', 'INACTIVO')),
+                        created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                        updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                    )
+                    """;
+            stmt.execute(createParametrosTable);
 
             // Crear índices para mejorar el rendimiento
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_numero_identificacion ON clientes(numero_identificacion)");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_nombre_completo ON clientes(nombre_completo)");
-            stmt.execute("CREATE INDEX IF NOT EXISTS idx_estado ON clientes(estado)");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_numero_identificacion ON cliente(numero_identificacion)");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_nombre_completo ON cliente(nombre_completo)");
+            stmt.execute("CREATE INDEX IF NOT EXISTS idx_estado ON cliente(estado)");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_usuario_identificacion ON usuarios(numero_identificacion)");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_usuario_nombre ON          usuarios(nombre_usuario)");
             stmt.execute("CREATE INDEX IF NOT EXISTS idx_usuario_estado ON          usuarios(estado)");
@@ -112,7 +112,7 @@ stmt.execute(createParametrosTable);
                         fecha_inicio DATE,
                         descripcion TEXT,
                         estado TEXT,
-                        FOREIGN KEY (cliente_id) REFERENCES clientes(id)
+                        FOREIGN KEY (cliente_id) REFERENCES cliente(id)
                     )
                     """;
             stmt.execute(createCasoTable);
@@ -177,7 +177,6 @@ stmt.execute(createParametrosTable);
             e.printStackTrace();
         }
 
-        
     }
 
     /**
@@ -193,4 +192,3 @@ stmt.execute(createParametrosTable);
         }
     }
 }
-

@@ -22,6 +22,8 @@ public class ModuloUsuarioController {
     @FXML
     private TableColumn<Usuario, String> tbc_NombresCompletos, tbc_NumeroI, tbc_NombreUsuario, tbc_Rol, tbc_Estado;
     @FXML
+    private TableColumn<Usuario, Void> tbc_BotonEditar, tbc_BotonVer, tbc_BotonReset, tbc_BotonCambiarClave;
+    @FXML
     private TextField txt_Busqueda;
     @FXML
     private Button btn_Nuevo, btn_Buscar, btn_Refrescar;
@@ -48,12 +50,78 @@ public class ModuloUsuarioController {
     @FXML
     private void initialize() {
         inicializarTabla();
+        inicializarColumnasDeBotones();
         configurarBotones();
         cargarUsuarios();
 
         // Configurar búsqueda
         txt_Busqueda.textProperty().addListener((observable, oldValue, newValue) -> {
             filtrarUsuarios(newValue);
+        });
+    }
+
+    // Inicializa las columnas de botones de acción en la tabla de usuarios
+    private void inicializarColumnasDeBotones() {
+        agregarBotonPorColumna(tbc_BotonEditar, "✏️", "Editar", "#f59e0b", "#d97706");
+        agregarBotonPorColumna(tbc_BotonVer, "👁️", "Ver", "#3b82f6", "#2563eb");
+        agregarBotonPorColumna(tbc_BotonReset, "🔄", "Reset", "#10b981", "#059669");
+        agregarBotonPorColumna(tbc_BotonCambiarClave, "🔑", "Clave", "#6366f1", "#4338ca");
+
+        tbc_BotonEditar.setText("");
+        tbc_BotonVer.setText("");
+        tbc_BotonReset.setText("");
+        tbc_BotonCambiarClave.setText("");
+
+        tbc_BotonEditar.setPrefWidth(55);
+        tbc_BotonVer.setPrefWidth(55);
+        tbc_BotonReset.setPrefWidth(55);
+        tbc_BotonCambiarClave.setPrefWidth(55);
+    }
+
+    // Lógica para agregar un botón personalizado por columna, con estilos y
+    // acciones diferenciadas
+    private void agregarBotonPorColumna(TableColumn<Usuario, Void> columna, String texto, String tooltip, String color,
+            String hoverColor) {
+        columna.setCellFactory(tc -> new TableCell<>() {
+            private final Button btn = new Button(texto);
+            {
+                btn.setTooltip(new Tooltip(tooltip));
+                setStyle("-fx-alignment: CENTER; -fx-padding: 2;");
+                btn.setStyle("-fx-background-color: " + color + "; -fx-text-fill: white; -fx-background-radius: 4; " +
+                        "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
+                        "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;");
+
+                btn.setOnMouseEntered(_ -> btn.setStyle(
+                        "-fx-background-color: " + hoverColor + "; -fx-text-fill: white; -fx-background-radius: 4; " +
+                                "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
+                                "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;"));
+                btn.setOnMouseExited(_ -> btn.setStyle(
+                        "-fx-background-color: " + color + "; -fx-text-fill: white; -fx-background-radius: 4; " +
+                                "-fx-font-size: 10px; -fx-font-weight: bold; -fx-min-width: 55; -fx-max-width: 55; " +
+                                "-fx-min-height: 25; -fx-max-height: 25; -fx-cursor: hand; -fx-padding: 0;"));
+
+                btn.setOnAction(_ -> {
+                    Usuario usuario = getTableView().getItems().get(getIndex());
+                    switch (tooltip) {
+                        case "Editar" -> mostrarFormularioUsuario(usuario);
+                        case "Ver" -> mostrarFormularioUsuario(usuario); // Puedes cambiar por solo lectura
+                        case "Reset" -> {
+                            tb_Usuarios.getSelectionModel().select(usuario);
+                            mostrarFormularioCambioClave();
+                        }
+                        case "Clave" -> {
+                            tb_Usuarios.getSelectionModel().select(usuario);
+                            mostrarFormularioCambioClave();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty || getTableRow() == null || getTableRow().getItem() == null ? null : btn);
+            }
         });
     }
 
@@ -141,63 +209,9 @@ public class ModuloUsuarioController {
      * @param usuario Usuario a editar, null para crear uno nuevo
      */
     private void mostrarFormularioUsuario(Usuario usuario) {
-        try {
-            // Usar el contenedor externo si está disponible
-            AnchorPane container = formularioContainer != null ? formularioContainer : containerForm;
-
-            System.out.println("Usando contenedor: " + (container == formularioContainer ? "externo" : "interno"));
-            System.out.println("Contenedor nulo: " + (container == null ? "SI" : "NO"));
-
-            if (container == null) {
-                System.err.println("Error: No hay contenedor disponible para mostrar el formulario");
-                return;
-            }
-
-            // Limpiar contenedor
-            container.getChildren().clear();
-
-            // Mostrar el contenedor
-            container.setVisible(true);
-            container.setManaged(true);
-
-            // Cargar formulario
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/views/usuario/form_usuario.fxml"));
-            AnchorPane formPane = loader.load();
-            formUsuarioController = loader.getController();
-
-            // Configurar formulario
-            formUsuarioController.setUsuario(usuario);
-            formUsuarioController.setOnGuardar(() -> {
-                cargarUsuarios();
-                container.getChildren().clear();
-                container.setVisible(false);
-                container.setManaged(false);
-            });
-            formUsuarioController.setOnCancelar(() -> {
-                container.getChildren().clear();
-                container.setVisible(false);
-                container.setManaged(false);
-            });
-
-            // Mostrar formulario
-            AnchorPane.setTopAnchor(formPane, 0.0);
-            AnchorPane.setRightAnchor(formPane, 0.0);
-            AnchorPane.setBottomAnchor(formPane, 0.0);
-            AnchorPane.setLeftAnchor(formPane, 0.0);
-            container.getChildren().add(formPane);
-
-            System.out.println("Formulario de usuario cargado correctamente");
-
-        } catch (IOException e) {
-            System.err.println("Error al cargar formulario: " + e.getMessage());
-            e.printStackTrace();
-            DialogUtil.mostrarDialogo(
-                    "Error",
-                    "Error al cargar formulario: " + e.getMessage(),
-                    "error",
-                    List.of(ButtonType.OK));
-        }
+        // Mostrar el panel flotante independiente
+        FormUsuarioModalLauncher.mostrarPanelUsuarioIndependiente(
+                tb_Usuarios.getScene(), usuario, this::cargarUsuarios);
     }
 
     /**
@@ -208,60 +222,12 @@ public class ModuloUsuarioController {
         if (usuarioSeleccionado == null) {
             return;
         }
-
-        try {
-            // Usar el contenedor externo si está disponible
-            AnchorPane container = formularioContainer != null ? formularioContainer : containerForm;
-
-            // Limpiar contenedor
-            container.getChildren().clear();
-
-            // Mostrar el contenedor
-            container.setVisible(true);
-            container.setManaged(true);
-
-            // Cargar formulario
-            javafx.fxml.FXMLLoader loader = new javafx.fxml.FXMLLoader(
-                    getClass().getResource("/views/usuario/form_cambio_clave.fxml"));
-            AnchorPane formPane = loader.load();
-            formCambioClaveController = loader.getController();
-
-            // Configurar formulario
-            formCambioClaveController.setUsuario(usuarioSeleccionado);
-            formCambioClaveController.setModo("RESET"); // Modo RESET (no solicita clave actual)
-            formCambioClaveController.setOnGuardar(() -> {
-                cargarUsuarios();
-                container.getChildren().clear();
-                container.setVisible(false);
-                container.setManaged(false);
-            });
-            formCambioClaveController.setOnCancelar(() -> {
-                container.getChildren().clear();
-                container.setVisible(false);
-                container.setManaged(false);
-            });
-
-            // Mostrar formulario
-            AnchorPane.setTopAnchor(formPane, 0.0);
-            AnchorPane.setRightAnchor(formPane, 0.0);
-            AnchorPane.setBottomAnchor(formPane, 0.0);
-            AnchorPane.setLeftAnchor(formPane, 0.0);
-            container.getChildren().add(formPane);
-
-            // Mostrar formulario
-            AnchorPane.setTopAnchor(formPane, 0.0);
-            AnchorPane.setRightAnchor(formPane, 0.0);
-            AnchorPane.setBottomAnchor(formPane, 0.0);
-            AnchorPane.setLeftAnchor(formPane, 0.0);
-            container.getChildren().add(formPane);
-
-        } catch (IOException e) {
-            DialogUtil.mostrarDialogo(
-                    "Error",
-                    "Error al cargar formulario: " + e.getMessage(),
-                    "error",
-                    List.of(ButtonType.OK));
-        }
+        // Mostrar como panel flotante independiente
+        FormUsuarioModalLauncher.mostrarPanelCambioClaveIndependiente(
+                tb_Usuarios.getScene(),
+                usuarioSeleccionado,
+                "RESET",
+                () -> cargarUsuarios());
     }
 
     /**

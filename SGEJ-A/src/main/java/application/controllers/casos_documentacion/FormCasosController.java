@@ -196,13 +196,13 @@ public class FormCasosController {
                         stmt.close();
 
                         // Ahora buscamos la identificación del cliente usando el cliente_id
-                        sql = "SELECT identificacion FROM cliente WHERE id = ?";
+                        sql = "SELECT numero_identificacion FROM cliente WHERE id = ?";
                         stmt = conn.prepareStatement(sql);
                         stmt.setInt(1, clienteId);
                         rs = stmt.executeQuery();
 
                         if (rs.next()) {
-                            String identificacionCliente = rs.getString("identificacion");
+                            String identificacionCliente = rs.getString("numero_identificacion");
                             txtf_IdentificacionCliente.setText(identificacionCliente);
                             System.out.println("INFO: Cargada identificación del cliente: " + identificacionCliente);
                         } else {

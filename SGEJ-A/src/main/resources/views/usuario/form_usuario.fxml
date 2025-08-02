@@ -13,78 +13,56 @@
                 AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" 
                 AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
 
-        <VBox spacing="24" styleClass="form-panel" alignment="TOP_LEFT">
+        <VBox spacing="20" styleClass="form-panel" alignment="TOP_LEFT">
             <padding>
                 <Insets top="24" right="24" bottom="24" left="24"/>
             </padding>
 
             <!-- Title panel with light color and white text -->
-            <StackPane prefHeight="50" style="-fx-background-color: #90caf9; -fx-background-radius: 8;" alignment="CENTER">
+            <StackPane prefHeight="48" style="-fx-background-color: #2196f3; -fx-background-radius: 12;" alignment="CENTER">
                 <Label fx:id="lbl_Titulo"
-                      text="REGISTRAR / VISUALIZAR / EDITAR"
+                      text="Crear / Editar Usuario"
                       style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"/>
             </StackPane>
 
             <!-- Error message display -->
             <Label fx:id="lbl_Error" style="-fx-text-fill: red; -fx-font-weight: bold;" />
 
-            <!-- Form fields -->
-            <GridPane hgap="20" vgap="16">
+            <!-- Form fields grouped visually -->
+            <GridPane hgap="18" vgap="16">
                 <columnConstraints>
-                    <ColumnConstraints prefWidth="250"/>
-                    <ColumnConstraints prefWidth="250"/>
+                    <ColumnConstraints prefWidth="240"/>
+                    <ColumnConstraints prefWidth="240"/>
                 </columnConstraints>
-
-                <!-- User Role -->
-                <Label text="Rol de Usuario:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label" 
-                       style="-fx-font-weight: bold; -fx-text-fill: #1e40af;"/>
-                <ComboBox fx:id="cmb_TipoUsuario" promptText="Seleccione el Rol"
-                          prefWidth="250" styleClass="combo-box"
-                          GridPane.rowIndex="1" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
-
-                <!-- Identification Section -->
-                <Label text="Número de Identificación / Cédula:" GridPane.rowIndex="2" GridPane.columnIndex="0" 
-                       style="-fx-font-weight: bold; -fx-text-fill: #1e40af;" styleClass="label"/>
-                <TextField fx:id="txt_Identificacion" styleClass="text-field" promptText="Ingrese número de cédula o RUC"
-                           GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
-
-                <!-- Name and Username -->
-                <Label text="Nombres:" GridPane.rowIndex="4" GridPane.columnIndex="0" styleClass="label"/>
-                <Label text="Apellidos:" GridPane.rowIndex="4" GridPane.columnIndex="1" styleClass="label"/>
-                <TextField fx:id="txt_Nombres" styleClass="text-field"
-                           GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                <TextField fx:id="txt_Apellidos" styleClass="text-field"
-                           GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-
-                <!-- Username and ID -->
-                <Label text="Nombre Usuario:" GridPane.rowIndex="6" GridPane.columnIndex="0" styleClass="label"/>
-                <Label text="Estado del Usuario:" GridPane.rowIndex="6" GridPane.columnIndex="1" styleClass="label"/>
-                <TextField fx:id="txt_Usuario" styleClass="text-field"
-                           GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-                <ComboBox fx:id="cmb_EstadoUsuario" promptText="Estado"
-                          styleClass="combo-box"
-                          GridPane.rowIndex="7" GridPane.columnIndex="1"/>
-
-                <!-- Email -->
-                <Label text="Correo:" GridPane.rowIndex="8" GridPane.columnIndex="0" styleClass="label"/>
-                <TextField fx:id="txt_Email" styleClass="text-field"
-                           GridPane.rowIndex="9" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
-
-                <!-- Password and Confirm Password -->
-                <Label text="Contraseña:" GridPane.rowIndex="10" GridPane.columnIndex="0" styleClass="label"/>
-                <Label text="Confirmar Contraseña:" GridPane.rowIndex="10" GridPane.columnIndex="1" styleClass="label"/>
-                <PasswordField fx:id="txt_Clave" styleClass="text-field"
-                               GridPane.rowIndex="11" GridPane.columnIndex="0"/>
-                <PasswordField fx:id="txt_ConfirmarClave" styleClass="text-field"
-                               GridPane.rowIndex="11" GridPane.columnIndex="1"/>
+                <!-- User Role and State -->
+                <Label text="Rol de Usuario:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                <ComboBox fx:id="cmb_TipoUsuario" promptText="Seleccione el Rol" prefWidth="220" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <Label text="Estado del Usuario:" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
+                <ComboBox fx:id="cmb_EstadoUsuario" promptText="Seleccione Estado" prefWidth="220" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <!-- Identification -->
+                <Label text="Identificación / Cédula:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txt_Identificacion" promptText="Cédula o RUC" prefWidth="220" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+                <!-- Name and Surname -->
+                <Label text="Nombres:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <Label text="Apellidos:" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                <TextField fx:id="txt_Nombres" prefWidth="220" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <TextField fx:id="txt_Apellidos" prefWidth="220" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                <!-- Username and Email -->
+                <Label text="Nombre Usuario:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                <Label text="Correo:" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                <TextField fx:id="txt_Usuario" prefWidth="220" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                <TextField fx:id="txt_Email" prefWidth="220" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                <!-- Passwords -->
+                <Label text="Contraseña:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                <Label text="Confirmar Contraseña:" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+                <PasswordField fx:id="txt_Clave" prefWidth="220" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+                <PasswordField fx:id="txt_ConfirmarClave" prefWidth="220" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
             </GridPane>
 
             <!-- Save / Cancel Buttons -->
-            <HBox spacing="40" alignment="CENTER">
-                <Button fx:id="btn_Guardar" text="Guardar" prefWidth="120"
-                        styleClass="button-windows,button-windows-green" />
-                <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="120"
-                        styleClass="button-windows,button-windows-red"/>
+            <HBox spacing="18" alignment="CENTER">
+                <Button fx:id="btn_Guardar" text="Guardar" style="-fx-background-color: #43a047; -fx-text-fill: white; -fx-font-weight: bold;" />
+                <Button fx:id="btn_Cancelar" text="Cancelar" style="-fx-background-color: #e53935; -fx-text-fill: white; -fx-font-weight: bold;" />
             </HBox>
         </VBox>
     </ScrollPane>

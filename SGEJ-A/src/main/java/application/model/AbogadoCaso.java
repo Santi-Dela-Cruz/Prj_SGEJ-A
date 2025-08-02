@@ -1,3 +1,4 @@
+
 package application.model;
 
 import java.util.Date;
@@ -8,6 +9,7 @@ public class AbogadoCaso {
     private int abogadoId;
     private String rol;
     private Date fechaAsignacion;
+    private String nombre;
 
     // Getters y setters
     public int getId() {
@@ -48,5 +50,13 @@ public class AbogadoCaso {
 
     public void setFechaAsignacion(Date fechaAsignacion) {
         this.fechaAsignacion = fechaAsignacion;
+    }
+
+    public String getNombre() {
+        return nombre;
+    }
+
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
     }
 }
