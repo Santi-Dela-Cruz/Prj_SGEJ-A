@@ -3,6 +3,7 @@ package application.controllers;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
@@ -10,6 +11,7 @@ import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,5 +42,20 @@ public class DialogUtil {
             e.printStackTrace();
             return Optional.empty();
         }
+    }
+
+    /**
+     * Muestra un mensaje en un cuadro de diálogo
+     * 
+     * @param titulo  Título del mensaje
+     * @param mensaje Contenido del mensaje
+     * @param tipo    Tipo de alerta (INFORMATION, WARNING, ERROR, CONFIRMATION)
+     */
+    public static void mostrarMensaje(String titulo, String mensaje, Alert.AlertType tipo) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 }

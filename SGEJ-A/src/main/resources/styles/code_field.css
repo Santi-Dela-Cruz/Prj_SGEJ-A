@@ -1,0 +1,25 @@
+/* Estilos específicos para campos de código */
+.code-field {
+  -fx-opacity: 1 !important;
+  -fx-text-fill: #0000cc !important;
+  -fx-background-color: #e1f5fe !important;
+  -fx-font-weight: bold !important;
+  -fx-font-size: 16px !important;
+  -fx-border-color: #2196f3 !important;
+  -fx-border-width: 3px !important;
+  -fx-border-radius: 3px !important;
+  -fx-padding: 10px !important;
+  -fx-focus-color: #2196f3 !important;
+  -fx-faint-focus-color: #bbdefb !important;
+  -fx-highlight-fill: #bbdefb !important;
+  -fx-highlight-text-fill: #0000cc !important;
+  -fx-prompt-text-fill: transparent !important;
+}
+
+/* Asegurar que incluso cuando está deshabilitado se vea bien */
+.code-field:disabled {
+  -fx-opacity: 1 !important;
+  -fx-text-fill: #0000cc !important;
+  -fx-background-color: #e1f5fe !important;
+  -fx-font-weight: bold !important;
+}

@@ -12,6 +12,8 @@ import application.model.Caso;
 import java.util.List;
 
 public class ModuloCasosController {
+    // Bandera para saber si ya se cargó el contexto desde el cliente
+    private boolean contextoClienteYaCargado = false;
     private application.model.Cliente clienteActual;
     @FXML
     private Label lbl_NombreCliente;
@@ -23,6 +25,7 @@ public class ModuloCasosController {
      */
     public void mostrarCasosDeCliente(application.model.Cliente cliente) {
         this.clienteActual = cliente;
+        contextoClienteYaCargado = true;
         if (lbl_NombreCliente != null) {
             lbl_NombreCliente.setText(cliente.getNombreCompleto());
         }
@@ -31,6 +34,7 @@ public class ModuloCasosController {
         }
         // Filtrar solo los casos del cliente seleccionado
         cargarCasosPorCliente(cliente.getId());
+        actualizarBotonRegresar();
     }
     // ...existing code...
 
@@ -142,10 +146,26 @@ public class ModuloCasosController {
      * seleccionado.
      */
     private void actualizarBotonRegresar() {
-        if (btn_Regresar != null) {
+        // Usar btn_Nuevo como botón de regreso si hay cliente seleccionado
+        if (btn_Nuevo != null) {
             boolean mostrar = hayClienteSeleccionado();
-            btn_Regresar.setVisible(mostrar);
-            btn_Regresar.setManaged(mostrar);
+            if (mostrar) {
+                btn_Nuevo.setText("⏪ Regresar");
+                btn_Nuevo.setStyle(
+                        "-fx-background-color: linear-gradient(to bottom, #f59e0b, #fbbf24); -fx-text-fill: #1e3a8a; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 10; -fx-padding: 8 18; -fx-cursor: hand;");
+                btn_Nuevo.setOnAction(_ -> {
+                    application.controllers.MainController mainController = application.controllers.MainController
+                            .getInstance();
+                    if (mainController != null) {
+                        mainController.cargarModulo("/views/cliente/modulo_cliente.fxml");
+                    }
+                });
+            } else {
+                btn_Nuevo.setText("➕ Nuevo Caso");
+                btn_Nuevo.setStyle(
+                        "-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);");
+                btn_Nuevo.setOnAction(_ -> mostrarFormulario(null, "NUEVO"));
+            }
         }
     }
 
@@ -189,7 +209,9 @@ public class ModuloCasosController {
         });
         configurarColumnas();
         inicializarColumnasDeBotones();
-        cargarCasosContexto();
+        if (!contextoClienteYaCargado) {
+            cargarCasosContexto();
+        }
         actualizarBotonRegresar();
         btn_Nuevo.setOnAction(_ -> mostrarFormulario(null, "NUEVO"));
         btn_Buscar.setOnAction(_ -> buscarCasos());
