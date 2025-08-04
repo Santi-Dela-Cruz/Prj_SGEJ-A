@@ -36,9 +36,11 @@ public class FormUsuarioController {
 
     // Patrones para validación
     private final Pattern emailPattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
-    
-    // Patrón para contraseñas seguras: al menos una mayúscula, un número y un carácter especial
-    private final Pattern contrasenaSeguraPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$");
+
+    // Patrón para contraseñas seguras: al menos una mayúscula, un número y un
+    // carácter especial
+    private final Pattern contrasenaSeguraPattern = Pattern
+            .compile("^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$");
 
     public void setOnGuardar(Runnable handler) {
         this.onGuardar = handler;
@@ -175,7 +177,7 @@ public class FormUsuarioController {
         // Validar cédula ecuatoriana utilizando la clase VerificationID
         String identificacion = txt_Identificacion.getText().trim();
         application.utils.VerificationID verificador = new application.utils.VerificationID();
-        
+
         // Verificar que sea cédula y no RUC
         if (!verificador.validarCedula(identificacion)) {
             lbl_Error.setText("La identificación debe ser una cédula ecuatoriana válida (10 dígitos)");
@@ -195,10 +197,12 @@ public class FormUsuarioController {
             }
 
             String contrasena = txt_Clave.getText();
-            
-            // Validar que la contraseña cumple con todos los requisitos de seguridad usando el patrón
+
+            // Validar que la contraseña cumple con todos los requisitos de seguridad usando
+            // el patrón
             if (!contrasenaSeguraPattern.matcher(contrasena).matches()) {
-                lbl_Error.setText("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, un número y un carácter especial");
+                lbl_Error.setText(
+                        "La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, un número y un carácter especial");
                 return false;
             }
         }

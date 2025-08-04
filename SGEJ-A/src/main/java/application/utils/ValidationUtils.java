@@ -72,10 +72,10 @@ public class ValidationUtils {
         if (ruc == null || ruc.trim().isEmpty()) {
             return false;
         }
-        
+
         // Eliminar espacios
         ruc = ruc.trim();
-        
+
         // Un RUC tiene exactamente 13 dígitos
         if (ruc.length() != 13) {
             return false;
@@ -101,7 +101,7 @@ public class ValidationUtils {
         if (!verificador.validarCedula(cedula)) {
             return false;
         }
-        
+
         // Todas las validaciones pasaron
         return true;
     }

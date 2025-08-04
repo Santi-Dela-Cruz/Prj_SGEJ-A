@@ -414,11 +414,12 @@ public class FormParametroController {
                         // Validar longitud de clave SMTP sin contar espacios
                         if (newVal != null) {
                             String sinEspacios = newVal.replace(" ", "");
-                            
+
                             // Mostrar contador de caracteres y validación
                             if (!sinEspacios.isEmpty()) {
                                 if (sinEspacios.length() != 16) {
-                                    lbl_Validacion.setText("La clave debe tener 16 caracteres (sin espacios). Actual: " + sinEspacios.length());
+                                    lbl_Validacion.setText("La clave debe tener 16 caracteres (sin espacios). Actual: "
+                                            + sinEspacios.length());
                                     lbl_Validacion.setVisible(true);
                                     lbl_Validacion.setManaged(true);
                                     txt_Valor.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
@@ -475,9 +476,9 @@ public class FormParametroController {
                             boolean formatosValidos = true;
                             StringBuilder formatosInvalidos = new StringBuilder();
                             StringBuilder formatosValidsStr = new StringBuilder();
-                            
+
                             // Definir los formatos permitidos
-                            final String[] FORMATOS_PERMITIDOS = {"doc", "docx", "pdf", "png", "jpg"};
+                            final String[] FORMATOS_PERMITIDOS = { "doc", "docx", "pdf", "png", "jpg" };
 
                             for (String formato : formatos) {
                                 formato = formato.trim();
@@ -490,7 +491,7 @@ public class FormParametroController {
                                             break;
                                         }
                                     }
-                                    
+
                                     if (!esFormatoValido) {
                                         formatosValidos = false;
                                         formatosInvalidos.append(formato).append(", ");
@@ -503,10 +504,10 @@ public class FormParametroController {
                                 if (invalidosStr.endsWith(",")) {
                                     invalidosStr = invalidosStr.substring(0, invalidosStr.length() - 1);
                                 }
-                                
+
                                 // Mostrar sugerencia de formatos permitidos
                                 String permitidosStr = String.join(", ", FORMATOS_PERMITIDOS);
-                                lbl_Validacion.setText("Formatos no válidos: " + invalidosStr + 
+                                lbl_Validacion.setText("Formatos no válidos: " + invalidosStr +
                                         "\nFormatos permitidos: " + permitidosStr);
                                 lbl_Validacion.setVisible(true);
                                 lbl_Validacion.setManaged(true);
@@ -517,7 +518,7 @@ public class FormParametroController {
                                 if (validosStr.endsWith(",")) {
                                     validosStr = validosStr.substring(0, validosStr.length() - 1);
                                 }
-                                
+
                                 lbl_Validacion.setText("Formatos válidos: " + validosStr);
                                 lbl_Validacion.setStyle("-fx-text-fill: green; -fx-font-size: 11px;");
                                 lbl_Validacion.setVisible(true);
@@ -604,7 +605,7 @@ public class FormParametroController {
             if (valor != null && !valor.isEmpty()) {
                 // Eliminar posibles espacios
                 valor = valor.trim();
-                
+
                 // Bloquear cualquier carácter no numérico inmediatamente
                 if (!valor.matches("^\\d+$")) {
                     txt_Valor.setText(valor.replaceAll("[^\\d]", ""));
@@ -617,7 +618,7 @@ public class FormParametroController {
 
                 // Si es un número, validar el rango
                 int tiempo = Integer.parseInt(valor);
-                
+
                 // Importante: Mínimo 1 minuto para evitar errores en SessionManager
                 if (tiempo < 1) {
                     lbl_Validacion.setText("El tiempo de sesión debe ser mayor a 0 minutos");
@@ -627,7 +628,7 @@ public class FormParametroController {
                     System.out.println("⚠️ VALIDACIÓN: Tiempo de sesión negativo o cero: " + tiempo);
                     return;
                 }
-                
+
                 // Validar límite máximo
                 if (tiempo > 480) {
                     // Si el usuario intenta ingresar un valor mayor, corregirlo automáticamente
@@ -641,7 +642,7 @@ public class FormParametroController {
                     System.out.println("⚠️ VALIDACIÓN: Tiempo de sesión excesivo: " + tiempo);
                     return;
                 }
-                
+
                 // Si llegamos aquí, el tiempo es válido
                 lbl_Validacion.setVisible(false);
                 lbl_Validacion.setManaged(false);
@@ -947,7 +948,7 @@ public class FormParametroController {
                     lbl_Validacion.setManaged(true);
                     return;
                 }
-                
+
                 if (tiempo > 480) {
                     txt_Valor.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
                     lbl_Validacion.setText("El tiempo de sesión no puede exceder 480 minutos (8 horas)");
@@ -998,7 +999,7 @@ public class FormParametroController {
                 lbl_Validacion.setManaged(true);
                 return;
             }
-            
+
             // Eliminar espacios y caracteres no numéricos
             if (valor.matches(".*[^0-9].*")) {
                 // Limpiar automáticamente
@@ -1009,7 +1010,7 @@ public class FormParametroController {
                 lbl_Validacion.setVisible(true);
                 lbl_Validacion.setManaged(true);
             }
-            
+
             // Verificar longitud exacta
             if (valor.length() != 13) {
                 txt_Valor.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
@@ -1018,7 +1019,7 @@ public class FormParametroController {
                 lbl_Validacion.setManaged(true);
                 return;
             }
-            
+
             // Verificar que termine en 001
             if (!valor.endsWith("001")) {
                 txt_Valor.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
@@ -1027,7 +1028,7 @@ public class FormParametroController {
                 lbl_Validacion.setManaged(true);
                 return;
             }
-            
+
             // Validar la cédula (primeros 10 dígitos)
             String cedula = valor.substring(0, 10);
             VerificationID verificador = new VerificationID();
@@ -1052,7 +1053,7 @@ public class FormParametroController {
         else if ("smtp_clave".equals(codigoParam)) {
             String valor = txt_Valor.getText().trim();
             String sinEspacios = valor.replace(" ", "");
-            
+
             if (valor.isEmpty()) {
                 txt_Valor.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
                 lbl_Validacion.setText("Debe ingresar una clave SMTP");
@@ -1060,15 +1061,16 @@ public class FormParametroController {
                 lbl_Validacion.setManaged(true);
                 return;
             }
-            
+
             if (sinEspacios.length() != 16) {
                 txt_Valor.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                lbl_Validacion.setText("La clave debe tener exactamente 16 caracteres (sin espacios). Actual: " + sinEspacios.length());
+                lbl_Validacion.setText("La clave debe tener exactamente 16 caracteres (sin espacios). Actual: "
+                        + sinEspacios.length());
                 lbl_Validacion.setVisible(true);
                 lbl_Validacion.setManaged(true);
                 return; // Impedir que continúe el guardado
             }
-            
+
             // Si la clave es válida, mostrar confirmación
             txt_Valor.setStyle("-fx-border-color: green; -fx-border-width: 1px;");
             lbl_Validacion.setText("Longitud correcta: 16 caracteres");
@@ -1101,7 +1103,7 @@ public class FormParametroController {
         // Validación para formatos_permitidos
         else if ("formatos_permitidos".equals(codigoParam)) {
             String valor = txt_Valor.getText().trim();
-            
+
             // Validar que no esté vacío
             if (valor.isEmpty()) {
                 txt_Valor.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
@@ -1110,10 +1112,10 @@ public class FormParametroController {
                 lbl_Validacion.setManaged(true);
                 return;
             }
-            
+
             // Definir los formatos permitidos
-            final String[] FORMATOS_PERMITIDOS = {"doc", "docx", "pdf", "png", "jpg"};
-            
+            final String[] FORMATOS_PERMITIDOS = { "doc", "docx", "pdf", "png", "jpg" };
+
             // Procesar formatos ingresados
             String[] formatos = valor.toLowerCase().split("[,;\\s]+");
             boolean formatosValidos = true;
@@ -1131,7 +1133,7 @@ public class FormParametroController {
                             break;
                         }
                     }
-                    
+
                     if (!esFormatoValido) {
                         formatosValidos = false;
                         formatosInvalidos.append(formato).append(", ");
@@ -1144,11 +1146,11 @@ public class FormParametroController {
                 if (invalidosStr.endsWith(",")) {
                     invalidosStr = invalidosStr.substring(0, invalidosStr.length() - 1);
                 }
-                
+
                 // Mostrar mensaje con formatos permitidos
                 String permitidosStr = String.join(", ", FORMATOS_PERMITIDOS);
                 txt_Valor.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
-                lbl_Validacion.setText("Formatos no válidos: " + invalidosStr + 
+                lbl_Validacion.setText("Formatos no válidos: " + invalidosStr +
                         "\nFormatos permitidos: " + permitidosStr);
                 lbl_Validacion.setVisible(true);
                 lbl_Validacion.setManaged(true);
@@ -1159,7 +1161,7 @@ public class FormParametroController {
                 if (validosStr.endsWith(",")) {
                     validosStr = validosStr.substring(0, validosStr.length() - 1);
                 }
-                
+
                 txt_Valor.setStyle("-fx-border-color: green; -fx-border-width: 1px;");
                 lbl_Validacion.setText("Formatos válidos: " + validosStr);
                 lbl_Validacion.setStyle("-fx-text-fill: green; -fx-font-size: 11px;");
