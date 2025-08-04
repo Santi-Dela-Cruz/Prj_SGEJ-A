@@ -27,6 +27,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.function.Consumer;
 
+// Importaciones de los controladores adicionales necesarios
+import application.controllers.administracion_sistema.FormParametroController;
+import application.controllers.administracion_sistema.FormSeleccionarParametroController;
+
 /**
  * Controlador para el módulo de gestión de parámetros del sistema
  */

@@ -295,6 +295,28 @@ public class ParametroDAO {
     }
 
     /**
+     * Actualizar solo el valor de un parámetro
+     * 
+     * @param codigo     código del parámetro a actualizar
+     * @param nuevoValor nuevo valor del parámetro
+     * @return true si se actualizó correctamente
+     */
+    public boolean actualizarValor(String codigo, String nuevoValor) {
+        String sql = "UPDATE parametro SET valor = ?, updated_at = CURRENT_TIMESTAMP WHERE codigo = ?";
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, nuevoValor);
+            pstmt.setString(2, codigo);
+            int filas = pstmt.executeUpdate();
+            return filas > 0;
+        } catch (SQLException e) {
+            System.err.println("Error al actualizar valor del parámetro: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
      * Eliminar un parámetro por su código
      * 
      * @param codigo código del parámetro

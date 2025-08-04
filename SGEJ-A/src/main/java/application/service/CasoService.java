@@ -9,10 +9,11 @@ import java.util.List;
 
 public class CasoService {
     private CasoDAO casoDAO;
+    private Connection conn;
 
     public CasoService() {
         try {
-            Connection conn = DatabaseConnection.getConnection();
+            this.conn = DatabaseConnection.getConnection();
             this.casoDAO = new CasoDAO(conn);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -20,6 +21,7 @@ public class CasoService {
     }
 
     public CasoService(Connection conn) {
+        this.conn = conn;
         this.casoDAO = new CasoDAO(conn);
     }
 
@@ -29,6 +31,47 @@ public class CasoService {
 
     public List<Caso> consultarCasos(String filtro) throws SQLException {
         return casoDAO.consultarCasos(filtro);
+    }
+
+    /**
+     * Busca casos por término para autocompletado
+     * 
+     * @param termino término de búsqueda
+     * @return lista de casos que coinciden con el término
+     */
+    public List<Caso> buscarCasosPorTermino(String termino) {
+        return casoDAO.buscarCasosPorTermino(termino);
+    }
+
+    /**
+     * Verifica si un caso pertenece a un cliente específico
+     * 
+     * @param numeroExpediente Número de expediente del caso
+     * @param clienteId        ID del cliente
+     * @return true si el caso pertenece al cliente, false en caso contrario
+     */
+    public boolean casoPertenecaACliente(String numeroExpediente, int clienteId) {
+        try {
+            if (this.conn == null || this.conn.isClosed()) {
+                this.conn = DatabaseConnection.getConnection();
+                this.casoDAO = new CasoDAO(conn);
+            }
+            return casoDAO.casoPertenecaACliente(numeroExpediente, clienteId);
+        } catch (SQLException e) {
+            System.err.println("Error al verificar si el caso pertenece al cliente: " + e.getMessage());
+            e.printStackTrace();
+            return true; // En caso de error, permitimos continuar (asumimos que pertenece)
+        }
+    }
+
+    /**
+     * Obtiene un caso por su número de expediente
+     * 
+     * @param numeroExpediente el número de expediente del caso
+     * @return el caso encontrado o null si no existe
+     */
+    public Caso obtenerCasoPorNumeroExpediente(String numeroExpediente) {
+        return casoDAO.obtenerCasoPorNumeroExpediente(numeroExpediente);
     }
 
     public void actualizarCaso(Caso caso) throws SQLException {

@@ -31,6 +31,9 @@ public class DatabaseInitializer {
             // Crear tabla de usuarios si no existe
             executeScript("/db/01_crear_tabla_usuarios.sql");
 
+            // Crear o recrear la tabla factura_detalle con la estructura correcta
+            executeScript("/database/crear_tabla_factura_detalle.sql");
+
             if (!tablaExiste) {
                 LOGGER.info("Tabla de parámetros no existe, ejecutando scripts de inicialización completa");
                 // Solo ejecutar estos scripts si la tabla no existe o es la primera vez
@@ -45,6 +48,28 @@ public class DatabaseInitializer {
             // Estos scripts se ejecutan siempre para asegurar datos correctos
             executeScript("/database/actualizar_categorias_parametros.sql");
             executeScript("/database/actualizar_idioma_sistema.sql");
+
+            // Actualizar estructura de la tabla factura para corregir nombres de columnas
+            executeScript("/database/actualizar_campos_factura.sql");
+
+            // Actualizar estructura de la tabla factura_detalle para añadir columna
+            // valor_subtotal
+            executeScript("/database/actualizar_estructura_factura_detalle.sql");
+
+            // Completar estructura de la tabla factura_detalle con todas las columnas
+            // necesarias
+            executeScript("/database/completar_estructura_factura_detalle.sql");
+
+            // Corregir nombres de columnas en la tabla factura (subtotal12 -> subtotal_12,
+            // etc.)
+            executeScript("/database/actualizar_columnas_factura.sql");
+
+            // Corregir estructura completa de la tabla factura para asegurar todas las
+            // columnas necesarias
+            executeScript("/database/corregir_estructura_factura.sql");
+
+            // Agregar la columna devolucion_iva que falta en la tabla factura
+            executeScript("/database/add_devolucion_iva_column.sql");
 
             // Limpiar tablas de respaldo y temporales siempre al final
             executeScript("/database/limpiar_tablas_backup.sql");

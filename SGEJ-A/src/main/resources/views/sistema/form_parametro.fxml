@@ -46,11 +46,9 @@
                 </columnConstraints>
                 
                 <!-- Código y Nombre -->
-                <Label text="Código:" GridPane.rowIndex="0" GridPane.columnIndex="0" 
-                       style="-fx-font-weight: bold; -fx-text-fill: #0000CC; -fx-font-size: 14px;"/>
-                <!-- Campo de código configurado para mostrar el texto claramente -->
+                <Label text="Código:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <!-- Campo de código sin estilos para evitar conflictos -->
                 <TextField fx:id="txt_Codigo" promptText="Código del parámetro" 
-                          style="-fx-background-color: #E8F5FE; -fx-text-fill: #0000CC; -fx-font-weight: bold;"
                           GridPane.rowIndex="1" GridPane.columnIndex="0" />
                 
                 <Label text="Nombre:" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
