@@ -8,7 +8,7 @@
 <ScrollPane fitToWidth="true" fitToHeight="true"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="application.controllers.facturacion.FormFacturaController"
+            fx:controller="application.controllers.factura.FormFacturaController"
             styleClass="scroll-form">
 
     <VBox spacing="24" styleClass="form-panel" alignment="TOP_LEFT">
@@ -21,6 +21,40 @@
                   text="GENERAR FACTURA"
                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
         </StackPane>
+        
+        <!-- Datos Generales -->
+        <TitledPane expanded="true" styleClass="titled-pane">
+            <graphic>
+                <Label text="    Datos Generales" textFill="white" style="-fx-font-weight: bold; -fx-font-size: 15px;" />
+            </graphic>
+            <GridPane hgap="20" vgap="12">
+                <columnConstraints>
+                    <ColumnConstraints prefWidth="250"/>
+                    <ColumnConstraints prefWidth="250"/>
+                </columnConstraints>
+
+                <Label text="Tipo de Documento:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="cbx_TipoDocumento" GridPane.rowIndex="0" GridPane.columnIndex="1" promptText="Seleccione el tipo" />
+
+                <Label text="Clave de Acceso:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_ClaveAcceso" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                <Label text="Número de Autorización:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_NumeroAutorizacion" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+
+                <Label text="Fecha y Hora de Autorización:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <HBox spacing="10" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                    <DatePicker fx:id="dtp_FechaAutorizacion" />
+                    <TextField fx:id="txtf_HoraAutorizacion" promptText="HH:MM" prefWidth="80" />
+                </HBox>
+
+                <Label text="Ambiente:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="cbx_Ambiente" GridPane.rowIndex="4" GridPane.columnIndex="1" promptText="Seleccione el ambiente" />
+
+                <Label text="Emisión:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="cbx_Emision" GridPane.rowIndex="5" GridPane.columnIndex="1" promptText="Seleccione el tipo de emisión" />
+            </GridPane>
+        </TitledPane>
 
         <!-- Datos del Emisor -->
         <TitledPane expanded="true" styleClass="titled-pane">
@@ -40,33 +74,42 @@
                 <TextField fx:id="txtf_RazonSocialEmisor" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
                 <Label text="Dirección Matriz:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_DireccionEmisor" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <TextField fx:id="txtf_DireccionMatriz" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                <Label text="Código Establecimiento:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_CodEstablecimiento" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                <Label text="Dirección Sucursal:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_DireccionSucursal" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-                <Label text="Código Punto Emisión:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_CodPuntoEmision" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                <Label text="Obligado a llevar contabilidad:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <ComboBox fx:id="cbx_ObligadoContabilidad" GridPane.rowIndex="4" GridPane.columnIndex="1" />
 
-                <Label text="Número Secuencial:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_Secuencial" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                <Label text="Código Establecimiento:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_CodEstablecimiento" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-                <Label text="Código Documento:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_CodigoDocumento" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                <Label text="Código Punto Emisión:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_CodPuntoEmision" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
 
-                <Label text="Fecha Emisión:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-                <DatePicker fx:id="dtp_FechaEmision" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                <Label text="Número Secuencial:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_Secuencial" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+                <Label text="Código Documento:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_CodigoDocumento" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+
+                <Label text="Fecha Emisión:" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+                <DatePicker fx:id="dtp_FechaEmision" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
             </GridPane>
         </TitledPane>
 
         <!-- Datos del Cliente -->
-        <TitledPane  expanded="true" styleClass="titled-pane">
+        <TitledPane expanded="true" styleClass="titled-pane">
             <graphic>
                 <Label text="    Datos del Cliente" textFill="white" style="-fx-font-weight: bold; -fx-font-size: 15px;" />
             </graphic>
             <GridPane hgap="20" vgap="12">
                 <Label text="Nombre / Razón Social:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_NombreCliente" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <HBox spacing="5" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                    <TextField fx:id="txtf_NombreCliente" HBox.hgrow="ALWAYS" prefWidth="200"/>
+                    <Button fx:id="btn_BuscarCliente" text="Buscar" />
+                </HBox>
 
                 <Label text="Número Identificación:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                 <TextField fx:id="txtf_IdCliente" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
@@ -76,88 +119,135 @@
 
                 <Label text="Dirección:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
                 <TextField fx:id="txtf_DirCliente" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                
+                <Label text="Teléfono:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_TelefonoCliente" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
-                <Label text="Correo Electrónico:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_EmailCliente" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                <Label text="Correo Electrónico:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_EmailCliente" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
             </GridPane>
         </TitledPane>
 
-        <!-- Detalles del Servicio -->
-        <TitledPane  expanded="true">
+        <!-- Servicios y Casos -->
+        <TitledPane expanded="true">
             <graphic>
-                <Label text="    Detalle de Servicios Legales" textFill="white" style="-fx-font-weight: bold; -fx-font-size: 15px;" />
+                <Label text="    Servicios Jurídicos y Casos" textFill="white" style="-fx-font-weight: bold; -fx-font-size: 15px;" />
             </graphic>
-            <GridPane hgap="20" vgap="12">
-                <Label text="Código Servicio:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_CodigoServicio" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+            <VBox spacing="10">
+                <!-- Sección del Caso -->
+                <TitledPane expanded="true" text="Información del Caso Legal" styleClass="sub-titled-pane">
+                    <GridPane hgap="20" vgap="12">
+                        <Label text="N° de Expediente:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <HBox spacing="5" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                            <TextField fx:id="txtf_NumExpediente" HBox.hgrow="ALWAYS" prefWidth="200"/>
+                            <Button fx:id="btn_BuscarCaso" text="Buscar Caso" />
+                        </HBox>
 
-                <Label text="Descripción:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_DescripcionServicio" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        <Label text="Nombre del Caso:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtf_NombreCaso" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                <Label text="Cantidad:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_Cantidad" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                        <Label text="Abogado Responsable:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtf_Abogado" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </TitledPane>
+                
+                <!-- Información del Servicio -->
+                <TitledPane expanded="true" text="Detalle del Servicio" styleClass="sub-titled-pane">
+                    <GridPane hgap="20" vgap="12">
+                        <Label text="Cantidad:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtf_Cantidad" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                <Label text="Tarifa por unidad:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_Tarifa" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                        <Label text="Código Principal:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtf_CodigoServicio" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                        
+                        <Label text="Código Auxiliar:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtf_CodigoAuxiliar" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                <Label text="Descuento:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_Descuento" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+                        <Label text="Descripción:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtf_DescripcionServicio" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-                <Label text="Subtotal del servicio:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_SubtotalServicio" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
-            </GridPane>
-        </TitledPane>
+                        <Label text="Precio Unitario:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtf_Tarifa" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
 
-        <!-- Datos del Caso -->
-        <TitledPane  expanded="true">
-            <graphic>
-                <Label text="    Información del Caso Legal" textFill="white" style="-fx-font-weight: bold; -fx-font-size: 15px;" />
-            </graphic>
-            <GridPane hgap="20" vgap="12">
-                <Label text="N° de Expediente:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_NumExpediente" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                        <Label text="Descuento (%):" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtf_Descuento" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
 
-                <Label text="Nombre del Caso:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_NombreCaso" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-
-                <Label text="Abogado Responsable:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_Abogado" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
-            </GridPane>
+                        <Label text="Precio Total:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                        <TextField fx:id="txtf_SubtotalServicio" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                    </GridPane>
+                </TitledPane>
+                
+                <!-- Botones para agregar/eliminar servicios -->
+                <HBox spacing="10" alignment="CENTER">
+                    <Button fx:id="btn_AgregarProducto" text="Agregar Servicio" />
+                    <Button fx:id="btn_EliminarProducto" text="Eliminar Seleccionado" />
+                </HBox>
+                
+                <!-- Tabla de servicios -->
+                <TableView fx:id="tbl_Productos" prefHeight="150">
+                    <columns>
+                        <TableColumn fx:id="col_Cantidad" text="Cantidad" />
+                        <TableColumn fx:id="col_Codigo" text="Código" />
+                        <TableColumn fx:id="col_Descripcion" text="Descripción" />
+                        <TableColumn fx:id="col_PrecioUnitario" text="P. Unitario" />
+                        <TableColumn fx:id="col_Descuento" text="Descuento" />
+                        <TableColumn fx:id="col_PrecioTotal" text="Total" />
+                    </columns>
+                </TableView>
+            </VBox>
         </TitledPane>
 
         <!-- Totales -->
-        <TitledPane  expanded="true">
+        <TitledPane expanded="true">
             <graphic>
-                <Label text="    Totales y Resumen" textFill="white" style="-fx-font-weight: bold; -fx-font-size: 15px;" />
+                <Label text="    Totales e Impuestos" textFill="white" style="-fx-font-weight: bold; -fx-font-size: 15px;" />
             </graphic>
             <GridPane hgap="20" vgap="12">
-                <Label text="Subtotal sin impuestos:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_Subtotal" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                <Label text="Subtotal (12%):" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_Subtotal12" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                <Label text="Total descuentos:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_TotalDescuento" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                <Label text="Subtotal (0%):" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_Subtotal0" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                <Label text="Valor IVA:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_Iva" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                <Label text="Subtotal no objeto de IVA:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_SubtotalNoObjetoIva" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
-                <Label text="Total Factura:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
-                <TextField fx:id="txtf_TotalFactura" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                <Label text="Subtotal exento de IVA:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_SubtotalExentoIva" GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+
+                <Label text="Subtotal sin impuestos:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_Subtotal" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+
+                <Label text="Total descuentos:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_TotalDescuento" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+
+                <Label text="Valor IVA:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_Iva" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+
+                <Label text="Total devolución IVA:" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_DevolucionIva" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+
+                <Label text="Propina:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_Propina" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+
+                <Label text="Total Factura:" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_TotalFactura" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
             </GridPane>
         </TitledPane>
 
-        <!-- Pagos -->
+        <!-- Formas de Pago -->
         <TitledPane expanded="true">
             <graphic>
                 <Label text="    Formas de Pago" textFill="white" style="-fx-font-weight: bold; -fx-font-size: 15px;" />
             </graphic>
             <GridPane hgap="20" vgap="12">
-                <Label text="Código Forma de Pago:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <Label text="Forma de Pago:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
                 <ComboBox fx:id="cbx_FormaPago" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
 
-                <Label text="Monto Pagado:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <Label text="Monto:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
                 <TextField fx:id="txtf_MontoPago" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-                <Label text="Plazo / Crédito:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <Label text="Plazo / Crédito (días):" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
                 <TextField fx:id="txtf_Plazo" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
 
                 <Label text="Estado de Factura:" GridPane.rowIndex="3" GridPane.columnIndex="0"/>
@@ -166,6 +256,23 @@
 
                 <Label text="¿Pago Realizado?:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
                 <CheckBox fx:id="chk_PagoRealizado" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
+            </GridPane>
+        </TitledPane>
+        
+        <!-- Subsidio -->
+        <TitledPane expanded="true">
+            <graphic>
+                <Label text="    Subsidio" textFill="white" style="-fx-font-weight: bold; -fx-font-size: 15px;" />
+            </graphic>
+            <GridPane hgap="20" vgap="12">
+                <Label text="Valor total sin subsidio:" GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_ValorSinSubsidio" GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                <Label text="Ahorro por subsidio:" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                <TextField fx:id="txtf_AhorroSubsidio" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                
+                <Label text="Mostrar subsidio en facturas:" GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                <CheckBox fx:id="chk_MostrarSubsidio" GridPane.rowIndex="2" GridPane.columnIndex="1"/>
             </GridPane>
         </TitledPane>
 

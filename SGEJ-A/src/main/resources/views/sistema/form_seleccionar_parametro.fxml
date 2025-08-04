@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx/24.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.administracion_sistema.FormSeleccionarParametroController"
+            prefWidth="440.0" prefHeight="500.0"
+            style="-fx-background-color: transparent;">
+
+    <VBox spacing="15" style="-fx-background-color: white; -fx-background-radius: 16; -fx-border-radius: 16; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 0, 3);"
+          AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0" 
+          AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+        
+        <!-- Título -->
+        <StackPane prefHeight="48" style="-fx-background-color: #2196f3; -fx-background-radius: 12;" alignment="CENTER">
+            <Label text="Añadir Parámetro Predefinido"
+                 style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        </StackPane>
+        
+        <!-- Descripción -->
+        <Label text="Seleccione uno de los parámetros predefinidos del sistema para activarlo:" 
+               wrapText="true" style="-fx-font-size: 13px;"/>
+
+        <!-- Filtro -->
+        <HBox spacing="10" alignment="CENTER_LEFT">
+            <Label text="Filtrar por categoría:" style="-fx-font-weight: bold;" />
+            <ComboBox fx:id="cmb_FiltroCategoria" prefWidth="200" />
+        </HBox>
+
+        <!-- Lista de parámetros con ScrollPane -->
+        <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
+            <content>
+                <ListView fx:id="lv_Parametros" VBox.vgrow="ALWAYS" 
+                          style="-fx-background-radius: 8; -fx-border-radius: 8; -fx-border-color: #e2e8f0;">
+                    <placeholder>
+                        <Label text="No hay parámetros disponibles para activar" />
+                    </placeholder>
+                </ListView>
+            </content>
+        </ScrollPane>
+        
+        <!-- Descripción del parámetro seleccionado -->
+        <VBox spacing="5" style="-fx-background-color: #f0f8ff; -fx-padding: 10; -fx-background-radius: 8;">
+            <Label text="Descripción del parámetro:" style="-fx-font-weight: bold;" />
+            <Label fx:id="lbl_Descripcion" text="Seleccione un parámetro para ver su descripción." 
+                   wrapText="true" />
+        </VBox>
+        
+        <!-- Botones -->
+        <HBox spacing="15" alignment="CENTER_RIGHT">
+            <Button fx:id="btn_Activar" text="Añadir Seleccionados" 
+                    style="-fx-background-color: #43a047; -fx-text-fill: white; -fx-font-weight: bold;" />
+            <Button fx:id="btn_Cancelar" text="Cancelar" 
+                    style="-fx-background-color: #e53935; -fx-text-fill: white; -fx-font-weight: bold;" />
+        </HBox>
+    </VBox>
+</AnchorPane>

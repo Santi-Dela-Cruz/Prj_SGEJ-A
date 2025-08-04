@@ -32,6 +32,9 @@
         <TextField fx:id="usernameField" promptText="Usuario" maxWidth="250"/>
         <PasswordField fx:id="passwordField" promptText="Contraseña" maxWidth="250"/>
         <ComboBox fx:id="userTypeBox" maxWidth="250" styleClass="combo-box"/>
+        <Label fx:id="errorLabel" text="" maxWidth="300" wrapText="true" 
+               style="-fx-text-fill: red; -fx-font-weight: bold; -fx-font-size: 14px; -fx-padding: 5px; -fx-background-color: #ffeeee; -fx-border-color: #ffaaaa; -fx-border-width: 1; -fx-border-radius: 3;" 
+               visible="false"/>
         <Button text="Ingresar" onAction="#handleLogin" maxWidth="100" styleClass="button-windows,button-windows-blue"/>
     </VBox>
 

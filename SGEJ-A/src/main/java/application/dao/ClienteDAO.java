@@ -16,6 +16,35 @@ import java.util.List;
 public class ClienteDAO {
 
     /**
+     * Buscar clientes por nombre o identificación (búsqueda incremental)
+     * 
+     * @param termino el término de búsqueda (parte del nombre o identificación)
+     * @return lista de clientes que coinciden con el término
+     */
+    public List<Cliente> buscarClientesPorTermino(String termino) {
+        String sql = "SELECT * FROM cliente WHERE nombre_completo LIKE ? OR numero_identificacion LIKE ? LIMIT 10";
+        List<Cliente> clientes = new ArrayList<>();
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, "%" + termino + "%");
+            pstmt.setString(2, "%" + termino + "%");
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    Cliente cliente = mapearClienteDesdeResultSet(rs);
+                    clientes.add(cliente);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return clientes;
+    }
+
+    /**
      * Insertar un nuevo cliente en la base de datos
      * 
      * @param cliente el cliente a insertar
@@ -121,7 +150,7 @@ public class ClienteDAO {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return mapearResultSetACliente(rs);
+                return mapearClienteDesdeResultSet(rs);
             }
 
         } catch (SQLException e) {
@@ -148,7 +177,7 @@ public class ClienteDAO {
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                return mapearResultSetACliente(rs);
+                return mapearClienteDesdeResultSet(rs);
             }
 
         } catch (SQLException e) {
@@ -173,7 +202,7 @@ public class ClienteDAO {
                 ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
-                clientes.add(mapearResultSetACliente(rs));
+                clientes.add(mapearClienteDesdeResultSet(rs));
             }
 
         } catch (SQLException e) {
@@ -201,7 +230,7 @@ public class ClienteDAO {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                clientes.add(mapearResultSetACliente(rs));
+                clientes.add(mapearClienteDesdeResultSet(rs));
             }
 
         } catch (SQLException e) {
@@ -229,7 +258,7 @@ public class ClienteDAO {
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
-                clientes.add(mapearResultSetACliente(rs));
+                clientes.add(mapearClienteDesdeResultSet(rs));
             }
 
         } catch (SQLException e) {
@@ -274,7 +303,7 @@ public class ClienteDAO {
      * @return el objeto Cliente mapeado
      * @throws SQLException si hay error en el mapeo
      */
-    private Cliente mapearResultSetACliente(ResultSet rs) throws SQLException {
+    private Cliente mapearClienteDesdeResultSet(ResultSet rs) throws SQLException {
         Cliente cliente = new Cliente();
 
         cliente.setId(rs.getInt("id"));

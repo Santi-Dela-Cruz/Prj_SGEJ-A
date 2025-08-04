@@ -20,6 +20,16 @@ public class ClienteService {
     }
 
     /**
+     * Buscar clientes por término para autocompletado
+     * 
+     * @param termino término de búsqueda
+     * @return lista de clientes que coinciden con el término
+     */
+    public List<Cliente> buscarClientesPorTermino(String termino) {
+        return clienteDAO.buscarClientesPorTermino(termino);
+    }
+
+    /**
      * Registrar un nuevo cliente
      * 
      * @param cliente el cliente a registrar

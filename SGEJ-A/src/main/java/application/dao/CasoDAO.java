@@ -1,5 +1,6 @@
 package application.dao;
 
+import application.database.DatabaseConnection;
 import application.model.Caso;
 import java.sql.*;
 import java.util.ArrayList;
@@ -10,6 +11,47 @@ public class CasoDAO {
 
     public CasoDAO(Connection conn) {
         this.conn = conn;
+    }
+
+    public CasoDAO() {
+        // Constructor sin parámetros para obtener la conexión al momento de usarla
+    }
+
+    /**
+     * Busca casos por término incremental
+     * 
+     * @param termino el término de búsqueda (parte del título, número de expediente
+     *                o descripción)
+     * @return lista de casos que coinciden con el término
+     */
+    public List<Caso> buscarCasosPorTermino(String termino) {
+        List<Caso> casos = new ArrayList<>();
+        String sql = "SELECT * FROM caso WHERE titulo LIKE ? OR numero_expediente LIKE ? OR descripcion LIKE ? LIMIT 10";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + termino + "%");
+            stmt.setString(2, "%" + termino + "%");
+            stmt.setString(3, "%" + termino + "%");
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Caso caso = new Caso();
+                    caso.setId(rs.getInt("id"));
+                    caso.setClienteId(rs.getInt("cliente_id"));
+                    caso.setNumeroExpediente(rs.getString("numero_expediente"));
+                    caso.setTitulo(rs.getString("titulo"));
+                    caso.setTipo(rs.getString("tipo"));
+                    caso.setFechaInicio(rs.getDate("fecha_inicio"));
+                    caso.setDescripcion(rs.getString("descripcion"));
+                    caso.setEstado(rs.getString("estado"));
+                    casos.add(caso);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return casos;
     }
 
     public void insertarCaso(Caso caso) throws SQLException {
@@ -65,6 +107,71 @@ public class CasoDAO {
             stmt.setInt(5, caso.getId());
             stmt.executeUpdate();
         }
+    }
+
+    /**
+     * Verifica si un caso pertenece a un cliente específico
+     * 
+     * @param numeroExpediente Número de expediente del caso
+     * @param clienteId        ID del cliente
+     * @return true si el caso pertenece al cliente, false en caso contrario
+     * @throws SQLException si ocurre un error al consultar la base de datos
+     */
+    public boolean casoPertenecaACliente(String numeroExpediente, int clienteId) throws SQLException {
+        if (conn == null || conn.isClosed()) {
+            conn = DatabaseConnection.getConnection();
+        }
+
+        String sql = "SELECT COUNT(*) FROM caso WHERE numero_expediente = ? AND cliente_id = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, numeroExpediente);
+            stmt.setInt(2, clienteId);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al verificar si el caso pertenece al cliente: " + e.getMessage());
+            throw e;
+        }
+
+        return false;
+    }
+
+    /**
+     * Obtiene un caso por su número de expediente
+     * 
+     * @param numeroExpediente el número de expediente del caso
+     * @return el caso encontrado o null si no existe
+     */
+    public Caso obtenerCasoPorNumeroExpediente(String numeroExpediente) {
+        String sql = "SELECT * FROM caso WHERE numero_expediente = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, numeroExpediente);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    Caso caso = new Caso();
+                    caso.setId(rs.getInt("id"));
+                    caso.setClienteId(rs.getInt("cliente_id"));
+                    caso.setNumeroExpediente(rs.getString("numero_expediente"));
+                    caso.setTitulo(rs.getString("titulo"));
+                    caso.setTipo(rs.getString("tipo"));
+                    caso.setFechaInicio(rs.getDate("fecha_inicio"));
+                    caso.setDescripcion(rs.getString("descripcion"));
+                    caso.setEstado(rs.getString("estado"));
+                    return caso;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     // Otros métodos según necesidades
