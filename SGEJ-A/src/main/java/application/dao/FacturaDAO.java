@@ -11,8 +11,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -430,7 +433,7 @@ public class FacturaDAO {
      * @param facturaId ID de la factura
      * @return Lista de detalles de la factura
      */
-    private List<FacturaDetalle> obtenerDetallesPorFacturaId(int facturaId) {
+    public List<FacturaDetalle> obtenerDetallesPorFacturaId(int facturaId) {
         String sql = "SELECT * FROM factura_detalle WHERE factura_id = ?";
         List<FacturaDetalle> detalles = new ArrayList<>();
 
@@ -588,10 +591,7 @@ public class FacturaDAO {
         factura.setClaveAcceso(rs.getString("clave_acceso"));
         factura.setNumeroAutorizacion(rs.getString("numero_autorizacion"));
 
-        Timestamp fechaAutorizacion = rs.getTimestamp("fecha_autorizacion");
-        if (fechaAutorizacion != null) {
-            factura.setFechaAutorizacion(fechaAutorizacion.toLocalDateTime());
-        }
+        factura.setFechaAutorizacion(obtenerLocalDateTime(rs, "fecha_autorizacion"));
 
         factura.setAmbiente(rs.getString("ambiente"));
         factura.setEmision(rs.getString("emision"));
@@ -605,10 +605,7 @@ public class FacturaDAO {
         factura.setSecuencial(rs.getString("secuencial"));
         factura.setCodigoDocumento(rs.getString("codigo_documento"));
 
-        Date fechaEmision = rs.getDate("fecha_emision");
-        if (fechaEmision != null) {
-            factura.setFechaEmision(fechaEmision.toLocalDate());
-        }
+        factura.setFechaEmision(obtenerLocalDate(rs, "fecha_emision"));
 
         factura.setNombreCliente(rs.getString("nombre_cliente"));
         factura.setIdCliente(rs.getString("id_cliente"));
@@ -641,23 +638,11 @@ public class FacturaDAO {
         factura.setEstadoSRI(rs.getString("estado_sri"));
         factura.setRespuestaSRI(rs.getString("respuesta_sri"));
 
-        Timestamp fechaRespuestaSRI = rs.getTimestamp("fecha_respuesta_sri");
-        if (fechaRespuestaSRI != null) {
-            factura.setFechaRespuestaSRI(fechaRespuestaSRI.toLocalDateTime());
-        }
-
+        factura.setFechaRespuestaSRI(obtenerLocalDateTime(rs, "fecha_respuesta_sri"));
         factura.setUsuarioCreacion(rs.getString("usuario_creacion"));
         factura.setUsuarioModificacion(rs.getString("usuario_modificacion"));
-
-        Timestamp createdAt = rs.getTimestamp("created_at");
-        if (createdAt != null) {
-            factura.setCreatedAt(createdAt.toLocalDateTime());
-        }
-
-        Timestamp updatedAt = rs.getTimestamp("updated_at");
-        if (updatedAt != null) {
-            factura.setUpdatedAt(updatedAt.toLocalDateTime());
-        }
+        factura.setCreatedAt(obtenerLocalDateTime(rs, "created_at"));
+        factura.setUpdatedAt(obtenerLocalDateTime(rs, "updated_at"));
 
         return factura;
     }
@@ -684,17 +669,112 @@ public class FacturaDAO {
         detalle.setUsuarioCreacion(rs.getString("usuario_creacion"));
         detalle.setUsuarioModificacion(rs.getString("usuario_modificacion"));
 
-        Timestamp createdAt = rs.getTimestamp("created_at");
-        if (createdAt != null) {
-            detalle.setCreatedAt(createdAt.toLocalDateTime());
-        }
-
-        Timestamp updatedAt = rs.getTimestamp("updated_at");
-        if (updatedAt != null) {
-            detalle.setUpdatedAt(updatedAt.toLocalDateTime());
-        }
+        detalle.setCreatedAt(obtenerLocalDateTime(rs, "created_at"));
+        detalle.setUpdatedAt(obtenerLocalDateTime(rs, "updated_at"));
 
         return detalle;
+    }
+    
+    /**
+     * Método auxiliar para obtener un LocalDateTime de manera segura desde un ResultSet
+     * Maneja casos donde la fecha está almacenada como timestamp, string o número
+     */
+    private LocalDateTime obtenerLocalDateTime(ResultSet rs, String columnName) {
+        try {
+            // Intentar directamente como String primero
+            String value = rs.getString(columnName);
+            if (value == null || value.isEmpty()) {
+                return null;
+            }
+            
+            // Verificar si es un timestamp Unix (milisegundos)
+            if (value.matches("\\d+")) {
+                try {
+                    long timeMillis = Long.parseLong(value);
+                    return Instant.ofEpochMilli(timeMillis)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDateTime();
+                } catch (Exception e) {
+                    // Suprimir errores de conversión y continuar
+                }
+            }
+            
+            // Intentar parsear como Timestamp usando getString
+            try {
+                Timestamp timestamp = rs.getTimestamp(columnName);
+                if (timestamp != null) {
+                    return timestamp.toLocalDateTime();
+                }
+            } catch (SQLException e) {
+                // Suprimir esta excepción específica y continuar
+            }
+            
+            // Intentar parsear como ISO fecha-hora
+            try {
+                return LocalDateTime.parse(value);
+            } catch (DateTimeParseException e) {
+                // Suprimir el log para no llenar el log con errores esperados
+            }
+        } catch (SQLException e) {
+            // Suprimir el log para reducir el ruido en la consola
+        }
+        
+        // Si todos los intentos fallan, devolver null
+        return null;
+    }
+    
+    /**
+     * Método auxiliar para obtener un LocalDate de manera segura desde un ResultSet
+     * Maneja casos donde la fecha está almacenada como Date, string o número
+     */
+    private LocalDate obtenerLocalDate(ResultSet rs, String columnName) {
+        try {
+            // Intentar directamente como String primero para evitar excepciones
+            String value = rs.getString(columnName);
+            if (value == null || value.isEmpty()) {
+                return null;
+            }
+            
+            // Verificar si es un timestamp Unix (milisegundos)
+            if (value.matches("\\d+")) {
+                try {
+                    long timeMillis = Long.parseLong(value);
+                    return Instant.ofEpochMilli(timeMillis)
+                        .atZone(ZoneId.systemDefault())
+                        .toLocalDate();
+                } catch (Exception e) {
+                    // Suprimir errores de conversión
+                }
+            }
+            
+            // Intentar como Date solo después de verificar que no es un timestamp
+            try {
+                Date date = rs.getDate(columnName);
+                if (date != null) {
+                    return date.toLocalDate();
+                }
+            } catch (SQLException e) {
+                // Suprimir esta excepción específica y continuar
+            }
+            
+            // Intentar parsear como ISO fecha
+            try {
+                return LocalDate.parse(value);
+            } catch (DateTimeParseException e) {
+                // Si falla, intentar extraer la fecha de un LocalDateTime
+                try {
+                    LocalDateTime dateTime = LocalDateTime.parse(value);
+                    return dateTime.toLocalDate();
+                } catch (DateTimeParseException e2) {
+                    // Suprimir mensajes de log para no llenar la consola
+                }
+            }
+        } catch (SQLException e) {
+            // Suprimir el log para reducir el ruido en la consola
+        }
+        
+        // Si todos los métodos fallan, devolver null
+        return null;
     }
 
     /**
@@ -759,5 +839,44 @@ public class FacturaDAO {
 
             LOGGER.info("Tablas de factura creadas exitosamente");
         }
+    }
+    
+    /**
+     * Busca facturas por texto en diferentes campos
+     * 
+     * @param termino Término de búsqueda
+     * @return Lista de facturas que coinciden con la búsqueda
+     */
+    public List<Factura> buscar(String termino) {
+        String sql = "SELECT * FROM factura " +
+                     "WHERE nombre_cliente LIKE ? " +
+                     "OR secuencial LIKE ? " +
+                     "OR id_cliente LIKE ? " +
+                     "OR numero_expediente LIKE ? " +
+                     "OR nombre_caso LIKE ? " +
+                     "ORDER BY fecha_emision DESC";
+
+        List<Factura> facturas = new ArrayList<>();
+        String parametro = "%" + termino + "%";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+            pstmt.setString(1, parametro);
+            pstmt.setString(2, parametro);
+            pstmt.setString(3, parametro);
+            pstmt.setString(4, parametro);
+            pstmt.setString(5, parametro);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    facturas.add(mapearFactura(rs));
+                }
+            }
+        } catch (SQLException e) {
+            LOGGER.log(Level.SEVERE, "Error al buscar facturas con término: " + termino, e);
+        }
+
+        return facturas;
     }
 }

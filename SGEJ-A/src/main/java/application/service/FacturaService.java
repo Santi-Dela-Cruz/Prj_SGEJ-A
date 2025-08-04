@@ -264,6 +264,19 @@ public class FacturaService {
             String cliente, String estado, String expediente) {
         return facturaDAO.buscarFacturas(fechaDesde, fechaHasta, cliente, estado, expediente);
     }
+    
+    /**
+     * Busca facturas por un término genérico (en varios campos)
+     * 
+     * @param termino Término a buscar
+     * @return Lista de facturas que coinciden con el término
+     */
+    public List<Factura> buscarFacturas(String termino) {
+        if (termino == null || termino.trim().isEmpty()) {
+            return obtenerTodasLasFacturas();
+        }
+        return facturaDAO.buscar(termino);
+    }
 
     /**
      * Genera el próximo número secuencial de factura

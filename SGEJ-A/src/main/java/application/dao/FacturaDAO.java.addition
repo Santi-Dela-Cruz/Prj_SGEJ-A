@@ -1,0 +1,441 @@
+/**
+ * Obtiene todas las facturas de la base de datos
+ * 
+ * @return Lista de facturas
+ */
+public List<Factura> obtenerTodas() {
+    List<Factura> facturas = new ArrayList<>();
+    String sql = "SELECT * FROM factura ORDER BY fecha_emision DESC";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)) {
+
+        while (rs.next()) {
+            Factura factura = mapearFactura(rs);
+            facturas.add(factura);
+        }
+
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Error al obtener todas las facturas", e);
+    }
+
+    return facturas;
+}
+
+/**
+ * Obtiene una factura por su ID
+ * 
+ * @param id ID de la factura
+ * @return Factura encontrada o null
+ */
+public Factura obtenerPorId(int id) {
+    String sql = "SELECT * FROM factura WHERE id = ?";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setInt(1, id);
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                Factura factura = mapearFactura(rs);
+                
+                // Obtener los detalles de la factura
+                factura.setDetalles(obtenerDetallesPorFacturaId(id));
+                
+                return factura;
+            }
+        }
+
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Error al obtener factura por ID: " + id, e);
+    }
+
+    return null;
+}
+
+/**
+ * Obtiene los detalles de una factura
+ * 
+ * @param facturaId ID de la factura
+ * @return Lista de detalles
+ */
+public List<FacturaDetalle> obtenerDetallesPorFacturaId(int facturaId) {
+    List<FacturaDetalle> detalles = new ArrayList<>();
+    String sql = "SELECT * FROM factura_detalle WHERE factura_id = ?";
+
+    try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+        pstmt.setInt(1, facturaId);
+
+        try (ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                FacturaDetalle detalle = mapearFacturaDetalle(rs);
+                detalles.add(detalle);
+            }
+        }
+
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Error al obtener detalles por factura ID: " + facturaId, e);
+    }
+
+    return detalles;
+}
+
+/**
+ * Mapea un ResultSet a un objeto FacturaDetalle
+ * 
+ * @param rs ResultSet
+ * @return Objeto FacturaDetalle
+ * @throws SQLException si hay un error al mapear
+ */
+private FacturaDetalle mapearFacturaDetalle(ResultSet rs) throws SQLException {
+    FacturaDetalle detalle = new FacturaDetalle();
+    detalle.setId(rs.getInt("id"));
+    detalle.setFacturaId(rs.getInt("factura_id"));
+    detalle.setCodigoServicio(rs.getInt("codigo_servicio"));
+    detalle.setCodigoAuxiliar(rs.getString("codigo_auxiliar"));
+    detalle.setDescripcion(rs.getString("descripcion"));
+    detalle.setCantidad(rs.getBigDecimal("cantidad"));
+    detalle.setPrecioUnitario(rs.getBigDecimal("precio_unitario"));
+    detalle.setDescuento(rs.getBigDecimal("descuento"));
+    
+    // Manejar campos que podrían no existir en todas las versiones de la tabla
+    try {
+        detalle.setValorSubtotal(rs.getBigDecimal("valor_subtotal"));
+    } catch (SQLException e) {
+        // Calcular subtotal si no existe el campo
+        BigDecimal subtotal = detalle.getCantidad().multiply(detalle.getPrecioUnitario()).subtract(detalle.getDescuento());
+        detalle.setValorSubtotal(subtotal);
+    }
+    
+    try {
+        detalle.setCodigoImpuesto(rs.getString("codigo_impuesto"));
+    } catch (SQLException e) {
+        detalle.setCodigoImpuesto("");
+    }
+    
+    try {
+        detalle.setCodigoTarifaIva(rs.getString("codigo_tarifa_iva"));
+    } catch (SQLException e) {
+        detalle.setCodigoTarifaIva("");
+    }
+    
+    try {
+        detalle.setPorcentajeIva(rs.getBigDecimal("porcentaje_iva"));
+    } catch (SQLException e) {
+        detalle.setPorcentajeIva(BigDecimal.ZERO);
+    }
+    
+    try {
+        detalle.setValorIva(rs.getBigDecimal("valor_iva"));
+    } catch (SQLException e) {
+        detalle.setValorIva(BigDecimal.ZERO);
+    }
+    
+    try {
+        detalle.setTipoImpuesto(rs.getString("tipo_impuesto"));
+    } catch (SQLException e) {
+        detalle.setTipoImpuesto("IVA_0");
+    }
+    
+    try {
+        detalle.setUsuarioCreacion(rs.getString("usuario_creacion"));
+        detalle.setUsuarioModificacion(rs.getString("usuario_modificacion"));
+    } catch (SQLException e) {
+        // Ignorar estos campos si no existen
+    }
+
+    return detalle;
+}
+
+/**
+ * Mapea un ResultSet a un objeto Factura
+ * 
+ * @param rs ResultSet
+ * @return Objeto Factura
+ * @throws SQLException si hay un error al mapear
+ */
+private Factura mapearFactura(ResultSet rs) throws SQLException {
+    Factura factura = new Factura();
+    
+    factura.setId(rs.getInt("id"));
+    
+    try {
+        factura.setTipoDocumento(rs.getString("tipo_documento"));
+    } catch (SQLException e) {
+        factura.setTipoDocumento("FACTURA");
+    }
+    
+    try {
+        factura.setClaveAcceso(rs.getString("clave_acceso"));
+    } catch (SQLException e) {
+        factura.setClaveAcceso("");
+    }
+    
+    try {
+        factura.setNumeroAutorizacion(rs.getString("numero_autorizacion"));
+    } catch (SQLException e) {
+        factura.setNumeroAutorizacion("");
+    }
+    
+    // Mapear fechas
+    try {
+        Timestamp fechaAut = rs.getTimestamp("fecha_autorizacion");
+        if (fechaAut != null) {
+            factura.setFechaAutorizacion(fechaAut.toLocalDateTime());
+        }
+    } catch (SQLException e) {
+        // Ignorar si no existe
+    }
+    
+    try {
+        factura.setAmbiente(rs.getString("ambiente"));
+    } catch (SQLException e) {
+        factura.setAmbiente("1"); // 1 = PRUEBAS
+    }
+    
+    try {
+        factura.setEmision(rs.getString("emision"));
+    } catch (SQLException e) {
+        factura.setEmision("NORMAL");
+    }
+    
+    // Datos del emisor
+    try {
+        factura.setRucEmisor(rs.getString("ruc_emisor"));
+        factura.setRazonSocialEmisor(rs.getString("razon_social_emisor"));
+        factura.setDireccionMatriz(rs.getString("direccion_matriz"));
+        factura.setDireccionSucursal(rs.getString("direccion_sucursal"));
+        factura.setObligadoContabilidad(rs.getBoolean("obligado_contabilidad"));
+    } catch (SQLException e) {
+        // Asignar valores por defecto si no existen
+    }
+    
+    // Datos del documento
+    try {
+        factura.setCodigoEstablecimiento(rs.getString("codigo_establecimiento"));
+        factura.setCodigoPuntoEmision(rs.getString("codigo_punto_emision"));
+        factura.setSecuencial(rs.getString("secuencial"));
+        factura.setCodigoDocumento(rs.getString("codigo_documento"));
+    } catch (SQLException e) {
+        // Asignar valores por defecto si no existen
+    }
+    
+    // Fecha emisión
+    try {
+        Date fechaEmision = rs.getDate("fecha_emision");
+        if (fechaEmision != null) {
+            factura.setFechaEmision(fechaEmision.toLocalDate());
+        }
+    } catch (SQLException e) {
+        // Ignorar si no existe
+    }
+    
+    // Datos del cliente
+    try {
+        factura.setNombreCliente(rs.getString("nombre_cliente"));
+        factura.setIdCliente(rs.getString("id_cliente"));
+        factura.setTipoIdentificacion(rs.getString("tipo_identificacion"));
+        factura.setDireccionCliente(rs.getString("direccion_cliente"));
+        factura.setTelefonoCliente(rs.getString("telefono_cliente"));
+        factura.setEmailCliente(rs.getString("email_cliente"));
+    } catch (SQLException e) {
+        // Asignar valores por defecto si no existen
+    }
+    
+    // Caso relacionado
+    try {
+        factura.setNumeroExpediente(rs.getString("numero_expediente"));
+        factura.setNombreCaso(rs.getString("nombre_caso"));
+        factura.setAbogadoResponsable(rs.getString("abogado_responsable"));
+    } catch (SQLException e) {
+        // Asignar valores por defecto si no existen
+    }
+    
+    // Totales
+    try {
+        factura.setSubtotal12(rs.getBigDecimal("subtotal12"));
+        factura.setSubtotal0(rs.getBigDecimal("subtotal0"));
+        factura.setSubtotalNoObjetoIva(rs.getBigDecimal("subtotal_no_objeto_iva"));
+        factura.setSubtotalExentoIva(rs.getBigDecimal("subtotal_exento_iva"));
+        factura.setSubtotalSinImpuestos(rs.getBigDecimal("subtotal_sin_impuestos"));
+        factura.setTotalDescuento(rs.getBigDecimal("total_descuento"));
+        factura.setValorIva(rs.getBigDecimal("valor_iva"));
+        factura.setPorcentajeIva(rs.getBigDecimal("porcentaje_iva"));
+        factura.setPropina(rs.getBigDecimal("propina"));
+        factura.setValorTotal(rs.getBigDecimal("valor_total"));
+    } catch (SQLException e) {
+        // Asignar valores por defecto si no existen
+    }
+    
+    try {
+        factura.setDevolucionIva(rs.getBigDecimal("devolucion_iva"));
+    } catch (SQLException e) {
+        factura.setDevolucionIva(BigDecimal.ZERO);
+    }
+    
+    // Subsidio
+    try {
+        factura.setValorSinSubsidio(rs.getBigDecimal("valor_sin_subsidio"));
+        factura.setAhorroSubsidio(rs.getBigDecimal("ahorro_subsidio"));
+    } catch (SQLException e) {
+        // Asignar valores por defecto si no existen
+    }
+    
+    // Pago
+    try {
+        factura.setFormaPago(rs.getString("forma_pago"));
+        factura.setMontoPago(rs.getBigDecimal("monto_pago"));
+        factura.setPlazo(rs.getInt("plazo"));
+        factura.setEstadoFactura(rs.getString("estado_factura"));
+        factura.setPagoRealizado(rs.getBoolean("pago_realizado"));
+    } catch (SQLException e) {
+        // Asignar valores por defecto si no existen
+    }
+    
+    // SRI
+    try {
+        factura.setEstadoSRI(rs.getString("estado_sri"));
+        factura.setRespuestaSRI(rs.getString("respuesta_sri"));
+        
+        Timestamp fechaRespuesta = rs.getTimestamp("fecha_respuesta_sri");
+        if (fechaRespuesta != null) {
+            factura.setFechaRespuestaSRI(fechaRespuesta.toLocalDateTime());
+        }
+    } catch (SQLException e) {
+        // Asignar valores por defecto si no existen
+    }
+    
+    // Auditoría
+    try {
+        factura.setUsuarioCreacion(rs.getString("usuario_creacion"));
+        factura.setUsuarioModificacion(rs.getString("usuario_modificacion"));
+        
+        Timestamp createdAt = rs.getTimestamp("created_at");
+        if (createdAt != null) {
+            factura.setCreatedAt(createdAt.toLocalDateTime());
+        }
+        
+        Timestamp updatedAt = rs.getTimestamp("updated_at");
+        if (updatedAt != null) {
+            factura.setUpdatedAt(updatedAt.toLocalDateTime());
+        }
+    } catch (SQLException e) {
+        // Ignorar si no existen
+    }
+    
+    return factura;
+}
+
+/**
+ * Busca facturas por un término genérico
+ * 
+ * @param termino Término de búsqueda
+ * @return Lista de facturas que coincidan con el término
+ */
+public List<Factura> buscar(String termino) {
+    List<Factura> facturas = new ArrayList<>();
+    String sql = "SELECT DISTINCT f.* FROM factura f " +
+                 "LEFT JOIN factura_detalle d ON f.id = d.factura_id " +
+                 "WHERE f.secuencial LIKE ? OR " +
+                 "f.nombre_cliente LIKE ? OR " +
+                 "f.id_cliente LIKE ? OR " +
+                 "f.numero_expediente LIKE ? OR " +
+                 "f.estado_factura LIKE ? OR " +
+                 "d.descripcion LIKE ? " +
+                 "ORDER BY f.fecha_emision DESC";
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql)) {
+        
+        String busqueda = "%" + termino + "%";
+        pstmt.setString(1, busqueda);
+        pstmt.setString(2, busqueda);
+        pstmt.setString(3, busqueda);
+        pstmt.setString(4, busqueda);
+        pstmt.setString(5, busqueda);
+        pstmt.setString(6, busqueda);
+        
+        try (ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Factura factura = mapearFactura(rs);
+                facturas.add(factura);
+            }
+        }
+        
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Error al buscar facturas con término: " + termino, e);
+    }
+    
+    return facturas;
+}
+
+/**
+ * Busca facturas según filtros específicos
+ * 
+ * @param fechaDesde Fecha desde
+ * @param fechaHasta Fecha hasta
+ * @param cliente Cliente
+ * @param estado Estado de la factura
+ * @param expediente Número de expediente
+ * @return Lista de facturas que coincidan con los filtros
+ */
+public List<Factura> buscarFacturas(LocalDate fechaDesde, LocalDate fechaHasta, 
+                                    String cliente, String estado, String expediente) {
+    List<Factura> facturas = new ArrayList<>();
+    StringBuilder sql = new StringBuilder("SELECT * FROM factura WHERE 1=1");
+    List<Object> parametros = new ArrayList<>();
+    
+    // Aplicar filtros
+    if (fechaDesde != null) {
+        sql.append(" AND fecha_emision >= ?");
+        parametros.add(Date.valueOf(fechaDesde));
+    }
+    
+    if (fechaHasta != null) {
+        sql.append(" AND fecha_emision <= ?");
+        parametros.add(Date.valueOf(fechaHasta));
+    }
+    
+    if (cliente != null && !cliente.isEmpty()) {
+        sql.append(" AND (nombre_cliente LIKE ? OR id_cliente LIKE ?)");
+        parametros.add("%" + cliente + "%");
+        parametros.add("%" + cliente + "%");
+    }
+    
+    if (estado != null && !estado.isEmpty()) {
+        sql.append(" AND estado_factura = ?");
+        parametros.add(estado);
+    }
+    
+    if (expediente != null && !expediente.isEmpty()) {
+        sql.append(" AND numero_expediente LIKE ?");
+        parametros.add("%" + expediente + "%");
+    }
+    
+    sql.append(" ORDER BY fecha_emision DESC");
+    
+    try (Connection conn = DatabaseConnection.getConnection();
+            PreparedStatement pstmt = conn.prepareStatement(sql.toString())) {
+        
+        // Establecer parámetros
+        for (int i = 0; i < parametros.size(); i++) {
+            pstmt.setObject(i + 1, parametros.get(i));
+        }
+        
+        try (ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Factura factura = mapearFactura(rs);
+                facturas.add(factura);
+            }
+        }
+        
+    } catch (SQLException e) {
+        LOGGER.log(Level.SEVERE, "Error al buscar facturas con filtros", e);
+    }
+    
+    return facturas;
+}

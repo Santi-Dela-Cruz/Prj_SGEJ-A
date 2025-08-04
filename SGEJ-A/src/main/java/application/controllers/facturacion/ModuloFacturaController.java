@@ -1,14 +1,25 @@
 package application.controllers.facturacion;
 
 import application.controllers.factura.FormFacturaController;
+import application.model.Factura;
+import application.service.FacturaService;
+
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+
 import java.io.IOException;
+import java.text.NumberFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ModuloFacturaController {
 
@@ -20,28 +31,28 @@ public class ModuloFacturaController {
     private TextField txt_Busqueda;
 
     @FXML
-    private TableView<FacturaDemo> tb_Facturas;
+    private TableView<Factura> tb_Facturas;
     @FXML
-    private TableColumn<FacturaDemo, String> tbc_NumeroFactura;
+    private TableColumn<Factura, String> tbc_NumeroFactura;
     @FXML
-    private TableColumn<FacturaDemo, String> tbc_FechaEmision;
+    private TableColumn<Factura, String> tbc_FechaEmision;
     @FXML
-    private TableColumn<FacturaDemo, String> tbc_NombreCliente;
+    private TableColumn<Factura, String> tbc_NombreCliente;
     @FXML
-    private TableColumn<FacturaDemo, String> tbc_NumExpediente;
+    private TableColumn<Factura, String> tbc_NumExpediente;
     @FXML
-    private TableColumn<FacturaDemo, String> tbc_Total;
+    private TableColumn<Factura, String> tbc_Total;
     @FXML
-    private TableColumn<FacturaDemo, String> tbc_EstadoFactura;
+    private TableColumn<Factura, String> tbc_EstadoFactura;
     @FXML
-    private TableColumn<FacturaDemo, String> tbc_PagoRealizado;
+    private TableColumn<Factura, String> tbc_PagoRealizado;
 
     @FXML
-    private TableColumn<FacturaDemo, Void> tbc_BotonEditar;
+    private TableColumn<Factura, Void> tbc_BotonEditar;
     @FXML
-    private TableColumn<FacturaDemo, Void> tbc_BotonVer;
+    private TableColumn<Factura, Void> tbc_BotonVer;
     @FXML
-    private TableColumn<FacturaDemo, Void> tbc_BotonDescargar;
+    private TableColumn<Factura, Void> tbc_BotonDescargar;
 
     private Pane pnl_Forms;
 
@@ -49,28 +60,51 @@ public class ModuloFacturaController {
         this.pnl_Forms = pnl_Forms;
     }
 
+    private FacturaService facturaService;
+    
     @FXML
+    @SuppressWarnings("unused")
     private void initialize() {
-        btn_Nuevo.setOnAction(e -> mostrarFormulario(null, "NUEVO"));
+        facturaService = new FacturaService();
+        
+        btn_Nuevo.setOnAction(__ -> mostrarFormulario(null, "NUEVO"));
+        btn_Buscar.setOnAction(__ -> buscarFacturas());
 
         configurarColumnasTexto();
         inicializarColumnasDeBotones();
-        cargarDatosEjemplo();
+        cargarDatosDesdeBD();
         ocultarEncabezadosColumnasDeAccion();
     }
+    
+    private void buscarFacturas() {
+        String termino = txt_Busqueda.getText().trim();
+        List<Factura> facturas = facturaService.buscarFacturas(termino);
+        
+        tb_Facturas.setItems(FXCollections.observableArrayList(facturas));
+    }
 
+    @SuppressWarnings("unused")
     private void ocultarEncabezadosColumnasDeAccion() {
-        tb_Facturas.widthProperty().addListener((obs, oldVal, newVal) -> {
+        tb_Facturas.widthProperty().addListener((__, ___, ____) -> {
             Node header = tb_Facturas.lookup("TableHeaderRow");
             if (header != null)
                 header.setVisible(true);
         });
     }
 
-    private void mostrarFormulario(FacturaDemo factura, String modo) {
+    private void mostrarFormulario(Factura factura, String modo) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/factura/form_factura.fxml"));
             Node form = loader.load();
+            
+            FormFacturaController controller = loader.getController();
+            if (controller != null) {
+                if (factura != null) {
+                    controller.cargarFactura(factura);
+                }
+                // El modo se puede manejar con un método adicional si es necesario
+                // Por ahora, el controller determina el modo según si la factura es nueva o existente
+            }
 
             // Configuramos la vista en el contenedor
             AnchorPane.setTopAnchor(form, 0.0);
@@ -83,25 +117,64 @@ public class ModuloFacturaController {
             pnl_Forms.setManaged(true);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error al cargar formulario de factura", e);
         }
     }
 
-    private void cerrarFormulario() {
-        pnl_Forms.getChildren().clear();
-        pnl_Forms.setVisible(false);
-        pnl_Forms.setManaged(false);
-    }
+    // Method removed as it was unused
 
     private void configurarColumnasTexto() {
-        tbc_NumeroFactura.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().numeroFactura()));
-        tbc_FechaEmision.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().fechaEmision()));
-        tbc_NombreCliente.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().nombreCliente()));
-        tbc_NumExpediente.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().numeroExpediente()));
-        tbc_Total.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().totalFactura()));
-        tbc_EstadoFactura.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().estadoFactura()));
-        tbc_PagoRealizado
-                .setCellValueFactory(data -> new SimpleStringProperty(data.getValue().pagoRealizado() ? "Sí" : "No"));
+        // Formato para las fechas
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        
+        // Formato para valores monetarios
+        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance(Locale.forLanguageTag("es-EC"));
+        
+        tbc_NumeroFactura.setCellValueFactory(data -> {
+            Factura factura = data.getValue();
+            if (factura.getCodigoEstablecimiento() != null && factura.getCodigoPuntoEmision() != null && factura.getSecuencial() != null) {
+                String numero = factura.getCodigoEstablecimiento() + "-" + 
+                               factura.getCodigoPuntoEmision() + "-" + 
+                               factura.getSecuencial();
+                return new SimpleStringProperty(numero);
+            } else {
+                return new SimpleStringProperty("N/A");
+            }
+        });
+        
+        tbc_FechaEmision.setCellValueFactory(data -> {
+            Factura factura = data.getValue();
+            if (factura.getFechaEmision() != null) {
+                return new SimpleStringProperty(factura.getFechaEmision().format(dateFormatter));
+            }
+            return new SimpleStringProperty("");
+        });
+        
+        tbc_NombreCliente.setCellValueFactory(data -> {
+            String nombre = data.getValue().getNombreCliente();
+            return new SimpleStringProperty(nombre != null ? nombre : "");
+        });
+        
+        tbc_NumExpediente.setCellValueFactory(data -> {
+            String expediente = data.getValue().getNumeroExpediente();
+            return new SimpleStringProperty(expediente != null ? expediente : "");
+        });
+        
+        tbc_Total.setCellValueFactory(data -> {
+            Factura factura = data.getValue();
+            if (factura.getValorTotal() != null) {
+                return new SimpleStringProperty(currencyFormat.format(factura.getValorTotal()));
+            }
+            return new SimpleStringProperty("$0.00");
+        });
+        
+        tbc_EstadoFactura.setCellValueFactory(data -> {
+            String estado = data.getValue().getEstadoFactura();
+            return new SimpleStringProperty(estado != null ? estado : "Pendiente");
+        });
+        
+        tbc_PagoRealizado.setCellValueFactory(data -> 
+            new SimpleStringProperty(data.getValue().isPagoRealizado() ? "Sí" : "No"));
     }
 
     private void inicializarColumnasDeBotones() {
@@ -113,22 +186,25 @@ public class ModuloFacturaController {
         tbc_BotonVer.setPrefWidth(40);
     }
 
-    private void agregarBotonPorColumna(TableColumn<FacturaDemo, Void> columna, String texto, String tooltip) {
+    @SuppressWarnings("unused")
+    private void agregarBotonPorColumna(TableColumn<Factura, Void> columna, String texto, String tooltip) {
         columna.getStyleClass().add("column-action");
 
-        columna.setCellFactory(param -> new TableCell<>() {
+        columna.setCellFactory(__ -> new TableCell<>() {
             private final Button btn = new Button(texto);
 
             {
                 btn.getStyleClass().add("table-button");
                 setStyle("-fx-alignment: CENTER;");
                 btn.setTooltip(new Tooltip(tooltip));
-                btn.setOnAction(event -> {
-                    FacturaDemo factura = getTableView().getItems().get(getIndex());
+                btn.setOnAction(__ -> {
+                    Factura factura = getTableView().getItems().get(getIndex());
                     if ("Editar".equals(tooltip)) {
                         mostrarFormulario(factura, "EDITAR");
                     } else if ("Ver".equals(tooltip)) {
                         mostrarFormulario(factura, "VER");
+                    } else if ("Descargar".equals(tooltip)) {
+                        descargarFactura(factura);
                     }
                 });
             }
@@ -140,67 +216,32 @@ public class ModuloFacturaController {
             }
         });
     }
-
-    private void cargarDatosEjemplo() {
-        tb_Facturas.getItems().addAll(
-                new FacturaDemo(
-                        "F001-000001", "2025-07-06", "Ana Mora", "EXP-123", "313.60", "Abierto", true,
-                        "0999999999001", "ABMECUADOR ESTUDIO JURÍDICO", "Av. Amazonas y NNUU, Quito",
-                        "001", "002", "01", "Cédula", "0102030405", "Calle Siempre Viva 123", "cliente@correo.com",
-                        "SVC-001", "Asesoría Legal Completa", "3", "100.00", "20.00", "280.00",
-                        "Caso Martínez vs López", "Dra. Carolina Montalvo", "300.00", "20.00", "33.60",
-                        "Transferencia", "313.60", "30 días"),
-                new FacturaDemo(
-                        "F001-000002", "2025-07-01", "Luis Pérez", "EXP-124", "201.60", "Registrado", true,
-                        "0998888888002", "LEGALGROUP S.A.", "Calle Bolívar y Olmedo",
-                        "002", "005", "01", "RUC", "1102233445", "Av. Patria E5-10", "luis@legal.com",
-                        "SVC-003", "Redacción de documentos legales", "2", "80.00", "0.00", "160.00",
-                        "Caso Herencia Familia Pérez", "Dr. Esteban Castro", "160.00", "0.00", "19.20",
-                        "Tarjeta", "179.20", "15 días"),
-                new FacturaDemo(
-                        "F001-000003", "2025-06-28", "María Salas", "EXP-125", "278.00", "Rechazado", false,
-                        "0997777777003", "JUSTICIA Y LEY", "Av. República y 10 de Agosto",
-                        "003", "007", "01", "Pasaporte", "P1234567", "Calle 10 N-22", "maria@justicia.com",
-                        "SVC-005", "Auditoría legal", "4", "75.00", "22.00", "278.00",
-                        "Caso Empresa XY Audit", "Dra. Paulina Sánchez", "300.00", "22.00", "33.60",
-                        "Efectivo", "278.00", "Contado"));
-
+    
+    private void descargarFactura(Factura factura) {
+        // Implementar lógica para descargar factura
+        System.out.println("Descargando factura: " + factura.getId());
+        // Aquí se podría generar un PDF o XML de la factura
     }
 
-    public record FacturaDemo(
-            String numeroFactura,
-            String fechaEmision,
-            String nombreCliente,
-            String numeroExpediente,
-            String totalFactura,
-            String estadoFactura,
-            boolean pagoRealizado,
-
-            // Campos adicionales para demo completo
-            String rucEmisor,
-            String razonSocialEmisor,
-            String direccionEmisor,
-            String codigoEstablecimiento,
-            String codigoPuntoEmision,
-            String codigoDocumento,
-            String tipoIdCliente,
-            String idCliente,
-            String dirCliente,
-            String emailCliente,
-            String codigoServicio,
-            String descripcionServicio,
-            String cantidad,
-            String tarifa,
-            String descuento,
-            String subtotalServicio,
-            String nombreCaso,
-            String abogadoResponsable,
-            String subtotal,
-            String totalDescuento,
-            String iva,
-            String formaPago,
-            String montoPago,
-            String plazo) {
+    private void cargarDatosDesdeBD() {
+        try {
+            List<Factura> facturas = facturaService.obtenerTodasLasFacturas();
+            tb_Facturas.setItems(FXCollections.observableArrayList(facturas));
+            
+            // Si no hay facturas, mostrar un mensaje
+            if (facturas.isEmpty()) {
+                // Podríamos mostrar un mensaje en la tabla o en un label
+                System.out.println("No hay facturas registradas en el sistema.");
+            }
+        } catch (Exception e) {
+            Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error al cargar facturas desde la base de datos", e);
+            // Mostrar un diálogo de error
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error al cargar facturas");
+            alert.setContentText("No se pudieron cargar las facturas desde la base de datos: " + e.getMessage());
+            alert.showAndWait();
+        }
     }
 
 }
