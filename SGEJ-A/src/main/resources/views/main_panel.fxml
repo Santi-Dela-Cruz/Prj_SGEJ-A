@@ -93,7 +93,7 @@
           styleClass="dropdown-menu"
           AnchorPane.topAnchor="90.0"
           AnchorPane.leftAnchor="480.0"
-          prefWidth="200.0"
+          prefWidth="230.0"
           visible="false"
           managed="false">
         <Button fx:id="btn_AdministracionUsuarios" styleClass="dropdown-item" text="Administración de usuarios" maxWidth="Infinity" />

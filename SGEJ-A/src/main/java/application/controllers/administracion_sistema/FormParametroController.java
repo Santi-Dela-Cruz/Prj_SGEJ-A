@@ -599,25 +599,26 @@ public class FormParametroController {
             if (exito) {
                 mostrarInfo("El parámetro se guardó exitosamente");
 
-                // Verificar si es un parámetro que afecta la interfaz visual
-                boolean esParametroInterfaz = codigo.equals("nombre_institucion") || codigo.equals("logo_sistema");
-
-                // Actualizar la interfaz principal si es necesario
-                if (esParametroInterfaz) {
-                    try {
-                        // Invalidar la caché del servicio de parámetros para asegurar que se cargue el
-                        // nuevo valor
-                        application.service.ParametroService.getInstance().invalidarCache();
-
+                // Siempre invalidar la caché para asegurar que los cambios se reflejen inmediatamente
+                try {
+                    // Invalidar la caché del servicio de parámetros para asegurar que se cargue el nuevo valor
+                    application.service.ParametroService.getInstance().invalidarCache();
+                    System.out.println("Caché de parámetros invalidada después de guardar " + codigo);
+                    
+                    // Verificar si es un parámetro que afecta la interfaz visual
+                    boolean esParametroInterfaz = codigo.equals("nombre_institucion") || codigo.equals("logo_sistema");
+                    
+                    // Actualizar la interfaz principal si es necesario
+                    if (esParametroInterfaz) {
                         // Notificar al controlador principal para actualizar la interfaz
                         application.controllers.MainController mainController = application.controllers.MainController
                                 .getInstance();
                         if (mainController != null) {
                             mainController.actualizarParametrosUI();
                         }
-                    } catch (Exception ex) {
-                        System.err.println("Error al actualizar interfaz: " + ex.getMessage());
                     }
+                } catch (Exception ex) {
+                    System.err.println("Error al actualizar caché o interfaz: " + ex.getMessage());
                 }
 
                 // Actualizar la tabla si es posible
