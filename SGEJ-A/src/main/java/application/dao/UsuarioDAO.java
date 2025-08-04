@@ -211,6 +211,35 @@ public class UsuarioDAO {
     public Usuario obtenerUsuarioPorNombre(String nombreUsuario) throws SQLException {
         return obtenerUsuarioPorNombreUsuario(nombreUsuario);
     }
+    
+    /**
+     * Verifica si existe un usuario con la identificación proporcionada
+     * 
+     * @param identificacion la identificación a verificar
+     * @param idUsuarioActual el ID del usuario actual (para excluirlo en la validación en modo edición)
+     * @return true si existe otro usuario con la misma identificación, false en caso contrario
+     * @throws SQLException si ocurre un error de base de datos
+     */
+    public boolean existeUsuarioConIdentificacion(String identificacion, Integer idUsuarioActual) throws SQLException {
+        String sql = "SELECT id FROM usuarios WHERE identificacion = ?";
+        
+        if (idUsuarioActual != null) {
+            sql += " AND id != ?";
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, identificacion);
+            
+            if (idUsuarioActual != null) {
+                pstmt.setInt(2, idUsuarioActual);
+            }
+            
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next(); // Si hay al menos un resultado, la identificación ya existe
+        }
+    }
 
     /**
      * Verifica si la clave de un usuario es correcta

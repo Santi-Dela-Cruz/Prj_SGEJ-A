@@ -40,23 +40,36 @@
                 <Label text="Estado del Usuario:" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-weight: bold; -fx-text-fill: #1976d2;"/>
                 <ComboBox fx:id="cmb_EstadoUsuario" promptText="Seleccione Estado" prefWidth="220" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
                 <!-- Identification -->
-                <Label text="Identificación / Cédula:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
-                <TextField fx:id="txt_Identificacion" promptText="Cédula o RUC" prefWidth="220" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+                <Label text="Número de Identificación - Cédula:" GridPane.rowIndex="2" GridPane.columnIndex="0" style="-fx-font-weight: bold;"/>
+                <TextField fx:id="txt_Identificacion" promptText="Ingrese el número de cédula" prefWidth="220" GridPane.rowIndex="3" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+                <Label fx:id="lbl_ErrorIdentificacion" text="" style="-fx-font-size: 9px; -fx-text-fill: #FF0000;" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
                 <!-- Name and Surname -->
-                <Label text="Nombres:" GridPane.rowIndex="4" GridPane.columnIndex="0"/>
-                <Label text="Apellidos:" GridPane.rowIndex="4" GridPane.columnIndex="1"/>
-                <TextField fx:id="txt_Nombres" prefWidth="220" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
-                <TextField fx:id="txt_Apellidos" prefWidth="220" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                <Label text="Nombres:" GridPane.rowIndex="5" GridPane.columnIndex="0"/>
+                <Label text="Apellidos:" GridPane.rowIndex="5" GridPane.columnIndex="1"/>
+                <TextField fx:id="txt_Nombres" prefWidth="220" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
+                <TextField fx:id="txt_Apellidos" prefWidth="220" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
+                <Label fx:id="lbl_ErrorNombres" text="" style="-fx-font-size: 9px; -fx-text-fill: #FF0000;" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
+                <Label fx:id="lbl_ErrorApellidos" text="" style="-fx-font-size: 9px; -fx-text-fill: #FF0000;" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
                 <!-- Username and Email -->
-                <Label text="Nombre Usuario:" GridPane.rowIndex="6" GridPane.columnIndex="0"/>
-                <Label text="Correo:" GridPane.rowIndex="6" GridPane.columnIndex="1"/>
-                <TextField fx:id="txt_Usuario" prefWidth="220" GridPane.rowIndex="7" GridPane.columnIndex="0"/>
-                <TextField fx:id="txt_Email" prefWidth="220" GridPane.rowIndex="7" GridPane.columnIndex="1"/>
+                <Label text="Nombre Usuario:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
+                <Label text="Correo:" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
+                <TextField fx:id="txt_Usuario" prefWidth="220" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
+                <TextField fx:id="txt_Email" prefWidth="220" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+                <Label fx:id="lbl_ErrorUsuario" text="" style="-fx-font-size: 9px; -fx-text-fill: #FF0000;" GridPane.rowIndex="10" GridPane.columnIndex="0"/>
+                <Label fx:id="lbl_ErrorEmail" text="" style="-fx-font-size: 9px; -fx-text-fill: #FF0000;" GridPane.rowIndex="10" GridPane.columnIndex="1"/>
                 <!-- Passwords -->
-                <Label text="Contraseña:" GridPane.rowIndex="8" GridPane.columnIndex="0"/>
-                <Label text="Confirmar Contraseña:" GridPane.rowIndex="8" GridPane.columnIndex="1"/>
-                <PasswordField fx:id="txt_Clave" prefWidth="220" GridPane.rowIndex="9" GridPane.columnIndex="0"/>
-                <PasswordField fx:id="txt_ConfirmarClave" prefWidth="220" GridPane.rowIndex="9" GridPane.columnIndex="1"/>
+                <Label fx:id="lbl_Clave" text="Contraseña:" GridPane.rowIndex="11" GridPane.columnIndex="0"/>
+                <Label fx:id="lbl_ConfirmarClave" text="Confirmar Contraseña:" GridPane.rowIndex="11" GridPane.columnIndex="1"/>
+                <PasswordField fx:id="txt_Clave" prefWidth="220" GridPane.rowIndex="12" GridPane.columnIndex="0"/>
+                <PasswordField fx:id="txt_ConfirmarClave" prefWidth="220" GridPane.rowIndex="12" GridPane.columnIndex="1"/>
+                <!-- Requisitos de contraseña -->
+                <VBox spacing="2.0" style="-fx-padding: 0 0 0 0;" GridPane.rowIndex="13" GridPane.columnIndex="0" GridPane.columnSpan="2">
+                    <Label fx:id="lbl_RequisitosPassword" text="La contraseña debe tener:" style="-fx-font-size: 9px; -fx-text-fill: #666666;" />
+                    <Label fx:id="lbl_ReqLongitud" text="• Al menos 8 caracteres" style="-fx-font-size: 9px; -fx-text-fill: #666666;" />
+                    <Label fx:id="lbl_ReqMayuscula" text="• Al menos una letra mayúscula" style="-fx-font-size: 9px; -fx-text-fill: #666666;" />
+                    <Label fx:id="lbl_ReqNumero" text="• Al menos un número" style="-fx-font-size: 9px; -fx-text-fill: #666666;" />
+                    <Label fx:id="lbl_ReqEspecial" text="• Al menos un carácter especial (!@#$%^&amp;*)" style="-fx-font-size: 9px; -fx-text-fill: #666666;" />
+                </VBox>
             </GridPane>
 
             <!-- Save / Cancel Buttons -->

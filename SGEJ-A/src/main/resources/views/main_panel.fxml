@@ -92,7 +92,7 @@
     <VBox fx:id="vpnl_DesplegableSistema"
           styleClass="dropdown-menu"
           AnchorPane.topAnchor="90.0"
-          AnchorPane.leftAnchor="480.0"
+          AnchorPane.leftAnchor="650.0"
           prefWidth="230.0"
           visible="false"
           managed="false">
