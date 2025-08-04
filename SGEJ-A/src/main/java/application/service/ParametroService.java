@@ -2,6 +2,7 @@ package application.service;
 
 import application.dao.ParametroDAO;
 import application.model.Parametro;
+import application.model.ParametrosSMTP;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Servicio para la gestión de parámetros del sistema implementando patrón
@@ -437,5 +440,96 @@ public class ParametroService {
      */
     public List<Parametro> getParametrosPorCategoria(String categoria) {
         return parametroDAO.obtenerPorCategoria(categoria);
+    }
+
+    private static final Logger LOGGER = Logger.getLogger(ParametroService.class.getName());
+
+    /**
+     * Carga los parámetros SMTP desde la base de datos
+     * 
+     * @return Objeto ParametrosSMTP con la configuración del servidor de correo
+     */
+    public ParametrosSMTP cargarParametrosSMTP() {
+        try {
+            // Cargar parámetros SMTP desde la base de datos
+            String servidor = getValor("smtp_servidor");
+            if (servidor == null || servidor.trim().isEmpty()) {
+                servidor = "smtp.gmail.com";
+                LOGGER.warning(
+                        "No se encontró configuración para smtp_servidor, usando valor por defecto: " + servidor);
+            } else {
+                LOGGER.info("Servidor SMTP configurado: " + servidor);
+            }
+
+            String puertoStr = getValor("smtp_puerto");
+            int puerto = 587; // valor por defecto
+            try {
+                if (puertoStr != null && !puertoStr.trim().isEmpty()) {
+                    puerto = Integer.parseInt(puertoStr);
+                    LOGGER.info("Puerto SMTP configurado: " + puerto);
+                } else {
+                    LOGGER.warning(
+                            "No se encontró configuración para smtp_puerto, usando valor por defecto: " + puerto);
+                }
+            } catch (NumberFormatException e) {
+                LOGGER.log(Level.WARNING, "El puerto SMTP '" + puertoStr
+                        + "' no es un número válido, usando valor por defecto: " + puerto, e);
+            }
+
+            String usuario = getValor("smtp_usuario");
+            if (usuario == null || usuario.trim().isEmpty()) {
+                usuario = "";
+                LOGGER.warning("No se encontró configuración para smtp_usuario");
+            } else {
+                LOGGER.info("Usuario SMTP configurado: " + usuario);
+            }
+
+            // Obtener la clave directamente desde la tabla para asegurar que no hay
+            // problemas con getValor
+            String clave = null;
+            try {
+                // Consulta directa a la tabla de parámetros
+                java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+                java.sql.PreparedStatement stmt = conn.prepareStatement(
+                        "SELECT valor FROM parametro WHERE codigo = 'smtp_clave' AND estado = 'ACTIVO'");
+                java.sql.ResultSet rs = stmt.executeQuery();
+                if (rs.next()) {
+                    clave = rs.getString("valor");
+                }
+                rs.close();
+                stmt.close();
+                conn.close();
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, "Error al obtener clave SMTP directamente", e);
+            }
+
+            // Verificación de la clave obtenida
+            if (clave == null || clave.trim().isEmpty()) {
+                clave = "";
+                LOGGER.warning("No se encontró configuración para smtp_clave");
+            } else {
+                LOGGER.info("Clave SMTP configurada (longitud): " + clave.length() + " caracteres");
+            }
+
+            String remitente = getValor("correo_remitente");
+            if (remitente == null || remitente.trim().isEmpty()) {
+                remitente = usuario; // Usar el usuario como remitente por defecto
+                LOGGER.warning("No se encontró configuración para correo_remitente, usando el usuario SMTP");
+            } else {
+                LOGGER.info("Correo remitente configurado: " + remitente);
+            }
+
+            // Validar configuración mínima necesaria
+            if (servidor.trim().isEmpty() || usuario.trim().isEmpty() || clave.trim().isEmpty()) {
+                LOGGER.severe(
+                        "La configuración SMTP está incompleta. Por favor verifique los parámetros smtp_servidor, smtp_usuario y smtp_clave");
+            }
+
+            return new ParametrosSMTP(servidor, puerto, usuario, clave, remitente);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error al cargar parámetros SMTP", e);
+            // Valores por defecto en caso de error
+            return new ParametrosSMTP("smtp.gmail.com", 587, "", "", "");
+        }
     }
 }

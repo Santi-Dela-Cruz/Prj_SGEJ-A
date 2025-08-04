@@ -1,7 +1,11 @@
 package application.controllers;
 
 import application.service.AutenticacionService;
+import application.service.ParametroService;
 import application.model.Usuario;
+import application.util.LoginFailureManager;
+import application.util.SessionManager;
+import application.dao.UsuarioDAO;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -89,15 +93,69 @@ public class LoginController {
             return;
         }
 
+        // Verificar si el usuario existe y no está bloqueado antes de intentar
+        // autenticar
+        UsuarioDAO usuarioDAO = new UsuarioDAO();
+        Usuario usuario = null;
+        try {
+            usuario = usuarioDAO.obtenerUsuarioPorNombreUsuario(username);
+
+            if (usuario == null) {
+                if (errorLabel != null) {
+                    errorLabel.setText("Usuario no encontrado. Por favor verifique sus credenciales.");
+                    errorLabel.setVisible(true);
+                }
+                return;
+            }
+        } catch (Exception e) {
+            if (errorLabel != null) {
+                errorLabel.setText("Error al verificar el usuario. Intente nuevamente.");
+                errorLabel.setVisible(true);
+            }
+            e.printStackTrace();
+            return;
+        }
+
+        if (usuario.getEstadoUsuario() == Usuario.EstadoUsuario.INACTIVO) {
+            if (errorLabel != null) {
+                errorLabel.setText("Usuario bloqueado. Contacte al administrador del sistema.");
+                errorLabel.setVisible(true);
+            }
+            return;
+        }
+
         // Intentar autenticar con las credenciales
         if (autenticacionService.autenticar(username, password)) {
+            // Reiniciar el contador de intentos fallidos
+            LoginFailureManager.getInstance().reiniciarIntentosFallidos(username);
+
             String rol = autenticacionService.getRolUsuarioActual();
             abrirPanelPrincipal(rol);
         } else {
-            // Mostrar error si la autenticación falla
-            if (errorLabel != null) {
-                errorLabel.setText("Credenciales incorrectas. Por favor intente nuevamente.");
-                errorLabel.setVisible(true);
+            // Registrar intento fallido
+            int intentosFallidos = LoginFailureManager.getInstance().registrarIntentoFallido(username);
+
+            // Obtener el máximo de intentos permitidos del parámetro
+            int maxIntentosFallidos = ParametroService.getInstance().getValorEntero("max_intento_fallidos", 3);
+
+            // Si supera el límite, bloquear la cuenta
+            if (intentosFallidos >= maxIntentosFallidos) {
+                // Bloquear usuario
+                usuario.setEstadoUsuario(Usuario.EstadoUsuario.INACTIVO);
+                usuarioDAO.actualizarUsuario(usuario);
+
+                // Mostrar mensaje de bloqueo
+                if (errorLabel != null) {
+                    errorLabel.setText("Usuario bloqueado por múltiples intentos fallidos. Contacte al administrador.");
+                    errorLabel.setVisible(true);
+                }
+            } else {
+                // Mostrar error si la autenticación falla pero aún no se bloquea
+                if (errorLabel != null) {
+                    int intentosRestantes = maxIntentosFallidos - intentosFallidos;
+                    errorLabel.setText("Credenciales incorrectas. Intentos restantes: " + intentosRestantes);
+                    errorLabel.setVisible(true);
+                }
             }
         }
     }
@@ -136,9 +194,37 @@ public class LoginController {
 
             stage.show();
 
+            // Configurar el control de tiempo de sesión
+            int tiempoSesion = ParametroService.getInstance().getValorEntero("tiempo_sesion", 30); // 30 minutos por
+                                                                                                   // defecto
+
+            // Configuramos la acción de cierre de sesión
+            Runnable logoutAction = () -> {
+                autenticacionService.cerrarSesion();
+
+                // Cerrar ventana principal y mostrar login
+                stage.close();
+
+                try {
+                    FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/views/login.fxml"));
+                    Parent loginRoot = loginLoader.load();
+
+                    Stage loginStage = new Stage();
+                    loginStage.setScene(new Scene(loginRoot));
+                    loginStage.initStyle(StageStyle.UNDECORATED);
+                    loginStage.show();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            };
+
+            // Iniciar el control de tiempo de sesión
+            SessionManager.getInstance().startSessionTimer(tiempoSesion, logoutAction, stage);
+
             // Cerrar la ventana de login
             Stage current = (Stage) usernameField.getScene().getWindow();
             current.close();
+
         } catch (Exception e) {
             e.printStackTrace();
             if (errorLabel != null) {

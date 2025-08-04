@@ -58,6 +58,20 @@
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.45.0.0</version>
         </dependency>
+        
+        <!-- JavaMail API -->
+        <dependency>
+            <groupId>com.sun.mail</groupId>
+            <artifactId>javax.mail</artifactId>
+            <version>1.6.2</version>
+        </dependency>
+        
+        <!-- iText PDF para generación de PDFs -->
+        <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13.3</version>
+        </dependency>
     </dependencies>
 
     <build>

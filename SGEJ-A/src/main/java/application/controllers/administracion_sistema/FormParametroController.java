@@ -346,7 +346,8 @@ public class FormParametroController {
             // Configurar TextField sin usar clear() que podría estar causando problemas
             txt_Codigo.setEditable(false);
             txt_Codigo.setDisable(false);
-            //txt_Codigo.setStyle("-fx-font-weight: bold; -fx-text-fill: #0000CC; -fx-background-color: #E8F5FE;");
+            // txt_Codigo.setStyle("-fx-font-weight: bold; -fx-text-fill: #0000CC;
+            // -fx-background-color: #E8F5FE;");
 
             // Asignar el código después de configurar el campo
             txt_Codigo.setText(codigo);
@@ -358,9 +359,9 @@ public class FormParametroController {
             lbl_Titulo.setText("Editar Parámetro: " + codigo);
 
             // Respaldo visible siempre
-            //lbl_Error.setText("CÓDIGO: " + codigo);
-            //lbl_Error.setStyle("-fx-text-fill: blue; -fx-font-weight: bold;");
-            //lbl_Error.setVisible(true);
+            // lbl_Error.setText("CÓDIGO: " + codigo);
+            // lbl_Error.setStyle("-fx-text-fill: blue; -fx-font-weight: bold;");
+            // lbl_Error.setVisible(true);
         });
 
         // Resto de campos
@@ -516,6 +517,27 @@ public class FormParametroController {
 
             if (exito) {
                 mostrarInfo("El parámetro se guardó exitosamente");
+
+                // Verificar si es un parámetro que afecta la interfaz visual
+                boolean esParametroInterfaz = codigo.equals("nombre_institucion") || codigo.equals("logo_sistema");
+
+                // Actualizar la interfaz principal si es necesario
+                if (esParametroInterfaz) {
+                    try {
+                        // Invalidar la caché del servicio de parámetros para asegurar que se cargue el
+                        // nuevo valor
+                        application.service.ParametroService.getInstance().invalidarCache();
+
+                        // Notificar al controlador principal para actualizar la interfaz
+                        application.controllers.MainController mainController = application.controllers.MainController
+                                .getInstance();
+                        if (mainController != null) {
+                            mainController.actualizarParametrosUI();
+                        }
+                    } catch (Exception ex) {
+                        System.err.println("Error al actualizar interfaz: " + ex.getMessage());
+                    }
+                }
 
                 // Actualizar la tabla si es posible
                 if (moduloParametrosController != null) {

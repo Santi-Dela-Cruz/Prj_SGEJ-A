@@ -264,7 +264,7 @@ public class FacturaService {
             String cliente, String estado, String expediente) {
         return facturaDAO.buscarFacturas(fechaDesde, fechaHasta, cliente, estado, expediente);
     }
-    
+
     /**
      * Busca facturas por un término genérico (en varios campos)
      * 

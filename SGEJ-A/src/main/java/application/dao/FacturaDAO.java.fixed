@@ -10,13 +10,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.InetAddress;
 import java.sql.*;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -592,7 +588,10 @@ public class FacturaDAO {
         factura.setClaveAcceso(rs.getString("clave_acceso"));
         factura.setNumeroAutorizacion(rs.getString("numero_autorizacion"));
 
-        factura.setFechaAutorizacion(obtenerLocalDateTime(rs, "fecha_autorizacion"));
+        Timestamp fechaAutorizacion = rs.getTimestamp("fecha_autorizacion");
+        if (fechaAutorizacion != null) {
+            factura.setFechaAutorizacion(fechaAutorizacion.toLocalDateTime());
+        }
 
         factura.setAmbiente(rs.getString("ambiente"));
         factura.setEmision(rs.getString("emision"));
@@ -606,7 +605,10 @@ public class FacturaDAO {
         factura.setSecuencial(rs.getString("secuencial"));
         factura.setCodigoDocumento(rs.getString("codigo_documento"));
 
-        factura.setFechaEmision(obtenerLocalDate(rs, "fecha_emision"));
+        Date fechaEmision = rs.getDate("fecha_emision");
+        if (fechaEmision != null) {
+            factura.setFechaEmision(fechaEmision.toLocalDate());
+        }
 
         factura.setNombreCliente(rs.getString("nombre_cliente"));
         factura.setIdCliente(rs.getString("id_cliente"));
@@ -639,11 +641,23 @@ public class FacturaDAO {
         factura.setEstadoSRI(rs.getString("estado_sri"));
         factura.setRespuestaSRI(rs.getString("respuesta_sri"));
 
-        factura.setFechaRespuestaSRI(obtenerLocalDateTime(rs, "fecha_respuesta_sri"));
+        Timestamp fechaRespuestaSRI = rs.getTimestamp("fecha_respuesta_sri");
+        if (fechaRespuestaSRI != null) {
+            factura.setFechaRespuestaSRI(fechaRespuestaSRI.toLocalDateTime());
+        }
+
         factura.setUsuarioCreacion(rs.getString("usuario_creacion"));
         factura.setUsuarioModificacion(rs.getString("usuario_modificacion"));
-        factura.setCreatedAt(obtenerLocalDateTime(rs, "created_at"));
-        factura.setUpdatedAt(obtenerLocalDateTime(rs, "updated_at"));
+
+        Timestamp createdAt = rs.getTimestamp("created_at");
+        if (createdAt != null) {
+            factura.setCreatedAt(createdAt.toLocalDateTime());
+        }
+
+        Timestamp updatedAt = rs.getTimestamp("updated_at");
+        if (updatedAt != null) {
+            factura.setUpdatedAt(updatedAt.toLocalDateTime());
+        }
 
         return factura;
     }
@@ -670,113 +684,17 @@ public class FacturaDAO {
         detalle.setUsuarioCreacion(rs.getString("usuario_creacion"));
         detalle.setUsuarioModificacion(rs.getString("usuario_modificacion"));
 
-        detalle.setCreatedAt(obtenerLocalDateTime(rs, "created_at"));
-        detalle.setUpdatedAt(obtenerLocalDateTime(rs, "updated_at"));
+        Timestamp createdAt = rs.getTimestamp("created_at");
+        if (createdAt != null) {
+            detalle.setCreatedAt(createdAt.toLocalDateTime());
+        }
+
+        Timestamp updatedAt = rs.getTimestamp("updated_at");
+        if (updatedAt != null) {
+            detalle.setUpdatedAt(updatedAt.toLocalDateTime());
+        }
 
         return detalle;
-    }
-
-    /**
-     * Método auxiliar para obtener un LocalDateTime de manera segura desde un
-     * ResultSet
-     * Maneja casos donde la fecha está almacenada como timestamp, string o número
-     */
-    private LocalDateTime obtenerLocalDateTime(ResultSet rs, String columnName) {
-        try {
-            // Intentar directamente como String primero
-            String value = rs.getString(columnName);
-            if (value == null || value.isEmpty()) {
-                return null;
-            }
-
-            // Verificar si es un timestamp Unix (milisegundos)
-            if (value.matches("\\d+")) {
-                try {
-                    long timeMillis = Long.parseLong(value);
-                    return Instant.ofEpochMilli(timeMillis)
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDateTime();
-                } catch (Exception e) {
-                    // Suprimir errores de conversión y continuar
-                }
-            }
-
-            // Intentar parsear como Timestamp usando getString
-            try {
-                Timestamp timestamp = rs.getTimestamp(columnName);
-                if (timestamp != null) {
-                    return timestamp.toLocalDateTime();
-                }
-            } catch (SQLException e) {
-                // Suprimir esta excepción específica y continuar
-            }
-
-            // Intentar parsear como ISO fecha-hora
-            try {
-                return LocalDateTime.parse(value);
-            } catch (DateTimeParseException e) {
-                // Suprimir el log para no llenar el log con errores esperados
-            }
-        } catch (SQLException e) {
-            // Suprimir el log para reducir el ruido en la consola
-        }
-
-        // Si todos los intentos fallan, devolver null
-        return null;
-    }
-
-    /**
-     * Método auxiliar para obtener un LocalDate de manera segura desde un ResultSet
-     * Maneja casos donde la fecha está almacenada como Date, string o número
-     */
-    private LocalDate obtenerLocalDate(ResultSet rs, String columnName) {
-        try {
-            // Intentar directamente como String primero para evitar excepciones
-            String value = rs.getString(columnName);
-            if (value == null || value.isEmpty()) {
-                return null;
-            }
-
-            // Verificar si es un timestamp Unix (milisegundos)
-            if (value.matches("\\d+")) {
-                try {
-                    long timeMillis = Long.parseLong(value);
-                    return Instant.ofEpochMilli(timeMillis)
-                            .atZone(ZoneId.systemDefault())
-                            .toLocalDate();
-                } catch (Exception e) {
-                    // Suprimir errores de conversión
-                }
-            }
-
-            // Intentar como Date solo después de verificar que no es un timestamp
-            try {
-                Date date = rs.getDate(columnName);
-                if (date != null) {
-                    return date.toLocalDate();
-                }
-            } catch (SQLException e) {
-                // Suprimir esta excepción específica y continuar
-            }
-
-            // Intentar parsear como ISO fecha
-            try {
-                return LocalDate.parse(value);
-            } catch (DateTimeParseException e) {
-                // Si falla, intentar extraer la fecha de un LocalDateTime
-                try {
-                    LocalDateTime dateTime = LocalDateTime.parse(value);
-                    return dateTime.toLocalDate();
-                } catch (DateTimeParseException e2) {
-                    // Suprimir mensajes de log para no llenar la consola
-                }
-            }
-        } catch (SQLException e) {
-            // Suprimir el log para reducir el ruido en la consola
-        }
-
-        // Si todos los métodos fallan, devolver null
-        return null;
     }
 
     /**
@@ -842,7 +760,7 @@ public class FacturaDAO {
             LOGGER.info("Tablas de factura creadas exitosamente");
         }
     }
-
+    
     /**
      * Busca facturas por texto en diferentes campos
      * 
@@ -851,19 +769,19 @@ public class FacturaDAO {
      */
     public List<Factura> buscar(String termino) {
         String sql = "SELECT * FROM factura " +
-                "WHERE nombre_cliente LIKE ? " +
-                "OR secuencial LIKE ? " +
-                "OR id_cliente LIKE ? " +
-                "OR numero_expediente LIKE ? " +
-                "OR nombre_caso LIKE ? " +
-                "ORDER BY fecha_emision DESC";
+                     "WHERE nombre_cliente LIKE ? " +
+                     "OR secuencial LIKE ? " +
+                     "OR id_cliente LIKE ? " +
+                     "OR numero_expediente LIKE ? " +
+                     "OR nombre_caso LIKE ? " +
+                     "ORDER BY fecha_emision DESC";
 
         List<Factura> facturas = new ArrayList<>();
         String parametro = "%" + termino + "%";
 
         try (Connection conn = DatabaseConnection.getConnection();
-                PreparedStatement pstmt = conn.prepareStatement(sql)) {
-
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
             pstmt.setString(1, parametro);
             pstmt.setString(2, parametro);
             pstmt.setString(3, parametro);
@@ -880,114 +798,5 @@ public class FacturaDAO {
         }
 
         return facturas;
-    }
-
-    /**
-     * Genera y envía la factura en formato PDF por correo electrónico
-     * 
-     * @param facturaId ID de la factura a enviar
-     * @return true si se envió correctamente, false en caso contrario
-     */
-    public boolean enviarFacturaPorCorreo(int facturaId) {
-        try {
-            // 1. Obtener la factura completa
-            Factura factura = obtenerPorId(facturaId);
-            if (factura == null) {
-                LOGGER.warning("No se puede enviar la factura por correo: factura no encontrada con ID " + facturaId);
-                return false;
-            }
-
-            // 2. Verificar que tenga correo electrónico
-            if (factura.getEmailCliente() == null || factura.getEmailCliente().trim().isEmpty()) {
-                LOGGER.warning("No se puede enviar la factura por correo: cliente sin correo electrónico");
-                return false;
-            }
-
-            return enviarFacturaPorCorreoA(facturaId, factura.getEmailCliente());
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error al enviar factura por correo", e);
-            return false;
-        }
-    }
-
-    /**
-     * Genera y envía la factura en formato PDF a una dirección de correo específica
-     * 
-     * @param facturaId    ID de la factura a enviar
-     * @param emailDestino Dirección de correo electrónico del destinatario
-     * @return true si se envió correctamente, false en caso contrario
-     */
-    public boolean enviarFacturaPorCorreoA(int facturaId, String emailDestino) {
-        try {
-            // Validar dirección de correo
-            if (emailDestino == null || emailDestino.trim().isEmpty()) {
-                LOGGER.warning("No se puede enviar la factura por correo: dirección de correo vacía");
-                return false;
-            }
-
-            // 1. Obtener la factura completa
-            Factura factura = obtenerPorId(facturaId);
-            if (factura == null) {
-                LOGGER.warning("No se puede enviar la factura por correo: factura no encontrada con ID " + facturaId);
-                return false;
-            }
-
-            // 2. Generar el PDF
-            String rutaPDF = application.service.FacturaPDFService.generarPDF(factura);
-            if (rutaPDF == null) {
-                LOGGER.warning("No se pudo generar el PDF de la factura");
-                return false;
-            }
-
-            // 3. Cargar parámetros SMTP
-            application.model.ParametrosSMTP smtp = application.service.ParametroService.getInstance()
-                    .cargarParametrosSMTP();
-
-            // 4. Preparar mensaje de correo
-            String asunto = "Factura Electrónica No. " + factura.getSecuencial();
-            String mensaje = "Estimado(a) " + factura.getNombreCliente() + ",\n\n" +
-                    "Adjunto encontrará su factura electrónica No. " + factura.getSecuencial() + " " +
-                    "por un valor de $" + factura.getValorTotal() + ".\n\n" +
-                    "Gracias por confiar en nuestros servicios.\n\n" +
-                    "Atentamente,\n" +
-                    factura.getRazonSocialEmisor();
-
-            // Verificar conectividad a Internet antes de intentar enviar
-            try {
-                InetAddress address = InetAddress.getByName("www.google.com");
-                if (!address.isReachable(5000)) {
-                    LOGGER.warning("No hay conexión a Internet disponible");
-                    throw new Exception("No hay conexión a Internet disponible. Verifique su conexión de red.");
-                }
-            } catch (Exception e) {
-                LOGGER.log(Level.WARNING, "Error al verificar conectividad a Internet", e);
-                throw new Exception("No se pudo verificar la conexión a Internet: " + e.getMessage());
-            }
-
-            // 5. Enviar correo
-            LOGGER.info("Intentando enviar correo a: " + emailDestino + " usando servidor: " + smtp.getServidor());
-
-            boolean enviado = application.service.EmailSenderService.enviarCorreoConAdjunto(
-                    emailDestino, asunto, mensaje, rutaPDF, smtp);
-
-            // 6. Registrar el envío en la base de datos (opcional)
-            if (enviado) {
-                LOGGER.info("Factura enviada correctamente por correo a: " + emailDestino);
-                // Aquí se podría registrar el envío en una tabla de historial
-            } else {
-                LOGGER.warning("Error al enviar la factura por correo");
-                throw new Exception(
-                        "No se pudo enviar el correo. Verifique la configuración SMTP y su conexión a Internet.");
-            }
-
-            return enviado;
-
-        } catch (Exception e) {
-            LOGGER.log(Level.SEVERE, "Error al enviar factura por correo: " + e.getMessage(), e);
-            // Propagar el error con un mensaje descriptivo
-            throw new RuntimeException("Error al enviar correo: " +
-                    (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
-        }
     }
 }
