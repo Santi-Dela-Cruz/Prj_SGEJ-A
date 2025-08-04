@@ -36,8 +36,9 @@ public class FormUsuarioController {
 
     // Patrones para validación
     private final Pattern emailPattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
-    private final Pattern cedulaPattern = Pattern.compile("^[0-9]{10}$");
-    private final Pattern rucPattern = Pattern.compile("^[0-9]{13}$");
+    
+    // Patrón para contraseñas seguras: al menos una mayúscula, un número y un carácter especial
+    private final Pattern contrasenaSeguraPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$");
 
     public void setOnGuardar(Runnable handler) {
         this.onGuardar = handler;
@@ -171,10 +172,13 @@ public class FormUsuarioController {
             return false;
         }
 
-        // Validar identificación (cédula o RUC)
+        // Validar cédula ecuatoriana utilizando la clase VerificationID
         String identificacion = txt_Identificacion.getText().trim();
-        if (!cedulaPattern.matcher(identificacion).matches() && !rucPattern.matcher(identificacion).matches()) {
-            lbl_Error.setText("La identificación debe ser una cédula (10 dígitos) o RUC (13 dígitos)");
+        application.utils.VerificationID verificador = new application.utils.VerificationID();
+        
+        // Verificar que sea cédula y no RUC
+        if (!verificador.validarCedula(identificacion)) {
+            lbl_Error.setText("La identificación debe ser una cédula ecuatoriana válida (10 dígitos)");
             return false;
         }
 
@@ -190,8 +194,11 @@ public class FormUsuarioController {
                 return false;
             }
 
-            if (txt_Clave.getText().length() < 6) {
-                lbl_Error.setText("La contraseña debe tener al menos 6 caracteres");
+            String contrasena = txt_Clave.getText();
+            
+            // Validar que la contraseña cumple con todos los requisitos de seguridad usando el patrón
+            if (!contrasenaSeguraPattern.matcher(contrasena).matches()) {
+                lbl_Error.setText("La contraseña debe tener al menos 8 caracteres, incluir una letra mayúscula, un número y un carácter especial");
                 return false;
             }
         }
