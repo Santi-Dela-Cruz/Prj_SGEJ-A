@@ -251,29 +251,30 @@ public class FormFacturaController implements Initializable {
         try {
             // Log para diagnostico
             System.out.println("Cargando parámetros del emisor para la factura...");
-            
-            // Emisor - Usando parámetros actualizados (todos en minúsculas para consistencia)
+
+            // Emisor - Usando parámetros actualizados (todos en minúsculas para
+            // consistencia)
             String rucInst = parametroService.getValor("ruc_institucional", "");
             System.out.println("RUC Institucional cargado: " + rucInst);
             txtf_RucEmisor.setText(rucInst);
-            
+
             String razonSocial = parametroService.getValor("razon_social", "");
             System.out.println("Razón Social cargada: " + razonSocial);
             txtf_RazonSocialEmisor.setText(razonSocial);
-            
+
             String direccionMatriz = parametroService.getValor("direccion_matriz", "");
             System.out.println("Dirección Matriz cargada: " + direccionMatriz);
             txtf_DireccionMatriz.setText(direccionMatriz);
-            
+
             String direccionSucursal = parametroService.getValor("direccion_sucursal", direccionMatriz);
             System.out.println("Dirección Sucursal cargada: " + direccionSucursal);
             txtf_DireccionSucursal.setText(direccionSucursal);
-            
+
             // Códigos de establecimiento y punto de emisión (convertidos a minúsculas)
             String codEstablecimiento = parametroService.getValor("codigo_establecimiento", "001");
             System.out.println("Código Establecimiento cargado: " + codEstablecimiento);
             txtf_CodEstablecimiento.setText(codEstablecimiento);
-            
+
             String codPuntoEmision = parametroService.getValor("codigo_punto_emision", "001");
             System.out.println("Código Punto Emisión cargado: " + codPuntoEmision);
             txtf_CodPuntoEmision.setText(codPuntoEmision);
@@ -293,7 +294,8 @@ public class FormFacturaController implements Initializable {
 
             boolean obligadoContabilidad = parametroService.getValorBoolean("obligado_contabilidad", false);
             System.out.println("Obligado Contabilidad cargado: " + obligadoContabilidad);
-            System.out.println("Valor directo del parametro obligado_contabilidad: " + parametroService.getValor("obligado_contabilidad", "false"));
+            System.out.println("Valor directo del parametro obligado_contabilidad: "
+                    + parametroService.getValor("obligado_contabilidad", "false"));
             cbx_ObligadoContabilidad.getSelectionModel().select(obligadoContabilidad ? "SI" : "NO");
 
             // Código del documento
@@ -998,22 +1000,24 @@ public class FormFacturaController implements Initializable {
 
         // Subtotal sin impuestos
         BigDecimal subtotalSinImpuestos = subtotal12.add(subtotal0).add(subtotalNoObjetoIva).add(subtotalExentoIva);
-        
+
         // Obtener porcentaje del subtotal para mostrar en la etiqueta
-        BigDecimal porcentajeSubtotal = parametroService.getValorBigDecimal("subtotal_porcentaje", new BigDecimal("12"));
+        BigDecimal porcentajeSubtotal = parametroService.getValorBigDecimal("subtotal_porcentaje",
+                new BigDecimal("12"));
         System.out.println("Porcentaje Subtotal cargado: " + porcentajeSubtotal);
-        
+
         // Actualizar el texto del campo de Subtotal para mostrar también el porcentaje
         txtf_Subtotal.setText(subtotalSinImpuestos.setScale(2, RoundingMode.HALF_UP).toString());
-        
+
         // Buscar el Label correspondiente a Subtotal (12%) y actualizarlo
         Label labelSubtotal = (Label) txtf_Subtotal.getParent().getChildrenUnmodifiable().stream()
                 .filter(node -> node instanceof Label && ((Label) node).getText().contains("Subtotal"))
                 .findFirst().orElse(null);
-                
+
         if (labelSubtotal != null) {
             labelSubtotal.setText("Subtotal (" + porcentajeSubtotal.intValue() + "%):");
-            System.out.println("Etiqueta de subtotal actualizada con: " + "Subtotal (" + porcentajeSubtotal.intValue() + "%):");
+            System.out.println(
+                    "Etiqueta de subtotal actualizada con: " + "Subtotal (" + porcentajeSubtotal.intValue() + "%):");
         } else {
             System.out.println("No se encontró la etiqueta de subtotal para actualizar");
         }
@@ -1022,15 +1026,16 @@ public class FormFacturaController implements Initializable {
         BigDecimal porcentajeIva = parametroService.getValorBigDecimal("porcentaje_iva", new BigDecimal("12"));
         System.out.println("Porcentaje IVA cargado: " + porcentajeIva);
         BigDecimal valorIva = subtotal12.multiply(porcentajeIva.divide(new BigDecimal("100")));
-        
+
         // Actualizar el texto del campo de IVA para mostrar el valor calculado
         txtf_Iva.setText(valorIva.setScale(2, RoundingMode.HALF_UP).toString());
-        
-        // Buscar el Label correspondiente a IVA y actualizarlo para mostrar el porcentaje
+
+        // Buscar el Label correspondiente a IVA y actualizarlo para mostrar el
+        // porcentaje
         Label labelIva = (Label) txtf_Iva.getParent().getChildrenUnmodifiable().stream()
                 .filter(node -> node instanceof Label && ((Label) node).getText().contains("IVA"))
                 .findFirst().orElse(null);
-                
+
         if (labelIva != null) {
             labelIva.setText("IVA (" + porcentajeIva.intValue() + "%):");
             System.out.println("Etiqueta de IVA actualizada con: " + "IVA (" + porcentajeIva.intValue() + "%):");

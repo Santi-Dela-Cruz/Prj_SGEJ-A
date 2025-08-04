@@ -43,10 +43,15 @@ public class SessionManager {
         // Cancelar cualquier timer existente
         stopSessionTimer();
 
-        this.sessionDurationMillis = durationMinutes * 60 * 1000L;
+        // Asegurar que el tiempo de sesión sea válido (mínimo 1 minuto)
+        int safeDurationMinutes = Math.max(1, durationMinutes);
+        this.sessionDurationMillis = safeDurationMinutes * 60 * 1000L;
         this.logoutAction = logoutAction;
         this.mainStage = stage;
         this.sessionActive = true;
+
+        System.out.println("Iniciando temporizador de sesión: " + safeDurationMinutes + " minutos ("
+                + sessionDurationMillis + " ms)");
 
         // Crear nuevo timer
         sessionTimer = new Timer();
@@ -77,7 +82,10 @@ public class SessionManager {
     public synchronized void resetSessionTimer() {
         if (sessionActive && logoutAction != null) {
             stopSessionTimer();
-            startSessionTimer((int) (sessionDurationMillis / (60 * 1000)), logoutAction, mainStage);
+            // Calcular duración en minutos, con un mínimo de 1 minuto
+            int durationMinutes = Math.max(1, (int) (sessionDurationMillis / (60 * 1000)));
+            System.out.println("Reiniciando temporizador de sesión: " + durationMinutes + " minutos");
+            startSessionTimer(durationMinutes, logoutAction, mainStage);
         }
     }
 

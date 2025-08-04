@@ -150,7 +150,7 @@ public class ParametroService {
         cacheParametros.clear();
         ultimaActualizacionCache = null;
     }
-    
+
     /**
      * Fuerza la actualización del caché y realiza una carga inmediata
      */
@@ -205,7 +205,7 @@ public class ParametroService {
         }
 
         codigo = codigo.toLowerCase();
-        
+
         // Siempre verificar si la caché está actualizada
         if (!cacheVigente()) {
             actualizarCache();
@@ -684,49 +684,49 @@ public class ParametroService {
 
         return resultado;
     }
-    
+
     /**
      * Actualiza los parámetros legales/fiscales para la facturación
      * 
-     * @param porcentajeIva porcentaje de IVA a aplicar
-     * @param rucInstitucional RUC institucional para la facturación
-     * @param razonSocial razón social de la empresa
-     * @param direccionMatriz dirección de la matriz
-     * @param direccionSucursal dirección de la sucursal
+     * @param porcentajeIva      porcentaje de IVA a aplicar
+     * @param rucInstitucional   RUC institucional para la facturación
+     * @param razonSocial        razón social de la empresa
+     * @param direccionMatriz    dirección de la matriz
+     * @param direccionSucursal  dirección de la sucursal
      * @param subtotalPorcentaje porcentaje para el subtotal
      * @return true si todos los parámetros se actualizaron correctamente
      */
-    public boolean actualizarParametrosLegalesFiscales(String porcentajeIva, String rucInstitucional, 
-                                                String razonSocial, String direccionMatriz, 
-                                                String direccionSucursal, String subtotalPorcentaje) {
+    public boolean actualizarParametrosLegalesFiscales(String porcentajeIva, String rucInstitucional,
+            String razonSocial, String direccionMatriz,
+            String direccionSucursal, String subtotalPorcentaje) {
         LOGGER.info("Actualizando parámetros legales/fiscales");
-        
+
         boolean resultado = true;
-        
+
         // Activar parámetros y actualizar sus valores
         activarParametro("porcentaje_iva");
         resultado &= actualizarValor("porcentaje_iva", porcentajeIva);
-        
+
         activarParametro("ruc_institucional");
         resultado &= actualizarValor("ruc_institucional", rucInstitucional);
-        
+
         activarParametro("razon_social");
         resultado &= actualizarValor("razon_social", razonSocial);
-        
+
         activarParametro("direccion_matriz");
         resultado &= actualizarValor("direccion_matriz", direccionMatriz);
-        
+
         activarParametro("direccion_sucursal");
         resultado &= actualizarValor("direccion_sucursal", direccionSucursal);
-        
+
         activarParametro("subtotal_porcentaje");
         resultado &= actualizarValor("subtotal_porcentaje", subtotalPorcentaje);
-        
+
         // Eliminar parámetros innecesarios (marcarlos como inactivos)
         desactivarParametro("correo_institucional");
         desactivarParametro("direccion_fiscal");
         desactivarParametro("retencion");
-        
+
         // Invalidar caché para que se carguen los nuevos valores
         if (resultado) {
             invalidarCache();
@@ -734,7 +734,7 @@ public class ParametroService {
         } else {
             LOGGER.warning("Hubo errores al actualizar los parámetros legales/fiscales");
         }
-        
+
         return resultado;
     }
 }
