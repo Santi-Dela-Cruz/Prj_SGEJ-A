@@ -16,6 +16,8 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Screen;
@@ -44,6 +46,26 @@ public class LoginController {
 
     private double xOffset = 0;
     private double yOffset = 0;
+    
+    /**
+     * Método utilitario para mostrar mensajes de error
+     * @param mensaje El mensaje de error a mostrar
+     */
+    private void mostrarError(String mensaje) {
+        if (errorLabel != null) {
+            errorLabel.setText(mensaje);
+            errorLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
+            errorLabel.setVisible(true);
+            
+            // Asegurarse de que el label sea visible
+            errorLabel.requestFocus();
+            
+            // Debug
+            System.out.println("Mostrando mensaje de error: " + mensaje);
+        } else {
+            System.err.println("ERROR: No se puede mostrar el mensaje de error porque el label es null");
+        }
+    }
 
     private final AutenticacionService autenticacionService = AutenticacionService.getInstancia();
 
@@ -73,9 +95,13 @@ public class LoginController {
         userTypeBox.getItems().addAll("Administrador", "Asistente Legal", "Contador", "Abogado");
         userTypeBox.getSelectionModel().selectFirst();
 
-        // Ocultar el error al inicio
+        // Configurar y ocultar el error al inicio
         if (errorLabel != null) {
+            errorLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
             errorLabel.setVisible(false);
+            System.out.println("Label de error inicializado correctamente");
+        } else {
+            System.err.println("ERROR: El label de error no fue encontrado en el FXML");
         }
     }
 
@@ -86,10 +112,7 @@ public class LoginController {
 
         // Validar que se hayan ingresado credenciales
         if (username.isEmpty() || password.isEmpty()) {
-            if (errorLabel != null) {
-                errorLabel.setText("Por favor ingrese nombre de usuario y contraseña.");
-                errorLabel.setVisible(true);
-            }
+            mostrarError("Por favor ingrese nombre de usuario y contraseña.");
             return;
         }
 
@@ -101,26 +124,17 @@ public class LoginController {
             usuario = usuarioDAO.obtenerUsuarioPorNombreUsuario(username);
 
             if (usuario == null) {
-                if (errorLabel != null) {
-                    errorLabel.setText("Usuario no encontrado. Por favor verifique sus credenciales.");
-                    errorLabel.setVisible(true);
-                }
+                mostrarError("Usuario no encontrado. Por favor verifique sus credenciales.");
                 return;
             }
         } catch (Exception e) {
-            if (errorLabel != null) {
-                errorLabel.setText("Error al verificar el usuario. Intente nuevamente.");
-                errorLabel.setVisible(true);
-            }
+            mostrarError("Error al verificar el usuario. Intente nuevamente.");
             e.printStackTrace();
             return;
         }
 
         if (usuario.getEstadoUsuario() == Usuario.EstadoUsuario.INACTIVO) {
-            if (errorLabel != null) {
-                errorLabel.setText("Usuario bloqueado. Contacte al administrador del sistema.");
-                errorLabel.setVisible(true);
-            }
+            mostrarError("Usuario bloqueado. Contacte al administrador del sistema.");
             return;
         }
 
@@ -144,18 +158,24 @@ public class LoginController {
                 usuario.setEstadoUsuario(Usuario.EstadoUsuario.INACTIVO);
                 usuarioDAO.actualizarUsuario(usuario);
 
-                // Mostrar mensaje de bloqueo
-                if (errorLabel != null) {
-                    errorLabel.setText("Usuario bloqueado por múltiples intentos fallidos. Contacte al administrador.");
-                    errorLabel.setVisible(true);
-                }
+                // Mostrar mensaje de bloqueo en el label
+                mostrarError("Usuario bloqueado por múltiples intentos fallidos. Contacte al administrador.");
+                
+                // Mostrar diálogo de alerta informando sobre el bloqueo
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("Cuenta Bloqueada");
+                alert.setHeaderText("Usuario bloqueado por seguridad");
+                alert.setContentText("Su cuenta ha sido bloqueada después de " + maxIntentosFallidos + 
+                                     " intentos fallidos de inicio de sesión.\n\n" +
+                                     "Por favor contacte al administrador del sistema para desbloquear su cuenta.");
+                
+                // Mostrar el diálogo y esperar a que el usuario lo cierre
+                alert.showAndWait();
+                
             } else {
                 // Mostrar error si la autenticación falla pero aún no se bloquea
-                if (errorLabel != null) {
-                    int intentosRestantes = maxIntentosFallidos - intentosFallidos;
-                    errorLabel.setText("Credenciales incorrectas. Intentos restantes: " + intentosRestantes);
-                    errorLabel.setVisible(true);
-                }
+                int intentosRestantes = maxIntentosFallidos - intentosFallidos;
+                mostrarError("El usuario o la contraseña son incorrectas. Intentos restantes: " + intentosRestantes);
             }
         }
     }
@@ -208,17 +228,20 @@ public class LoginController {
                 try {
                     FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/views/login.fxml"));
                     Parent loginRoot = loginLoader.load();
-
+                    
+                    // Crear escena y aplicar estilos
+                    Scene loginScene = new Scene(loginRoot);
+                    loginScene.getStylesheets().add(getClass().getResource("/styles/app.css").toExternalForm());
+                    
                     Stage loginStage = new Stage();
-                    loginStage.setScene(new Scene(loginRoot));
+                    loginStage.setTitle("Sistema de Gestión de Estudios Jurídicos");
                     loginStage.initStyle(StageStyle.UNDECORATED);
+                    loginStage.setScene(loginScene);
                     loginStage.show();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            };
-
-            // Iniciar el control de tiempo de sesión
+            };            // Iniciar el control de tiempo de sesión
             SessionManager.getInstance().startSessionTimer(tiempoSesion, logoutAction, stage);
 
             // Cerrar la ventana de login
@@ -227,10 +250,7 @@ public class LoginController {
 
         } catch (Exception e) {
             e.printStackTrace();
-            if (errorLabel != null) {
-                errorLabel.setText("Error al iniciar la aplicación: " + e.getMessage());
-                errorLabel.setVisible(true);
-            }
+            mostrarError("Error al iniciar la aplicación: " + e.getMessage());
         }
     }
 }
