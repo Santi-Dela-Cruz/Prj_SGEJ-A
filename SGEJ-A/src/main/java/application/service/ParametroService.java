@@ -4,6 +4,9 @@ import application.dao.ParametroDAO;
 import application.model.Parametro;
 import application.model.ParametrosSMTP;
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -85,7 +88,12 @@ public class ParametroService {
         valoresPorDefecto.put("mostrar_novedades", "true");
         valoresPorDefecto.put("notificaciones_activas", "true");
         valoresPorDefecto.put("logo_empresa", "default_logo.png");
-        valoresPorDefecto.put("ruta_documentos", "uploads/documentos/");
+        valoresPorDefecto.put("ruta_documentos", "uploads/facturas/");
+
+        // Parámetros para documentos
+        valoresPorDefecto.put("ruta_archivos", "uploads/facturas/");
+        valoresPorDefecto.put("formatos_permitidos", "pdf,doc,docx,jpg,png");
+        valoresPorDefecto.put("tamaño_maximo_archivo", "10");
 
         // Parámetros para facturación
         valoresPorDefecto.put("porcentaje_iva", "12");
@@ -528,8 +536,138 @@ public class ParametroService {
             return new ParametrosSMTP(servidor, puerto, usuario, clave, remitente);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Error al cargar parámetros SMTP", e);
-            // Valores por defecto en caso de error
-            return new ParametrosSMTP("smtp.gmail.com", 587, "", "", "");
         }
+        return null;
+    }
+
+    /**
+     * Obtiene la ruta donde se almacenarán los archivos subidos
+     * 
+     * @return ruta de archivos
+     */
+    public String getRutaArchivos() {
+        // Usamos la misma ruta que las facturas para unificar el almacenamiento
+        // La ruta predeterminada ahora es "uploads/facturas/"
+        return getValor("ruta_archivos", "uploads/facturas/");
+    }
+
+    /**
+     * Obtiene el tamaño máximo permitido para los archivos en MB
+     * 
+     * @return tamaño máximo en MB
+     */
+    public int getTamañoMaximoArchivo() {
+        return getValorEntero("tamaño_maximo_archivo", 10);
+    }
+
+    /**
+     * Obtiene los formatos de archivo permitidos separados por coma
+     * 
+     * @return cadena con formatos permitidos (ej: "pdf,doc,docx")
+     */
+    public String getFormatosPermitidos() {
+        // Invalidar caché para asegurar que obtenemos el valor más reciente
+        invalidarCache();
+
+        // Consulta directa a la base de datos para obtener el valor más reciente
+        try {
+            Connection conn = application.database.DatabaseConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(
+                    "SELECT valor FROM parametro WHERE codigo = 'formatos_permitidos' AND (estado = 'ACTIVO' OR estado = 'INACTIVO')");
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String formatos = rs.getString("valor");
+                LOGGER.info("Formatos permitidos obtenidos directamente de BD: [" + formatos + "]");
+                rs.close();
+                stmt.close();
+                conn.close();
+                return formatos;
+            }
+            rs.close();
+            stmt.close();
+            conn.close();
+        } catch (Exception e) {
+            LOGGER.warning("Error al obtener formatos permitidos directamente: " + e.getMessage());
+        }
+
+        // Si no se pudo obtener de la BD, usar getValor con caché invalidado
+        String valor = getValor("formatos_permitidos", "pdf,doc,docx,jpg,png");
+        LOGGER.info("Formatos permitidos obtenidos con getValor: [" + valor + "]");
+        return valor;
+    }
+
+    /**
+     * Verifica si una extensión de archivo está permitida según la configuración
+     * 
+     * @param extension extensión del archivo (sin el punto)
+     * @return true si está permitida, false en caso contrario
+     */
+    public boolean esExtensionPermitida(String extension) {
+        if (extension == null || extension.isEmpty()) {
+            LOGGER.warning("Extensión vacía o nula, no permitida");
+            return false;
+        }
+
+        // Normalizar la extensión (quitar punto inicial si existe, convertir a
+        // minúsculas)
+        extension = extension.toLowerCase().trim();
+        if (extension.startsWith(".")) {
+            extension = extension.substring(1);
+        }
+
+        // Obtener formatos permitidos y convertir a array
+        String formatosStr = getFormatosPermitidos();
+
+        if (formatosStr == null || formatosStr.isEmpty()) {
+            LOGGER.warning("No se encontraron formatos permitidos configurados");
+            return false;
+        }
+
+        // Mejorar el procesamiento de los formatos para evitar problemas con espacios
+        String[] formatos = formatosStr.toLowerCase().split(",");
+
+        LOGGER.info("Verificando extensión: [" + extension + "] contra formatos permitidos: [" + formatosStr + "]");
+
+        // Verificar si la extensión está en la lista de permitidos
+        for (String formato : formatos) {
+            String formatoTrimmed = formato.trim();
+            LOGGER.info("Comparando con formato: [" + formatoTrimmed + "]");
+
+            if (formatoTrimmed.equals(extension)) {
+                LOGGER.info("Extensión [" + extension + "] permitida");
+                return true;
+            }
+        }
+
+        LOGGER.warning("Extensión [" + extension + "] no está en la lista de formatos permitidos");
+        return false;
+    }
+
+    /**
+     * Actualiza los formatos de archivo permitidos
+     * 
+     * @param nuevosFormatos Lista de formatos separados por coma (ej:
+     *                       "pdf,doc,docx,jpg,png")
+     * @return true si se actualizó correctamente
+     */
+    public boolean actualizarFormatosPermitidos(String nuevosFormatos) {
+        LOGGER.info("Actualizando formatos permitidos a: [" + nuevosFormatos + "]");
+
+        // Asegurar que el parámetro esté activado
+        activarParametro("formatos_permitidos");
+
+        // Actualizar el valor
+        boolean resultado = actualizarValor("formatos_permitidos", nuevosFormatos);
+
+        // Invalidar caché para que se carguen los nuevos valores
+        if (resultado) {
+            invalidarCache();
+            LOGGER.info("Formatos permitidos actualizados correctamente");
+        } else {
+            LOGGER.warning("No se pudieron actualizar los formatos permitidos");
+        }
+
+        return resultado;
     }
 }

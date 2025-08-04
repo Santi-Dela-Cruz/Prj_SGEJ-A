@@ -83,7 +83,7 @@ public class DatabaseConnection {
                         nombre TEXT NOT NULL,
                         descripcion TEXT,
                         valor TEXT NOT NULL,
-                        tipo TEXT NOT NULL CHECK (tipo IN ('NUMERICO', 'TEXTO', 'TIEMPO')),
+                        tipo TEXT NOT NULL CHECK (tipo IN ('NUMERICO', 'TEXTO', 'TIEMPO', 'PORCENTAJE')),
                         estado TEXT NOT NULL CHECK (estado IN ('ACTIVO', 'INACTIVO')),
                         created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                         updated_at DATETIME DEFAULT CURRENT_TIMESTAMP

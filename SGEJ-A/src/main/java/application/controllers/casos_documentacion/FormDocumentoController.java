@@ -24,8 +24,11 @@ import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 public class FormDocumentoController {
+
+    private static final Logger LOGGER = Logger.getLogger(FormDocumentoController.class.getName());
 
     @FXML
     private TextField txtf_NombreDocumento;
@@ -69,7 +72,7 @@ public class FormDocumentoController {
 
         btn_SeleccionarArchivo.setOnAction(e -> seleccionarArchivo());
 
-        btn_Guardar.setOnAction(e -> {
+        btn_Guardar.setOnAction(event -> {
             if (txtf_NumeroExpediente.getText().isEmpty() ||
                     txtf_NombreDocumento.getText().isEmpty() ||
                     cbx_TipoDocumento.getValue() == null ||
@@ -97,12 +100,17 @@ public class FormDocumentoController {
 
             if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
                 try {
-                    // Guardar el archivo en la carpeta de uploads
+                    // Guardar el archivo en la carpeta de uploads según configuración
                     File archivoOrigen = new File(txtf_RutaArchivo.getText());
                     String numeroExpediente = txtf_NumeroExpediente.getText();
 
+                    // Obtener ruta base desde parámetros
+                    application.service.ParametroService paramService = application.service.ParametroService
+                            .getInstance();
+                    String rutaBase = paramService.getRutaArchivos();
+
                     // Crear el directorio para los documentos del caso si no existe
-                    Path directorioDestino = Paths.get("src/main/resources/uploads/documentos/" + numeroExpediente);
+                    Path directorioDestino = Paths.get(rutaBase, numeroExpediente);
                     if (!Files.exists(directorioDestino)) {
                         Files.createDirectories(directorioDestino);
                     }
@@ -162,7 +170,7 @@ public class FormDocumentoController {
             }
         });
 
-        btn_Cancelar.setOnAction(e -> {
+        btn_Cancelar.setOnAction(event -> {
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                     "Confirmación",
                     "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
@@ -177,39 +185,138 @@ public class FormDocumentoController {
     }
 
     private void seleccionarArchivo() {
+        // Obtener la configuración de formatos permitidos desde el servicio de
+        // parámetros
+        application.service.ParametroService paramService = application.service.ParametroService.getInstance();
+        // Invalidar caché antes de obtener el valor para asegurar que obtenemos la
+        // versión más reciente
+        paramService.invalidarCache();
+        String formatosPermitidos = paramService.getFormatosPermitidos();
+
+        LOGGER.info("Formatos permitidos obtenidos del servicio: [" + formatosPermitidos + "]");
+
+        // Convertir la cadena de formatos a un array, eliminando espacios
+        String[] formatos = formatosPermitidos.split(",");
+
+        // Preparar los formatos para el FileChooser (añadir * y .)
+        String[] formatosConPunto = new String[formatos.length];
+        for (int i = 0; i < formatos.length; i++) {
+            formatosConPunto[i] = "*." + formatos[i].trim();
+            LOGGER.info("Formato con punto preparado: " + formatosConPunto[i]);
+        }
+
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Seleccionar archivo");
 
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Todos los archivos", "*.*"),
-                new FileChooser.ExtensionFilter("Documentos PDF", "*.pdf"),
-                new FileChooser.ExtensionFilter("Documentos Word", "*.docx", "*.doc", "*.rtf", "*.odt"),
-                new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp", "*.tif",
-                        "*.tiff"),
-                new FileChooser.ExtensionFilter("Textos", "*.txt", "*.md", "*.csv"),
-                new FileChooser.ExtensionFilter("Excel", "*.xls", "*.xlsx"),
-                new FileChooser.ExtensionFilter("PowerPoint", "*.ppt", "*.pptx"),
-                new FileChooser.ExtensionFilter("Archivos Comprimidos", "*.zip", "*.rar", "*.7z"));
+        // Configurar los filtros según los parámetros
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter("Formatos permitidos (" + formatosPermitidos + ")", formatosConPunto));
+
+        // Añadir también filtros específicos por tipo para mejor usabilidad
+        // Verificar que cada formato esté realmente en la lista (no solo que la cadena
+        // lo contenga)
+        boolean tienePDF = false;
+        boolean tieneWord = false;
+        boolean tieneImagen = false;
+
+        for (String formato : formatos) {
+            String fmt = formato.trim().toLowerCase();
+            if ("pdf".equals(fmt)) {
+                tienePDF = true;
+            } else if ("doc".equals(fmt) || "docx".equals(fmt)) {
+                tieneWord = true;
+            } else if ("jpg".equals(fmt) || "jpeg".equals(fmt) || "png".equals(fmt)) {
+                tieneImagen = true;
+            }
+        }
+
+        LOGGER.info("Filtros específicos - PDF: " + tienePDF + ", Word: " + tieneWord + ", Imágenes: " + tieneImagen);
+
+        if (tienePDF) {
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Documentos PDF", "*.pdf"));
+        }
+        if (tieneWord) {
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Documentos Word", "*.docx", "*.doc"));
+        }
+        if (tieneImagen) {
+            fileChooser.getExtensionFilters().add(
+                    new FileChooser.ExtensionFilter("Imágenes", "*.png", "*.jpg", "*.jpeg"));
+        }
 
         Window window = btn_SeleccionarArchivo.getScene().getWindow();
         File archivo = fileChooser.showOpenDialog(window);
 
         if (archivo != null) {
+            // Verificar tamaño del archivo
+            int tamañoMaximoMB = paramService.getTamañoMaximoArchivo();
+            long tamañoArchivoMB = archivo.length() / (1024 * 1024); // Convertir bytes a MB
+
+            // Verificar extensión del archivo
+            String fileName = archivo.getName();
+            int puntoIndex = fileName.lastIndexOf('.');
+            String extension = "";
+            if (puntoIndex > 0) {
+                extension = fileName.substring(puntoIndex + 1).toLowerCase().trim();
+            }
+
+            LOGGER.info("Verificando archivo: [" + fileName + "] con extensión: [" + extension + "]");
+            // Usamos la variable formatosPermitidos ya declarada anteriormente
+            LOGGER.info("Formatos permitidos: [" + formatosPermitidos + "]");
+
+            // Verificación manual de la extensión para depurar
+            boolean extensionEnFormatos = false;
+            for (String formato : formatos) {
+                String formatoTrimmed = formato.trim();
+                LOGGER.info("Comparando extensión [" + extension + "] con formato [" + formatoTrimmed + "]");
+                if (formatoTrimmed.equalsIgnoreCase(extension)) {
+                    extensionEnFormatos = true;
+                    break;
+                }
+            }
+            LOGGER.info("Verificación manual de extensión: " + extensionEnFormatos);
+
+            // Usamos el servicio para la verificación oficial
+            boolean extensionPermitida = paramService.esExtensionPermitida(extension);
+
+            // Validar tamaño y extensión
+            if (tamañoArchivoMB > tamañoMaximoMB) {
+                DialogUtil.mostrarDialogo(
+                        "Archivo demasiado grande",
+                        "El archivo seleccionado excede el tamaño máximo permitido de " + tamañoMaximoMB + " MB.",
+                        "warning",
+                        List.of(ButtonType.OK));
+                return;
+            }
+
+            if (!extensionPermitida) {
+                LOGGER.warning("Archivo rechazado: extensión [" + extension + "] no permitida");
+                DialogUtil.mostrarDialogo(
+                        "Formato no permitido",
+                        "El formato de archivo ." + extension + " no está permitido.\n" +
+                                "Formatos permitidos: " + paramService.getFormatosPermitidos(),
+                        "warning",
+                        List.of(ButtonType.OK));
+                return;
+            } else {
+                LOGGER.info("Archivo aceptado: extensión [" + extension + "] permitida");
+            }
+
             txtf_RutaArchivo.setText(archivo.getAbsolutePath());
 
             // Extraer y autocompletar nombre del documento basado en el archivo
-            String nombreArchivo = archivo.getName();
+            String nombreArchivo = fileName;
             // Quitar la extensión para un nombre más limpio
-            int puntoIndex = nombreArchivo.lastIndexOf('.');
             if (puntoIndex > 0) {
-                nombreArchivo = nombreArchivo.substring(0, puntoIndex);
+                nombreArchivo = fileName.substring(0, puntoIndex);
             }
             txtf_NombreDocumento.setText(nombreArchivo);
 
             // Intentar determinar el tipo de documento basado en la extensión
-            String extension = "";
             if (puntoIndex > 0) {
-                extension = archivo.getName().substring(puntoIndex + 1).toLowerCase();
+                // La variable extension ya fue declarada y asignada anteriormente, no es
+                // necesario redeclararla
                 switch (extension) {
                     case "pdf":
                         cbx_TipoDocumento.setValue("PDF");

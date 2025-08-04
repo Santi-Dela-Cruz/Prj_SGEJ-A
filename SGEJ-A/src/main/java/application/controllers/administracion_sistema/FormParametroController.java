@@ -3,12 +3,14 @@ package application.controllers.administracion_sistema;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.TextFormatter;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,6 +19,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.function.UnaryOperator;
 
 import application.dao.ParametroDAO;
 import application.model.Parametro;
@@ -155,17 +160,28 @@ public class FormParametroController {
 
     private void inicializarComboTipo() {
         cmb_Tipo.getItems().clear();
-        cmb_Tipo.getItems().addAll("TEXTO", "NUMERICO", "TIEMPO");
+        cmb_Tipo.getItems().addAll("TEXTO", "NUMERICO", "TIEMPO", "PORCENTAJE");
         cmb_Tipo.setValue("TEXTO");
 
         // Listener para mostrar/ocultar componentes de upload (si decides usar
         // archivos)
         cmb_Tipo.valueProperty().addListener((observable, oldValue, newValue) -> {
             boolean esArchivo = "ARCHIVO".equalsIgnoreCase(newValue);
+            boolean esPorcentaje = "PORCENTAJE".equalsIgnoreCase(newValue);
+
+            // Configurar visibilidad y manejo de componentes
             vbox_Upload.setVisible(esArchivo);
             vbox_Upload.setManaged(esArchivo);
             vbox_Valor.setVisible(!esArchivo);
             vbox_Valor.setManaged(!esArchivo);
+
+            // Configurar el campo de valor según el tipo
+            if (esPorcentaje) {
+                configurarCampoPorcentaje();
+            } else {
+                // Eliminar formatter personalizado si existe
+                txt_Valor.setTextFormatter(null);
+            }
         });
     }
 
@@ -178,6 +194,69 @@ public class FormParametroController {
                 "Notificaciones",
                 "Sistema");
         cmb_Categoria.setValue("General");
+    }
+
+    /**
+     * Configura el campo de valor para mostrar y editar porcentajes
+     * Formatea el valor como porcentaje y permite ingresar valores entre 0-100%
+     */
+    private void configurarCampoPorcentaje() {
+        DecimalFormat percentFormat = new DecimalFormat("#0.##");
+
+        // Crear un filtro para solo permitir números y punto decimal
+        UnaryOperator<TextFormatter.Change> filter = change -> {
+            String newText = change.getControlNewText();
+            // Permite dígitos, punto decimal y asegura formato válido de número
+            if (newText.matches("^\\d*\\.?\\d*$")) {
+                try {
+                    // Si está vacío, permitir (para poder borrar)
+                    if (newText.isEmpty()) {
+                        return change;
+                    }
+
+                    // Convertir a número y validar rango (0-100)
+                    double valor = Double.parseDouble(newText);
+                    if (valor >= 0 && valor <= 100) {
+                        return change;
+                    }
+                } catch (NumberFormatException e) {
+                    // Si no es un número válido, rechazar
+                    return null;
+                }
+            }
+            // Rechazar otros caracteres
+            return null;
+        };
+
+        // Conversor para formatear como porcentaje
+        StringConverter<Double> converter = new StringConverter<>() {
+            @Override
+            public String toString(Double value) {
+                if (value == null) {
+                    return "";
+                }
+                return percentFormat.format(value) + "%";
+            }
+
+            @Override
+            public Double fromString(String string) {
+                if (string == null || string.isEmpty() || string.equals("%")) {
+                    return 0.0;
+                }
+                // Quitar el símbolo de porcentaje si existe
+                String cleaned = string.replace("%", "").trim();
+                try {
+                    return percentFormat.parse(cleaned).doubleValue();
+                } catch (ParseException e) {
+                    return 0.0;
+                }
+            }
+        };
+
+        // Aplicar el TextFormatter al campo de valor
+        TextFormatter<Double> textFormatter = new TextFormatter<>(converter, 0.0, filter);
+        txt_Valor.setTextFormatter(textFormatter);
+        txt_Valor.setPromptText("Ingrese un porcentaje (0-100%)");
     }
 
     private void configurarBotones() {
@@ -378,6 +457,8 @@ public class FormParametroController {
             cmb_Tipo.setValue("TEXTO");
         else if (tipo.equals("TIEMPO"))
             cmb_Tipo.setValue("TIEMPO");
+        else if (tipo.equals("PORCENTAJE"))
+            cmb_Tipo.setValue("PORCENTAJE");
         else
             cmb_Tipo.setValue("TEXTO");
 
@@ -672,7 +753,7 @@ public class FormParametroController {
 
     private void configurarUploadArchivos() {
         // Usar referencia de método directa
-        btn_SeleccionarArchivo.setOnMouseClicked(e -> seleccionarArchivo());
+        btn_SeleccionarArchivo.setOnAction(event -> seleccionarArchivo());
         btn_SeleccionarArchivo.getStyleClass().add("upload-button");
     }
 

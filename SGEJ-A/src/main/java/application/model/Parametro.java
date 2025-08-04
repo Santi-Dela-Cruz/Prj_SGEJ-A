@@ -9,7 +9,7 @@ public class Parametro {
 
     // Enumeraciones para tipo y estado
     public enum Tipo {
-        NUMERICO, TEXTO, TIEMPO, ENTERO, DECIMAL, BOOLEANO, IMAGEN, CLAVE
+        NUMERICO, TEXTO, TIEMPO, ENTERO, DECIMAL, BOOLEANO, IMAGEN, CLAVE, PORCENTAJE
     }
 
     public enum Estado {

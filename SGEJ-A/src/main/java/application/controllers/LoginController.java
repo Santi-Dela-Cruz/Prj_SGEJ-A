@@ -46,9 +46,10 @@ public class LoginController {
 
     private double xOffset = 0;
     private double yOffset = 0;
-    
+
     /**
      * Método utilitario para mostrar mensajes de error
+     * 
      * @param mensaje El mensaje de error a mostrar
      */
     private void mostrarError(String mensaje) {
@@ -56,10 +57,10 @@ public class LoginController {
             errorLabel.setText(mensaje);
             errorLabel.setStyle("-fx-text-fill: red; -fx-font-weight: bold;");
             errorLabel.setVisible(true);
-            
+
             // Asegurarse de que el label sea visible
             errorLabel.requestFocus();
-            
+
             // Debug
             System.out.println("Mostrando mensaje de error: " + mensaje);
         } else {
@@ -160,18 +161,18 @@ public class LoginController {
 
                 // Mostrar mensaje de bloqueo en el label
                 mostrarError("Usuario bloqueado por múltiples intentos fallidos. Contacte al administrador.");
-                
+
                 // Mostrar diálogo de alerta informando sobre el bloqueo
                 Alert alert = new Alert(AlertType.ERROR);
                 alert.setTitle("Cuenta Bloqueada");
                 alert.setHeaderText("Usuario bloqueado por seguridad");
-                alert.setContentText("Su cuenta ha sido bloqueada después de " + maxIntentosFallidos + 
-                                     " intentos fallidos de inicio de sesión.\n\n" +
-                                     "Por favor contacte al administrador del sistema para desbloquear su cuenta.");
-                
+                alert.setContentText("Su cuenta ha sido bloqueada después de " + maxIntentosFallidos +
+                        " intentos fallidos de inicio de sesión.\n\n" +
+                        "Por favor contacte al administrador del sistema para desbloquear su cuenta.");
+
                 // Mostrar el diálogo y esperar a que el usuario lo cierre
                 alert.showAndWait();
-                
+
             } else {
                 // Mostrar error si la autenticación falla pero aún no se bloquea
                 int intentosRestantes = maxIntentosFallidos - intentosFallidos;
@@ -228,11 +229,11 @@ public class LoginController {
                 try {
                     FXMLLoader loginLoader = new FXMLLoader(getClass().getResource("/views/login.fxml"));
                     Parent loginRoot = loginLoader.load();
-                    
+
                     // Crear escena y aplicar estilos
                     Scene loginScene = new Scene(loginRoot);
                     loginScene.getStylesheets().add(getClass().getResource("/styles/app.css").toExternalForm());
-                    
+
                     Stage loginStage = new Stage();
                     loginStage.setTitle("Sistema de Gestión de Estudios Jurídicos");
                     loginStage.initStyle(StageStyle.UNDECORATED);
@@ -241,7 +242,7 @@ public class LoginController {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            };            // Iniciar el control de tiempo de sesión
+            }; // Iniciar el control de tiempo de sesión
             SessionManager.getInstance().startSessionTimer(tiempoSesion, logoutAction, stage);
 
             // Cerrar la ventana de login
