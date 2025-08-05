@@ -71,6 +71,9 @@ public class DatabaseInitializer {
             // Agregar la columna devolucion_iva que falta en la tabla factura
             executeScript("/database/add_devolucion_iva_column.sql");
 
+            // Crear tabla de personal si no existe
+            executeScript("/database/crear_tabla_personal.sql");
+
             // Actualizar los parámetros legales y fiscales para la facturación
             executeScript("/database/actualizar_parametros_legales_fiscales.sql");
 
