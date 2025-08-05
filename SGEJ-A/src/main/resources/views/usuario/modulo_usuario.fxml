@@ -98,7 +98,7 @@
                 
                 <TableView fx:id="tb_Usuarios" style="-fx-background-color: transparent; -fx-table-cell-border-color: #e2e8f0; -fx-selection-bar: linear-gradient(to right, #3b82f6, #2563eb); -fx-selection-bar-non-focused: #93c5fd; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-size: 13px; -fx-background-radius: 10; -fx-padding: 5;" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="tbc_NombresCompletos" minWidth="180.0" prefWidth="180.0" style="-fx-alignment: CENTER-LEFT; -fx-font-weight: bold; -fx-padding: 0 10 0 10;" text="👤 Nombres Completos" />
+                        <TableColumn fx:id="tbc_NombresCompletos" minWidth="180.0" prefWidth="180.0" style="-fx-alignment: CENTER; -fx-font-weight: bold; -fx-padding: 0 10 0 10;" text="👤 Nombres Completos" />
                         <TableColumn fx:id="tbc_NombreUsuario" minWidth="100.0" prefWidth="100.0" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" text="🧑‍💻 Usuario" />
                         <TableColumn fx:id="tbc_NumeroI" minWidth="120.0" prefWidth="120.0" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" text="🔢 N° Identificación" />
                         <TableColumn fx:id="tbc_Estado" minWidth="80.0" prefWidth="80.0" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" text="🔘 Estado" />

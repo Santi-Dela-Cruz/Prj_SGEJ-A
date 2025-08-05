@@ -20,7 +20,7 @@ public class FormCambioClaveController {
     private Button btn_Guardar, btn_Cancelar;
     @FXML
     private Label lbl_Usuario;
-    
+
     @FXML
     private Label lbl_RequisitosPassword, lbl_ReqLongitud, lbl_ReqMayuscula, lbl_ReqNumero, lbl_ReqEspecial;
 
@@ -30,15 +30,16 @@ public class FormCambioClaveController {
 
     // DAO para operaciones con la base de datos
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
-    
+
     // Patrones individuales para cada requisito de contraseña
     private final Pattern longitudPattern = Pattern.compile(".{8,}");
     private final Pattern mayusculaPattern = Pattern.compile(".*[A-Z].*");
     private final Pattern numeroPattern = Pattern.compile(".*[0-9].*");
     private final Pattern especialPattern = Pattern.compile(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*");
-    
+
     // Patrón completo para contraseñas seguras
-    private final Pattern contrasenaSeguraPattern = Pattern.compile("^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$");
+    private final Pattern contrasenaSeguraPattern = Pattern
+            .compile("^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$");
 
     public void setOnGuardar(Runnable handler) {
         this.onGuardar = handler;
@@ -93,13 +94,11 @@ public class FormCambioClaveController {
                 onCancelar.run();
             }
         });
-        
+
         // Agregar listener al campo de nueva contraseña para validación en tiempo real
-        txt_Nueva.textProperty().addListener((__, ___, newValue) -> 
-            actualizarIndicadoresRequisitos(newValue)
-        );
+        txt_Nueva.textProperty().addListener((__, ___, newValue) -> actualizarIndicadoresRequisitos(newValue));
     }
-    
+
     /**
      * Actualiza los indicadores visuales de los requisitos de contraseña
      * 
@@ -111,19 +110,19 @@ public class FormCambioClaveController {
         boolean cumpleMayuscula = mayusculaPattern.matcher(password).matches();
         boolean cumpleNumero = numeroPattern.matcher(password).matches();
         boolean cumpleEspecial = especialPattern.matcher(password).matches();
-        
+
         // Actualizar color de cada indicador (verde si cumple, rojo si no)
-        lbl_ReqLongitud.setStyle("-fx-font-size: 9px; -fx-text-fill: " + 
-                               (cumpleLongitud ? "#006400" : "#FF0000") + ";");
-        
-        lbl_ReqMayuscula.setStyle("-fx-font-size: 9px; -fx-text-fill: " + 
-                                (cumpleMayuscula ? "#006400" : "#FF0000") + ";");
-        
-        lbl_ReqNumero.setStyle("-fx-font-size: 9px; -fx-text-fill: " + 
-                             (cumpleNumero ? "#006400" : "#FF0000") + ";");
-        
-        lbl_ReqEspecial.setStyle("-fx-font-size: 9px; -fx-text-fill: " + 
-                               (cumpleEspecial ? "#006400" : "#FF0000") + ";");
+        lbl_ReqLongitud.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleLongitud ? "#006400" : "#FF0000") + ";");
+
+        lbl_ReqMayuscula.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleMayuscula ? "#006400" : "#FF0000") + ";");
+
+        lbl_ReqNumero.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleNumero ? "#006400" : "#FF0000") + ";");
+
+        lbl_ReqEspecial.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleEspecial ? "#006400" : "#FF0000") + ";");
     }
 
     /**
@@ -173,12 +172,13 @@ public class FormCambioClaveController {
             return false;
         }
 
-        // Validar que la contraseña cumple con todos los requisitos de seguridad usando el patrón
+        // Validar que la contraseña cumple con todos los requisitos de seguridad usando
+        // el patrón
         String contrasena = txt_Nueva.getText();
-        
+
         // Actualizar indicadores visuales de requisitos
         actualizarIndicadoresRequisitos(contrasena);
-        
+
         if (!contrasenaSeguraPattern.matcher(contrasena).matches()) {
             lbl_Error.setText("La contraseña no cumple con todos los requisitos de seguridad");
             return false;

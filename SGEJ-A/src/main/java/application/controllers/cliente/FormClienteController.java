@@ -78,6 +78,8 @@ public class FormClienteController implements Initializable {
     @FXML
     private Label lbl_ErrorTipoIdentificacion;
     @FXML
+    private Label lbl_ErrorNumIdentificacion;
+    @FXML
     private Label lbl_ErrorTelefono;
     @FXML
     private Label lbl_ErrorCorreo;
@@ -133,9 +135,11 @@ public class FormClienteController implements Initializable {
             // Configurar ComboBox de tipo de identificación
             if (cbx_TipoIdentificacion != null) {
                 cbx_TipoIdentificacion.getItems().clear();
-                cbx_TipoIdentificacion.getItems().addAll("Cédula", "RUC", "Pasaporte");
+                cbx_TipoIdentificacion.getItems().addAll("Cédula", "RUC"); // Eliminado "Pasaporte"
                 cbx_TipoIdentificacion.setPromptText("Seleccionar tipo de identificación");
                 aplicarEstilosComboBox(cbx_TipoIdentificacion);
+                // Inicialmente habilitado hasta que se seleccione un tipo de persona
+                cbx_TipoIdentificacion.setDisable(false);
                 System.out.println("✅ ComboBox Tipo Identificación configurado: "
                         + cbx_TipoIdentificacion.getItems().size() + " items");
             } else {
@@ -203,11 +207,19 @@ public class FormClienteController implements Initializable {
                     if (tipoSeleccionado.equals("Persona Natural")) {
                         mostrarCamposPersonaNatural(true);
                         mostrarCamposPersonaJuridica(false);
-                        System.out.println("👤 Mostrando campos persona natural");
+                        // Establecer automáticamente Cédula para persona natural
+                        cbx_TipoIdentificacion.setValue("Cédula");
+                        // Deshabilitar el combo para que no pueda ser modificado
+                        cbx_TipoIdentificacion.setDisable(true);
+                        System.out.println("👤 Mostrando campos persona natural - Tipo ID: Cédula (bloqueado)");
                     } else if (tipoSeleccionado.equals("Persona Jurídica")) {
                         mostrarCamposPersonaNatural(false);
                         mostrarCamposPersonaJuridica(true);
-                        System.out.println("🏢 Mostrando campos persona jurídica");
+                        // Establecer automáticamente RUC para persona jurídica
+                        cbx_TipoIdentificacion.setValue("RUC");
+                        // Deshabilitar el combo para que no pueda ser modificado
+                        cbx_TipoIdentificacion.setDisable(true);
+                        System.out.println("🏢 Mostrando campos persona jurídica - Tipo ID: RUC (bloqueado)");
                     }
                 }
             });
@@ -382,18 +394,16 @@ public class FormClienteController implements Initializable {
                 txtf_DireccionFiscal.setText(cliente.getDireccionFiscal());
             }
 
-            // Configurar tipo de identificación
-            switch (cliente.getTipoIdentificacion()) {
-                case CEDULA:
-                    cbx_TipoIdentificacion.getSelectionModel().select("Cédula");
-                    break;
-                case RUC:
-                    cbx_TipoIdentificacion.getSelectionModel().select("RUC");
-                    break;
-                case PASAPORTE:
-                    cbx_TipoIdentificacion.getSelectionModel().select("Pasaporte");
-                    break;
+            // Configurar tipo de identificación según el tipo de persona
+            // El tipo de identificación ahora se establece automáticamente según el tipo de persona
+            if (cliente.getTipoIdentificacion() == Cliente.TipoIdentificacion.CEDULA) {
+                cbx_TipoIdentificacion.getSelectionModel().select("Cédula");
+            } else if (cliente.getTipoIdentificacion() == Cliente.TipoIdentificacion.RUC) {
+                cbx_TipoIdentificacion.getSelectionModel().select("RUC");
             }
+            
+            // Asegurar que el combobox esté deshabilitado
+            cbx_TipoIdentificacion.setDisable(true);
 
             txtf_NumeroIdentificacion.setText(cliente.getNumeroIdentificacion());
             txtf_Direccion.setText(cliente.getDireccion());
@@ -532,14 +542,28 @@ public class FormClienteController implements Initializable {
             mostrarError(lbl_ErrorTipoIdentificacion);
             esValido = false;
         }
+        
+        // Validar número de identificación
+        if (txtf_NumeroIdentificacion.getText() == null || txtf_NumeroIdentificacion.getText().trim().isEmpty()) {
+            mostrarError(lbl_ErrorNumIdentificacion);
+            esValido = false;
+        }
 
         // Validar teléfono
         if (txtf_Telefono.getText() == null || txtf_Telefono.getText().trim().isEmpty()) {
             mostrarError(lbl_ErrorTelefono);
             esValido = false;
+        } else {
+            // Validar formato del teléfono (solo números y longitud correcta)
+            String telefono = txtf_Telefono.getText().trim();
+            if (!telefono.matches("^\\d{10}$")) {
+                mostrarError(lbl_ErrorTelefono);
+                lbl_ErrorTelefono.setText("*El teléfono debe tener 10 dígitos numéricos");
+                esValido = false;
+            }
         }
 
-        // Validar correo
+        // Validar correo (ahora obligatorio)
         if (txtf_Correo.getText() == null || txtf_Correo.getText().trim().isEmpty()) {
             mostrarError(lbl_ErrorCorreo);
             esValido = false;
@@ -561,6 +585,7 @@ public class FormClienteController implements Initializable {
                     System.err.println("⚠️ Label de error para Representante Legal no encontrado");
                 } else {
                     mostrarError(lbl_ErrorRepresentante);
+                    lbl_ErrorRepresentante.setText("*Debe ingresar el nombre del representante legal");
                 }
                 esValido = false;
             }
@@ -571,6 +596,7 @@ public class FormClienteController implements Initializable {
                     System.err.println("⚠️ Label de error para Dirección Fiscal no encontrado");
                 } else {
                     mostrarError(lbl_ErrorDireccionFiscal);
+                    lbl_ErrorDireccionFiscal.setText("*Debe ingresar la dirección fiscal completa");
                 }
                 esValido = false;
             }
@@ -581,10 +607,92 @@ public class FormClienteController implements Initializable {
         // NOTA: cbx_EstadoCivil (estado civil) NO es obligatorio para personas
         // naturales
 
-        // Si hay errores, mostrar mensaje general
+        // Si hay errores, mostrar la lista específica de errores en el diálogo
         if (!esValido) {
-            mostrarMensajeAdvertencia("Campos Obligatorios",
-                    "Por favor complete correctamente los campos marcados en rojo.");
+            // Verificar cada campo en el orden del formulario y mostrar solo el primer error encontrado
+            if (lbl_ErrorTipoCliente != null && lbl_ErrorTipoCliente.isVisible()) {
+                application.controllers.DialogUtil.mostrarDialogo(
+                    "Error de Validación", 
+                    "• Debe seleccionar un tipo de cliente", 
+                    "error", 
+                    java.util.List.of(javafx.scene.control.ButtonType.OK)
+                );
+                return esValido;
+            }
+            
+            if (lbl_ErrorNombres != null && lbl_ErrorNombres.isVisible()) {
+                String mensaje = lbl_ErrorNombres.getText().contains("Solo se permiten") ?
+                    "• El nombre contiene caracteres no válidos" : 
+                    "• Debe ingresar un nombre completo";
+                    
+                application.controllers.DialogUtil.mostrarDialogo(
+                    "Error de Validación", 
+                    mensaje, 
+                    "error", 
+                    java.util.List.of(javafx.scene.control.ButtonType.OK)
+                );
+                return esValido;
+            }
+            
+            if (lbl_ErrorTipoIdentificacion != null && lbl_ErrorTipoIdentificacion.isVisible()) {
+                application.controllers.DialogUtil.mostrarDialogo(
+                    "Error de Validación", 
+                    "• Debe seleccionar un tipo de identificación", 
+                    "error", 
+                    java.util.List.of(javafx.scene.control.ButtonType.OK)
+                );
+                return esValido;
+            }
+            
+            if (lbl_ErrorNumIdentificacion != null && lbl_ErrorNumIdentificacion.isVisible()) {
+                application.controllers.DialogUtil.mostrarDialogo(
+                    "Error de Validación", 
+                    "• Debe ingresar un número de identificación válido", 
+                    "error", 
+                    java.util.List.of(javafx.scene.control.ButtonType.OK)
+                );
+                return esValido;
+            }
+            
+            if (lbl_ErrorTelefono != null && lbl_ErrorTelefono.isVisible()) {
+                application.controllers.DialogUtil.mostrarDialogo(
+                    "Error de Validación", 
+                    "• " + lbl_ErrorTelefono.getText().substring(1), 
+                    "error", 
+                    java.util.List.of(javafx.scene.control.ButtonType.OK)
+                );
+                return esValido;
+            }
+            
+            if (lbl_ErrorCorreo != null && lbl_ErrorCorreo.isVisible()) {
+                application.controllers.DialogUtil.mostrarDialogo(
+                    "Error de Validación", 
+                    "• " + lbl_ErrorCorreo.getText().substring(1), 
+                    "error", 
+                    java.util.List.of(javafx.scene.control.ButtonType.OK)
+                );
+                return esValido;
+            }
+            
+            if (lbl_ErrorRepresentante != null && lbl_ErrorRepresentante.isVisible()) {
+                application.controllers.DialogUtil.mostrarDialogo(
+                    "Error de Validación", 
+                    "• Debe ingresar un representante legal", 
+                    "error", 
+                    java.util.List.of(javafx.scene.control.ButtonType.OK)
+                );
+                return esValido;
+            }
+            
+            if (lbl_ErrorDireccionFiscal != null && lbl_ErrorDireccionFiscal.isVisible()) {
+                application.controllers.DialogUtil.mostrarDialogo(
+                    "Error de Validación", 
+                    "• Debe ingresar una dirección fiscal", 
+                    "error", 
+                    java.util.List.of(javafx.scene.control.ButtonType.OK)
+                );
+                return esValido;
+            }
         }
 
         return esValido;
@@ -596,22 +704,36 @@ public class FormClienteController implements Initializable {
     private void ocultarErrores() {
         if (lbl_ErrorNombres != null) {
             lbl_ErrorNombres.setVisible(false);
-            lbl_ErrorNombres.setText("*Campo Obligatorio"); // Resetear texto
+            lbl_ErrorNombres.setText("*Debe ingresar un nombre completo"); // Mensaje más específico
         }
-        if (lbl_ErrorTipoCliente != null)
+        if (lbl_ErrorTipoCliente != null) {
             lbl_ErrorTipoCliente.setVisible(false);
-        if (lbl_ErrorTipoIdentificacion != null)
+            lbl_ErrorTipoCliente.setText("*Debe seleccionar un tipo de cliente"); // Mensaje más específico
+        }
+        if (lbl_ErrorTipoIdentificacion != null) {
             lbl_ErrorTipoIdentificacion.setVisible(false);
-        if (lbl_ErrorTelefono != null)
+            lbl_ErrorTipoIdentificacion.setText("*Debe seleccionar un tipo de identificación"); // Mensaje más específico
+        }
+        if (lbl_ErrorNumIdentificacion != null) {
+            lbl_ErrorNumIdentificacion.setVisible(false);
+            lbl_ErrorNumIdentificacion.setText("*Ingrese un número de identificación válido"); // Mensaje más específico
+        }
+        if (lbl_ErrorTelefono != null) {
             lbl_ErrorTelefono.setVisible(false);
+            lbl_ErrorTelefono.setText("*El teléfono debe tener 10 dígitos numéricos"); // Mensaje más específico
+        }
         if (lbl_ErrorCorreo != null) {
             lbl_ErrorCorreo.setVisible(false);
-            lbl_ErrorCorreo.setText("*Campo Obligatorio"); // Resetear texto
+            lbl_ErrorCorreo.setText("*Ingrese un correo electrónico válido"); 
         }
-        if (lbl_ErrorRepresentante != null)
+        if (lbl_ErrorRepresentante != null) {
             lbl_ErrorRepresentante.setVisible(false);
-        if (lbl_ErrorDireccionFiscal != null)
+            lbl_ErrorRepresentante.setText("*Debe ingresar el nombre del representante legal"); // Mensaje más específico
+        }
+        if (lbl_ErrorDireccionFiscal != null) {
             lbl_ErrorDireccionFiscal.setVisible(false);
+            lbl_ErrorDireccionFiscal.setText("*Debe ingresar la dirección fiscal completa"); // Mensaje más específico
+        }
     }
 
     /**
@@ -676,9 +798,7 @@ public class FormClienteController implements Initializable {
                 case "RUC":
                     cliente.setTipoIdentificacion(Cliente.TipoIdentificacion.RUC);
                     break;
-                case "Pasaporte":
-                    cliente.setTipoIdentificacion(Cliente.TipoIdentificacion.PASAPORTE);
-                    break;
+                // Caso de Pasaporte eliminado
             }
         }
 
@@ -781,6 +901,8 @@ public class FormClienteController implements Initializable {
         txtf_Nombres.clear();
         cbx_TipoCliente.setValue(null);
         cbx_TipoIdentificacion.setValue(null);
+        // Habilitar el combobox de tipo de identificación cuando se limpia el formulario
+        cbx_TipoIdentificacion.setDisable(false);
         txtf_NumeroIdentificacion.clear();
         txtf_Direccion.clear();
         txtf_Telefono.clear();
@@ -865,9 +987,7 @@ public class FormClienteController implements Initializable {
         DialogUtil.mostrarDialogo(titulo, mensaje, "error", List.of(ButtonType.OK));
     }
 
-    private void mostrarMensajeAdvertencia(String titulo, String mensaje) {
-        DialogUtil.mostrarDialogo(titulo, mensaje, "warning", List.of(ButtonType.OK));
-    }
+    // Método eliminado ya que ahora usamos DialogUtil.mostrarDialogo directamente
 
     private boolean mostrarConfirmacion(String titulo, String mensaje) {
         Optional<ButtonType> resultado = DialogUtil.mostrarDialogo(titulo, mensaje, "confirm",
@@ -985,7 +1105,9 @@ public class FormClienteController implements Initializable {
             comboBox.setVisibleRowCount(5);
 
             // Listener para asegurar que el texto se vea cuando se seleccione
-            comboBox.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            // Parámetros no usados: observable, oldValue
+            comboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newVal) -> {
+                // Se ignoran los parámetros observable y oldValue ya que no se necesitan
                 if (newVal != null && !newVal.isEmpty()) {
                     System.out.println("ComboBox seleccionado: " + newVal);
                     // Forzar la actualización visual usando setText

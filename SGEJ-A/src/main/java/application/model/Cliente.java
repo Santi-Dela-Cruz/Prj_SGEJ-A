@@ -10,7 +10,7 @@ public class Cliente {
     
     // Enumeraciones para tipos
     public enum TipoIdentificacion {
-        CEDULA, RUC, PASAPORTE
+        CEDULA, RUC /* PASAPORTE eliminado */
     }
     
     public enum TipoPersona {

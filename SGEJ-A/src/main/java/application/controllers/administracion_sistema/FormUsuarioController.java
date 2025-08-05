@@ -41,7 +41,7 @@ public class FormUsuarioController {
 
     // Patrones para validación
     private final Pattern emailPattern = Pattern.compile("^[A-Za-z0-9+_.-]+@(.+)$");
-    
+
     // Patrones individuales para cada requisito de contraseña
     private final Pattern longitudPattern = Pattern.compile(".{8,}");
     private final Pattern mayusculaPattern = Pattern.compile(".*[A-Z].*");
@@ -88,7 +88,6 @@ public class FormUsuarioController {
                     case INTERNO -> rol = "Administrador";
                     case NATURAL -> rol = "Abogado";
                     case JURIDICA -> rol = "Contador";
-                    case EXTERNO -> rol = "Asistente Legal";
                     default -> rol = "Administrador";
                 }
                 cmb_TipoUsuario.getSelectionModel().select(rol);
@@ -124,23 +123,23 @@ public class FormUsuarioController {
             txt_Clave.setManaged(!ocultar);
             txt_ConfirmarClave.setVisible(!ocultar);
             txt_ConfirmarClave.setManaged(!ocultar);
-            
+
             // Ocultar/Mostrar las etiquetas
             if (lbl_Clave != null && lbl_ConfirmarClave != null) {
                 lbl_Clave.setVisible(!ocultar);
                 lbl_Clave.setManaged(!ocultar);
                 lbl_ConfirmarClave.setVisible(!ocultar);
                 lbl_ConfirmarClave.setManaged(!ocultar);
-                
+
                 System.out.println("Campos de contraseña " + (ocultar ? "ocultados" : "mostrados") + " correctamente");
             } else {
                 System.err.println("Las etiquetas de los campos de contraseña no están disponibles");
             }
-            
+
             // Ocultar/Mostrar los indicadores de requisitos de contraseña
-            if (lbl_RequisitosPassword != null && lbl_ReqLongitud != null && 
-                lbl_ReqMayuscula != null && lbl_ReqNumero != null && lbl_ReqEspecial != null) {
-                
+            if (lbl_RequisitosPassword != null && lbl_ReqLongitud != null &&
+                    lbl_ReqMayuscula != null && lbl_ReqNumero != null && lbl_ReqEspecial != null) {
+
                 lbl_RequisitosPassword.setVisible(!ocultar);
                 lbl_RequisitosPassword.setManaged(!ocultar);
                 lbl_ReqLongitud.setVisible(!ocultar);
@@ -151,8 +150,9 @@ public class FormUsuarioController {
                 lbl_ReqNumero.setManaged(!ocultar);
                 lbl_ReqEspecial.setVisible(!ocultar);
                 lbl_ReqEspecial.setManaged(!ocultar);
-                
-                System.out.println("Requisitos de contraseña " + (ocultar ? "ocultados" : "mostrados") + " correctamente");
+
+                System.out.println(
+                        "Requisitos de contraseña " + (ocultar ? "ocultados" : "mostrados") + " correctamente");
             }
         } else {
             System.err.println("Los campos de contraseña no están disponibles");
@@ -162,7 +162,7 @@ public class FormUsuarioController {
     @FXML
     private void initialize() {
         lbl_Error.setText("");
-        
+
         // Limpiar las etiquetas de error
         limpiarEtiquetasError();
 
@@ -176,19 +176,13 @@ public class FormUsuarioController {
         // Seleccionar valores predeterminados
         cmb_TipoUsuario.getSelectionModel().select("Administrador");
         cmb_EstadoUsuario.getSelectionModel().select("ACTIVO");
-        
+
         // Configurar listeners para validación en tiempo real
-        txt_Identificacion.textProperty().addListener((__, ___, newValue) -> 
-            validarIdentificacion(newValue)
-        );
-        
-        txt_Email.textProperty().addListener((__, ___, newValue) -> 
-            validarEmail(newValue)
-        );
-        
-        txt_Clave.textProperty().addListener((__, ___, newValue) -> 
-            actualizarIndicadoresRequisitos(newValue)
-        );
+        txt_Identificacion.textProperty().addListener((__, ___, newValue) -> validarIdentificacion(newValue));
+
+        txt_Email.textProperty().addListener((__, ___, newValue) -> validarEmail(newValue));
+
+        txt_Clave.textProperty().addListener((__, ___, newValue) -> actualizarIndicadoresRequisitos(newValue));
 
         // Configurar botones
         btn_Guardar.setOnAction(__ -> guardarUsuario());
@@ -198,7 +192,7 @@ public class FormUsuarioController {
             }
         });
     }
-    
+
     /**
      * Limpia todas las etiquetas de error
      */
@@ -209,10 +203,10 @@ public class FormUsuarioController {
         lbl_ErrorApellidos.setText("");
         lbl_ErrorUsuario.setText("");
         lbl_ErrorEmail.setText("");
-        
+
         // Establecer color gris para requisitos de contraseña
-        if (lbl_ReqLongitud != null && lbl_ReqMayuscula != null && 
-            lbl_ReqNumero != null && lbl_ReqEspecial != null) {
+        if (lbl_ReqLongitud != null && lbl_ReqMayuscula != null &&
+                lbl_ReqNumero != null && lbl_ReqEspecial != null) {
             String colorGris = "-fx-font-size: 9px; -fx-text-fill: #666666;";
             lbl_ReqLongitud.setStyle(colorGris);
             lbl_ReqMayuscula.setStyle(colorGris);
@@ -220,25 +214,26 @@ public class FormUsuarioController {
             lbl_ReqEspecial.setStyle(colorGris);
         }
     }
-    
+
     /**
      * Valida la identificación (cédula ecuatoriana)
      */
     private void validarIdentificacion(String identificacion) {
         application.utils.VerificationID verificador = new application.utils.VerificationID();
-        
+
         if (!identificacion.isEmpty()) {
             // Primero validamos que sea una cédula válida
             if (!verificador.validarCedula(identificacion)) {
                 lbl_ErrorIdentificacion.setText("La cédula ingresada no es válida");
                 return;
             }
-            
+
             // Luego verificamos que no exista otro usuario con la misma identificación
             try {
                 Integer idUsuarioActual = (modo.equals("EDITAR") && usuario != null) ? usuario.getId() : null;
-                boolean identificacionExistente = usuarioDAO.existeUsuarioConIdentificacion(identificacion, idUsuarioActual);
-                
+                boolean identificacionExistente = usuarioDAO.existeUsuarioConIdentificacion(identificacion,
+                        idUsuarioActual);
+
                 if (identificacionExistente) {
                     lbl_ErrorIdentificacion.setText("Esta cédula ya está registrada para otro usuario");
                 } else {
@@ -252,7 +247,7 @@ public class FormUsuarioController {
             lbl_ErrorIdentificacion.setText("");
         }
     }
-    
+
     /**
      * Valida el formato del correo electrónico
      */
@@ -267,7 +262,7 @@ public class FormUsuarioController {
             lbl_ErrorEmail.setText("");
         }
     }
-    
+
     /**
      * Actualiza los indicadores visuales de los requisitos de contraseña
      * 
@@ -275,29 +270,29 @@ public class FormUsuarioController {
      */
     private void actualizarIndicadoresRequisitos(String password) {
         // Si no están inicializados, salir
-        if (lbl_ReqLongitud == null || lbl_ReqMayuscula == null || 
-            lbl_ReqNumero == null || lbl_ReqEspecial == null) {
+        if (lbl_ReqLongitud == null || lbl_ReqMayuscula == null ||
+                lbl_ReqNumero == null || lbl_ReqEspecial == null) {
             return;
         }
-        
+
         // Validar cada requisito por separado
         boolean cumpleLongitud = longitudPattern.matcher(password).matches();
         boolean cumpleMayuscula = mayusculaPattern.matcher(password).matches();
         boolean cumpleNumero = numeroPattern.matcher(password).matches();
         boolean cumpleEspecial = especialPattern.matcher(password).matches();
-        
+
         // Actualizar color de cada indicador (verde si cumple, rojo si no)
-        lbl_ReqLongitud.setStyle("-fx-font-size: 9px; -fx-text-fill: " + 
-                              (cumpleLongitud ? "#006400" : "#FF0000") + ";");
-        
-        lbl_ReqMayuscula.setStyle("-fx-font-size: 9px; -fx-text-fill: " + 
-                               (cumpleMayuscula ? "#006400" : "#FF0000") + ";");
-        
-        lbl_ReqNumero.setStyle("-fx-font-size: 9px; -fx-text-fill: " + 
-                            (cumpleNumero ? "#006400" : "#FF0000") + ";");
-        
-        lbl_ReqEspecial.setStyle("-fx-font-size: 9px; -fx-text-fill: " + 
-                              (cumpleEspecial ? "#006400" : "#FF0000") + ";");
+        lbl_ReqLongitud.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleLongitud ? "#006400" : "#FF0000") + ";");
+
+        lbl_ReqMayuscula.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleMayuscula ? "#006400" : "#FF0000") + ";");
+
+        lbl_ReqNumero.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleNumero ? "#006400" : "#FF0000") + ";");
+
+        lbl_ReqEspecial.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleEspecial ? "#006400" : "#FF0000") + ";");
     }
 
     /**
@@ -309,7 +304,7 @@ public class FormUsuarioController {
         // Limpiar todas las etiquetas de error
         limpiarEtiquetasError();
         lbl_Error.setText(""); // limpiar error general
-        
+
         boolean formularioValido = true;
 
         // Validar campos obligatorios
@@ -317,22 +312,22 @@ public class FormUsuarioController {
             lbl_ErrorNombres.setText("El nombre es obligatorio");
             formularioValido = false;
         }
-        
+
         if (txt_Apellidos.getText().trim().isEmpty()) {
             lbl_ErrorApellidos.setText("El apellido es obligatorio");
             formularioValido = false;
         }
-        
+
         if (txt_Identificacion.getText().trim().isEmpty()) {
             lbl_ErrorIdentificacion.setText("La cédula es obligatoria");
             formularioValido = false;
         }
-        
+
         if (txt_Email.getText().trim().isEmpty()) {
             lbl_ErrorEmail.setText("El correo es obligatorio");
             formularioValido = false;
         }
-        
+
         if (txt_Usuario.getText().trim().isEmpty()) {
             lbl_ErrorUsuario.setText("El nombre de usuario es obligatorio");
             formularioValido = false;
@@ -356,8 +351,9 @@ public class FormUsuarioController {
                 // Verificar que no exista otro usuario con la misma identificación
                 try {
                     Integer idUsuarioActual = (modo.equals("EDITAR") && usuario != null) ? usuario.getId() : null;
-                    boolean identificacionExistente = usuarioDAO.existeUsuarioConIdentificacion(identificacion, idUsuarioActual);
-                    
+                    boolean identificacionExistente = usuarioDAO.existeUsuarioConIdentificacion(identificacion,
+                            idUsuarioActual);
+
                     if (identificacionExistente) {
                         lbl_ErrorIdentificacion.setText("Esta cédula ya está registrada para otro usuario");
                         formularioValido = false;
@@ -383,7 +379,7 @@ public class FormUsuarioController {
             }
 
             String contrasena = txt_Clave.getText();
-            
+
             // Actualizar indicadores visuales de requisitos
             actualizarIndicadoresRequisitos(contrasena);
 
@@ -393,11 +389,13 @@ public class FormUsuarioController {
                 formularioValido = false;
             }
         }
-        
-        // Validar que el nombre de usuario sea único (excepto para el mismo usuario en edición)
+
+        // Validar que el nombre de usuario sea único (excepto para el mismo usuario en
+        // edición)
         try {
             Usuario usuarioExistente = usuarioDAO.obtenerUsuarioPorNombreUsuario(txt_Usuario.getText().trim());
-            if (usuarioExistente != null && (modo.equals("CREAR") || !usuarioExistente.getId().equals(usuario.getId()))) {
+            if (usuarioExistente != null
+                    && (modo.equals("CREAR") || !usuarioExistente.getId().equals(usuario.getId()))) {
                 lbl_ErrorUsuario.setText("Este nombre de usuario ya existe");
                 formularioValido = false;
             }
@@ -406,7 +404,7 @@ public class FormUsuarioController {
             lbl_Error.setText("Error al verificar disponibilidad del usuario");
             formularioValido = false;
         }
-        
+
         return formularioValido;
     }
 

@@ -41,14 +41,14 @@
                 <Label text="Tipo de Cliente:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-alignment: center;" />
                 <VBox GridPane.rowIndex="1" GridPane.columnIndex="0" alignment="TOP_LEFT">
                     <ComboBox fx:id="cbx_TipoCliente" promptText="Seleccionar tipo..." prefWidth="200" style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 2 8; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 32; -fx-max-height: 32;" />
-                    <Label fx:id="lbl_ErrorTipoCliente" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 2 0 0 0;" visible="false" />
+                    <Label fx:id="lbl_ErrorTipoCliente" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-style: italic; -fx-font-weight: normal; -fx-padding: 2 0 0 0;" visible="false" />
                 </VBox>
 
                 <!-- Nombre Completo -->
                 <Label text="Nombre Completo:" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
                 <VBox GridPane.rowIndex="1" GridPane.columnIndex="1">
                     <TextField fx:id="txtf_Nombres" promptText="Ingrese nombre completo..." prefWidth="260" style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 6; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 32;" />
-                    <Label fx:id="lbl_ErrorNombres" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 2 0 0 0;" visible="false" />
+                    <Label fx:id="lbl_ErrorNombres" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-style: italic; -fx-font-weight: normal; -fx-padding: 2 0 0 0;" visible="false" />
                 </VBox>
 
                 <!-- Estado -->
@@ -75,13 +75,14 @@
                 <Label text="Tipo de Identificación:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-alignment: center;" />
                 <VBox GridPane.rowIndex="1" GridPane.columnIndex="0" alignment="TOP_LEFT">
                     <ComboBox fx:id="cbx_TipoIdentificacion" promptText="Seleccionar tipo..." prefWidth="160" style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 2 8; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 32; -fx-max-height: 32;" />
-                    <Label fx:id="lbl_ErrorTipoIdentificacion" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 2 0 0 0;" visible="false" />
+                    <Label fx:id="lbl_ErrorTipoIdentificacion" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-style: italic; -fx-font-weight: normal; -fx-padding: 2 0 0 0;" visible="false" />
                 </VBox>
 
                 <!-- Número de Identificación -->
                 <Label text="Número de Identificación:" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-alignment: center;" />
                 <VBox GridPane.rowIndex="1" GridPane.columnIndex="1" alignment="TOP_LEFT">
                     <TextField fx:id="txtf_NumeroIdentificacion" promptText="Ej: 1234567890..." prefWidth="180" style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 6; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 32;" />
+                    <Label fx:id="lbl_ErrorNumIdentificacion" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-style: italic; -fx-font-weight: normal; -fx-padding: 2 0 0 0;" visible="false" />
                 </VBox>
 
                 <!-- Fecha de Ingreso -->
@@ -108,14 +109,14 @@
                 <Label text="Teléfono:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-alignment: center;" />
                 <VBox GridPane.rowIndex="1" GridPane.columnIndex="0" alignment="TOP_LEFT">
                     <TextField fx:id="txtf_Telefono" promptText="Ej: 0987654321..." prefWidth="150" style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 6; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 32;" />
-                    <Label fx:id="lbl_ErrorTelefono" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 2 0 0 0;" visible="false" />
+                    <Label fx:id="lbl_ErrorTelefono" text="*Ingrese un número válido de 10 dígitos" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-style: italic; -fx-font-weight: normal; -fx-padding: 2 0 0 0;" visible="false" />
                 </VBox>
 
                 <!-- Correo Electrónico -->
                 <Label text="Correo Electrónico:" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
                 <VBox GridPane.rowIndex="1" GridPane.columnIndex="1">
                     <TextField fx:id="txtf_Correo" promptText="cliente@ejemplo.com..." prefWidth="260" style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 6; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 32;" />
-                    <Label fx:id="lbl_ErrorCorreo" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 2 0 0 0;" visible="false" />
+                    <Label fx:id="lbl_ErrorCorreo" text="*Ingrese un correo electrónico válido" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-style: italic; -fx-font-weight: normal; -fx-padding: 2 0 0 0;" visible="false" />
                 </VBox>
 
                 <!-- Dirección -->
@@ -162,14 +163,14 @@
                 <Label fx:id="lbl_RepresentanteLegal" text="Representante Legal:" GridPane.rowIndex="0" GridPane.columnIndex="0" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-alignment: center;" />
                 <VBox GridPane.rowIndex="1" GridPane.columnIndex="0" alignment="TOP_LEFT">
                     <TextField fx:id="txtf_RepresentanteLegal" promptText="Nombre del representante..." prefWidth="160" style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 6; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 32;" />
-                    <Label fx:id="lbl_ErrorRepresentante" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 2 0 0 0;" visible="false" />
+                    <Label fx:id="lbl_ErrorRepresentante" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-style: italic; -fx-font-weight: normal; -fx-padding: 2 0 0 0;" visible="false" />
                 </VBox>
 
                 <!-- Dirección Fiscal -->
                 <Label fx:id="lbl_DireccionFiscal" text="Dirección Fiscal:" GridPane.rowIndex="0" GridPane.columnIndex="1" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-alignment: center;" />
                 <VBox GridPane.rowIndex="1" GridPane.columnIndex="1" alignment="TOP_LEFT">
                     <TextField fx:id="txtf_DireccionFiscal" promptText="Dirección fiscal..." prefWidth="160" style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 6; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 32;" />
-                    <Label fx:id="lbl_ErrorDireccionFiscal" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-weight: bold; -fx-padding: 2 0 0 0;" visible="false" />
+                    <Label fx:id="lbl_ErrorDireccionFiscal" text="*Campo Obligatorio" style="-fx-text-fill: #ef4444; -fx-font-size: 11px; -fx-font-style: italic; -fx-font-weight: normal; -fx-padding: 2 0 0 0;" visible="false" />
                 </VBox>
             </GridPane>
         </VBox>

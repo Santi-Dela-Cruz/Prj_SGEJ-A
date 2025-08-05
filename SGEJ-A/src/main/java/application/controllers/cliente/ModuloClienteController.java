@@ -5,7 +5,10 @@ import application.controllers.casos_documentacion.ModuloCasosController;
 import application.model.Cliente;
 import application.service.ClienteService;
 import application.controllers.administracion_sistema.FormUsuarioModalLauncher;
+import application.utils.ExportadorExcel;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.scene.control.Alert;
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -32,6 +35,8 @@ public class ModuloClienteController {
     private Button btn_Buscar;
     @FXML
     private Button btn_LimpiarFiltro;
+    @FXML
+    private Button btn_ExportarExcel;
     @FXML
     private TextField txt_Busqueda;
     @FXML
@@ -108,6 +113,7 @@ public class ModuloClienteController {
         btn_Nuevo.setOnAction(_ -> mostrarFormulario(null, "NUEVO"));
         btn_Buscar.setOnAction(_ -> buscarClientes());
         btn_LimpiarFiltro.setOnAction(_ -> limpiarFiltro());
+        btn_ExportarExcel.setOnAction(_ -> exportarClientesAExcel());
 
         // Configurar ComboBox de filtro
         configurarFiltroEstado();
@@ -532,6 +538,56 @@ public class ModuloClienteController {
             cmb_FiltroEstado.getSelectionModel().selectFirst(); // Seleccionar "Todos"
         }
         cargarClientesDesdeBaseDatos();
+    }
+    
+    /**
+     * Exporta los datos de todos los clientes a un archivo Excel
+     * Utiliza la clase ExportadorExcel para generar el archivo
+     */
+    private void exportarClientesAExcel() {
+        try {
+            // Obtener la lista completa de clientes desde la base de datos
+            List<Cliente> listaClientes;
+            
+            // Si es administrador, exportar todos los clientes
+            if ("Administrador".equals(tipoUsuario)) {
+                listaClientes = clienteService.obtenerTodosLosClientesIncluirInactivos();
+            } else {
+                // Si no es administrador, exportar solo clientes activos
+                listaClientes = clienteService.obtenerClientesActivos();
+            }
+            
+            // Exportar a Excel usando la utilidad
+            boolean resultado = ExportadorExcel.exportarClientesAExcel(listaClientes);
+            
+            // Mostrar mensaje según el resultado
+            if (resultado) {
+                mostrarMensaje(Alert.AlertType.INFORMATION, "Exportación Exitosa", 
+                       "Los datos de los clientes han sido exportados correctamente.");
+            } else {
+                mostrarMensaje(Alert.AlertType.WARNING, "Exportación Cancelada", 
+                       "La exportación de datos fue cancelada o no se pudo completar.");
+            }
+        } catch (Exception e) {
+            mostrarMensaje(Alert.AlertType.ERROR, "Error en Exportación", 
+                   "No se pudieron exportar los datos: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Muestra una alerta con el tipo, título y mensaje especificados
+     * 
+     * @param tipo Tipo de alerta (información, advertencia, error)
+     * @param titulo Título de la alerta
+     * @param mensaje Mensaje a mostrar
+     */
+    private void mostrarMensaje(Alert.AlertType tipo, String titulo, String mensaje) {
+        Alert alert = new Alert(tipo);
+        alert.setTitle(titulo);
+        alert.setHeaderText(null);
+        alert.setContentText(mensaje);
+        alert.showAndWait();
     }
 
     /**
