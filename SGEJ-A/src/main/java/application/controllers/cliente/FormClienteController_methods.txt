@@ -1,0 +1,76 @@
+/**
+ * Inicializa el formulario para ver los detalles de un cliente en modo solo lectura
+ * 
+ * @param cliente El cliente cuyos detalles se mostrarán
+ */
+public void inicializarParaVerDetalle(Cliente cliente) {
+    if (cliente == null) return;
+    
+    // Guardar referencia al cliente
+    this.clienteActual = cliente;
+    
+    // Configurar el modo del formulario
+    configurarModo(ModoFormulario.VISUALIZAR);
+    
+    // Actualizar título del formulario
+    if (txt_TituloForm != null) {
+        txt_TituloForm.setText("Detalles del Cliente");
+    }
+    
+    // Cargar datos del cliente en los campos
+    cargarDatosCliente(cliente);
+    
+    // Deshabilitar todos los campos para que sea de solo lectura
+    deshabilitarCampos();
+    
+    // Ocultar botones de acción o cambiar su comportamiento
+    if (btn_Guardar != null) {
+        btn_Guardar.setVisible(false);
+    }
+    
+    if (btn_Cancelar != null) {
+        btn_Cancelar.setText("Cerrar");
+        btn_Cancelar.setOnAction(e -> {
+            // Cerrar el formulario sin hacer nada más
+            ((Button) e.getSource()).getScene().getWindow().hide();
+        });
+    }
+}
+
+/**
+ * Deshabilita todos los campos del formulario para modo solo lectura
+ */
+private void deshabilitarCampos() {
+    // Deshabilitar ComboBoxes
+    if (cbx_TipoCliente != null) cbx_TipoCliente.setDisable(true);
+    if (cbx_TipoIdentificacion != null) cbx_TipoIdentificacion.setDisable(true);
+    if (cbx_Estado != null) cbx_Estado.setDisable(true);
+    if (cbx_EstadoCivil != null) cbx_EstadoCivil.setDisable(true);
+    
+    // Deshabilitar TextFields
+    if (txtf_Nombres != null) txtf_Nombres.setEditable(false);
+    if (txtf_NumeroIdentificacion != null) txtf_NumeroIdentificacion.setEditable(false);
+    if (txtf_Direccion != null) txtf_Direccion.setEditable(false);
+    if (txtf_Telefono != null) txtf_Telefono.setEditable(false);
+    if (txtf_Correo != null) txtf_Correo.setEditable(false);
+    if (txtf_RepresentanteLegal != null) txtf_RepresentanteLegal.setEditable(false);
+    if (txtf_DireccionFiscal != null) txtf_DireccionFiscal.setEditable(false);
+    
+    // Deshabilitar DatePicker
+    if (dt_FechaIngreso != null) dt_FechaIngreso.setEditable(false);
+    
+    // Aplicar estilos visuales para indicar que son de solo lectura
+    String readOnlyStyle = "-fx-opacity: 0.9; -fx-background-color: #f8f9fa;";
+    
+    // Aplicar a todos los campos
+    if (txtf_Nombres != null) txtf_Nombres.setStyle(txtf_Nombres.getStyle() + readOnlyStyle);
+    if (txtf_NumeroIdentificacion != null) txtf_NumeroIdentificacion.setStyle(txtf_NumeroIdentificacion.getStyle() + readOnlyStyle);
+    if (txtf_Direccion != null) txtf_Direccion.setStyle(txtf_Direccion.getStyle() + readOnlyStyle);
+    if (txtf_Telefono != null) txtf_Telefono.setStyle(txtf_Telefono.getStyle() + readOnlyStyle);
+    if (txtf_Correo != null) txtf_Correo.setStyle(txtf_Correo.getStyle() + readOnlyStyle);
+    if (txtf_RepresentanteLegal != null) txtf_RepresentanteLegal.setStyle(txtf_RepresentanteLegal.getStyle() + readOnlyStyle);
+    if (txtf_DireccionFiscal != null) txtf_DireccionFiscal.setStyle(txtf_DireccionFiscal.getStyle() + readOnlyStyle);
+    
+    // Ocultar todos los mensajes de error
+    ocultarErrores();
+}
