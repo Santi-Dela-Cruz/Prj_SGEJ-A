@@ -98,7 +98,7 @@ public class FormParametroController {
 
     @FXML
     private void initialize() {
-        System.out.println("Inicializando FormParametroController");
+        //System.out.println("Inicializando FormParametroController");
 
         // Configurar campo de código para que siempre muestre el texto correctamente
         configurarCampoCodigo();

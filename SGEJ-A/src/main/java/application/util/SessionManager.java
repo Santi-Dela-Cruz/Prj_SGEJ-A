@@ -50,8 +50,9 @@ public class SessionManager {
         this.mainStage = stage;
         this.sessionActive = true;
 
-        System.out.println("Iniciando temporizador de sesión: " + safeDurationMinutes + " minutos ("
-                + sessionDurationMillis + " ms)");
+        // System.out.println("Iniciando temporizador de sesión: " + safeDurationMinutes
+        // + " minutos ("
+        // + sessionDurationMillis + " ms)");
 
         // Crear nuevo timer
         sessionTimer = new Timer();
@@ -84,7 +85,8 @@ public class SessionManager {
             stopSessionTimer();
             // Calcular duración en minutos, con un mínimo de 1 minuto
             int durationMinutes = Math.max(1, (int) (sessionDurationMillis / (60 * 1000)));
-            System.out.println("Reiniciando temporizador de sesión: " + durationMinutes + " minutos");
+            // System.out.println("Reiniciando temporizador de sesión: " + durationMinutes +
+            // " minutos");
             startSessionTimer(durationMinutes, logoutAction, mainStage);
         }
     }

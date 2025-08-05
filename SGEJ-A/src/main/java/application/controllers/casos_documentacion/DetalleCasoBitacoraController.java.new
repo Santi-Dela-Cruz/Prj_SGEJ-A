@@ -30,6 +30,7 @@ public class DetalleCasoBitacoraController {
     @FXML
     private AnchorPane panelPrincipal;
 
+    private Runnable onRegresar;
     private int casoId;
     private AnchorPane panelSobrepuesto;
 
@@ -63,32 +64,32 @@ public class DetalleCasoBitacoraController {
         btnRegresar.setOnAction(e -> {
             System.out.println("DEBUG: Botón regresar presionado en DetalleCasoBitacoraController");
             
-            // Usar MainController exclusivamente para navegación
+            // Método principal: usar MainController (más fiable)
             try {
                 System.out.println("DEBUG: Navegando con MainController");
                 application.controllers.MainController mainController = 
                     application.controllers.MainController.getInstance();
                 if (mainController != null) {
-                    // Cambiado para usar la ruta correcta del FXML
-                    mainController.cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                    mainController.cargarModulo("/views/casos_documentos/modulo_casos.fxml");
                     System.out.println("DEBUG: Navegación exitosa con MainController");
-                } else {
-                    System.err.println("ERROR: No se pudo obtener instancia de MainController");
+                    return; // Terminar aquí si tuvo éxito
                 }
             } catch (Exception ex) {
                 System.err.println("ERROR: Falló navegación con MainController: " + ex.getMessage());
-                ex.printStackTrace();
-                // Intentar cargar con una ruta alternativa si la primera falló
+            }
+            
+            // Método alternativo: usar callback
+            if (onRegresar != null) {
+                System.out.println("DEBUG: Intentando usar callback onRegresar...");
                 try {
-                    application.controllers.MainController mainController = 
-                        application.controllers.MainController.getInstance();
-                    if (mainController != null) {
-                        mainController.cargarModulo("views/casos_documentos/modulo_casos_documentacion_casos.fxml");
-                        System.out.println("DEBUG: Navegación exitosa con ruta alternativa");
-                    }
-                } catch (Exception e2) {
-                    System.err.println("ERROR: También falló la navegación con ruta alternativa: " + e2.getMessage());
+                    onRegresar.run();
+                    System.out.println("DEBUG: Callback ejecutado exitosamente");
+                } catch (Exception ex) {
+                    System.err.println("ERROR: Error al ejecutar onRegresar: " + ex.getMessage());
+                    ex.printStackTrace();
                 }
+            } else {
+                System.err.println("ERROR: No se ha configurado la acción de regreso (onRegresar es null)");
             }
         });
     }
@@ -199,13 +200,19 @@ public class DetalleCasoBitacoraController {
     }
 
     /**
-     * Este método ahora no hace nada excepto registrar que fue llamado.
-     * La navegación se realiza exclusivamente a través de MainController.
+     * Establece el callback que se ejecutará cuando se presione el botón regresar.
+     * NOTA: Este método ya no reconfigura el botón regresar. La navegación principal
+     * se realiza siempre a través de MainController.
      */
     public void setOnRegresar(Runnable r) {
-        System.out.println("DEBUG: setOnRegresar llamado en DetalleCasoBitacoraController - ignorando callback");
+        System.out.println("DEBUG: setOnRegresar llamado en DetalleCasoBitacoraController con: " + 
+                           (r != null ? "NO NULO" : "NULO"));
         
-        // Ya no usamos callbacks para navegación, utilizamos MainController directamente
-        // El botón de regreso ya está configurado en el método configurarBotonRegresar()
+        if (r == null) {
+            System.err.println("ADVERTENCIA: Se intentó configurar un callback nulo en DetalleCasoBitacoraController.setOnRegresar");
+        }
+        
+        // Guardar el callback como método de respaldo
+        this.onRegresar = r;
     }
 }
