@@ -148,40 +148,16 @@ public class ModuloDocumentosController {
             System.err.println("ERROR: btn_Regresar es NULL en initialize");
         }
 
-        // Inicializar ComboBox con opciones de búsqueda
+        // Inicializar ComboBox con única opción de búsqueda
         if (cmb_CriterioBusqueda != null) {
-            cmb_CriterioBusqueda.getItems().addAll(
-                    "Nombre del documento",
-                    "Número de Expediente",
-                    "Número de Identificación",
-                    "Tipo de documento",
-                    "Fecha");
+            cmb_CriterioBusqueda.getItems().add("Nombre del documento");
             cmb_CriterioBusqueda.setValue("Nombre del documento");
-
-            // Cambiar el prompt del TextField según el criterio seleccionado
-            cmb_CriterioBusqueda.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-                if (newVal != null) {
-                    switch (newVal) {
-                        case "Nombre del documento":
-                            txtf_Buscar.setPromptText("🔍 Buscar por nombre del documento...");
-                            break;
-                        case "Número de Expediente":
-                            txtf_Buscar.setPromptText("🔢 Ingrese número de expediente...");
-                            break;
-                        case "Número de Identificación":
-                            txtf_Buscar.setPromptText("🪪 Ingrese número de identificación...");
-                            break;
-                        case "Tipo de documento":
-                            txtf_Buscar.setPromptText("🏷️ Ingrese tipo de documento...");
-                            break;
-                        case "Fecha":
-                            txtf_Buscar.setPromptText("📅 Formato: DD/MM/AAAA");
-                            break;
-                        default:
-                            txtf_Buscar.setPromptText("🔍 Buscar documento...");
-                    }
-                }
-            });
+            
+            // Establecer el prompt del TextField para búsqueda por nombre
+            txtf_Buscar.setPromptText("🔍 Buscar por nombre del documento...");
+            
+            // Desactivar el ComboBox ya que solo hay una opción
+            cmb_CriterioBusqueda.setDisable(true);
         } else {
             System.err.println("ERROR: cmb_CriterioBusqueda es NULL en initialize");
         }
@@ -202,42 +178,30 @@ public class ModuloDocumentosController {
     }
 
     /**
-     * Realiza la búsqueda según el criterio seleccionado
+     * Realiza la búsqueda por nombre del documento
      */
     private void realizarBusqueda() {
         if (txtf_Buscar.getText().trim().isEmpty()) {
             DialogUtil.mostrarDialogo(
                     "Búsqueda Vacía",
-                    "Por favor, ingrese un término de búsqueda.",
+                    "Por favor, ingrese un nombre de documento para buscar.",
                     "info",
                     List.of(ButtonType.OK));
             return;
         }
 
-        String criterio = cmb_CriterioBusqueda.getValue();
         String termino = txtf_Buscar.getText().trim();
-
-        System.out.println("Realizando búsqueda por " + criterio + ": " + termino);
+        System.out.println("Realizando búsqueda por nombre de documento: " + termino);
 
         try {
             // Si estamos en modo demo, usar datos de ejemplo filtrados
             if (numeroExpediente == null || numeroExpediente.isEmpty()) {
-                buscarDocumentosDemo(criterio, termino);
+                buscarDocumentosDemo("Nombre del documento", termino);
                 return;
             }
 
-            // En un entorno real, aquí iría la búsqueda en la base de datos
-            switch (criterio) {
-                case "Número de Expediente":
-                    cargarDocumentosPorExpediente(termino);
-                    break;
-                case "Número de Identificación":
-                    buscarDocumentosPorIdentificacion(termino);
-                    break;
-                default:
-                    buscarDocumentosPorCriterio(criterio, termino);
-                    break;
-            }
+            // Buscar documentos por nombre
+            buscarDocumentosPorCriterio("Nombre del documento", termino);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -265,23 +229,17 @@ public class ModuloDocumentosController {
 
         if (resultados.isEmpty()) {
             DialogUtil.mostrarDialogo(
-                    "Sin Resultados",
-                    "No se encontraron documentos que coincidan con su búsqueda.",
-                    "info",
+                    "Documento no encontrado",
+                    "No se encontró ningún documento con el nombre \"" + termino + "\".",
+                    "error",
                     List.of(ButtonType.OK));
         }
     }
 
     private boolean coincideConCriterio(DocumentoDemo doc, String criterio, String termino) {
         termino = termino.toLowerCase();
-        return switch (criterio) {
-            case "Nombre del documento" -> doc.nombre().toLowerCase().contains(termino);
-            case "Número de Expediente" -> doc.numeroExpediente().toLowerCase().contains(termino);
-            case "Tipo de documento" -> doc.tipo().toLowerCase().contains(termino);
-            case "Fecha" -> doc.fecha().toLowerCase().contains(termino);
-            case "Número de Identificación" -> true; // En modo demo, simular que coincide
-            default -> false;
-        };
+        // Solo buscaremos por nombre del documento
+        return doc.nombre().toLowerCase().contains(termino);
     }
 
     private void buscarDocumentosPorIdentificacion(String identificacion) {
@@ -347,7 +305,10 @@ public class ModuloDocumentosController {
     }
 
     private void buscarDocumentosPorCriterio(String criterio, String termino) {
-        try (Connection conn = DatabaseConnection.getConnection()) {
+        Connection conn = null;
+        try {
+            conn = DatabaseConnection.getConnection();
+            
             String columnaBusqueda = switch (criterio) {
                 case "Nombre del documento" -> "nombre";
                 case "Tipo de documento" -> "tipo";
@@ -355,8 +316,17 @@ public class ModuloDocumentosController {
                 default -> "nombre";
             };
 
-            // Obtenemos el caso_id correspondiente al número de expediente actual
-            int casoId = obtenerCasoIdPorExpediente(numeroExpediente);
+            // Obtenemos el caso_id correspondiente al número de expediente actual usando la misma conexión
+            int casoId = -1;
+            String sqlCaso = "SELECT id FROM caso WHERE numero_expediente = ?";
+            try (java.sql.PreparedStatement stmtCaso = conn.prepareStatement(sqlCaso)) {
+                stmtCaso.setString(1, numeroExpediente);
+                try (java.sql.ResultSet rsCaso = stmtCaso.executeQuery()) {
+                    if (rsCaso.next()) {
+                        casoId = rsCaso.getInt("id");
+                    }
+                }
+            }
 
             if (casoId == -1) {
                 DialogUtil.mostrarDialogo(
@@ -398,9 +368,9 @@ public class ModuloDocumentosController {
 
             if (resultados.isEmpty()) {
                 DialogUtil.mostrarDialogo(
-                        "Sin Resultados",
-                        "No se encontraron documentos que coincidan con su búsqueda.",
-                        "info",
+                        "Documento no encontrado",
+                        "No se encontró ningún documento con el nombre \"" + termino + "\".",
+                        "error",
                         List.of(ButtonType.OK));
             }
 
@@ -411,23 +381,20 @@ public class ModuloDocumentosController {
                     "Ocurrió un error al buscar documentos: " + e.getMessage(),
                     "error",
                     List.of(ButtonType.OK));
-        }
-    }
-
-    private int obtenerCasoIdPorExpediente(String numeroExpediente) throws SQLException {
-        try (Connection conn = DatabaseConnection.getConnection()) {
-            String sql = "SELECT id FROM caso WHERE numero_expediente = ?";
-            try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
-                stmt.setString(1, numeroExpediente);
-                try (java.sql.ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        return rs.getInt("id");
-                    }
+        } finally {
+            // Asegurarse de cerrar la conexión en cualquier caso
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    System.err.println("Error al cerrar la conexión: " + e.getMessage());
                 }
             }
         }
-        return -1;
     }
+
+    // El método obtenerCasoIdPorExpediente fue eliminado ya que su funcionalidad 
+    // se integró directamente en buscarDocumentosPorCriterio para evitar problemas de conexión
 
     private String formatearFecha(java.sql.Date fecha) {
         if (fecha == null)
