@@ -152,10 +152,10 @@ public class ModuloDocumentosController {
         if (cmb_CriterioBusqueda != null) {
             cmb_CriterioBusqueda.getItems().add("Nombre del documento");
             cmb_CriterioBusqueda.setValue("Nombre del documento");
-            
+
             // Establecer el prompt del TextField para búsqueda por nombre
             txtf_Buscar.setPromptText("🔍 Buscar por nombre del documento...");
-            
+
             // Desactivar el ComboBox ya que solo hay una opción
             cmb_CriterioBusqueda.setDisable(true);
         } else {
@@ -308,7 +308,7 @@ public class ModuloDocumentosController {
         Connection conn = null;
         try {
             conn = DatabaseConnection.getConnection();
-            
+
             String columnaBusqueda = switch (criterio) {
                 case "Nombre del documento" -> "nombre";
                 case "Tipo de documento" -> "tipo";
@@ -316,7 +316,8 @@ public class ModuloDocumentosController {
                 default -> "nombre";
             };
 
-            // Obtenemos el caso_id correspondiente al número de expediente actual usando la misma conexión
+            // Obtenemos el caso_id correspondiente al número de expediente actual usando la
+            // misma conexión
             int casoId = -1;
             String sqlCaso = "SELECT id FROM caso WHERE numero_expediente = ?";
             try (java.sql.PreparedStatement stmtCaso = conn.prepareStatement(sqlCaso)) {
@@ -393,8 +394,9 @@ public class ModuloDocumentosController {
         }
     }
 
-    // El método obtenerCasoIdPorExpediente fue eliminado ya que su funcionalidad 
-    // se integró directamente en buscarDocumentosPorCriterio para evitar problemas de conexión
+    // El método obtenerCasoIdPorExpediente fue eliminado ya que su funcionalidad
+    // se integró directamente en buscarDocumentosPorCriterio para evitar problemas
+    // de conexión
 
     private String formatearFecha(java.sql.Date fecha) {
         if (fecha == null)

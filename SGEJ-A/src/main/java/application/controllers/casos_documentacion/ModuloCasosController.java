@@ -325,7 +325,7 @@ public class ModuloCasosController {
                     }
                 });
             } else {
-                btn_Nuevo.setText("➕ Nuevo Caso");
+                btn_Nuevo.setText("➕ Registrar Caso");
                 btn_Nuevo.setStyle(
                         "-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);");
                 btn_Nuevo.setOnAction(_ -> mostrarFormulario(null, "NUEVO"));
@@ -522,8 +522,9 @@ public class ModuloCasosController {
                 Label lblNoData = new Label("No se encontraron casos con el término: '" + termino + "'");
                 lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
                 tb_Casos.setPlaceholder(lblNoData);
-                
-                // Mostrar diálogo informando que no se encontraron casos según el criterio de búsqueda
+
+                // Mostrar diálogo informando que no se encontraron casos según el criterio de
+                // búsqueda
                 String mensaje;
                 if (criterioBusqueda.equals("Número de expediente")) {
                     mensaje = "No se encontró ningún caso con el número de expediente: " + termino;
@@ -532,13 +533,12 @@ public class ModuloCasosController {
                 } else {
                     mensaje = "No se encontraron casos que coincidan con: " + termino;
                 }
-                
+
                 application.controllers.DialogUtil.mostrarDialogo(
-                    "Búsqueda sin resultados",
-                    mensaje,
-                    "info",
-                    java.util.List.of(javafx.scene.control.ButtonType.OK)
-                );
+                        "Búsqueda sin resultados",
+                        mensaje,
+                        "info",
+                        java.util.List.of(javafx.scene.control.ButtonType.OK));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -707,8 +707,8 @@ public class ModuloCasosController {
     }
 
     private void inicializarColumnasDeBotones() {
-        agregarBoton(tbc_BotonEditar, "✎", "Editar");
-        agregarBoton(tbc_ButonVisualizar, "👁", "Ver");
+        agregarBoton(tbc_BotonEditar, "✎", "Actualizar Caso");
+        agregarBoton(tbc_ButonVisualizar, "👁", "Ver Bitacora");
         agregarBotonDocumentos(tbc_BotonDocumentos, "📄", "Ver Documentos");
     }
 

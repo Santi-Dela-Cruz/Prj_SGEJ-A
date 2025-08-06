@@ -425,24 +425,24 @@ public class FormCasosController {
             if (checkConn == null) {
                 throw new Exception("Error al conectar con la base de datos");
             }
-            
+
             // Verificar si ya existe un caso con el mismo número de expediente
             String checkCasoSql = "SELECT COUNT(*) as count FROM caso WHERE numero_expediente = ?";
             java.sql.PreparedStatement checkCasoStmt = checkConn.prepareStatement(checkCasoSql);
             checkCasoStmt.setString(1, numeroExpediente);
             java.sql.ResultSet checkCasoRs = checkCasoStmt.executeQuery();
-            
+
             if (checkCasoRs.next() && checkCasoRs.getInt("count") > 0) {
                 checkCasoRs.close();
                 checkCasoStmt.close();
-                
+
                 DialogUtil.mostrarDialogo("Error",
                         "Ya existe un caso con el número de expediente: " + numeroExpediente,
                         "error",
                         List.of(ButtonType.OK));
                 return false;
             }
-            
+
             checkCasoRs.close();
             checkCasoStmt.close();
 
@@ -475,11 +475,12 @@ public class FormCasosController {
                         List.of(ButtonType.OK));
                 return false;
             }
-            
+
             // Verificar si el cliente está activo
             if (cliente.getEstado() == application.model.Cliente.Estado.INACTIVO) {
                 DialogUtil.mostrarDialogo("Error",
-                        "No se puede crear un caso para el cliente: " + cliente.getNombreCompleto() + " porque está INACTIVO.",
+                        "No se puede crear un caso para el cliente: " + cliente.getNombreCompleto()
+                                + " porque está INACTIVO.",
                         "error",
                         List.of(ButtonType.OK));
                 return false;
@@ -802,22 +803,22 @@ public class FormCasosController {
 
             // Incrementamos en 1 para el nuevo caso
             int nuevoId = ultimoId + 1;
-            
+
             // Formateamos el número con el año actual y un número secuencial
             java.time.Year anioActual = java.time.Year.now();
             String numeroExpediente;
             boolean expedienteExiste = true;
-            
+
             // Bucle para asegurar que el número de expediente sea único
             while (expedienteExiste) {
                 numeroExpediente = String.format("EXP-%s-%04d", anioActual.getValue(), nuevoId);
-                
+
                 // Verificar si ya existe un caso con este número de expediente
                 String checkSql = "SELECT COUNT(*) as count FROM caso WHERE numero_expediente = ?";
                 java.sql.PreparedStatement checkStmt = conn.prepareStatement(checkSql);
                 checkStmt.setString(1, numeroExpediente);
                 java.sql.ResultSet checkRs = checkStmt.executeQuery();
-                
+
                 if (checkRs.next() && checkRs.getInt("count") == 0) {
                     // No existe un caso con este número de expediente
                     expedienteExiste = false;
@@ -825,10 +826,10 @@ public class FormCasosController {
                     // Incrementar para probar con el siguiente número
                     nuevoId++;
                 }
-                
+
                 checkRs.close();
                 checkStmt.close();
-                
+
                 if (!expedienteExiste) {
                     System.out.println("INFO: Número de expediente generado: " + numeroExpediente);
                     txtf_NumeroExpediente.setText(numeroExpediente);

@@ -86,7 +86,7 @@ public class ModuloHistorialController {
             private final Button btn = new Button("🗑");
             {
                 btn.getStyleClass().add("table-button");
-                btn.setTooltip(new Tooltip("Eliminar"));
+                btn.setTooltip(new Tooltip("Eliminar Registro"));
                 btn.setOnAction(actionEvent -> {
                     if (getIndex() >= 0 && getIndex() < getTableView().getItems().size()) {
                         HistorialComunicacion comm = getTableView().getItems().get(getIndex());
@@ -104,8 +104,15 @@ public class ModuloHistorialController {
                                 List.of(ButtonType.OK, ButtonType.CANCEL));
 
                         if (respuesta.isPresent() && respuesta.get() == ButtonType.OK) {
+                            // Crear una nueva conexión específicamente para la eliminación
+                            Connection conn = null;
                             try {
-                                boolean eliminado = service.eliminarComunicacion(comm.getId());
+                                // Obtener una nueva conexión para esta operación
+                                conn = DatabaseConnection.getConnection();
+                                // Crear un nuevo servicio con esta conexión
+                                HistorialComunicacionService deleteService = new HistorialComunicacionService(conn);
+
+                                boolean eliminado = deleteService.eliminarComunicacion(comm.getId());
                                 if (eliminado) {
                                     System.out.println("Comunicación eliminada correctamente. ID: " + comm.getId());
                                     // Recargar la tabla
@@ -126,6 +133,16 @@ public class ModuloHistorialController {
                                 DialogUtil.mostrarDialogo("Error",
                                         "Error al eliminar la comunicación: " + e.getMessage(), "error",
                                         List.of(ButtonType.OK));
+                            } finally {
+                                // Cerrar la conexión después de usarla
+                                if (conn != null) {
+                                    try {
+                                        conn.close();
+                                        System.out.println("Conexión cerrada después de eliminar comunicación");
+                                    } catch (Exception e) {
+                                        System.err.println("ERROR: No se pudo cerrar la conexión: " + e.getMessage());
+                                    }
+                                }
                             }
                         }
                     }
@@ -279,15 +296,14 @@ public class ModuloHistorialController {
                         + criterioBusqueda);
             } else {
                 System.out.println("INFO: No se encontraron comunicaciones para el criterio: " + criterioBusqueda);
-                
+
                 // Mostrar diálogo de error cuando no se encuentran resultados
                 DialogUtil.mostrarDialogo(
-                    "Sin resultados",
-                    "No se encontraron comunicaciones para la búsqueda: '" + textoBusqueda + "'",
-                    "warning",
-                    List.of(ButtonType.OK)
-                );
-                
+                        "Sin resultados",
+                        "No se encontraron comunicaciones para la búsqueda: '" + textoBusqueda + "'",
+                        "warning",
+                        List.of(ButtonType.OK));
+
                 // Establecer un mensaje cuando la búsqueda no tiene resultados
                 Label lblNoData = new Label(
                         "No se encontraron comunicaciones para la búsqueda: '" + textoBusqueda + "'");

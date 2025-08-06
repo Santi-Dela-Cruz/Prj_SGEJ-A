@@ -72,7 +72,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         
                         <Button fx:id="btn_AnadirEntrada" mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0" 
-                                styleClass="btn-success" text="➕ Nueva Entrada" />
+                                styleClass="btn-success" text="➕ Registrar Entrada" />
                     </children>
                 </HBox>
             </children>

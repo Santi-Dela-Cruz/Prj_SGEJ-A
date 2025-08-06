@@ -288,25 +288,38 @@ public class FormHistorialComunicacionController {
                     comunicacion.setAbogadoNombre(abogado.getNombres() + " " + abogado.getApellidos());
 
                     // Guardar en la base de datos
-                    Connection conn = DatabaseConnection.getConnection();
-                    HistorialComunicacionService service = new HistorialComunicacionService(conn);
-                    String resultado = service.registrarComunicacion(comunicacion);
+                    Connection conn = null;
+                    try {
+                        conn = DatabaseConnection.getConnection();
+                        HistorialComunicacionService service = new HistorialComunicacionService(conn);
+                        String resultado = service.registrarComunicacion(comunicacion);
 
-                    if (resultado.isEmpty()) {
-                        DialogUtil.mostrarDialogo(
-                                "Guardado exitoso",
-                                "La comunicación ha sido registrada correctamente.",
-                                "info",
-                                List.of(ButtonType.OK));
+                        if (resultado.isEmpty()) {
+                            DialogUtil.mostrarDialogo(
+                                    "Guardado exitoso",
+                                    "La comunicación ha sido registrada correctamente.",
+                                    "info",
+                                    List.of(ButtonType.OK));
 
-                        if (onGuardar != null)
-                            onGuardar.run();
-                    } else {
-                        DialogUtil.mostrarDialogo(
-                                "Error al guardar",
-                                "No se pudo guardar la comunicación: " + resultado,
-                                "error",
-                                List.of(ButtonType.OK));
+                            if (onGuardar != null)
+                                onGuardar.run();
+                        } else {
+                            DialogUtil.mostrarDialogo(
+                                    "Error al guardar",
+                                    "No se pudo guardar la comunicación: " + resultado,
+                                    "error",
+                                    List.of(ButtonType.OK));
+                        }
+                    } finally {
+                        // Cerrar la conexión después de usarla
+                        if (conn != null) {
+                            try {
+                                conn.close();
+                                System.out.println("Conexión cerrada después de registrar comunicación");
+                            } catch (Exception e) {
+                                System.err.println("ERROR: No se pudo cerrar la conexión: " + e.getMessage());
+                            }
+                        }
                     }
                 }
             } catch (SQLException e) {
