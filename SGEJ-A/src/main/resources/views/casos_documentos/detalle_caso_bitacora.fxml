@@ -44,7 +44,7 @@
                 <Label text="Seguimiento cronológico del expediente jurídico" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: #4b5563; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
                 
                 <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-                    <Button fx:id="btnAgregarEntrada" text="➕ Nueva entrada" styleClass="button-windows,button-windows-green" style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2); -fx-padding: 10 15;" />
+                    <Button fx:id="btnAgregarEntrada" text="➕ Registrar entrada" styleClass="button-windows,button-windows-green" style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2); -fx-padding: 10 15;" />
                 </HBox>
             </HBox>
             

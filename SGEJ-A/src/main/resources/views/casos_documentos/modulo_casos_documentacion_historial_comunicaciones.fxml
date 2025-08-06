@@ -81,7 +81,7 @@
                         <Pane HBox.hgrow="ALWAYS" />
                         <!-- Botón Añadir Comunicación -->
                         <Button fx:id="btn_Anadir" mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0"
-                                style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);" 
+                                style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 10px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);" 
                                 text="➕ Registrar Comunicación" />
                     </children>
                 </HBox>

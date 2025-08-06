@@ -520,18 +520,19 @@ public class ModuloDocumentosController {
                 while (current != null && !(current instanceof AnchorPane)) {
                     current = current.getParent();
                 }
-                
+
                 // Si encontramos un AnchorPane, agregamos el panel de formulario
                 if (current instanceof AnchorPane) {
                     AnchorPane panelPrincipal = (AnchorPane) current;
                     panelPrincipal.getChildren().add(pnl_Forms);
-                    
+
                     // Inicialmente oculto
                     pnl_Forms.setVisible(false);
                     pnl_Forms.setManaged(false);
                 } else {
                     // No se encontró un AnchorPane padre
-                    throw new IllegalStateException("No se pudo encontrar un AnchorPane padre para agregar el formulario");
+                    throw new IllegalStateException(
+                            "No se pudo encontrar un AnchorPane padre para agregar el formulario");
                 }
             }
 
