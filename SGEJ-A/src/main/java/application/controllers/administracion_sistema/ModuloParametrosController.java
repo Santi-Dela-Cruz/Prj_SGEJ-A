@@ -269,7 +269,7 @@ public class ModuloParametrosController {
 
         // Actualizar contador con resultados
         int resultados = tp_Parametros.getChildren().size();
-        lbl_TotalParametros.setText("Resultados: " + resultados + " parámetros");
+        lbl_TotalParametros.setText("Resultados: " + resultados );
     }
 
     /**

@@ -1,6 +1,8 @@
 package application.controllers.personal;
 
 import application.controllers.DialogUtil;
+import application.model.Personal;
+import application.service.EmpleadoService;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.text.Text;
@@ -10,11 +12,17 @@ import java.util.Optional;
 
 public class FormEmpleadoController {
 
-    @FXML private Button btn_Guardar, btn_Cancelar;
-    @FXML private TextField txtf_Nombres, txtf_Apellidos, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo, txtf_Telefono;
-    @FXML private ComboBox<String> cbx_Rol, cbx_TipoIdentificacion, cbx_Estado;
-    @FXML private DatePicker dt_FechaIngreso;
-    @FXML private Text txt_TituloForm;
+    @FXML
+    private Button btn_Guardar, btn_Cancelar;
+    @FXML
+    private TextField txtf_Nombres, txtf_Apellidos, txtf_NumeroIdentificacion, txtf_Direccion, txtf_Correo,
+            txtf_Telefono;
+    @FXML
+    private ComboBox<String> cbx_Rol, cbx_TipoIdentificacion, cbx_Estado;
+    @FXML
+    private DatePicker dt_FechaIngreso;
+    @FXML
+    private Text txt_TituloForm;
 
     private Runnable onGuardar, onCancelar;
 
@@ -26,13 +34,19 @@ public class FormEmpleadoController {
         this.onCancelar = handler;
     }
 
+    private EmpleadoService empleadoService;
+    private Personal personalActual;
+    private String modoActual;
+
     @FXML
     private void initialize() {
+        empleadoService = new EmpleadoService();
+
         cbx_Estado.getItems().addAll("Activo", "Inactivo");
         cbx_TipoIdentificacion.getItems().addAll("Cédula", "RUC", "Pasaporte");
-        cbx_Rol.getItems().addAll("Gerente", "Administrador", "Empleado", "Supervisor", "Asistente");
+        cbx_Rol.getItems().addAll("Gerente", "Administrador", "Empleado", "Abogado");
 
-        btn_Guardar.setOnAction(e -> {
+        btn_Guardar.setOnAction(event -> {
             if (txtf_Nombres.getText().isEmpty() ||
                     txtf_Apellidos.getText().isEmpty() ||
                     txtf_NumeroIdentificacion.getText().isEmpty() ||
@@ -52,8 +66,7 @@ public class FormEmpleadoController {
                                 " - Estado\n" +
                                 " - Fecha de Ingreso",
                         "warning",
-                        List.of(ButtonType.OK)
-                );
+                        List.of(ButtonType.OK));
                 return;
             }
 
@@ -61,46 +74,134 @@ public class FormEmpleadoController {
                     "Confirmación",
                     "¿Está seguro que desea guardar este empleado?",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO)
-            );
+                    List.of(ButtonType.YES, ButtonType.NO));
 
             if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-                if (onGuardar != null) onGuardar.run();
+                guardarEmpleado();
+                if (onGuardar != null)
+                    onGuardar.run();
             }
         });
 
-        btn_Cancelar.setOnAction(e -> {
+        btn_Cancelar.setOnAction(event -> {
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                     "Confirmación",
                     "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO)
-            );
+                    List.of(ButtonType.YES, ButtonType.NO));
 
             if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-                if (onCancelar != null) onCancelar.run();
+                if (onCancelar != null)
+                    onCancelar.run();
             }
         });
-
     }
 
+    /**
+     * Guarda los datos del formulario en la base de datos
+     */
+    private void guardarEmpleado() {
+        try {
+            Personal personal = new Personal();
+
+            // Si estamos en modo edición, cargar el ID del empleado actual
+            if (personalActual != null && "EDITAR".equalsIgnoreCase(modoActual)) {
+                personal.setId(personalActual.getId());
+            }
+
+            // Asignar valores del formulario al objeto Personal
+            personal.setNombres(txtf_Nombres.getText());
+            personal.setApellidos(txtf_Apellidos.getText());
+            personal.setNumeroIdentificacion(txtf_NumeroIdentificacion.getText());
+            personal.setTipoIdentificacion(cbx_TipoIdentificacion.getValue());
+            personal.setTelefono(txtf_Telefono.getText());
+            personal.setCorreo(txtf_Correo.getText());
+            personal.setDireccion(txtf_Direccion.getText());
+            personal.setFechaIngreso(dt_FechaIngreso.getValue());
+            personal.setRol(cbx_Rol.getValue());
+            personal.setEstado(cbx_Estado.getValue());
+
+            boolean resultado;
+
+            // Guardar o actualizar según el modo
+            if ("EDITAR".equalsIgnoreCase(modoActual) && personalActual != null) {
+                resultado = empleadoService.actualizarEmpleado(personal);
+                if (resultado) {
+                    DialogUtil.mostrarDialogo("Éxito", "Empleado actualizado correctamente", "info",
+                            List.of(ButtonType.OK));
+                } else {
+                    DialogUtil.mostrarDialogo("Error", "No se pudo actualizar el empleado", "error",
+                            List.of(ButtonType.OK));
+                }
+            } else {
+                int id = empleadoService.registrarEmpleado(personal);
+                resultado = (id > 0);
+                if (resultado) {
+                    DialogUtil.mostrarDialogo("Éxito", "Empleado registrado correctamente con ID: " + id, "info",
+                            List.of(ButtonType.OK));
+                } else {
+                    DialogUtil.mostrarDialogo("Error", "No se pudo registrar el empleado", "error",
+                            List.of(ButtonType.OK));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtil.mostrarDialogo("Error", "Error al guardar: " + e.getMessage(), "error", List.of(ButtonType.OK));
+        }
+    }
+
+    /**
+     * Carga los datos de un empleado en el formulario para edición o visualización
+     */
     public void cargarEmpleado(ModuloEmpleadoController.EmpleadoDemo empleado) {
-        txtf_Nombres.setText(empleado.nombres());
-        txtf_Apellidos.setText(empleado.apellidos());
-        txtf_NumeroIdentificacion.setText(empleado.numeroIdentificacion());
-        txtf_Direccion.setText(empleado.direccion());
-        dt_FechaIngreso.setValue(empleado.fechaIngreso());
-        txtf_Telefono.setText(empleado.telefono());
-        txtf_Correo.setText(empleado.correo());
-        cbx_Rol.setValue(empleado.rol());
-        cbx_TipoIdentificacion.setValue(empleado.tipoIdentificacion());
-        cbx_Estado.setValue(empleado.estado());
+        try {
+            // Primero intentamos cargar el empleado desde la base de datos por su número de
+            // identificación
+            personalActual = empleadoService.obtenerEmpleadoPorIdentificacion(empleado.numeroIdentificacion());
+
+            // Si no lo encontramos, creamos un objeto temporal con los datos del
+            // EmpleadoDemo
+            if (personalActual == null) {
+                personalActual = new Personal();
+                personalActual.setNombres(empleado.nombres());
+                personalActual.setApellidos(empleado.apellidos());
+                personalActual.setNumeroIdentificacion(empleado.numeroIdentificacion());
+                personalActual.setDireccion(empleado.direccion());
+                personalActual.setFechaIngreso(empleado.fechaIngreso());
+                personalActual.setTelefono(empleado.telefono());
+                personalActual.setCorreo(empleado.correo());
+                personalActual.setRol(empleado.rol());
+                personalActual.setTipoIdentificacion(empleado.tipoIdentificacion());
+                personalActual.setEstado(empleado.estado());
+            }
+
+            // Cargar datos en el formulario
+            txtf_Nombres.setText(personalActual.getNombres());
+            txtf_Apellidos.setText(personalActual.getApellidos());
+            txtf_NumeroIdentificacion.setText(personalActual.getNumeroIdentificacion());
+            txtf_Direccion.setText(personalActual.getDireccion());
+            dt_FechaIngreso.setValue(personalActual.getFechaIngreso());
+            txtf_Telefono.setText(personalActual.getTelefono());
+            txtf_Correo.setText(personalActual.getCorreo());
+            cbx_Rol.setValue(personalActual.getRol());
+            cbx_TipoIdentificacion.setValue(personalActual.getTipoIdentificacion());
+            cbx_Estado.setValue(personalActual.getEstado());
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtil.mostrarDialogo("Error", "No se pudo cargar el empleado: " + e.getMessage(), "error",
+                    List.of(ButtonType.OK));
+        }
     }
 
+    /**
+     * Configura el formulario según el modo de uso (nuevo, editar, ver)
+     */
     public void setModo(String modo) {
+        this.modoActual = modo;
         boolean esEditar = "EDITAR".equalsIgnoreCase(modo);
         boolean esVer = "VER".equalsIgnoreCase(modo);
-        boolean esRegistrar = !esEditar && !esVer;
+        // boolean esRegistrar = !esEditar && !esVer; // No se usa pero se mantiene para
+        // claridad
 
         if (esEditar) {
             txt_TituloForm.setText("Editar Empleado");
@@ -129,7 +230,7 @@ public class FormEmpleadoController {
             cbx_TipoIdentificacion.setDisable(true);
             txtf_Telefono.setEditable(true);
             txtf_Correo.setEditable(true);
-            cbx_Estado.setDisable(true);
+            cbx_Estado.setDisable(false); // Permitir cambiar el estado al editar
             txtf_Direccion.setEditable(true);
             cbx_Rol.setDisable(false);
             dt_FechaIngreso.setDisable(false);

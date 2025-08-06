@@ -56,7 +56,7 @@ VALUES
 -- Parámetros de Sesión y Seguridad
 INSERT OR IGNORE INTO parametro (codigo, nombre, descripcion, valor, valor_defecto, tipo, categoria, predefinido, visible, estado)
 VALUES 
-('tiempo_sesion', 'Tiempo de Sesión', 'Tiempo de inactividad (en minutos) tras el cual la sesión del usuario se cierra automáticamente', '30', '30', 'ENTERO', 'Seguridad', 1, 0, 'ACTIVO'),
+('tiempo_sesion', 'Tiempo de Sesión', 'Tiempo de inactividad (en minutos) tras el cual la sesión del usuario se cierra automáticamente', '5', '5', 'ENTERO', 'Seguridad', 1, 0, 'ACTIVO'),
 ('max_intentos_fallidos', 'Máximo de Intentos', 'Número máximo de intentos fallidos de inicio de sesión antes de bloquear la cuenta', '3', '3', 'ENTERO', 'Seguridad', 1, 0, 'ACTIVO'),
 ('forzar_cambio_clave', 'Forzar Cambio de Clave', 'Indica si los usuarios deben cambiar su contraseña al iniciar sesión por primera vez', 'true', 'true', 'BOOLEANO', 'Seguridad', 1, 0, 'ACTIVO');
 

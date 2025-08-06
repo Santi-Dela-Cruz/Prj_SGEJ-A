@@ -1,6 +1,9 @@
 package application.controllers.personal;
 
+import application.service.EmpleadoService;
+import application.controllers.DialogUtil;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -9,25 +12,41 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ModuloEmpleadoController {
 
-    @FXML private Button btn_Nuevo;
-    @FXML private Button btn_Buscar;
-    @FXML private TextField txt_Busqueda;
+    @FXML
+    private Button btn_Nuevo;
+    @FXML
+    private Button btn_Buscar;
+    @FXML
+    private TextField txt_Busqueda;
 
-    @FXML private TableView<EmpleadoDemo> tb_Empleados;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Nombres;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Apellidos;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_NumeroI;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_TipoIdentificacion;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Telefono;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Correo;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Estado;
-    @FXML private TableColumn<EmpleadoDemo, String> tbc_Rol;
+    @FXML
+    private TableView<EmpleadoDemo> tb_Empleados;
+    @FXML
+    private TableColumn<EmpleadoDemo, String> tbc_Nombres;
+    @FXML
+    private TableColumn<EmpleadoDemo, String> tbc_Apellidos;
+    @FXML
+    private TableColumn<EmpleadoDemo, String> tbc_NumeroI;
+    @FXML
+    private TableColumn<EmpleadoDemo, String> tbc_TipoIdentificacion;
+    @FXML
+    private TableColumn<EmpleadoDemo, String> tbc_Telefono;
+    @FXML
+    private TableColumn<EmpleadoDemo, String> tbc_Correo;
+    @FXML
+    private TableColumn<EmpleadoDemo, String> tbc_Estado;
+    @FXML
+    private TableColumn<EmpleadoDemo, String> tbc_Rol;
 
-    @FXML private TableColumn<EmpleadoDemo, Void> tbc_BotonEditar;
-    @FXML private TableColumn<EmpleadoDemo, Void> tbc_BotonVer;
+    @FXML
+    private TableColumn<EmpleadoDemo, Void> tbc_BotonEditar;
+    @FXML
+    private TableColumn<EmpleadoDemo, Void> tbc_BotonVer;
 
     private Pane pnl_Forms;
 
@@ -91,13 +110,17 @@ public class ModuloEmpleadoController {
         pnl_Forms.getChildren().clear();
         pnl_Forms.setVisible(false);
         pnl_Forms.setManaged(false);
+
+        // Actualizar la tabla de empleados para mostrar cambios recientes
+        cargarDatosEjemplo();
     }
 
     private void configurarColumnasTexto() {
         tbc_Nombres.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().nombres()));
         tbc_Apellidos.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().apellidos()));
         tbc_NumeroI.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().numeroIdentificacion()));
-        tbc_TipoIdentificacion.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().tipoIdentificacion()));
+        tbc_TipoIdentificacion
+                .setCellValueFactory(data -> new SimpleStringProperty(data.getValue().tipoIdentificacion()));
         tbc_Telefono.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().telefono()));
         tbc_Correo.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().correo()));
         tbc_Estado.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().estado()));
@@ -140,22 +163,65 @@ public class ModuloEmpleadoController {
         });
     }
 
+    /**
+     * Carga los datos de empleados desde la base de datos usando el PersonalDAO
+     */
     private void cargarDatosEjemplo() {
-        tb_Empleados.getItems().addAll(
-                new EmpleadoDemo(
-                        "Ana", "Mora", "0102030405", "Cédula", "0991234567", "ana@correo.com", "Activo",
-                        "Av. Siempre Viva 123", "Referencia 1", java.time.LocalDate.of(2023, 1, 10), "Natural", "Administrador"
-                ),
-                new EmpleadoDemo(
-                        "Luis", "Pérez", "1102233445", "Pasaporte", "0987654321", "luis@correo.com", "Activo",
-                        "Calle Falsa 456", "Referencia 2", java.time.LocalDate.of(2022, 5, 20), "Jurídica", "Gerente"
-                ),
-                new EmpleadoDemo(
-                        "María", "Salas", "2223334445", "RUC", "0970001122", "maria@correo.com", "Inactivo",
-                        "Calle Real 789", "Referencia 3", java.time.LocalDate.of(2021, 8, 15), "Natural", "Asistente"
-                )
-        );
+        try {
+            // Crear una instancia del servicio
+            EmpleadoService empleadoService = new EmpleadoService();
+
+            // Obtener todos los empleados
+            List<application.model.Personal> listaPersonal = empleadoService.obtenerTodosLosEmpleados();
+
+            // Limpiar la tabla actual
+            tb_Empleados.getItems().clear();
+
+            // Convertir objetos Personal a EmpleadoDemo para la tabla
+            List<EmpleadoDemo> empleados = new ArrayList<>();
+
+            for (application.model.Personal persona : listaPersonal) {
+                EmpleadoDemo empleado = new EmpleadoDemo(
+                        persona.getNombres(),
+                        persona.getApellidos(),
+                        persona.getNumeroIdentificacion(),
+                        persona.getTipoIdentificacion(),
+                        persona.getTelefono(),
+                        persona.getCorreo(),
+                        persona.getEstado(),
+                        persona.getDireccion(),
+                        "", // Adicional (no existe en nuestro modelo)
+                        persona.getFechaIngreso() != null ? persona.getFechaIngreso() : java.time.LocalDate.now(),
+                        "", // tipoEmpleado (no existe en nuestro modelo)
+                        persona.getRol());
+
+                empleados.add(empleado);
+            }
+
+            // Añadir la lista de empleados a la tabla
+            tb_Empleados.getItems().addAll(empleados);
+
+            // Si no hay empleados, mostrar mensaje
+            if (empleados.isEmpty()) {
+                System.out.println("No se encontraron empleados en la base de datos");
+                mostrarMensajeInfo("Tabla vacía", "No hay empleados registrados en la base de datos");
+            }
+
+        } catch (Exception e) {
+            System.err.println("Error al cargar empleados: " + e.getMessage());
+            e.printStackTrace();
+            mostrarMensajeError("Error", "No se pudieron cargar los empleados: " + e.getMessage());
+        }
     }
+
+    private void mostrarMensajeError(String titulo, String mensaje) {
+        DialogUtil.mostrarDialogo(titulo, mensaje, "error", List.of(ButtonType.OK));
+    }
+
+    private void mostrarMensajeInfo(String titulo, String mensaje) {
+        DialogUtil.mostrarDialogo(titulo, mensaje, "info", List.of(ButtonType.OK));
+    }
+
     // Example record (replace with your real Empleado class if needed)
     public record EmpleadoDemo(
             String nombres,
@@ -169,6 +235,6 @@ public class ModuloEmpleadoController {
             String adicional,
             java.time.LocalDate fechaIngreso,
             String tipoEmpleado,
-            String rol
-    ) {}
+            String rol) {
+    }
 }

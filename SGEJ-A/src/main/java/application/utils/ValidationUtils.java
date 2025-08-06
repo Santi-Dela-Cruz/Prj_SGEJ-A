@@ -56,32 +56,9 @@ public class ValidationUtils {
      * @return true si es válida, false en caso contrario
      */
     public static boolean isValidCedula(String cedula) {
-        // Una cédula ecuatoriana tiene 10 dígitos
-        if (cedula == null || cedula.length() != 10) {
-            return false;
-        }
-
-        // Verificar que solo contenga dígitos
-        try {
-            Long.parseLong(cedula);
-        } catch (NumberFormatException e) {
-            return false;
-        }
-
-        // Extraer los dígitos
-        int[] coeficientes = { 2, 1, 2, 1, 2, 1, 2, 1, 2 };
-        int verificador = Character.getNumericValue(cedula.charAt(9));
-        int suma = 0;
-
-        // Algoritmo de validación de cédula ecuatoriana
-        for (int i = 0; i < coeficientes.length; i++) {
-            int valor = Character.getNumericValue(cedula.charAt(i)) * coeficientes[i];
-            suma += (valor >= 10) ? valor - 9 : valor;
-        }
-
-        int digitoVerificador = (suma % 10 == 0) ? 0 : 10 - (suma % 10);
-
-        return verificador == digitoVerificador;
+        // Utilizar la implementación de VerificationID para una validación más completa
+        VerificationID verificador = new VerificationID();
+        return verificador.validarCedula(cedula);
     }
 
     /**
@@ -91,15 +68,21 @@ public class ValidationUtils {
      * @return true si es válido, false en caso contrario
      */
     public static boolean isValidRuc(String ruc) {
-        // Un RUC tiene 13 dígitos
-        if (ruc == null || ruc.length() != 13) {
+        // Validaciones básicas
+        if (ruc == null || ruc.trim().isEmpty()) {
+            return false;
+        }
+
+        // Eliminar espacios
+        ruc = ruc.trim();
+
+        // Un RUC tiene exactamente 13 dígitos
+        if (ruc.length() != 13) {
             return false;
         }
 
         // Verificar que solo contenga dígitos
-        try {
-            Long.parseLong(ruc);
-        } catch (NumberFormatException e) {
+        if (!ruc.matches("^\\d+$")) {
             return false;
         }
 
@@ -113,8 +96,14 @@ public class ValidationUtils {
             return false;
         }
 
-        // Validar la parte de la cédula
-        return isValidCedula(cedula);
+        // Validar los primeros 10 dígitos (debe ser una cédula válida)
+        VerificationID verificador = new VerificationID();
+        if (!verificador.validarCedula(cedula)) {
+            return false;
+        }
+
+        // Todas las validaciones pasaron
+        return true;
     }
 
     /**

@@ -61,6 +61,8 @@
                         <Separator orientation="VERTICAL" prefHeight="40.0" style="-fx-background-color: #e2e8f0;" />
                         <!-- Spacer para empujar el botón Nuevo a la derecha -->
                         <Pane HBox.hgrow="ALWAYS" />
+                        <Button fx:id="btn_Exportar" mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0" style="-fx-background-color: linear-gradient(to bottom, #f59e0b, #d97706); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(245, 158, 11, 0.4), 4, 0, 0, 2);" text="📊 Exportar Excel" />
+                        <Separator orientation="VERTICAL" prefHeight="40.0" style="-fx-background-color: #e2e8f0;" />
                         <Button fx:id="btn_Nuevo" mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0" style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);" text="➕ Nuevo Usuario" />
                     </children>
                 </HBox>
@@ -96,12 +98,9 @@
                 
                 <TableView fx:id="tb_Usuarios" style="-fx-background-color: transparent; -fx-table-cell-border-color: #e2e8f0; -fx-selection-bar: linear-gradient(to right, #3b82f6, #2563eb); -fx-selection-bar-non-focused: #93c5fd; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-size: 13px; -fx-background-radius: 10; -fx-padding: 5;" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="tbc_NombresCompletos" minWidth="180.0" prefWidth="180.0" style="-fx-alignment: CENTER-LEFT; -fx-font-weight: bold; -fx-padding: 0 10 0 10;" text="👤 Nombres Completos" />
+                        <TableColumn fx:id="tbc_NombresCompletos" minWidth="180.0" prefWidth="180.0" style="-fx-alignment: CENTER; -fx-font-weight: bold; -fx-padding: 0 10 0 10;" text="👤 Nombres Completos" />
                         <TableColumn fx:id="tbc_NombreUsuario" minWidth="100.0" prefWidth="100.0" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" text="🧑‍💻 Usuario" />
                         <TableColumn fx:id="tbc_NumeroI" minWidth="120.0" prefWidth="120.0" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" text="🔢 N° Identificación" />
-                        <TableColumn fx:id="tbc_TipoIdentificacion" minWidth="100.0" prefWidth="100.0" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" text="📄 Tipo ID" />
-                        <TableColumn fx:id="tbc_Telefono" minWidth="100.0" prefWidth="100.0" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" text="📞 Teléfono" />
-                        <TableColumn fx:id="tbc_Correo" minWidth="150.0" prefWidth="150.0" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 10 0 10;" text="✉ Correo Electrónico" />
                         <TableColumn fx:id="tbc_Estado" minWidth="80.0" prefWidth="80.0" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" text="🔘 Estado" />
                         <TableColumn fx:id="tbc_Rol" minWidth="100.0" prefWidth="100.0" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" text="🧑‍⚖ Rol" />
                         <TableColumn fx:id="tbc_BotonEditar" minWidth="60.0" prefWidth="60.0" maxWidth="60.0" resizable="false" style="-fx-alignment: CENTER; -fx-padding: 0 5 0 5;" text="✏️ Editar" />

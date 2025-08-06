@@ -12,6 +12,7 @@ import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.text.Text;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -71,7 +72,7 @@ public class FormCasosController {
         generarNumeroExpediente();
 
         configurarTabla();
-        cargarAbogadosEjemplo();
+        cargarAbogados(); // Método renombrado para reflejar que carga abogados reales
 
         btn_Guardar.setOnAction(e -> {
             if (modo != null && "EDITAR".equals(modo)) {
@@ -332,11 +333,53 @@ public class FormCasosController {
         tb_Abogados.setEditable(true);
     }
 
-    private void cargarAbogadosEjemplo() {
-        tb_Abogados.setItems(FXCollections.observableArrayList(
-                new AbogadoDemo("Andrea", "Salinas", "12345678", "Elegir rol", false),
-                new AbogadoDemo("José", "Ruiz", "87654321", "Elegir rol", false),
-                new AbogadoDemo("María", "León", "11223344", "Elegir rol", false)));
+    private void cargarAbogados() {
+        try {
+            // Usar el servicio de empleados para cargar abogados reales
+            application.service.EmpleadoService empleadoService = new application.service.EmpleadoService();
+            List<application.service.EmpleadoService.Empleado> abogados = empleadoService.getEmpleadosByRol("Abogado");
+
+            List<AbogadoDemo> abogadosDemoList = new ArrayList<>();
+
+            // Convertir los empleados con rol "Abogado" a AbogadoDemo para mostrarlos en la
+            // tabla
+            for (application.service.EmpleadoService.Empleado abogado : abogados) {
+                abogadosDemoList.add(new AbogadoDemo(
+                        abogado.getNombres(),
+                        abogado.getApellidos(),
+                        abogado.getNumeroIdentificacion(),
+                        "Elegir rol", // Valor por defecto para el rol en el caso
+                        false // Por defecto no está asignado
+                ));
+            }
+
+            // Si no hay abogados en la base de datos, mostrar un mensaje de advertencia
+            if (abogadosDemoList.isEmpty()) {
+                System.out.println("ADVERTENCIA: No se encontraron abogados en el sistema.");
+                DialogUtil.mostrarDialogo(
+                        "No hay abogados disponibles",
+                        "No se encontraron usuarios con rol de Abogado en el sistema.\nPor favor, registre al menos un usuario con rol de Abogado desde el módulo de personal.",
+                        "warning",
+                        List.of(ButtonType.OK));
+            }
+
+            // Establecer los items en la tabla (incluso si está vacía)
+            tb_Abogados.setItems(FXCollections.observableArrayList(abogadosDemoList));
+
+        } catch (Exception e) {
+            System.err.println("ERROR: No se pudieron cargar los abogados: " + e.getMessage());
+            e.printStackTrace();
+
+            // Mostrar mensaje de error al usuario
+            DialogUtil.mostrarDialogo(
+                    "Error al cargar abogados",
+                    "Ocurrió un error al cargar los abogados desde la base de datos: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK));
+
+            // Inicializar con lista vacía en lugar de datos de ejemplo
+            tb_Abogados.setItems(FXCollections.observableArrayList());
+        }
     }
 
     /**

@@ -213,6 +213,37 @@ public class UsuarioDAO {
     }
 
     /**
+     * Verifica si existe un usuario con la identificación proporcionada
+     * 
+     * @param identificacion  la identificación a verificar
+     * @param idUsuarioActual el ID del usuario actual (para excluirlo en la
+     *                        validación en modo edición)
+     * @return true si existe otro usuario con la misma identificación, false en
+     *         caso contrario
+     * @throws SQLException si ocurre un error de base de datos
+     */
+    public boolean existeUsuarioConIdentificacion(String identificacion, Integer idUsuarioActual) throws SQLException {
+        String sql = "SELECT id FROM usuarios WHERE identificacion = ?";
+
+        if (idUsuarioActual != null) {
+            sql += " AND id != ?";
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            pstmt.setString(1, identificacion);
+
+            if (idUsuarioActual != null) {
+                pstmt.setInt(2, idUsuarioActual);
+            }
+
+            ResultSet rs = pstmt.executeQuery();
+            return rs.next(); // Si hay al menos un resultado, la identificación ya existe
+        }
+    }
+
+    /**
      * Verifica si la clave de un usuario es correcta
      * 
      * @param nombreUsuario nombre de usuario
@@ -235,6 +266,39 @@ public class UsuarioDAO {
             }
         }
         return false;
+    }
+
+    /**
+     * Activa un usuario específico estableciendo su estado como ACTIVO
+     * 
+     * @param nombreUsuario nombre del usuario a activar
+     * @return true si se activó correctamente, false en caso contrario
+     */
+    public boolean activarUsuario(String nombreUsuario) {
+        String sql = "UPDATE usuarios SET estado_usuario = 'ACTIVO', updated_at = ? WHERE nombre_usuario = ?";
+
+        try (Connection conn = DatabaseConnection.getConnection();
+                PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+            String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+            pstmt.setString(1, timestamp);
+            pstmt.setString(2, nombreUsuario);
+
+            int filasAfectadas = pstmt.executeUpdate();
+
+            if (filasAfectadas > 0) {
+                System.out.println("Usuario '" + nombreUsuario + "' activado correctamente.");
+                return true;
+            } else {
+                System.out.println("No se encontró el usuario '" + nombreUsuario + "' o ya estaba activo.");
+                return false;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al activar usuario: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 
     /**

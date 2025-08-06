@@ -30,7 +30,6 @@ public class DetalleCasoBitacoraController {
     @FXML
     private AnchorPane panelPrincipal;
 
-    private Runnable onRegresar;
     private int casoId;
     private AnchorPane panelSobrepuesto;
 
@@ -54,14 +53,42 @@ public class DetalleCasoBitacoraController {
 
         // Configurar los botones
         btnAgregarEntrada.setOnAction(e -> mostrarFormularioBitacora());
+        configurarBotonRegresar();
+    }
+
+    /**
+     * Configura el botón regresar para usar MainController directamente
+     */
+    private void configurarBotonRegresar() {
         btnRegresar.setOnAction(e -> {
-            System.out.println("DEBUG: Botón regresar presionado");
-            if (onRegresar != null) {
-                System.out.println("DEBUG: Callback onRegresar encontrado, ejecutando...");
-                onRegresar.run();
-                System.out.println("DEBUG: Callback onRegresar ejecutado");
-            } else {
-                System.err.println("ERROR: No se ha configurado la acción de regreso (onRegresar es null)");
+            System.out.println("DEBUG: Botón regresar presionado en DetalleCasoBitacoraController");
+
+            // Usar MainController exclusivamente para navegación
+            try {
+                System.out.println("DEBUG: Navegando con MainController");
+                application.controllers.MainController mainController = application.controllers.MainController
+                        .getInstance();
+                if (mainController != null) {
+                    // Cambiado para usar la ruta correcta del FXML
+                    mainController.cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                    System.out.println("DEBUG: Navegación exitosa con MainController");
+                } else {
+                    System.err.println("ERROR: No se pudo obtener instancia de MainController");
+                }
+            } catch (Exception ex) {
+                System.err.println("ERROR: Falló navegación con MainController: " + ex.getMessage());
+                ex.printStackTrace();
+                // Intentar cargar con una ruta alternativa si la primera falló
+                try {
+                    application.controllers.MainController mainController = application.controllers.MainController
+                            .getInstance();
+                    if (mainController != null) {
+                        mainController.cargarModulo("views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                        System.out.println("DEBUG: Navegación exitosa con ruta alternativa");
+                    }
+                } catch (Exception e2) {
+                    System.err.println("ERROR: También falló la navegación con ruta alternativa: " + e2.getMessage());
+                }
             }
         });
     }
@@ -171,7 +198,16 @@ public class DetalleCasoBitacoraController {
         }
     }
 
+    /**
+     * Este método ahora no hace nada excepto registrar que fue llamado.
+     * La navegación se realiza exclusivamente a través de MainController.
+     */
     public void setOnRegresar(Runnable r) {
-        this.onRegresar = r;
+        System.out.println("DEBUG: setOnRegresar llamado en DetalleCasoBitacoraController - ignorando callback");
+
+        // Ya no usamos callbacks para navegación, utilizamos MainController
+        // directamente
+        // El botón de regreso ya está configurado en el método
+        // configurarBotonRegresar()
     }
 }

@@ -367,6 +367,26 @@ public class MainController {
 
     public void cargarModulo(String rutaFXML) {
         try {
+            // Normalizar la ruta para asegurarnos que tiene el slash inicial
+            if (!rutaFXML.startsWith("/")) {
+                rutaFXML = "/" + rutaFXML;
+            }
+
+            System.out.println("DEBUG: MainController intentando cargar: " + rutaFXML);
+
+            // Verificar que el recurso existe antes de intentar cargarlo
+            if (getClass().getResource(rutaFXML) == null) {
+                System.err.println("ERROR: El recurso " + rutaFXML + " no existe");
+                // Intentar sin el slash inicial como alternativa
+                String rutaAlternativa = rutaFXML.startsWith("/") ? rutaFXML.substring(1) : rutaFXML;
+                if (getClass().getResource(rutaAlternativa) != null) {
+                    System.out.println("DEBUG: Encontrado con ruta alternativa: " + rutaAlternativa);
+                    rutaFXML = rutaAlternativa;
+                } else {
+                    throw new IllegalArgumentException("El recurso FXML no existe: " + rutaFXML);
+                }
+            }
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
             Node modulo = loader.load();
 

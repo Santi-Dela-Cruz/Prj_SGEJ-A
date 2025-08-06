@@ -39,7 +39,6 @@ public class ModuloDocumentosController {
 
     private Pane pnl_Forms;
     private String numeroExpediente;
-    private Runnable onRegresar;
 
     public void setFormularioContainer(Pane pnl_Forms) {
         this.pnl_Forms = pnl_Forms;
@@ -56,22 +55,101 @@ public class ModuloDocumentosController {
         cargarDocumentosPorExpediente(numeroExpediente);
     }
 
+    /**
+     * Este método ahora ignora el callback proporcionado y siempre usa
+     * MainController
+     * para navegar, lo cual es más fiable.
+     */
     public void setOnRegresar(Runnable callback) {
-        this.onRegresar = callback;
+        System.out.println("DEBUG: setOnRegresar llamado - ignorando callback y usando MainController");
+
+        // Ya no guardamos el callback ni lo usamos
+
+        // Asegurarnos que el botón de regresar use MainController directamente
+        if (btn_Regresar != null) {
+            btn_Regresar.setOnAction(e -> {
+                System.out.println("DEBUG: BOTÓN REGRESAR PRESIONADO (ModuloDocumentosController)");
+                try {
+                    System.out.println("DEBUG: Navegando a modulo_casos usando MainController");
+                    application.controllers.MainController mainController = application.controllers.MainController
+                            .getInstance();
+                    if (mainController != null) {
+                        mainController.cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                        System.out.println("DEBUG: Navegación a modulo_casos exitosa");
+                    } else {
+                        System.err.println("ERROR: No se pudo obtener instancia de MainController");
+                    }
+                } catch (Exception ex) {
+                    System.err.println("ERROR: Error al navegar usando MainController: " + ex.getMessage());
+                    ex.printStackTrace();
+
+                    // Intentar con una ruta alternativa
+                    try {
+                        System.out.println("DEBUG: Intentando ruta alternativa desde setOnRegresar");
+                        application.controllers.MainController mainController = application.controllers.MainController
+                                .getInstance();
+                        if (mainController != null) {
+                            mainController.cargarModulo("views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                            System.out.println("DEBUG: Navegación con ruta alternativa exitosa");
+                        }
+                    } catch (Exception e2) {
+                        System.err.println("ERROR: También falló la ruta alternativa: " + e2.getMessage());
+                    }
+                }
+            });
+            System.out.println("DEBUG: btn_Regresar configurado exitosamente");
+        } else {
+            System.err.println("ERROR: btn_Regresar es NULL en setOnRegresar");
+        }
     }
 
     @FXML
     private void initialize() {
-        // Configurar botón regresar si existe
+        System.out.println("DEBUG: initialize en ModuloDocumentosController");
+
+        // Configurar el botón regresar para usar siempre MainController
+        // (mucho más confiable que el sistema de callbacks)
         if (btn_Regresar != null) {
-            btn_Regresar.setOnAction(event -> {
-                if (onRegresar != null) {
-                    onRegresar.run();
+            btn_Regresar.setOnAction(e -> {
+                System.out.println("DEBUG: BOTÓN REGRESAR PRESIONADO (initialize en ModuloDocumentosController)");
+                try {
+                    System.out.println("DEBUG: Navegando a modulo_casos usando MainController");
+                    application.controllers.MainController mainController = application.controllers.MainController
+                            .getInstance();
+                    if (mainController != null) {
+                        mainController.cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                        System.out.println("DEBUG: Navegación a modulo_casos exitosa");
+                    } else {
+                        System.err.println("ERROR: No se pudo obtener instancia de MainController");
+                    }
+                } catch (Exception ex) {
+                    System.err.println("ERROR: Error al navegar usando MainController: " + ex.getMessage());
+                    ex.printStackTrace();
+
+                    // Intentar con una ruta alternativa si la primera falló
+                    try {
+                        System.out.println("DEBUG: Intentando ruta alternativa");
+                        application.controllers.MainController mainController = application.controllers.MainController
+                                .getInstance();
+                        if (mainController != null) {
+                            // Intentar sin el slash inicial
+                            mainController.cargarModulo("views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                            System.out.println("DEBUG: Navegación con ruta alternativa exitosa");
+                        }
+                    } catch (Exception e2) {
+                        System.err.println("ERROR: También falló la ruta alternativa: " + e2.getMessage());
+                        e2.printStackTrace();
+                    }
                 }
             });
+        } else {
+            System.err.println("ERROR: btn_Regresar es NULL en initialize");
         }
 
-        btn_Subir.setOnAction(event -> mostrarFormularioDocumento());
+        // Configurar botón subir documento
+        if (btn_Subir != null) {
+            btn_Subir.setOnAction(event -> mostrarFormularioDocumento());
+        }
 
         configurarColumnas();
         inicializarColumnasDeBotones();
@@ -436,8 +514,11 @@ public class ModuloDocumentosController {
 
             FormDocumentoController controller = loader.getController();
 
-            // Configurar callbacks
+            // Configurar callbacks para ambos escenarios: cancelar y guardar
+            // Esto asegura que el botón de regresar funcione correctamente
             controller.setOnCancelar(() -> cerrarFormulario());
+            controller.setOnGuardar(() -> cerrarFormulario()); // Aunque no se use en modo VER, es buena práctica
+                                                               // configurarlo
 
             // Obtener la ruta del archivo
             String rutaArchivo = obtenerRutaArchivoDesdeNombre(doc.numeroExpediente(), doc.nombre());

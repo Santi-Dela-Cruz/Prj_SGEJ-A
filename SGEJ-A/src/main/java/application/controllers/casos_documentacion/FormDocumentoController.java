@@ -72,6 +72,22 @@ public class FormDocumentoController {
 
         btn_SeleccionarArchivo.setOnAction(e -> seleccionarArchivo());
 
+        // Configuración inicial del botón Cancelar (será modificado en setModo si es
+        // necesario)
+        btn_Cancelar.setOnAction(e -> {
+            Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                    "Confirmación",
+                    "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
+                    "confirm",
+                    List.of(ButtonType.YES, ButtonType.NO));
+
+            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (onCancelar != null) {
+                    onCancelar.run();
+                }
+            }
+        });
+
         btn_Guardar.setOnAction(event -> {
             if (txtf_NumeroExpediente.getText().isEmpty() ||
                     txtf_NombreDocumento.getText().isEmpty() ||
@@ -400,6 +416,33 @@ public class FormDocumentoController {
 
         btn_Guardar.setVisible(!esVer);
         btn_Guardar.setDisable(esVer);
+
+        // Configurar el botón Cancelar específicamente para el modo Ver
+        if (esVer) {
+            btn_Cancelar.setText("Regresar");
+            // En modo VER, el botón cancelar no debe mostrar diálogo de confirmación
+            btn_Cancelar.setOnAction(e -> {
+                if (onCancelar != null) {
+                    onCancelar.run();
+                }
+            });
+        } else {
+            btn_Cancelar.setText("Cancelar");
+            // Reestablecer comportamiento normal para otros modos
+            btn_Cancelar.setOnAction(e -> {
+                Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                        "Confirmación",
+                        "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
+                        "confirm",
+                        List.of(ButtonType.YES, ButtonType.NO));
+
+                if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                    if (onCancelar != null) {
+                        onCancelar.run();
+                    }
+                }
+            });
+        }
     }
 
     public void cargarDatosDocumento(String nombre, String tipo, String fecha, String descripcion, String expediente,

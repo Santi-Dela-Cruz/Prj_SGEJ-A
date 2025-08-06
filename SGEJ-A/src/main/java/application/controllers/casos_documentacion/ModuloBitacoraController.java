@@ -43,6 +43,26 @@ public class ModuloBitacoraController {
      */
     public void setOnRegresar(Runnable onRegresar) {
         this.onRegresar = onRegresar;
+
+        // Re-configurar el botón regresar después de establecer el callback
+        // Esto es crucial porque el método initialize() se ejecuta antes que
+        // setOnRegresar()
+        if (btn_Regresar != null) {
+            btn_Regresar.setOnAction(e -> {
+                System.out.println("DEBUG: Botón regresar presionado en ModuloBitacoraController");
+                if (onRegresar != null) {
+                    System.out.println(
+                            "DEBUG: Callback onRegresar encontrado en ModuloBitacoraController, ejecutando...");
+                    onRegresar.run();
+                    System.out.println("DEBUG: Callback onRegresar ejecutado en ModuloBitacoraController");
+                } else {
+                    System.err.println(
+                            "ERROR: No se ha configurado la acción de regreso en ModuloBitacoraController (onRegresar es null)");
+                }
+            });
+        } else {
+            System.err.println("ERROR: btn_Regresar no encontrado en ModuloBitacoraController");
+        }
     }
 
     @FXML

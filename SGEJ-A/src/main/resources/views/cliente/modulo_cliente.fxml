@@ -60,9 +60,12 @@
                   <Button fx:id="btn_Buscar" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: linear-gradient(to bottom, #3b82f6, #2563eb); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 4, 0, 0, 2);" text="Buscar" />
                   <Button fx:id="btn_LimpiarFiltro" mnemonicParsing="false" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: linear-gradient(to bottom, #6b7280, #4b5563); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(107, 114, 128, 0.4), 4, 0, 0, 2);" text="Limpiar" />
                   <Separator orientation="VERTICAL" prefHeight="40.0" style="-fx-background-color: #e2e8f0;" />
-                  <!-- Spacer para empujar el botón Nuevo a la derecha -->
+                  <!-- Spacer para empujar los botones a la derecha -->
                   <Pane HBox.hgrow="ALWAYS" />
-                  <Button fx:id="btn_Nuevo" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);" text="➕ Nuevo Cliente" />
+                  <!-- Botón para exportar a Excel -->
+                  <Button fx:id="btn_ExportarExcel" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: linear-gradient(to bottom, #16a34a, #15803d); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(22, 163, 74, 0.4), 4, 0, 0, 2);" text="📥 Exportar a Excel" />
+                  <Separator orientation="VERTICAL" prefHeight="40.0" prefWidth="10.0" />
+                  <Button fx:id="btn_Nuevo" mnemonicParsing="false" prefHeight="40.0" prefWidth="160.0" style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);" text="➕ Registrar Nuevo Cliente" />
                </children>
             </HBox>
          </children>
@@ -90,6 +93,7 @@
                   </VBox>
                   <!-- Separador -->
                   <Separator orientation="VERTICAL" prefHeight="40.0" style="-fx-background-color: #e2e8f0;" />
+                  
                   <!-- Indicador de estado -->
                   <Pane prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: linear-gradient(to right, #10b981, #059669); -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.3), 3, 0, 0, 1);">
                      <children>
@@ -109,7 +113,8 @@
                   <TableColumn fx:id="tbc_Correo" minWidth="200.0" prefWidth="240.0" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 10 0 10;" text="📧 Correo Electrónico" />
                   <TableColumn fx:id="tbc_Estado" minWidth="80.0" prefWidth="90.0" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" text="📊 Estado" />
                   <TableColumn fx:id="tbc_BotonEditar" minWidth="80.0" prefWidth="90.0" maxWidth="90.0" resizable="false" style="-fx-alignment: CENTER; -fx-padding: 0 15 0 15;" text="✏️ Editar" />
-                  <TableColumn fx:id="tbc_BotonVer" minWidth="80.0" prefWidth="90.0" maxWidth="90.0" resizable="false" style="-fx-alignment: CENTER; -fx-padding: 0 15 0 15;" text="👁️ Ver" />
+                  <TableColumn fx:id="tbc_BotonVer" minWidth="80.0" prefWidth="90.0" maxWidth="90.0" resizable="false" style="-fx-alignment: CENTER; -fx-padding: 0 15 0 15;" text="� Ver Casos" />
+                  <TableColumn fx:id="tbc_BotonVerDetalles" minWidth="80.0" prefWidth="90.0" maxWidth="90.0" resizable="false" style="-fx-alignment: CENTER; -fx-padding: 0 15 0 15;" text="�👁️ Ver" />
                </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />

@@ -5,6 +5,7 @@ import application.dao.UsuarioDAO;
 import application.model.Usuario;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import java.util.regex.Pattern;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,12 +21,25 @@ public class FormCambioClaveController {
     @FXML
     private Label lbl_Usuario;
 
+    @FXML
+    private Label lbl_RequisitosPassword, lbl_ReqLongitud, lbl_ReqMayuscula, lbl_ReqNumero, lbl_ReqEspecial;
+
     private Runnable onCancelar, onGuardar;
     private Usuario usuario;
     private String modo = "CAMBIO"; // "CAMBIO" o "RESET"
 
     // DAO para operaciones con la base de datos
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
+
+    // Patrones individuales para cada requisito de contraseña
+    private final Pattern longitudPattern = Pattern.compile(".{8,}");
+    private final Pattern mayusculaPattern = Pattern.compile(".*[A-Z].*");
+    private final Pattern numeroPattern = Pattern.compile(".*[0-9].*");
+    private final Pattern especialPattern = Pattern.compile(".*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?].*");
+
+    // Patrón completo para contraseñas seguras
+    private final Pattern contrasenaSeguraPattern = Pattern
+            .compile("^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,}$");
 
     public void setOnGuardar(Runnable handler) {
         this.onGuardar = handler;
@@ -74,12 +88,41 @@ public class FormCambioClaveController {
     private void initialize() {
         lbl_Error.setText("");
 
-        btn_Guardar.setOnAction(e -> guardarCambios());
-        btn_Cancelar.setOnAction(e -> {
+        btn_Guardar.setOnAction(__ -> guardarCambios());
+        btn_Cancelar.setOnAction(__ -> {
             if (onCancelar != null) {
                 onCancelar.run();
             }
         });
+
+        // Agregar listener al campo de nueva contraseña para validación en tiempo real
+        txt_Nueva.textProperty().addListener((__, ___, newValue) -> actualizarIndicadoresRequisitos(newValue));
+    }
+
+    /**
+     * Actualiza los indicadores visuales de los requisitos de contraseña
+     * 
+     * @param password La contraseña a validar
+     */
+    private void actualizarIndicadoresRequisitos(String password) {
+        // Validar cada requisito por separado
+        boolean cumpleLongitud = longitudPattern.matcher(password).matches();
+        boolean cumpleMayuscula = mayusculaPattern.matcher(password).matches();
+        boolean cumpleNumero = numeroPattern.matcher(password).matches();
+        boolean cumpleEspecial = especialPattern.matcher(password).matches();
+
+        // Actualizar color de cada indicador (verde si cumple, rojo si no)
+        lbl_ReqLongitud.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleLongitud ? "#006400" : "#FF0000") + ";");
+
+        lbl_ReqMayuscula.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleMayuscula ? "#006400" : "#FF0000") + ";");
+
+        lbl_ReqNumero.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleNumero ? "#006400" : "#FF0000") + ";");
+
+        lbl_ReqEspecial.setStyle("-fx-font-size: 9px; -fx-text-fill: " +
+                (cumpleEspecial ? "#006400" : "#FF0000") + ";");
     }
 
     /**
@@ -129,9 +172,15 @@ public class FormCambioClaveController {
             return false;
         }
 
-        // Verificar longitud mínima
-        if (txt_Nueva.getText().length() < 6) {
-            lbl_Error.setText("La contraseña debe tener al menos 6 caracteres");
+        // Validar que la contraseña cumple con todos los requisitos de seguridad usando
+        // el patrón
+        String contrasena = txt_Nueva.getText();
+
+        // Actualizar indicadores visuales de requisitos
+        actualizarIndicadoresRequisitos(contrasena);
+
+        if (!contrasenaSeguraPattern.matcher(contrasena).matches()) {
+            lbl_Error.setText("La contraseña no cumple con todos los requisitos de seguridad");
             return false;
         }
 

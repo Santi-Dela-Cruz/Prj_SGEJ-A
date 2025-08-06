@@ -71,6 +71,19 @@ public class DatabaseInitializer {
             // Agregar la columna devolucion_iva que falta en la tabla factura
             executeScript("/database/add_devolucion_iva_column.sql");
 
+            // Crear tabla de personal si no existe
+            executeScript("/database/crear_tabla_personal.sql");
+
+            // Actualizar los parámetros legales y fiscales para la facturación
+            executeScript("/database/actualizar_parametros_legales_fiscales.sql");
+
+            // Actualizar directamente los datos de la institución para asegurar que estén
+            // correctos
+            executeScript("/database/actualizar_datos_institucion.sql");
+
+            // Actualizar categorías de los parámetros institucionales y eliminar duplicados
+            executeScript("/database/actualizar_categoria_parametros_institucionales.sql");
+
             // Limpiar tablas de respaldo y temporales siempre al final
             executeScript("/database/limpiar_tablas_backup.sql");
 

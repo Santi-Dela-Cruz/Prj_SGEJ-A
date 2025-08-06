@@ -80,7 +80,6 @@ public class ParametroService {
      */
     private void inicializarValoresPorDefecto() {
         // Valores por defecto para parámetros comunes del sistema
-        valoresPorDefecto.put("iva", "12");
         valoresPorDefecto.put("porcentaje_descuento", "5");
         valoresPorDefecto.put("dias_pago_factura", "30");
         valoresPorDefecto.put("idioma_sistema", "es");
@@ -95,14 +94,15 @@ public class ParametroService {
         valoresPorDefecto.put("formatos_permitidos", "pdf,doc,docx,jpg,png");
         valoresPorDefecto.put("tamaño_maximo_archivo", "10");
 
-        // Parámetros para facturación
-        valoresPorDefecto.put("porcentaje_iva", "12");
+        // Parámetros para facturación - Legal/Fiscal
+        valoresPorDefecto.put("porcentaje_iva", "12"); // IVA utilizado para cálculos en la factura
         valoresPorDefecto.put("codigo_documento_factura", "01");
-        valoresPorDefecto.put("ruc_empresa", "9999999999001");
-        valoresPorDefecto.put("razon_social", "EMPRESA DEMO");
-        valoresPorDefecto.put("direccion_matriz", "DIRECCION MATRIZ");
-        valoresPorDefecto.put("direccion_sucursal", "DIRECCION SUCURSAL");
-        valoresPorDefecto.put("obligado_contabilidad", "false");
+        valoresPorDefecto.put("ruc_institucional", "1790011119001"); // Actualizado
+        valoresPorDefecto.put("razon_social", "ESTUDIO JURÍDICO INTEGRAL S.A.");
+        valoresPorDefecto.put("direccion_matriz", "AV. AMAZONAS N36-152 Y NACIONES UNIDAS");
+        valoresPorDefecto.put("direccion_sucursal", "CALLE PORTUGAL E9-138 Y AV. ELOY ALFARO");
+        valoresPorDefecto.put("obligado_contabilidad", "true");
+        valoresPorDefecto.put("subtotal_porcentaje", "12"); // Porcentaje para el subtotal por defecto
         valoresPorDefecto.put("codigo_establecimiento", "001");
         valoresPorDefecto.put("codigo_punto_emision", "001");
         valoresPorDefecto.put("ambiente_facturacion", "1");
@@ -152,6 +152,15 @@ public class ParametroService {
     }
 
     /**
+     * Fuerza la actualización del caché y realiza una carga inmediata
+     */
+    public void refreshCache() {
+        invalidarCache();
+        actualizarCache();
+        System.out.println("Caché de parámetros refrescado con " + cacheParametros.size() + " parámetros");
+    }
+
+    /**
      * Establece el tiempo de vigencia del caché en minutos
      * 
      * @param minutos tiempo en minutos
@@ -196,6 +205,11 @@ public class ParametroService {
         }
 
         codigo = codigo.toLowerCase();
+
+        // Siempre verificar si la caché está actualizada
+        if (!cacheVigente()) {
+            actualizarCache();
+        }
 
         Parametro parametro = getParametro(codigo);
 
@@ -666,6 +680,59 @@ public class ParametroService {
             LOGGER.info("Formatos permitidos actualizados correctamente");
         } else {
             LOGGER.warning("No se pudieron actualizar los formatos permitidos");
+        }
+
+        return resultado;
+    }
+
+    /**
+     * Actualiza los parámetros legales/fiscales para la facturación
+     * 
+     * @param porcentajeIva      porcentaje de IVA a aplicar
+     * @param rucInstitucional   RUC institucional para la facturación
+     * @param razonSocial        razón social de la empresa
+     * @param direccionMatriz    dirección de la matriz
+     * @param direccionSucursal  dirección de la sucursal
+     * @param subtotalPorcentaje porcentaje para el subtotal
+     * @return true si todos los parámetros se actualizaron correctamente
+     */
+    public boolean actualizarParametrosLegalesFiscales(String porcentajeIva, String rucInstitucional,
+            String razonSocial, String direccionMatriz,
+            String direccionSucursal, String subtotalPorcentaje) {
+        LOGGER.info("Actualizando parámetros legales/fiscales");
+
+        boolean resultado = true;
+
+        // Activar parámetros y actualizar sus valores
+        activarParametro("porcentaje_iva");
+        resultado &= actualizarValor("porcentaje_iva", porcentajeIva);
+
+        activarParametro("ruc_institucional");
+        resultado &= actualizarValor("ruc_institucional", rucInstitucional);
+
+        activarParametro("razon_social");
+        resultado &= actualizarValor("razon_social", razonSocial);
+
+        activarParametro("direccion_matriz");
+        resultado &= actualizarValor("direccion_matriz", direccionMatriz);
+
+        activarParametro("direccion_sucursal");
+        resultado &= actualizarValor("direccion_sucursal", direccionSucursal);
+
+        activarParametro("subtotal_porcentaje");
+        resultado &= actualizarValor("subtotal_porcentaje", subtotalPorcentaje);
+
+        // Eliminar parámetros innecesarios (marcarlos como inactivos)
+        desactivarParametro("correo_institucional");
+        desactivarParametro("direccion_fiscal");
+        desactivarParametro("retencion");
+
+        // Invalidar caché para que se carguen los nuevos valores
+        if (resultado) {
+            invalidarCache();
+            LOGGER.info("Parámetros legales/fiscales actualizados correctamente");
+        } else {
+            LOGGER.warning("Hubo errores al actualizar los parámetros legales/fiscales");
         }
 
         return resultado;

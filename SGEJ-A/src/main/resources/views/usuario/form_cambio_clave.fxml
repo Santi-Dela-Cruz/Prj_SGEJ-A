@@ -37,6 +37,13 @@
                 <Label text="Nueva contraseña:" prefWidth="150"/>
                 <PasswordField fx:id="txt_Nueva" prefWidth="200"/>
             </HBox>
+            <VBox spacing="2.0" style="-fx-padding: 0 0 0 150;">
+                <Label fx:id="lbl_RequisitosPassword" text="La contraseña debe tener:" style="-fx-font-size: 9px; -fx-text-fill: #666666;" />
+                <Label fx:id="lbl_ReqLongitud" text="• Al menos 8 caracteres" style="-fx-font-size: 9px; -fx-text-fill: #666666;" />
+                <Label fx:id="lbl_ReqMayuscula" text="• Al menos una letra mayúscula" style="-fx-font-size: 9px; -fx-text-fill: #666666;" />
+                <Label fx:id="lbl_ReqNumero" text="• Al menos un número" style="-fx-font-size: 9px; -fx-text-fill: #666666;" />
+                <Label fx:id="lbl_ReqEspecial" text="• Al menos un carácter especial (!@#$%^&amp;*)" style="-fx-font-size: 9px; -fx-text-fill: #666666;" />
+            </VBox>
             <HBox spacing="10.0" alignment="CENTER_LEFT">
                 <Label text="Confirmar nueva contraseña:" prefWidth="150"/>
                 <PasswordField fx:id="txt_Confirmar" prefWidth="200"/>
@@ -44,7 +51,7 @@
             <Label fx:id="lbl_Error"
                    text=""
                    textFill="red"
-                   style="-fx-font-size: 12px;" />
+                   style="-fx-font-size: 9px;" />
         </VBox>
 
         <!-- Buttons -->

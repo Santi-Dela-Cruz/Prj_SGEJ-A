@@ -1,0 +1,576 @@
+package application.controllers.casos_documentacion;
+
+import application.controllers.DialogUtil;
+import application.database.DatabaseConnection;
+import application.model.DocumentoCaso;
+import application.service.DocumentoCasoService;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Optional;
+
+public class ModuloDocumentosController {
+
+    @FXML
+    private TextField txtf_Buscar;
+    @FXML
+    private Button btn_Buscar, btn_Subir, btn_Regresar;
+    @FXML
+    private TableView<DocumentoDemo> tb_Documentos;
+    @FXML
+    private TableColumn<DocumentoDemo, String> tbc_Nombre, tbc_Tipo, tbc_Fecha, tbc_Tamano;
+    @FXML
+    private TableColumn<DocumentoDemo, Void> tbc_BotonVer, tbc_BotonEliminar, tbc_BotonDescargar;
+    @FXML
+    private Label lblTitulo;
+
+    private Pane pnl_Forms;
+    private String numeroExpediente;
+
+    public void setFormularioContainer(Pane pnl_Forms) {
+        this.pnl_Forms = pnl_Forms;
+    }
+
+    public void setNumeroExpediente(String numeroExpediente) {
+        this.numeroExpediente = numeroExpediente;
+        // Actualizar título si existe el label
+        if (lblTitulo != null) {
+            lblTitulo.setText("Documentos - Expediente " + numeroExpediente);
+            lblTitulo.setStyle("-fx-font-size: 16.0; -fx-font-weight: bold; -fx-text-fill: white;");
+        }
+        // Cargar documentos específicos del caso
+        cargarDocumentosPorExpediente(numeroExpediente);
+    }
+
+    /**
+     * Este método ahora ignora el callback proporcionado y siempre usa MainController
+     * para navegar, lo cual es más fiable.
+     */
+    public void setOnRegresar(Runnable callback) {
+        System.out.println("DEBUG: setOnRegresar llamado - ignorando callback y usando MainController");
+        
+        // Ya no guardamos el callback ni lo usamos
+        
+        // Asegurarnos que el botón de regresar use MainController directamente
+        if (btn_Regresar != null) {
+            btn_Regresar.setOnAction(e -> {
+                System.out.println("DEBUG: BOTÓN REGRESAR PRESIONADO (ModuloDocumentosController)");
+                try {
+                    System.out.println("DEBUG: Navegando a modulo_casos usando MainController");
+                    application.controllers.MainController mainController = 
+                        application.controllers.MainController.getInstance();
+                    if (mainController != null) {
+                        // Ruta actualizada al FXML correcto
+                        mainController.cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                        System.out.println("DEBUG: Navegación a modulo_casos exitosa");
+                    } else {
+                        System.err.println("ERROR: No se pudo obtener instancia de MainController");
+                    }
+                } catch (Exception ex) {
+                    System.err.println("ERROR: Error al navegar usando MainController: " + ex.getMessage());
+                    ex.printStackTrace();
+                    
+                    // Intentar con una ruta alternativa
+                    try {
+                        System.out.println("DEBUG: Intentando ruta alternativa desde setOnRegresar");
+                        application.controllers.MainController mainController = 
+                            application.controllers.MainController.getInstance();
+                        if (mainController != null) {
+                            // Ruta alternativa actualizada también
+                            mainController.cargarModulo("views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                            System.out.println("DEBUG: Navegación con ruta alternativa exitosa");
+                        }
+                    } catch (Exception e2) {
+                        System.err.println("ERROR: También falló la ruta alternativa: " + e2.getMessage());
+                    }
+                }
+            });
+            System.out.println("DEBUG: btn_Regresar configurado exitosamente");
+        } else {
+            System.err.println("ERROR: btn_Regresar es NULL en setOnRegresar");
+        }
+    }
+
+    @FXML
+    private void initialize() {
+        System.out.println("DEBUG: initialize en ModuloDocumentosController");
+        
+        // Configurar el botón regresar para usar siempre MainController 
+        // (mucho más confiable que el sistema de callbacks)
+        if (btn_Regresar != null) {
+            btn_Regresar.setOnAction(e -> {
+                System.out.println("DEBUG: BOTÓN REGRESAR PRESIONADO (initialize en ModuloDocumentosController)");
+                try {
+                    System.out.println("DEBUG: Navegando a modulo_casos usando MainController");
+                    application.controllers.MainController mainController = 
+                        application.controllers.MainController.getInstance();
+                    if (mainController != null) {
+                        // Ruta actualizada al FXML correcto
+                        mainController.cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                        System.out.println("DEBUG: Navegación a modulo_casos exitosa");
+                    } else {
+                        System.err.println("ERROR: No se pudo obtener instancia de MainController");
+                    }
+                } catch (Exception ex) {
+                    System.err.println("ERROR: Error al navegar usando MainController: " + ex.getMessage());
+                    ex.printStackTrace();
+                    
+                    // Intentar con una ruta alternativa si la primera falló
+                    try {
+                        System.out.println("DEBUG: Intentando ruta alternativa");
+                        application.controllers.MainController mainController = 
+                            application.controllers.MainController.getInstance();
+                        if (mainController != null) {
+                            // Ruta alternativa actualizada también
+                            mainController.cargarModulo("views/casos_documentos/modulo_casos_documentacion_casos.fxml");
+                            System.out.println("DEBUG: Navegación con ruta alternativa exitosa");
+                        }
+                    } catch (Exception e2) {
+                        System.err.println("ERROR: También falló la ruta alternativa: " + e2.getMessage());
+                        e2.printStackTrace();
+                    }
+                }
+            });
+        } else {
+            System.err.println("ERROR: btn_Regresar es NULL en initialize");
+        }
+        
+        // Configurar botón subir documento
+        if (btn_Subir != null) {
+            btn_Subir.setOnAction(event -> mostrarFormularioDocumento());
+        }
+
+        configurarColumnas();
+        inicializarColumnasDeBotones();
+        cargarDatosEjemplo();
+    }
+
+    private void mostrarFormularioDocumento() {
+        try {
+            // Crear panel para formulario si no existe
+            if (pnl_Forms != null) {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/casos_documentos/form_documento.fxml"));
+                AnchorPane form = loader.load();
+                FormDocumentoController controller = loader.getController();
+
+                controller.setNumeroExpediente(numeroExpediente);
+                controller.setOnGuardar(() -> {
+                    // Recargar documentos después de guardar
+                    cargarDocumentosPorExpediente(numeroExpediente);
+
+                    // Limpiar formulario
+                    pnl_Forms.getChildren().clear();
+                    System.out.println("Formulario cerrado después de guardar");
+                });
+
+                controller.setOnCancelar(() -> {
+                    // Limpiar formulario
+                    pnl_Forms.getChildren().clear();
+                    System.out.println("Formulario cerrado después de cancelar");
+                });
+
+                // Mostrar formulario con animación
+                mostrarFormularioConAnimacion(form);
+            } else {
+                System.err.println("Error: pnl_Forms es NULL");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void mostrarFormularioConAnimacion(Node form) {
+        if (pnl_Forms != null) {
+            pnl_Forms.getChildren().clear();
+            
+            // Añadir al panel
+            pnl_Forms.getChildren().add(form);
+            form.setOpacity(0);
+
+            // Animación de aparición
+            javafx.animation.FadeTransition tt = new javafx.animation.FadeTransition(
+                    javafx.util.Duration.millis(300), form);
+            tt.setFromValue(0);
+            tt.setToValue(1);
+            tt.play();
+
+            // Configurar tamaños
+            form.prefWidthProperty().bind(pnl_Forms.widthProperty());
+            form.prefHeightProperty().bind(pnl_Forms.heightProperty());
+        }
+    }
+
+    private void inicializarColumnasDeBotones() {
+        // Configurar columna para botón Ver
+        inicializarColumnaBotonVer();
+
+        // Configurar columna para botón Eliminar
+        inicializarColumnaBotonEliminar();
+
+        // Configurar columna para botón Descargar
+        inicializarColumnaBotonDescargar();
+    }
+
+    private void inicializarColumnaBotonVer() {
+        tbc_BotonVer.setCellFactory(param -> new TableCell<>() {
+            private final Button btn = new Button("Ver");
+
+            {
+                btn.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;");
+                btn.setOnAction(event -> {
+                    DocumentoDemo documento = getTableView().getItems().get(getIndex());
+                    abrirDocumento(documento);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btn);
+                }
+            }
+        });
+    }
+
+    private void inicializarColumnaBotonEliminar() {
+        tbc_BotonEliminar.setCellFactory(param -> new TableCell<>() {
+            private final Button btn = new Button("Eliminar");
+
+            {
+                btn.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
+                btn.setOnAction(event -> {
+                    DocumentoDemo documento = getTableView().getItems().get(getIndex());
+                    confirmarEliminacion(documento);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btn);
+                }
+            }
+        });
+    }
+
+    private void inicializarColumnaBotonDescargar() {
+        tbc_BotonDescargar.setCellFactory(param -> new TableCell<>() {
+            private final Button btn = new Button("Descargar");
+
+            {
+                btn.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
+                btn.setOnAction(event -> {
+                    DocumentoDemo documento = getTableView().getItems().get(getIndex());
+                    descargarDocumento(documento);
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btn);
+                }
+            }
+        });
+    }
+
+    private void configurarColumnas() {
+        tbc_Nombre.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getNombre()));
+        tbc_Tipo.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTipo()));
+        tbc_Fecha.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getFecha()));
+        tbc_Tamano.setCellValueFactory(data -> new SimpleStringProperty(data.getValue().getTamano()));
+    }
+
+    private void cargarDatosEjemplo() {
+        try {
+            // Preferimos cargar datos reales de la BD
+            if (numeroExpediente != null && !numeroExpediente.isEmpty()) {
+                System.out.println("INFO: No se cargan datos de ejemplo para hacer pruebas con datos reales de la BD");
+                return;
+            }
+            
+            // Solo cargar datos de ejemplo si no tenemos un expediente específico
+            tb_Documentos.getItems().add(new DocumentoDemo("Contrato.pdf", "PDF", "01/01/2025", "250 KB", "1"));
+            tb_Documentos.getItems().add(new DocumentoDemo("Demanda.docx", "Word", "05/01/2025", "120 KB", "2"));
+            tb_Documentos.getItems().add(new DocumentoDemo("Pruebas.zip", "ZIP", "10/01/2025", "4.5 MB", "3"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void cargarDocumentosPorExpediente(String expediente) {
+        try {
+            // Si no hay expediente, no cargar nada
+            if (expediente == null || expediente.trim().isEmpty()) {
+                return;
+            }
+
+            // Conectar a la BD
+            Connection conn = DatabaseConnection.getConnection();
+            DocumentoCasoService service = new DocumentoCasoService(conn);
+            
+            // Obtener documentos del caso
+            List<DocumentoCaso> documentos = service.obtenerDocumentosPorExpediente(expediente);
+            
+            // Limpiar tabla y cargar nuevos datos
+            tb_Documentos.getItems().clear();
+            
+            for (DocumentoCaso doc : documentos) {
+                // Formatear fecha
+                String fechaFormateada = "";
+                if (doc.getFechaSubida() != null) {
+                    fechaFormateada = new SimpleDateFormat("dd/MM/yyyy").format(doc.getFechaSubida());
+                }
+                
+                // Formatear tamaño
+                String tamanoFormateado = formatearTamano(doc.getTamanoBytes());
+                
+                // Añadir a la tabla
+                tb_Documentos.getItems().add(new DocumentoDemo(
+                        doc.getNombreArchivo(), 
+                        doc.getTipoDocumento(), 
+                        fechaFormateada, 
+                        tamanoFormateado, 
+                        String.valueOf(doc.getId())
+                ));
+            }
+            
+            System.out.println("DEBUG: Cargados " + documentos.size() + " documentos para expediente: " + expediente);
+            
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DialogUtil.mostrarError("Error al cargar documentos", 
+                    "No se pudieron cargar los documentos del expediente: " + e.getMessage());
+        }
+    }
+
+    private String formatearTamano(long bytes) {
+        if (bytes < 1024) {
+            return bytes + " B";
+        } else if (bytes < 1048576) { // 1024 * 1024
+            return String.format("%.1f KB", bytes / 1024.0);
+        } else if (bytes < 1073741824) { // 1024 * 1024 * 1024
+            return String.format("%.1f MB", bytes / 1048576.0);
+        } else {
+            return String.format("%.1f GB", bytes / 1073741824.0);
+        }
+    }
+
+    private void abrirDocumento(DocumentoDemo documento) {
+        try {
+            // Implementación real: obtener ruta del documento desde la BD
+            Connection conn = DatabaseConnection.getConnection();
+            DocumentoCasoService service = new DocumentoCasoService(conn);
+            
+            // Obtener documento por ID
+            DocumentoCaso doc = service.obtenerDocumentoPorId(Integer.parseInt(documento.getId()));
+            
+            if (doc == null || doc.getRutaArchivo() == null) {
+                DialogUtil.mostrarError("Error", "No se encontró la ruta del documento");
+                return;
+            }
+            
+            // Verificar si el archivo existe
+            File file = new File(doc.getRutaArchivo());
+            if (!file.exists()) {
+                DialogUtil.mostrarError("Error", "El archivo no existe en la ubicación: " + file.getPath());
+                return;
+            }
+
+            // Abrir con la aplicación predeterminada del sistema
+            try {
+                if (System.getProperty("os.name").toLowerCase().contains("win")) {
+                    new ProcessBuilder("rundll32", "url.dll,FileProtocolHandler", file.getAbsolutePath()).start();
+                } else if (System.getProperty("os.name").toLowerCase().contains("mac")) {
+                    new ProcessBuilder("open", file.getAbsolutePath()).start();
+                } else {
+                    new ProcessBuilder("xdg-open", file.getAbsolutePath()).start();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                DialogUtil.mostrarError("Error al abrir documento", 
+                        "No se pudo abrir el documento: " + e.getMessage());
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtil.mostrarError("Error", "No se pudo abrir el documento: " + e.getMessage());
+        }
+    }
+
+    private void confirmarEliminacion(DocumentoDemo documento) {
+        Optional<ButtonType> result = DialogUtil.mostrarConfirmacion(
+                "Confirmar eliminación", 
+                "¿Está seguro que desea eliminar el documento \"" + documento.getNombre() + "\"?");
+
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            eliminarDocumento(documento);
+        }
+    }
+
+    private void eliminarDocumento(DocumentoDemo documento) {
+        try {
+            // Implementación real: eliminar documento de la BD
+            Connection conn = DatabaseConnection.getConnection();
+            DocumentoCasoService service = new DocumentoCasoService(conn);
+            
+            boolean eliminado = service.eliminarDocumento(Integer.parseInt(documento.getId()));
+            
+            if (eliminado) {
+                // Eliminar de la tabla
+                tb_Documentos.getItems().remove(documento);
+                DialogUtil.mostrarInfo("Documento eliminado", 
+                        "El documento \"" + documento.getNombre() + "\" ha sido eliminado correctamente.");
+            } else {
+                DialogUtil.mostrarError("Error", "No se pudo eliminar el documento.");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtil.mostrarError("Error", "No se pudo eliminar el documento: " + e.getMessage());
+        }
+    }
+
+    private void descargarDocumento(DocumentoDemo documento) {
+        try {
+            // Implementación real: obtener ruta del documento desde la BD
+            Connection conn = DatabaseConnection.getConnection();
+            DocumentoCasoService service = new DocumentoCasoService(conn);
+            
+            // Obtener documento por ID
+            DocumentoCaso doc = service.obtenerDocumentoPorId(Integer.parseInt(documento.getId()));
+            
+            if (doc == null || doc.getRutaArchivo() == null) {
+                DialogUtil.mostrarError("Error", "No se encontró la ruta del documento");
+                return;
+            }
+            
+            // Verificar si el archivo existe
+            File archivoOrigen = new File(doc.getRutaArchivo());
+            if (!archivoOrigen.exists()) {
+                DialogUtil.mostrarError("Error", "El archivo no existe en la ubicación: " + archivoOrigen.getPath());
+                return;
+            }
+
+            // Mostrar diálogo para seleccionar ubicación de guardado
+            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+            fileChooser.setTitle("Guardar documento");
+            fileChooser.setInitialFileName(documento.getNombre());
+            
+            // Configurar filtros por tipo de documento
+            configureFileFilters(fileChooser, documento.getTipo());
+            
+            // Obtener ubicación de guardado
+            File archivoDestino = fileChooser.showSaveDialog(null);
+            
+            if (archivoDestino != null) {
+                // Copiar archivo
+                Files.copy(archivoOrigen.toPath(), archivoDestino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                
+                DialogUtil.mostrarInfo("Documento descargado", 
+                        "El documento ha sido guardado correctamente en: " + archivoDestino.getPath());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtil.mostrarError("Error", "No se pudo descargar el documento: " + e.getMessage());
+        }
+    }
+
+    private void configureFileFilters(javafx.stage.FileChooser fileChooser, String tipo) {
+        // Configurar filtros según el tipo de documento
+        switch (tipo.toLowerCase()) {
+            case "pdf":
+                fileChooser.getExtensionFilters().add(
+                        new javafx.stage.FileChooser.ExtensionFilter("Archivos PDF (*.pdf)", "*.pdf"));
+                break;
+            case "word":
+            case "doc":
+            case "docx":
+                fileChooser.getExtensionFilters().add(
+                        new javafx.stage.FileChooser.ExtensionFilter("Documentos Word (*.docx, *.doc)", "*.docx", "*.doc"));
+                break;
+            case "excel":
+            case "xls":
+            case "xlsx":
+                fileChooser.getExtensionFilters().add(
+                        new javafx.stage.FileChooser.ExtensionFilter("Hojas de cálculo Excel (*.xlsx, *.xls)", "*.xlsx", "*.xls"));
+                break;
+            case "imagen":
+            case "image":
+            case "img":
+                fileChooser.getExtensionFilters().add(
+                        new javafx.stage.FileChooser.ExtensionFilter("Imágenes (*.jpg, *.png, *.gif)", "*.jpg", "*.jpeg", "*.png", "*.gif"));
+                break;
+            case "zip":
+                fileChooser.getExtensionFilters().add(
+                        new javafx.stage.FileChooser.ExtensionFilter("Archivos comprimidos (*.zip)", "*.zip"));
+                break;
+            default:
+                fileChooser.getExtensionFilters().add(
+                        new javafx.stage.FileChooser.ExtensionFilter("Todos los archivos (*.*)", "*.*"));
+                break;
+        }
+        
+        // Añadir filtro para todos los archivos al final
+        fileChooser.getExtensionFilters().add(
+                new javafx.stage.FileChooser.ExtensionFilter("Todos los archivos (*.*)", "*.*"));
+    }
+
+    // Clase para representar documentos en la tabla
+    public class DocumentoDemo {
+        private String nombre;
+        private String tipo;
+        private String fecha;
+        private String tamano;
+        private String id;
+
+        public DocumentoDemo(String nombre, String tipo, String fecha, String tamano, String id) {
+            this.nombre = nombre;
+            this.tipo = tipo;
+            this.fecha = fecha;
+            this.tamano = tamano;
+            this.id = id;
+        }
+
+        public String getNombre() {
+            return nombre;
+        }
+
+        public String getTipo() {
+            return tipo;
+        }
+
+        public String getFecha() {
+            return fecha;
+        }
+
+        public String getTamano() {
+            return tamano;
+        }
+
+        public String getId() {
+            return id;
+        }
+    }
+}

@@ -3,6 +3,7 @@ package application.controllers.administracion_sistema;
 import application.controllers.DialogUtil;
 import application.dao.UsuarioDAO;
 import application.model.Usuario;
+import application.utils.ExportadorExcel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,7 +27,7 @@ public class ModuloUsuarioController {
     @FXML
     private TextField txt_Busqueda;
     @FXML
-    private Button btn_Nuevo, btn_Buscar, btn_Refrescar;
+    private Button btn_Nuevo, btn_Buscar, btn_Refrescar, btn_Exportar;
     @FXML
     private AnchorPane containerForm;
 
@@ -149,6 +150,9 @@ public class ModuloUsuarioController {
         btn_Nuevo.setOnAction(e -> mostrarFormularioUsuario(null));
         btn_Buscar.setOnAction(e -> filtrarUsuarios(txt_Busqueda.getText()));
         btn_Refrescar.setOnAction(e -> cargarUsuarios());
+
+        // Configurar botón de exportar a Excel
+        btn_Exportar.setOnAction(e -> exportarUsuariosExcel());
     }
 
     /**
@@ -271,6 +275,39 @@ public class ModuloUsuarioController {
                         "error",
                         List.of(ButtonType.OK));
             }
+        }
+    }
+
+    /**
+     * Exporta la lista de usuarios a un archivo Excel
+     */
+    private void exportarUsuariosExcel() {
+        try {
+            // Obtenemos la lista más actualizada de usuarios
+            List<Usuario> listaParaExportar = usuarioDAO.obtenerTodosLosUsuarios();
+
+            if (listaParaExportar == null || listaParaExportar.isEmpty()) {
+                DialogUtil.mostrarDialogo("Exportar Excel", "No hay usuarios para exportar. La lista está vacía.",
+                        "warning", List.of(ButtonType.OK));
+                return;
+            }
+
+            // Llamar al exportador
+            boolean resultado = ExportadorExcel.exportarUsuariosAExcel(listaParaExportar);
+
+            if (resultado) {
+                DialogUtil.mostrarDialogo("Exportar Excel", "Los datos se han exportado correctamente a Excel.",
+                        "info", List.of(ButtonType.OK));
+            } else {
+                DialogUtil.mostrarDialogo("Exportar Excel",
+                        "No se completó la exportación. Es posible que se haya cancelado el guardado.",
+                        "warning", List.of(ButtonType.OK));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtil.mostrarDialogo("Error", "Ocurrió un error al exportar los datos: " + e.getMessage(),
+                    "error", List.of(ButtonType.OK));
         }
     }
 }

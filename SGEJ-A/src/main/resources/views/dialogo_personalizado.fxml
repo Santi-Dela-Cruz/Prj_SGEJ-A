@@ -64,8 +64,8 @@
                                 <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" vbarPolicy="AS_NEEDED" style="-fx-background-color: transparent; -fx-padding: 0;">
                                     <content>
                                         <Label fx:id="lbl_Mensaje" wrapText="true" 
-                                               style="-fx-text-fill: #475569; -fx-font-size: 12px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-line-spacing: 1; -fx-padding: 0 0 0 0;"
-                                               text="Este es el mensaje del diálogo personalizado." VBox.vgrow="ALWAYS"/>
+                                               style="-fx-text-fill: #ef4444; -fx-font-size: 12px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-line-spacing: 1.2; -fx-padding: 0 0 0 0; -fx-font-weight: normal;"
+                                               text="Este es el mensaje del diálogo personalizado." VBox.vgrow="ALWAYS" minWidth="280" maxWidth="400"/>
                                     </content>
                                 </ScrollPane>
                             </children>

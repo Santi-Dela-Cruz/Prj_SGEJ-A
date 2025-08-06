@@ -44,6 +44,35 @@ public class CasoService {
     }
 
     /**
+     * Valida si un número de expediente existe en la base de datos
+     * 
+     * @param numeroExpediente Número de expediente a validar
+     * @return true si el caso existe, false en caso contrario
+     */
+    public boolean existeCasoPorNumero(String numeroExpediente) {
+        if (numeroExpediente == null || numeroExpediente.trim().isEmpty()) {
+            return false;
+        }
+
+        Caso caso = casoDAO.obtenerCasoPorNumero(numeroExpediente);
+        return caso != null;
+    }
+
+    /**
+     * Obtiene un caso por su número de expediente
+     * 
+     * @param numeroExpediente Número de expediente a buscar
+     * @return Objeto Caso si existe, null en caso contrario
+     */
+    public Caso obtenerCasoPorNumero(String numeroExpediente) {
+        if (numeroExpediente == null || numeroExpediente.trim().isEmpty()) {
+            return null;
+        }
+
+        return casoDAO.obtenerCasoPorNumero(numeroExpediente);
+    }
+
+    /**
      * Verifica si un caso pertenece a un cliente específico
      * 
      * @param numeroExpediente Número de expediente del caso
