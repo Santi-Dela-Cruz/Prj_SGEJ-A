@@ -68,7 +68,7 @@ public class HistorialComunicacionService {
     public List<HistorialComunicacion> obtenerPorCaso(int casoId) throws SQLException {
         return dao.consultarPorCaso(casoId);
     }
-    
+
     /**
      * Obtiene todas las comunicaciones registradas en la base de datos
      * 
@@ -98,7 +98,7 @@ public class HistorialComunicacionService {
     public boolean verificarExistenciaAbogado(int abogadoId) {
         return dao.verificarExistenciaAbogado(abogadoId);
     }
-    
+
     /**
      * Elimina una comunicación de la base de datos
      * 

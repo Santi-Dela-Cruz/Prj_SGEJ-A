@@ -18,12 +18,19 @@ import java.util.List;
 
 public class ModuloHistorialController {
 
-    @FXML private TextField txtf_Buscar;
-    @FXML private Label lbl_NumeroExpediente;
-    @FXML private Button btn_Buscar, btn_Anadir;
-    @FXML private TableView<HistorialComunicacion> tb_Comunicaciones;
-    @FXML private TableColumn<HistorialComunicacion, String> tbc_FechaEntrada, tbc_Usuario, tbc_TipoAccion, tbc_Descripcion, tbc_Expediente;
-    @FXML private TableColumn<HistorialComunicacion, Void> tbc_BotonEliminar;
+    @FXML
+    private TextField txtf_Buscar;
+    @FXML
+    private Label lbl_NumeroExpediente;
+    @FXML
+    private Button btn_Buscar, btn_Anadir;
+    @FXML
+    private TableView<HistorialComunicacion> tb_Comunicaciones;
+    @FXML
+    private TableColumn<HistorialComunicacion, String> tbc_FechaEntrada, tbc_Usuario, tbc_TipoAccion, tbc_Descripcion,
+            tbc_Expediente;
+    @FXML
+    private TableColumn<HistorialComunicacion, Void> tbc_BotonEliminar;
 
     private Pane pnl_Forms;
     private HistorialComunicacionService service;
@@ -54,11 +61,11 @@ public class ModuloHistorialController {
             }
             return new SimpleStringProperty("N/A");
         });
-        tbc_Usuario.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getAbogadoNombre() != null ? 
-                                                                     d.getValue().getAbogadoNombre() : "Sin asignar"));
+        tbc_Usuario.setCellValueFactory(d -> new SimpleStringProperty(
+                d.getValue().getAbogadoNombre() != null ? d.getValue().getAbogadoNombre() : "Sin asignar"));
         tbc_TipoAccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTipo()));
         tbc_Descripcion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDescripcion()));
-        // Usar el número de expediente completo 
+        // Usar el número de expediente completo
         tbc_Expediente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNumeroExpediente()));
 
         tbc_BotonEliminar.setCellFactory(tc -> new TableCell<>() {
@@ -69,20 +76,19 @@ public class ModuloHistorialController {
                 btn.setOnAction(actionEvent -> {
                     if (getIndex() >= 0 && getIndex() < getTableView().getItems().size()) {
                         HistorialComunicacion comm = getTableView().getItems().get(getIndex());
-                        
+
                         // Construir el mensaje para el diálogo
-                        String mensaje = "Se eliminará la comunicación de tipo: " + comm.getTipo() + 
-                                        "\nRealizada por: " + comm.getAbogadoNombre() +
-                                        "\nExpediente: " + comm.getNumeroExpediente();
-                        
+                        String mensaje = "Se eliminará la comunicación de tipo: " + comm.getTipo() +
+                                "\nRealizada por: " + comm.getAbogadoNombre() +
+                                "\nExpediente: " + comm.getNumeroExpediente();
+
                         // Mostrar diálogo de confirmación personalizado
                         Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
-                            "Confirmar eliminación",
-                            mensaje,
-                            "confirm", 
-                            List.of(ButtonType.OK, ButtonType.CANCEL)
-                        );
-                        
+                                "Confirmar eliminación",
+                                mensaje,
+                                "confirm",
+                                List.of(ButtonType.OK, ButtonType.CANCEL));
+
                         if (respuesta.isPresent() && respuesta.get() == ButtonType.OK) {
                             try {
                                 boolean eliminado = service.eliminarComunicacion(comm.getId());
@@ -90,23 +96,28 @@ public class ModuloHistorialController {
                                     System.out.println("Comunicación eliminada correctamente. ID: " + comm.getId());
                                     // Recargar la tabla
                                     ModuloHistorialController.this.cargarComunicaciones();
-                                    
+
                                     // Mostrar mensaje de éxito
-                                    DialogUtil.mostrarDialogo("Éxito", "Comunicación eliminada correctamente", "info", List.of(ButtonType.OK));
+                                    DialogUtil.mostrarDialogo("Éxito", "Comunicación eliminada correctamente", "info",
+                                            List.of(ButtonType.OK));
                                 } else {
                                     System.out.println("No se pudo eliminar la comunicación");
                                     // Usar diálogo personalizado
-                                    DialogUtil.mostrarDialogo("Error", "No se pudo eliminar la comunicación", "error", List.of(ButtonType.OK));
+                                    DialogUtil.mostrarDialogo("Error", "No se pudo eliminar la comunicación", "error",
+                                            List.of(ButtonType.OK));
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 // Usar diálogo personalizado
-                                DialogUtil.mostrarDialogo("Error", "Error al eliminar la comunicación: " + e.getMessage(), "error", List.of(ButtonType.OK));
+                                DialogUtil.mostrarDialogo("Error",
+                                        "Error al eliminar la comunicación: " + e.getMessage(), "error",
+                                        List.of(ButtonType.OK));
                             }
                         }
                     }
                 });
             }
+
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
@@ -117,8 +128,10 @@ public class ModuloHistorialController {
     }
 
     private void mostrarFormulario(HistorialComunicacion comunicacion, String modo) {
-        // Aquí deberíamos adaptar el FormHistorialComunicacionController para que trabaje con HistorialComunicacion
-        // en lugar de ComunicacionDemo, pero por ahora simplemente mostraremos un formulario vacío
+        // Aquí deberíamos adaptar el FormHistorialComunicacionController para que
+        // trabaje con HistorialComunicacion
+        // en lugar de ComunicacionDemo, pero por ahora simplemente mostraremos un
+        // formulario vacío
         Node form = FormHistorialComunicacionController.cargarFormulario(
                 modo,
                 null,
@@ -126,8 +139,7 @@ public class ModuloHistorialController {
                     cerrarFormulario();
                     cargarComunicaciones(); // Recargar datos después de guardar
                 },
-                result -> cerrarFormulario()
-        );
+                result -> cerrarFormulario());
 
         AnchorPane.setTopAnchor(form, 0.0);
         AnchorPane.setBottomAnchor(form, 0.0);
@@ -144,8 +156,9 @@ public class ModuloHistorialController {
         pnl_Forms.setVisible(false);
         pnl_Forms.setManaged(false);
     }
-    
-    // El método mostrarDialogo fue reemplazado por llamadas directas a DialogUtil.mostrarDialogo
+
+    // El método mostrarDialogo fue reemplazado por llamadas directas a
+    // DialogUtil.mostrarDialogo
 
     /**
      * Carga las comunicaciones desde la base de datos
@@ -156,13 +169,13 @@ public class ModuloHistorialController {
             if (service == null) {
                 service = new HistorialComunicacionService(conn);
             }
-            
+
             // Limpiar tabla
             tb_Comunicaciones.getItems().clear();
-            
+
             // Obtener comunicaciones de la base de datos
             List<HistorialComunicacion> lista = service.obtenerTodasLasComunicaciones();
-            
+
             if (lista != null && !lista.isEmpty()) {
                 tb_Comunicaciones.getItems().addAll(lista);
                 System.out.println("INFO: Se cargaron " + lista.size() + " comunicaciones desde la base de datos");

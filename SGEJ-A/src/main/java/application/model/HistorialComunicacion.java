@@ -67,11 +67,11 @@ public class HistorialComunicacion {
     public void setAbogadoNombre(String abogadoNombre) {
         this.abogadoNombre = abogadoNombre;
     }
-    
+
     public String getNumeroExpediente() {
         return numeroExpediente;
     }
-    
+
     public void setNumeroExpediente(String numeroExpediente) {
         this.numeroExpediente = numeroExpediente;
     }

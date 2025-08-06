@@ -14,30 +14,31 @@ import java.util.List;
  */
 public class AbogadoCasoService {
     private AbogadoCasoDAO dao;
-    
+
     public AbogadoCasoService() {
         try {
-            // Ejecutamos la migración para asegurar que las tablas estén correctamente configuradas
+            // Ejecutamos la migración para asegurar que las tablas estén correctamente
+            // configuradas
             MigracionAbogadoCaso.ejecutarMigracion();
-            
+
             Connection conn = DatabaseConnection.getConnection();
             dao = new AbogadoCasoDAO(conn);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Verifica si un abogado está asignado a un caso específico
      * 
-     * @param casoId ID del caso
+     * @param casoId    ID del caso
      * @param abogadoId ID del abogado
      * @return true si el abogado está asignado al caso, false en caso contrario
      */
     public boolean verificarAbogadoAsignadoACaso(int casoId, int abogadoId) {
         return dao.verificarAbogadoAsignadoACaso(casoId, abogadoId);
     }
-    
+
     /**
      * Obtiene todos los abogados asignados a un caso específico
      * 
@@ -47,24 +48,25 @@ public class AbogadoCasoService {
     public List<Personal> obtenerAbogadosPorCaso(int casoId) {
         return dao.obtenerAbogadosPorCaso(casoId);
     }
-    
+
     /**
      * Asigna un abogado como principal a un caso
      * 
-     * @param casoId ID del caso
+     * @param casoId    ID del caso
      * @param abogadoId ID del abogado
      * @return true si la asignación fue exitosa, false en caso contrario
      */
     public boolean asignarAbogadoPrincipal(int casoId, int abogadoId) {
         return dao.asignarAbogadoPrincipal(casoId, abogadoId);
     }
-    
+
     /**
      * Asigna un abogado a un caso con un rol específico
      * 
-     * @param casoId ID del caso
+     * @param casoId    ID del caso
      * @param abogadoId ID del abogado
-     * @param rol Rol del abogado en el caso (ej. "Principal", "Asistente", etc.)
+     * @param rol       Rol del abogado en el caso (ej. "Principal", "Asistente",
+     *                  etc.)
      * @return true si la asignación fue exitosa, false en caso contrario
      */
     public boolean asignarAbogadoACaso(int casoId, int abogadoId, String rol) {

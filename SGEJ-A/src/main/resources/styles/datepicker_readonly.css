@@ -1,12 +1,12 @@
 .readonly-datepicker {
-    -fx-opacity: 0.9;
+  -fx-opacity: 0.9;
 }
 
 .readonly-datepicker .arrow-button {
-    -fx-opacity: 0.5;
+  -fx-opacity: 0.5;
 }
 
 .readonly-datepicker .text-field {
-    -fx-background-color: #f8f8f8;
-    -fx-border-color: #cccccc;
+  -fx-background-color: #f8f8f8;
+  -fx-border-color: #cccccc;
 }

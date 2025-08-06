@@ -48,10 +48,10 @@ public class ModuloComunicacionesController {
         try {
             Connection conn = DatabaseConnection.getConnection();
             service = new HistorialComunicacionService(conn);
-            
+
             // Consulta todas las comunicaciones disponibles en la base de datos
             List<HistorialComunicacion> lista = service.obtenerTodasLasComunicaciones();
-            
+
             if (lista != null && !lista.isEmpty()) {
                 tb_Comunicaciones.getItems().setAll(lista);
                 System.out.println("INFO: Se cargaron " + lista.size() + " comunicaciones desde la base de datos");
