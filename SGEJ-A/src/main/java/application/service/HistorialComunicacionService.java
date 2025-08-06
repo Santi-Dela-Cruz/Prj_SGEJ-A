@@ -109,7 +109,7 @@ public class HistorialComunicacionService {
     public boolean eliminarComunicacion(int id) throws SQLException {
         return dao.eliminarComunicacion(id);
     }
-    
+
     /**
      * Busca comunicaciones por número de expediente
      * 
@@ -120,7 +120,7 @@ public class HistorialComunicacionService {
     public List<HistorialComunicacion> buscarComunicacionesPorExpediente(String numeroExpediente) throws SQLException {
         return dao.buscarPorExpediente(numeroExpediente);
     }
-    
+
     /**
      * Busca comunicaciones por nombre de abogado
      * 
@@ -131,7 +131,7 @@ public class HistorialComunicacionService {
     public List<HistorialComunicacion> buscarComunicacionesPorAbogado(String nombreAbogado) throws SQLException {
         return dao.buscarPorAbogado(nombreAbogado);
     }
-    
+
     /**
      * Busca comunicaciones por texto en cualquier campo relevante
      * 

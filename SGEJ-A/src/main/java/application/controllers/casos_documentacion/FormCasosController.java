@@ -7,11 +7,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.CheckBoxTableCell;
-import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.text.Text;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,17 +30,7 @@ public class FormCasosController {
     private TextArea txtb_DescripcionCaso;
 
     @FXML
-    private TableView<AbogadoDemo> tb_Abogados;
-    @FXML
-    private TableColumn<AbogadoDemo, Boolean> tbc_CheckBoton;
-    @FXML
-    private TableColumn<AbogadoDemo, String> tbc_Nombres;
-    @FXML
-    private TableColumn<AbogadoDemo, String> tbc_Apellidos;
-    @FXML
-    private TableColumn<AbogadoDemo, String> tbc_Cedula;
-    @FXML
-    private TableColumn<AbogadoDemo, String> tbc_Rol_ChekBox;
+    private ComboBox<AbogadoDemo> cbx_AbogadoAsignado;
     @FXML
     private Text txt_TituloForm;
 
@@ -56,8 +43,11 @@ public class FormCasosController {
     private Runnable onCancelar;
     private String modo; // Variable para almacenar el modo actual
 
-    private final ObservableList<String> roles = FXCollections.observableArrayList(
-            "Principal", "Asistente", "Apoderado", "Consultor");
+    // Lista para almacenar los abogados que se muestran en el ComboBox
+    private ObservableList<AbogadoDemo> abogadosObservableList;
+
+    // Variable para almacenar el abogado originalmente asignado al caso
+    private AbogadoDemo abogadoOriginal;
 
     @FXML
     private void initialize() {
@@ -71,8 +61,9 @@ public class FormCasosController {
         // Generar y establecer número de expediente automáticamente
         generarNumeroExpediente();
 
-        configurarTabla();
-        cargarAbogados(); // Método renombrado para reflejar que carga abogados reales
+        // Configurar el ComboBox de abogados asignados
+        configurarComboBoxAbogado();
+        cargarAbogados(); // Cargar la lista de abogados disponibles
 
         btn_Guardar.setOnAction(e -> {
             if (modo != null && "EDITAR".equals(modo)) {
@@ -86,14 +77,26 @@ public class FormCasosController {
                     return;
                 }
 
+                // Verificar si se está cambiando el abogado asignado
+                String mensaje;
+                AbogadoDemo nuevoAbogado = cbx_AbogadoAsignado.getValue();
+                boolean cambioAbogado = nuevoAbogado != null &&
+                        (abogadoOriginal == null || !nuevoAbogado.getCedula().equals(abogadoOriginal.getCedula()));
+
+                if (cambioAbogado) {
+                    mensaje = "¿Está seguro que desea actualizar el abogado asignado de este caso?";
+                } else {
+                    mensaje = "¿Está seguro que desea actualizar el estado de este caso?";
+                }
+
                 Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                         "Confirmación",
-                        "¿Está seguro que desea actualizar el estado de este caso?",
+                        mensaje,
                         "confirm",
                         List.of(ButtonType.YES, ButtonType.NO));
 
                 if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-                    // Actualizar solo el estado del caso en la base de datos
+                    // Actualizar el estado y/o abogado del caso en la base de datos
                     if (actualizarEstadoCasoEnBaseDeDatos()) {
                         // Si la actualización fue exitosa, cerrar el formulario
                         if (onGuardar != null)
@@ -273,6 +276,11 @@ public class FormCasosController {
         } else {
             dt_FechaInicio.setValue(null);
         }
+
+        // Si estamos en modo editar o ver, cargar el abogado asignado al caso
+        if (!modo.equals("NUEVO")) {
+            cargarAbogadoAsignado(numeroExpediente);
+        }
     }
 
     public void setModo(String modo) {
@@ -300,7 +308,7 @@ public class FormCasosController {
             cbx_Estado.setDisable(false); // Solo el estado es editable
             dt_FechaInicio.setDisable(true);
             txtb_DescripcionCaso.setEditable(false);
-            tb_Abogados.setDisable(true);
+            cbx_AbogadoAsignado.setDisable(false); // El abogado asignado también es editable
         } else {
             txtf_TituloCaso.setEditable(esNuevo);
             txtf_IdentificacionCliente.setEditable(esNuevo);
@@ -308,25 +316,41 @@ public class FormCasosController {
             cbx_Estado.setDisable(esVer);
             dt_FechaInicio.setDisable(!esNuevo || esVer);
             txtb_DescripcionCaso.setEditable(esNuevo);
-            tb_Abogados.setDisable(!esNuevo || esVer);
+            cbx_AbogadoAsignado.setDisable(esVer); // Permitir editar el abogado asignado en modo editar
         }
 
         btn_Guardar.setVisible(!esVer);
         btn_Guardar.setDisable(esVer);
     }
 
-    private void configurarTabla() {
-        tbc_CheckBoton.setCellFactory(CheckBoxTableCell.forTableColumn(tbc_CheckBoton));
-        tbc_CheckBoton.setCellValueFactory(data -> data.getValue().seleccionadoProperty());
+    private void configurarComboBoxAbogado() {
+        // Configurar el ComboBox para mostrar el nombre completo del abogado
+        cbx_AbogadoAsignado.setCellFactory(param -> new ListCell<AbogadoDemo>() {
+            @Override
+            protected void updateItem(AbogadoDemo abogado, boolean empty) {
+                super.updateItem(abogado, empty);
 
-        tbc_Nombres.setCellValueFactory(data -> data.getValue().nombresProperty());
-        tbc_Apellidos.setCellValueFactory(data -> data.getValue().apellidosProperty());
-        tbc_Cedula.setCellValueFactory(data -> data.getValue().cedulaProperty());
-        tbc_Cedula.setStyle("-fx-alignment: CENTER-LEFT;"); // Align cedula left
+                if (empty || abogado == null) {
+                    setText(null);
+                } else {
+                    setText(abogado.getNombres() + " " + abogado.getApellidos() + " - " + abogado.getCedula());
+                }
+            }
+        });
 
-        tbc_Rol_ChekBox.setCellValueFactory(data -> data.getValue().rolProperty());
+        // Configurar la visualización del item seleccionado
+        cbx_AbogadoAsignado.setButtonCell(new ListCell<AbogadoDemo>() {
+            @Override
+            protected void updateItem(AbogadoDemo abogado, boolean empty) {
+                super.updateItem(abogado, empty);
 
-        tb_Abogados.setEditable(true);
+                if (empty || abogado == null) {
+                    setText(null);
+                } else {
+                    setText(abogado.getNombres() + " " + abogado.getApellidos() + " - " + abogado.getCedula());
+                }
+            }
+        });
     }
 
     private void cargarAbogados() {
@@ -337,15 +361,15 @@ public class FormCasosController {
 
             List<AbogadoDemo> abogadosDemoList = new ArrayList<>();
 
-            // Convertir los empleados con rol "Abogado" a AbogadoDemo para mostrarlos en la
-            // tabla
+            // Convertir los empleados con rol "Abogado" a AbogadoDemo para mostrarlos en el
+            // ComboBox
             for (application.service.EmpleadoService.Empleado abogado : abogados) {
                 abogadosDemoList.add(new AbogadoDemo(
                         abogado.getNombres(),
                         abogado.getApellidos(),
                         abogado.getNumeroIdentificacion(),
-                        "Elegir rol", // Valor por defecto para el rol en el caso
-                        false // Por defecto no está asignado
+                        "Principal", // Por defecto todos son abogados principales
+                        false // No afecta en el ComboBox
                 ));
             }
 
@@ -359,8 +383,9 @@ public class FormCasosController {
                         List.of(ButtonType.OK));
             }
 
-            // Establecer los items en la tabla (incluso si está vacía)
-            tb_Abogados.setItems(FXCollections.observableArrayList(abogadosDemoList));
+            // Establecer los items en el ComboBox (incluso si está vacía)
+            abogadosObservableList = FXCollections.observableArrayList(abogadosDemoList);
+            cbx_AbogadoAsignado.setItems(abogadosObservableList);
 
         } catch (Exception e) {
             System.err.println("ERROR: No se pudieron cargar los abogados: " + e.getMessage());
@@ -373,8 +398,9 @@ public class FormCasosController {
                     "error",
                     List.of(ButtonType.OK));
 
-            // Inicializar con lista vacía en lugar de datos de ejemplo
-            tb_Abogados.setItems(FXCollections.observableArrayList());
+            // Inicializar con lista vacía
+            abogadosObservableList = FXCollections.observableArrayList();
+            cbx_AbogadoAsignado.setItems(abogadosObservableList);
         }
     }
 
@@ -440,26 +466,32 @@ public class FormCasosController {
             caso.setFechaInicio(fechaInicio);
             caso.setClienteId(cliente.getId());
 
-            // Verificar si hay algún abogado seleccionado (será el principal)
+            // Obtener el abogado seleccionado del ComboBox
             application.model.Personal abogadoPrincipal = null;
+            AbogadoDemo abogadoSeleccionado = cbx_AbogadoAsignado.getValue();
 
-            for (AbogadoDemo abogado : tb_Abogados.getItems()) {
-                if (abogado.isSeleccionado()) {
-                    // Buscar este abogado en la base de datos por su cédula
-                    try {
-                        application.dao.PersonalDAO personalDAO = new application.dao.PersonalDAO();
-                        application.model.Personal personal = personalDAO
-                                .obtenerPersonalPorIdentificacion(abogado.getCedula());
-                        if (personal != null) {
-                            abogadoPrincipal = personal;
-                            // Asignar el abogado principal al caso
-                            caso.setAbogadoId(personal.getId());
-                            break;
-                        }
-                    } catch (Exception ex) {
-                        System.err.println("Error al buscar abogado: " + ex.getMessage());
+            if (abogadoSeleccionado != null) {
+                // Buscar este abogado en la base de datos por su cédula
+                try {
+                    application.dao.PersonalDAO personalDAO = new application.dao.PersonalDAO();
+                    application.model.Personal personal = personalDAO
+                            .obtenerPersonalPorIdentificacion(abogadoSeleccionado.getCedula());
+                    if (personal != null) {
+                        abogadoPrincipal = personal;
+                        // Asignar el abogado principal al caso
+                        caso.setAbogadoId(personal.getId());
                     }
+                } catch (Exception ex) {
+                    System.err.println("Error al buscar abogado: " + ex.getMessage());
                 }
+            } else {
+                // Si no hay abogado seleccionado, mostrar un mensaje de advertencia
+                DialogUtil.mostrarDialogo(
+                        "Abogado requerido",
+                        "Por favor, seleccione un abogado para asignar al caso.",
+                        "warning",
+                        List.of(ButtonType.OK));
+                return false;
             }
 
             // Guardar el caso en la base de datos
@@ -497,7 +529,7 @@ public class FormCasosController {
     }
 
     /**
-     * Actualiza solo el estado del caso en la base de datos.
+     * Actualiza el estado y abogado asignado del caso en la base de datos.
      * 
      * @return true si la actualización fue exitosa, false en caso contrario
      */
@@ -506,8 +538,10 @@ public class FormCasosController {
             // Obtener los datos necesarios del formulario
             String numeroExpediente = txtf_NumeroExpediente.getText();
             String estado = cbx_Estado.getValue();
+            AbogadoDemo abogadoSeleccionado = cbx_AbogadoAsignado.getValue();
 
-            System.out.println("INFO: Actualizando estado del caso " + numeroExpediente + " a: " + estado);
+            System.out.println("INFO: Actualizando caso " + numeroExpediente);
+            System.out.println(" - Estado: " + estado);
 
             // Inicializar el servicio
             CasoService casoService = new CasoService();
@@ -515,19 +549,68 @@ public class FormCasosController {
             // Actualizar el estado del caso en la base de datos
             boolean actualizado = casoService.actualizarEstadoCaso(numeroExpediente, estado);
 
+            // Si se ha seleccionado un abogado, actualizar también el abogado asignado
+            if (actualizado && abogadoSeleccionado != null) {
+                try {
+                    // Obtener el abogado de la base de datos por su cédula
+                    application.dao.PersonalDAO personalDAO = new application.dao.PersonalDAO();
+                    application.model.Personal abogado = personalDAO
+                            .obtenerPersonalPorIdentificacion(abogadoSeleccionado.getCedula());
+
+                    if (abogado != null) {
+                        System.out
+                                .println(" - Abogado asignado: " + abogado.getNombres() + " " + abogado.getApellidos());
+
+                        // Actualizar el abogado asignado al caso
+                        java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+                        if (conn != null) {
+                            String sql = "UPDATE caso SET abogado_id = ? WHERE numero_expediente = ?";
+                            java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+                            stmt.setInt(1, abogado.getId());
+                            stmt.setString(2, numeroExpediente);
+                            int filasAfectadas = stmt.executeUpdate();
+                            stmt.close();
+                            conn.close();
+
+                            if (filasAfectadas > 0) {
+                                System.out.println("INFO: Abogado asignado actualizado correctamente");
+                            } else {
+                                System.err.println("ERROR: No se pudo actualizar el abogado asignado");
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    System.err.println("ERROR al actualizar abogado asignado: " + e.getMessage());
+                    e.printStackTrace();
+                }
+            }
+
             if (actualizado) {
-                // Mostrar mensaje de éxito
-                System.out.println("INFO: Estado del caso actualizado exitosamente");
-                DialogUtil.mostrarDialogo("Éxito",
-                        "El estado del caso ha sido actualizado correctamente.",
-                        "info",
-                        List.of(ButtonType.OK));
+                // Mostrar mensaje de éxito específico dependiendo de si se actualizó el abogado
+                System.out.println("INFO: Caso actualizado exitosamente");
+
+                // Verificar si hubo cambio de abogado
+                boolean cambioAbogado = abogadoSeleccionado != null &&
+                        (abogadoOriginal == null
+                                || !abogadoSeleccionado.getCedula().equals(abogadoOriginal.getCedula()));
+
+                if (cambioAbogado) {
+                    DialogUtil.mostrarDialogo("Éxito",
+                            "El abogado asignado ha sido actualizado correctamente.",
+                            "info",
+                            List.of(ButtonType.OK));
+                } else {
+                    DialogUtil.mostrarDialogo("Éxito",
+                            "El estado del caso ha sido actualizado correctamente.",
+                            "info",
+                            List.of(ButtonType.OK));
+                }
                 return true;
             } else {
-                System.err.println("ERROR: No se pudo actualizar el estado. No se encontró el caso con expediente: "
+                System.err.println("ERROR: No se pudo actualizar el caso. No se encontró el caso con expediente: "
                         + numeroExpediente);
                 DialogUtil.mostrarDialogo("Error",
-                        "No se pudo actualizar el estado del caso. Verifique el número de expediente.",
+                        "No se pudo actualizar el caso. Verifique el número de expediente.",
                         "error",
                         List.of(ButtonType.OK));
                 return false;
@@ -611,6 +694,57 @@ public class FormCasosController {
 
         public BooleanProperty seleccionadoProperty() {
             return seleccionado;
+        }
+    }
+
+    /**
+     * Carga el abogado asignado al caso desde la base de datos
+     * 
+     * @param numeroExpediente El número de expediente del caso
+     */
+    private void cargarAbogadoAsignado(String numeroExpediente) {
+        try {
+            // Obtener la conexión a la base de datos
+            java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+            if (conn == null) {
+                throw new Exception("Error al conectar con la base de datos");
+            }
+
+            // Consultar el ID del abogado asignado al caso
+            String sql = "SELECT abogado_id FROM caso WHERE numero_expediente = ?";
+            java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, numeroExpediente);
+            java.sql.ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                int abogadoId = rs.getInt("abogado_id");
+                rs.close();
+                stmt.close();
+
+                // Si hay un abogado asignado, obtener sus datos
+                if (abogadoId > 0) {
+                    application.dao.PersonalDAO personalDAO = new application.dao.PersonalDAO();
+                    application.model.Personal personal = personalDAO.obtenerPersonalPorId(abogadoId);
+
+                    if (personal != null) {
+                        // Buscar en la lista de abogados el que coincide con el ID
+                        for (AbogadoDemo abogado : abogadosObservableList) {
+                            if (personal.getNumeroIdentificacion().equals(abogado.getCedula())) {
+                                // Seleccionar este abogado en el ComboBox
+                                cbx_AbogadoAsignado.setValue(abogado);
+                                // Guardar el abogado original para comparaciones posteriores
+                                abogadoOriginal = abogado;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+
+            conn.close();
+        } catch (Exception e) {
+            System.err.println("ERROR: No se pudo cargar el abogado asignado: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

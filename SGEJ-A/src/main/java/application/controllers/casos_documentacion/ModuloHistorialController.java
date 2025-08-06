@@ -47,16 +47,15 @@ public class ModuloHistorialController {
     @FXML
     private void initialize() {
         System.out.println("INFO: Inicializando ModuloHistorialController");
-        
+
         // Configurar ComboBox de criterio de búsqueda
         cmb_CriterioBusqueda.getItems().addAll(
-            "Número de Expediente", 
-            "Abogado Responsable"
-        );
+                "Número de Expediente",
+                "Abogado Responsable");
         cmb_CriterioBusqueda.setValue("Número de Expediente"); // Valor por defecto
-        
+
         configurarColumnas();
-        
+
         // No inicializamos service aquí, lo haremos en cada método que lo necesite
         // para asegurar conexiones frescas
         cargarComunicaciones();
@@ -65,7 +64,7 @@ public class ModuloHistorialController {
             System.out.println("INFO: Iniciando creación de nueva comunicación");
             mostrarFormulario(null, "NUEVO");
         });
-        
+
         btn_Buscar.setOnAction(event -> buscarComunicaciones());
     }
 
@@ -153,14 +152,14 @@ public class ModuloHistorialController {
                 result -> {
                     System.out.println("INFO: Callback onGuardar ejecutado - Cerrando formulario y recargando datos");
                     cerrarFormulario();
-                    
+
                     // Pequeña pausa para asegurar que la transacción en la BD se complete
                     try {
                         Thread.sleep(200); // Esperar 200ms
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
                     }
-                    
+
                     // Recargar datos después de guardar
                     cargarComunicaciones();
                 },
@@ -194,7 +193,7 @@ public class ModuloHistorialController {
         try {
             // Crear una nueva conexión cada vez para asegurar que se obtengan datos frescos
             conn = DatabaseConnection.getConnection();
-            
+
             // Crear una nueva instancia del servicio con la conexión fresca
             service = new HistorialComunicacionService(conn);
 
@@ -232,33 +231,34 @@ public class ModuloHistorialController {
             }
         }
     }
-    
+
     /**
      * Busca comunicaciones según el criterio seleccionado en el ComboBox
      */
     private void buscarComunicaciones() {
         String criterioBusqueda = cmb_CriterioBusqueda.getValue();
         String textoBusqueda = txtf_Buscar.getText().trim();
-        
+
         if (textoBusqueda.isEmpty()) {
             // Si el campo de búsqueda está vacío, cargar todas las comunicaciones
             cargarComunicaciones();
             return;
         }
-        
+
         Connection conn = null;
         try {
             // Crear una nueva conexión cada vez para asegurar datos frescos
             conn = DatabaseConnection.getConnection();
             service = new HistorialComunicacionService(conn);
-            
-            System.out.println("INFO: Realizando búsqueda con criterio: " + criterioBusqueda + ", texto: '" + textoBusqueda + "'");
-            
+
+            System.out.println(
+                    "INFO: Realizando búsqueda con criterio: " + criterioBusqueda + ", texto: '" + textoBusqueda + "'");
+
             // Limpiar tabla
             tb_Comunicaciones.getItems().clear();
-            
+
             List<HistorialComunicacion> resultados = null;
-            
+
             // Buscar según el criterio seleccionado
             switch (criterioBusqueda) {
                 case "Número de Expediente":
@@ -272,14 +272,16 @@ public class ModuloHistorialController {
                     resultados = service.buscarComunicaciones(textoBusqueda);
                     break;
             }
-            
+
             if (resultados != null && !resultados.isEmpty()) {
                 tb_Comunicaciones.getItems().addAll(resultados);
-                System.out.println("INFO: Se encontraron " + resultados.size() + " comunicaciones con el criterio: " + criterioBusqueda);
+                System.out.println("INFO: Se encontraron " + resultados.size() + " comunicaciones con el criterio: "
+                        + criterioBusqueda);
             } else {
                 System.out.println("INFO: No se encontraron comunicaciones para el criterio: " + criterioBusqueda);
                 // Establecer un mensaje cuando la búsqueda no tiene resultados
-                Label lblNoData = new Label("No se encontraron comunicaciones para la búsqueda: '" + textoBusqueda + "'");
+                Label lblNoData = new Label(
+                        "No se encontraron comunicaciones para la búsqueda: '" + textoBusqueda + "'");
                 lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
                 tb_Comunicaciones.setPlaceholder(lblNoData);
             }

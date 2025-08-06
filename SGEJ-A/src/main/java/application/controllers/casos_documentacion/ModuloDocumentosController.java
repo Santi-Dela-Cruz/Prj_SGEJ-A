@@ -151,14 +151,13 @@ public class ModuloDocumentosController {
         // Inicializar ComboBox con opciones de búsqueda
         if (cmb_CriterioBusqueda != null) {
             cmb_CriterioBusqueda.getItems().addAll(
-                "Nombre del documento", 
-                "Número de Expediente", 
-                "Número de Identificación", 
-                "Tipo de documento", 
-                "Fecha"
-            );
+                    "Nombre del documento",
+                    "Número de Expediente",
+                    "Número de Identificación",
+                    "Tipo de documento",
+                    "Fecha");
             cmb_CriterioBusqueda.setValue("Nombre del documento");
-            
+
             // Cambiar el prompt del TextField según el criterio seleccionado
             cmb_CriterioBusqueda.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
                 if (newVal != null) {
@@ -201,33 +200,32 @@ public class ModuloDocumentosController {
         inicializarColumnasDeBotones();
         cargarDatosEjemplo();
     }
-    
+
     /**
      * Realiza la búsqueda según el criterio seleccionado
      */
     private void realizarBusqueda() {
         if (txtf_Buscar.getText().trim().isEmpty()) {
             DialogUtil.mostrarDialogo(
-                "Búsqueda Vacía",
-                "Por favor, ingrese un término de búsqueda.",
-                "info",
-                List.of(ButtonType.OK)
-            );
+                    "Búsqueda Vacía",
+                    "Por favor, ingrese un término de búsqueda.",
+                    "info",
+                    List.of(ButtonType.OK));
             return;
         }
-        
+
         String criterio = cmb_CriterioBusqueda.getValue();
         String termino = txtf_Buscar.getText().trim();
-        
+
         System.out.println("Realizando búsqueda por " + criterio + ": " + termino);
-        
+
         try {
             // Si estamos en modo demo, usar datos de ejemplo filtrados
             if (numeroExpediente == null || numeroExpediente.isEmpty()) {
                 buscarDocumentosDemo(criterio, termino);
                 return;
             }
-            
+
             // En un entorno real, aquí iría la búsqueda en la base de datos
             switch (criterio) {
                 case "Número de Expediente":
@@ -240,42 +238,40 @@ public class ModuloDocumentosController {
                     buscarDocumentosPorCriterio(criterio, termino);
                     break;
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             DialogUtil.mostrarDialogo(
-                "Error en la Búsqueda",
-                "Ocurrió un error al procesar su búsqueda: " + e.getMessage(),
-                "error",
-                List.of(ButtonType.OK)
-            );
+                    "Error en la Búsqueda",
+                    "Ocurrió un error al procesar su búsqueda: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK));
         }
     }
-    
+
     private void buscarDocumentosDemo(String criterio, String termino) {
         // Filtrar los datos demo según el criterio y término
         List<DocumentoDemo> resultados = tb_Documentos.getItems().stream()
-            .filter(doc -> coincideConCriterio(doc, criterio, termino))
-            .toList();
-        
+                .filter(doc -> coincideConCriterio(doc, criterio, termino))
+                .toList();
+
         tb_Documentos.getItems().clear();
         tb_Documentos.getItems().addAll(resultados);
-        
+
         // Actualizar contador de documentos
         if (lbl_TotalDocumentos != null) {
             lbl_TotalDocumentos.setText("Total: " + resultados.size() + " documentos");
         }
-        
+
         if (resultados.isEmpty()) {
             DialogUtil.mostrarDialogo(
-                "Sin Resultados",
-                "No se encontraron documentos que coincidan con su búsqueda.",
-                "info",
-                List.of(ButtonType.OK)
-            );
+                    "Sin Resultados",
+                    "No se encontraron documentos que coincidan con su búsqueda.",
+                    "info",
+                    List.of(ButtonType.OK));
         }
     }
-    
+
     private boolean coincideConCriterio(DocumentoDemo doc, String criterio, String termino) {
         termino = termino.toLowerCase();
         return switch (criterio) {
@@ -287,16 +283,16 @@ public class ModuloDocumentosController {
             default -> false;
         };
     }
-    
+
     private void buscarDocumentosPorIdentificacion(String identificacion) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             // Primero obtenemos los casos asociados a la identificación
             String sqlCasos = "SELECT c.numero_expediente FROM caso c " +
-                              "JOIN cliente cl ON c.cliente_id = cl.id " +
-                              "WHERE cl.identificacion = ?";
-            
+                    "JOIN cliente cl ON c.cliente_id = cl.id " +
+                    "WHERE cl.identificacion = ?";
+
             List<String> expedientesEncontrados = new java.util.ArrayList<>();
-            
+
             try (java.sql.PreparedStatement stmt = conn.prepareStatement(sqlCasos)) {
                 stmt.setString(1, identificacion);
                 try (java.sql.ResultSet rs = stmt.executeQuery()) {
@@ -305,17 +301,16 @@ public class ModuloDocumentosController {
                     }
                 }
             }
-            
+
             if (expedientesEncontrados.isEmpty()) {
                 DialogUtil.mostrarDialogo(
-                    "Sin Resultados",
-                    "No se encontraron casos asociados al número de identificación: " + identificacion,
-                    "info",
-                    List.of(ButtonType.OK)
-                );
+                        "Sin Resultados",
+                        "No se encontraron casos asociados al número de identificación: " + identificacion,
+                        "info",
+                        List.of(ButtonType.OK));
                 return;
             }
-            
+
             // Para cada expediente, cargamos sus documentos
             List<DocumentoDemo> todosDocumentos = new java.util.ArrayList<>();
             for (String expediente : expedientesEncontrados) {
@@ -327,30 +322,30 @@ public class ModuloDocumentosController {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    System.err.println("Error al obtener documentos del expediente " + expediente + ": " + e.getMessage());
+                    System.err.println(
+                            "Error al obtener documentos del expediente " + expediente + ": " + e.getMessage());
                 }
             }
-            
+
             // Actualizar la tabla con todos los documentos encontrados
             tb_Documentos.getItems().clear();
             tb_Documentos.getItems().addAll(todosDocumentos);
-            
+
             // Actualizar contador
             if (lbl_TotalDocumentos != null) {
                 lbl_TotalDocumentos.setText("Total: " + todosDocumentos.size() + " documentos");
             }
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
             DialogUtil.mostrarDialogo(
-                "Error de Base de Datos",
-                "Ocurrió un error al buscar documentos: " + e.getMessage(),
-                "error",
-                List.of(ButtonType.OK)
-            );
+                    "Error de Base de Datos",
+                    "Ocurrió un error al buscar documentos: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK));
         }
     }
-    
+
     private void buscarDocumentosPorCriterio(String criterio, String termino) {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String columnaBusqueda = switch (criterio) {
@@ -359,70 +354,66 @@ public class ModuloDocumentosController {
                 case "Fecha" -> "fecha_creacion";
                 default -> "nombre";
             };
-            
+
             // Obtenemos el caso_id correspondiente al número de expediente actual
             int casoId = obtenerCasoIdPorExpediente(numeroExpediente);
-            
+
             if (casoId == -1) {
                 DialogUtil.mostrarDialogo(
-                    "Error",
-                    "No se pudo encontrar el caso con expediente: " + numeroExpediente,
-                    "error",
-                    List.of(ButtonType.OK)
-                );
+                        "Error",
+                        "No se pudo encontrar el caso con expediente: " + numeroExpediente,
+                        "error",
+                        List.of(ButtonType.OK));
                 return;
             }
-            
+
             // Consulta SQL con filtro por columna dinámica
             String sql = "SELECT * FROM documento_caso WHERE caso_id = ? AND " + columnaBusqueda + " LIKE ?";
             List<DocumentoDemo> resultados = new java.util.ArrayList<>();
-            
+
             try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, casoId);
                 stmt.setString(2, "%" + termino + "%");
-                
+
                 try (java.sql.ResultSet rs = stmt.executeQuery()) {
                     while (rs.next()) {
                         resultados.add(new DocumentoDemo(
-                            rs.getString("nombre"),
-                            rs.getString("tipo"),
-                            formatearFecha(rs.getDate("fecha_creacion")),
-                            formatearTamano(rs.getLong("tamano")),
-                            numeroExpediente
-                        ));
+                                rs.getString("nombre"),
+                                rs.getString("tipo"),
+                                formatearFecha(rs.getDate("fecha_creacion")),
+                                formatearTamano(rs.getLong("tamano")),
+                                numeroExpediente));
                     }
                 }
             }
-            
+
             // Actualizar la tabla con los resultados
             tb_Documentos.getItems().clear();
             tb_Documentos.getItems().addAll(resultados);
-            
+
             // Actualizar contador
             if (lbl_TotalDocumentos != null) {
                 lbl_TotalDocumentos.setText("Total: " + resultados.size() + " documentos");
             }
-            
+
             if (resultados.isEmpty()) {
                 DialogUtil.mostrarDialogo(
-                    "Sin Resultados",
-                    "No se encontraron documentos que coincidan con su búsqueda.",
-                    "info",
-                    List.of(ButtonType.OK)
-                );
+                        "Sin Resultados",
+                        "No se encontraron documentos que coincidan con su búsqueda.",
+                        "info",
+                        List.of(ButtonType.OK));
             }
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
             DialogUtil.mostrarDialogo(
-                "Error de Base de Datos",
-                "Ocurrió un error al buscar documentos: " + e.getMessage(),
-                "error",
-                List.of(ButtonType.OK)
-            );
+                    "Error de Base de Datos",
+                    "Ocurrió un error al buscar documentos: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK));
         }
     }
-    
+
     private int obtenerCasoIdPorExpediente(String numeroExpediente) throws SQLException {
         try (Connection conn = DatabaseConnection.getConnection()) {
             String sql = "SELECT id FROM caso WHERE numero_expediente = ?";
@@ -437,19 +428,23 @@ public class ModuloDocumentosController {
         }
         return -1;
     }
-    
+
     private String formatearFecha(java.sql.Date fecha) {
-        if (fecha == null) return "";
+        if (fecha == null)
+            return "";
         SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
         return sdf.format(fecha);
     }
-    
+
     private String formatearTamano(long tamano) {
-        if (tamano < 1024) return tamano + " bytes";
-        else if (tamano < 1024 * 1024) return String.format("%.2f KB", tamano / 1024.0);
-        else return String.format("%.2f MB", tamano / (1024.0 * 1024.0));
+        if (tamano < 1024)
+            return tamano + " bytes";
+        else if (tamano < 1024 * 1024)
+            return String.format("%.2f KB", tamano / 1024.0);
+        else
+            return String.format("%.2f MB", tamano / (1024.0 * 1024.0));
     }
-    
+
     /**
      * Obtiene la lista de documentos asociados a un número de expediente
      * 
@@ -458,11 +453,11 @@ public class ModuloDocumentosController {
      */
     private List<DocumentoDemo> obtenerDocumentosPorExpediente(String expediente) {
         List<DocumentoDemo> documentos = new java.util.ArrayList<>();
-        
+
         if (expediente == null || expediente.isEmpty()) {
             return documentos;
         }
-        
+
         try (Connection conn = DatabaseConnection.getConnection()) {
             // Obtener el ID del caso desde el número de expediente
             String sqlCaso = "SELECT id FROM caso WHERE numero_expediente = ?";
@@ -500,23 +495,22 @@ public class ModuloDocumentosController {
                 String tipo = determinarTipoDocumento(doc.getNombre());
 
                 documentos.add(new DocumentoDemo(
-                    expediente,
-                    doc.getNombre(),
-                    tipo,
-                    dateFormat.format(doc.getFechaSubida()),
-                    tamano
-                ));
+                        expediente,
+                        doc.getNombre(),
+                        tipo,
+                        dateFormat.format(doc.getFechaSubida()),
+                        tamano));
             }
-            
+
             return documentos;
-            
+
         } catch (SQLException e) {
             e.printStackTrace();
             System.err.println("Error al obtener documentos para expediente " + expediente + ": " + e.getMessage());
             return documentos;
         }
     }
-    
+
     /**
      * Determina el tipo de documento a partir del nombre
      * 
@@ -525,12 +519,16 @@ public class ModuloDocumentosController {
      */
     private String determinarTipoDocumento(String nombre) {
         // Por extensión
-        if (nombre.toLowerCase().endsWith(".pdf")) return "PDF";
-        if (nombre.toLowerCase().endsWith(".doc") || nombre.toLowerCase().endsWith(".docx")) return "Word";
-        if (nombre.toLowerCase().endsWith(".xls") || nombre.toLowerCase().endsWith(".xlsx")) return "Excel";
-        if (nombre.toLowerCase().endsWith(".jpg") || nombre.toLowerCase().endsWith(".jpeg") || 
-            nombre.toLowerCase().endsWith(".png") || nombre.toLowerCase().endsWith(".gif")) return "Imagen";
-        
+        if (nombre.toLowerCase().endsWith(".pdf"))
+            return "PDF";
+        if (nombre.toLowerCase().endsWith(".doc") || nombre.toLowerCase().endsWith(".docx"))
+            return "Word";
+        if (nombre.toLowerCase().endsWith(".xls") || nombre.toLowerCase().endsWith(".xlsx"))
+            return "Excel";
+        if (nombre.toLowerCase().endsWith(".jpg") || nombre.toLowerCase().endsWith(".jpeg") ||
+                nombre.toLowerCase().endsWith(".png") || nombre.toLowerCase().endsWith(".gif"))
+            return "Imagen";
+
         // Por tipo en paréntesis, si existe
         if (nombre.contains("(") && nombre.contains(")")) {
             int inicioTipo = nombre.lastIndexOf("(") + 1;
@@ -539,7 +537,7 @@ public class ModuloDocumentosController {
                 return nombre.substring(inicioTipo, finTipo);
             }
         }
-        
+
         return "Otro";
     }
 
@@ -693,11 +691,11 @@ public class ModuloDocumentosController {
         Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                 "Confirmación de Eliminación",
                 "¿Estás seguro que deseas eliminar este archivo?\n\n" +
-                "• Nombre: " + doc.nombre() + "\n" +
-                "• Tipo: " + doc.tipo() + "\n" +
-                "• Fecha: " + doc.fecha() + "\n\n" +
-                "⚠️ Esta acción no se puede deshacer y el archivo\n" +
-                "será eliminado permanentemente del sistema.",
+                        "• Nombre: " + doc.nombre() + "\n" +
+                        "• Tipo: " + doc.tipo() + "\n" +
+                        "• Fecha: " + doc.fecha() + "\n\n" +
+                        "⚠️ Esta acción no se puede deshacer y el archivo\n" +
+                        "será eliminado permanentemente del sistema.",
                 "warning",
                 List.of(ButtonType.YES, ButtonType.NO));
 
@@ -887,7 +885,8 @@ public class ModuloDocumentosController {
     }
 
     /**
-     * Abre el documento para visualizar usando el programa predeterminado del sistema
+     * Abre el documento para visualizar usando el programa predeterminado del
+     * sistema
      * 
      * @param doc el documento a visualizar
      */
@@ -920,7 +919,7 @@ public class ModuloDocumentosController {
                 // Verificamos si el sistema operativo es compatible
                 if (java.awt.Desktop.isDesktopSupported()) {
                     java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
-                    
+
                     if (desktop.isSupported(java.awt.Desktop.Action.OPEN)) {
                         desktop.open(archivo);
                         System.out.println("Archivo abierto con aplicación predeterminada: " + rutaArchivo);
@@ -935,7 +934,7 @@ public class ModuloDocumentosController {
             } catch (Exception e) {
                 e.printStackTrace();
                 System.err.println("Error al abrir el archivo: " + e.getMessage());
-                
+
                 DialogUtil.mostrarDialogo(
                         "Error",
                         "No se pudo abrir el archivo: " + e.getMessage() + "\n\nRuta: " + rutaArchivo,
@@ -945,7 +944,7 @@ public class ModuloDocumentosController {
         } catch (Exception e) {
             e.printStackTrace();
             System.err.println("Error al procesar el documento para visualizar: " + e.getMessage());
-            
+
             DialogUtil.mostrarDialogo(
                     "Error",
                     "Error al procesar el documento: " + e.getMessage(),
@@ -953,7 +952,7 @@ public class ModuloDocumentosController {
                     List.of(ButtonType.OK));
         }
     }
-    
+
     /**
      * Método alternativo para abrir archivos usando ProcessBuilder
      * 
@@ -962,7 +961,7 @@ public class ModuloDocumentosController {
     private void abrirArchivoConProceso(File archivo) throws IOException {
         String osName = System.getProperty("os.name").toLowerCase();
         ProcessBuilder pb;
-        
+
         if (osName.contains("windows")) {
             // Windows usa el comando 'start'
             pb = new ProcessBuilder("cmd", "/c", "start", "", archivo.getAbsolutePath());
@@ -973,7 +972,7 @@ public class ModuloDocumentosController {
             // Linux/Unix usa 'xdg-open'
             pb = new ProcessBuilder("xdg-open", archivo.getAbsolutePath());
         }
-        
+
         pb.start();
         System.out.println("Archivo abierto con ProcessBuilder: " + archivo.getAbsolutePath());
     }

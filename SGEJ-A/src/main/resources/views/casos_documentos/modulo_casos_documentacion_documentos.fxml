@@ -52,13 +52,15 @@
         </Pane>
 
         <!-- Control Panel Mejorado -->
-        <VBox layoutX="20.0" layoutY="100.0" prefHeight="90.0" spacing="18.0" styleClass="card-app" 
+        <VBox layoutX="20.0" layoutY="100.0" prefHeight="90.0" spacing="12.0" 
+              style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 2); -fx-padding: 20; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 15;" 
               AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0">
             <children>
                 <HBox alignment="CENTER_LEFT" spacing="18.0">
                     <children>
                         <Button fx:id="btn_Regresar" mnemonicParsing="false" prefHeight="40.0" prefWidth="110.0" 
-                                styleClass="btn-secondary" text="⏪ Regresar" />
+                                style="-fx-background-color: linear-gradient(to bottom, #6b7280, #4b5563); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(107, 114, 128, 0.4), 4, 0, 0, 2);" 
+                                text="⏪ Regresar" />
                                 
                         <VBox alignment="CENTER_LEFT" spacing="5.0">
                             <children>
@@ -78,13 +80,15 @@
                                    HBox.hgrow="SOMETIMES" />
                                    
                         <Button fx:id="btn_Buscar" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" 
-                                styleClass="btn-primary" text="🔍 Buscar" />
+                                style="-fx-background-color: linear-gradient(to bottom, #3b82f6, #2563eb); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 4, 0, 0, 2);" 
+                                text="🔍 Buscar" />
                                 
                         <!-- Spacer para empujar el botón a la derecha -->
                         <Pane HBox.hgrow="ALWAYS" />
                         
                         <Button fx:id="btn_Subir" mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0" 
-                                styleClass="btn-success" text="➕ Subir Documento" />
+                                style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);" 
+                                text="➕ Subir Documento" />
                     </children>
                 </HBox>
             </children>
