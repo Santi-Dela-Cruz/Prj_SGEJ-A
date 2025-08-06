@@ -27,6 +27,8 @@ public class ModuloDocumentosController {
     @FXML
     private TextField txtf_Buscar;
     @FXML
+    private ComboBox<String> cmb_CriterioBusqueda;
+    @FXML
     private Button btn_Buscar, btn_Subir, btn_Regresar;
     @FXML
     private TableView<DocumentoDemo> tb_Documentos;
@@ -35,7 +37,7 @@ public class ModuloDocumentosController {
     @FXML
     private TableColumn<DocumentoDemo, Void> tbc_BotonVer, tbc_BotonEliminar, tbc_BotonDescargar;
     @FXML
-    private Label lblTitulo;
+    private Label lblTitulo, lbl_TotalDocumentos;
 
     private Pane pnl_Forms;
     private String numeroExpediente;
@@ -146,6 +148,49 @@ public class ModuloDocumentosController {
             System.err.println("ERROR: btn_Regresar es NULL en initialize");
         }
 
+        // Inicializar ComboBox con opciones de búsqueda
+        if (cmb_CriterioBusqueda != null) {
+            cmb_CriterioBusqueda.getItems().addAll(
+                    "Nombre del documento",
+                    "Número de Expediente",
+                    "Número de Identificación",
+                    "Tipo de documento",
+                    "Fecha");
+            cmb_CriterioBusqueda.setValue("Nombre del documento");
+
+            // Cambiar el prompt del TextField según el criterio seleccionado
+            cmb_CriterioBusqueda.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+                if (newVal != null) {
+                    switch (newVal) {
+                        case "Nombre del documento":
+                            txtf_Buscar.setPromptText("🔍 Buscar por nombre del documento...");
+                            break;
+                        case "Número de Expediente":
+                            txtf_Buscar.setPromptText("🔢 Ingrese número de expediente...");
+                            break;
+                        case "Número de Identificación":
+                            txtf_Buscar.setPromptText("🪪 Ingrese número de identificación...");
+                            break;
+                        case "Tipo de documento":
+                            txtf_Buscar.setPromptText("🏷️ Ingrese tipo de documento...");
+                            break;
+                        case "Fecha":
+                            txtf_Buscar.setPromptText("📅 Formato: DD/MM/AAAA");
+                            break;
+                        default:
+                            txtf_Buscar.setPromptText("🔍 Buscar documento...");
+                    }
+                }
+            });
+        } else {
+            System.err.println("ERROR: cmb_CriterioBusqueda es NULL en initialize");
+        }
+
+        // Configurar botón de búsqueda
+        if (btn_Buscar != null) {
+            btn_Buscar.setOnAction(e -> realizarBusqueda());
+        }
+
         // Configurar botón subir documento
         if (btn_Subir != null) {
             btn_Subir.setOnAction(event -> mostrarFormularioDocumento());
@@ -154,6 +199,346 @@ public class ModuloDocumentosController {
         configurarColumnas();
         inicializarColumnasDeBotones();
         cargarDatosEjemplo();
+    }
+
+    /**
+     * Realiza la búsqueda según el criterio seleccionado
+     */
+    private void realizarBusqueda() {
+        if (txtf_Buscar.getText().trim().isEmpty()) {
+            DialogUtil.mostrarDialogo(
+                    "Búsqueda Vacía",
+                    "Por favor, ingrese un término de búsqueda.",
+                    "info",
+                    List.of(ButtonType.OK));
+            return;
+        }
+
+        String criterio = cmb_CriterioBusqueda.getValue();
+        String termino = txtf_Buscar.getText().trim();
+
+        System.out.println("Realizando búsqueda por " + criterio + ": " + termino);
+
+        try {
+            // Si estamos en modo demo, usar datos de ejemplo filtrados
+            if (numeroExpediente == null || numeroExpediente.isEmpty()) {
+                buscarDocumentosDemo(criterio, termino);
+                return;
+            }
+
+            // En un entorno real, aquí iría la búsqueda en la base de datos
+            switch (criterio) {
+                case "Número de Expediente":
+                    cargarDocumentosPorExpediente(termino);
+                    break;
+                case "Número de Identificación":
+                    buscarDocumentosPorIdentificacion(termino);
+                    break;
+                default:
+                    buscarDocumentosPorCriterio(criterio, termino);
+                    break;
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            DialogUtil.mostrarDialogo(
+                    "Error en la Búsqueda",
+                    "Ocurrió un error al procesar su búsqueda: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK));
+        }
+    }
+
+    private void buscarDocumentosDemo(String criterio, String termino) {
+        // Filtrar los datos demo según el criterio y término
+        List<DocumentoDemo> resultados = tb_Documentos.getItems().stream()
+                .filter(doc -> coincideConCriterio(doc, criterio, termino))
+                .toList();
+
+        tb_Documentos.getItems().clear();
+        tb_Documentos.getItems().addAll(resultados);
+
+        // Actualizar contador de documentos
+        if (lbl_TotalDocumentos != null) {
+            lbl_TotalDocumentos.setText("Total: " + resultados.size() + " documentos");
+        }
+
+        if (resultados.isEmpty()) {
+            DialogUtil.mostrarDialogo(
+                    "Sin Resultados",
+                    "No se encontraron documentos que coincidan con su búsqueda.",
+                    "info",
+                    List.of(ButtonType.OK));
+        }
+    }
+
+    private boolean coincideConCriterio(DocumentoDemo doc, String criterio, String termino) {
+        termino = termino.toLowerCase();
+        return switch (criterio) {
+            case "Nombre del documento" -> doc.nombre().toLowerCase().contains(termino);
+            case "Número de Expediente" -> doc.numeroExpediente().toLowerCase().contains(termino);
+            case "Tipo de documento" -> doc.tipo().toLowerCase().contains(termino);
+            case "Fecha" -> doc.fecha().toLowerCase().contains(termino);
+            case "Número de Identificación" -> true; // En modo demo, simular que coincide
+            default -> false;
+        };
+    }
+
+    private void buscarDocumentosPorIdentificacion(String identificacion) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            // Primero obtenemos los casos asociados a la identificación
+            String sqlCasos = "SELECT c.numero_expediente FROM caso c " +
+                    "JOIN cliente cl ON c.cliente_id = cl.id " +
+                    "WHERE cl.identificacion = ?";
+
+            List<String> expedientesEncontrados = new java.util.ArrayList<>();
+
+            try (java.sql.PreparedStatement stmt = conn.prepareStatement(sqlCasos)) {
+                stmt.setString(1, identificacion);
+                try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        expedientesEncontrados.add(rs.getString("numero_expediente"));
+                    }
+                }
+            }
+
+            if (expedientesEncontrados.isEmpty()) {
+                DialogUtil.mostrarDialogo(
+                        "Sin Resultados",
+                        "No se encontraron casos asociados al número de identificación: " + identificacion,
+                        "info",
+                        List.of(ButtonType.OK));
+                return;
+            }
+
+            // Para cada expediente, cargamos sus documentos
+            List<DocumentoDemo> todosDocumentos = new java.util.ArrayList<>();
+            for (String expediente : expedientesEncontrados) {
+                // Obtenemos los documentos para este expediente
+                try {
+                    List<DocumentoDemo> docsExpediente = obtenerDocumentosPorExpediente(expediente);
+                    if (docsExpediente != null) {
+                        todosDocumentos.addAll(docsExpediente);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.err.println(
+                            "Error al obtener documentos del expediente " + expediente + ": " + e.getMessage());
+                }
+            }
+
+            // Actualizar la tabla con todos los documentos encontrados
+            tb_Documentos.getItems().clear();
+            tb_Documentos.getItems().addAll(todosDocumentos);
+
+            // Actualizar contador
+            if (lbl_TotalDocumentos != null) {
+                lbl_TotalDocumentos.setText("Total: " + todosDocumentos.size() + " documentos");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DialogUtil.mostrarDialogo(
+                    "Error de Base de Datos",
+                    "Ocurrió un error al buscar documentos: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK));
+        }
+    }
+
+    private void buscarDocumentosPorCriterio(String criterio, String termino) {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String columnaBusqueda = switch (criterio) {
+                case "Nombre del documento" -> "nombre";
+                case "Tipo de documento" -> "tipo";
+                case "Fecha" -> "fecha_creacion";
+                default -> "nombre";
+            };
+
+            // Obtenemos el caso_id correspondiente al número de expediente actual
+            int casoId = obtenerCasoIdPorExpediente(numeroExpediente);
+
+            if (casoId == -1) {
+                DialogUtil.mostrarDialogo(
+                        "Error",
+                        "No se pudo encontrar el caso con expediente: " + numeroExpediente,
+                        "error",
+                        List.of(ButtonType.OK));
+                return;
+            }
+
+            // Consulta SQL con filtro por columna dinámica
+            String sql = "SELECT * FROM documento_caso WHERE caso_id = ? AND " + columnaBusqueda + " LIKE ?";
+            List<DocumentoDemo> resultados = new java.util.ArrayList<>();
+
+            try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, casoId);
+                stmt.setString(2, "%" + termino + "%");
+
+                try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                    while (rs.next()) {
+                        resultados.add(new DocumentoDemo(
+                                rs.getString("nombre"),
+                                rs.getString("tipo"),
+                                formatearFecha(rs.getDate("fecha_creacion")),
+                                formatearTamano(rs.getLong("tamano")),
+                                numeroExpediente));
+                    }
+                }
+            }
+
+            // Actualizar la tabla con los resultados
+            tb_Documentos.getItems().clear();
+            tb_Documentos.getItems().addAll(resultados);
+
+            // Actualizar contador
+            if (lbl_TotalDocumentos != null) {
+                lbl_TotalDocumentos.setText("Total: " + resultados.size() + " documentos");
+            }
+
+            if (resultados.isEmpty()) {
+                DialogUtil.mostrarDialogo(
+                        "Sin Resultados",
+                        "No se encontraron documentos que coincidan con su búsqueda.",
+                        "info",
+                        List.of(ButtonType.OK));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            DialogUtil.mostrarDialogo(
+                    "Error de Base de Datos",
+                    "Ocurrió un error al buscar documentos: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK));
+        }
+    }
+
+    private int obtenerCasoIdPorExpediente(String numeroExpediente) throws SQLException {
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            String sql = "SELECT id FROM caso WHERE numero_expediente = ?";
+            try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, numeroExpediente);
+                try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("id");
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    private String formatearFecha(java.sql.Date fecha) {
+        if (fecha == null)
+            return "";
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(fecha);
+    }
+
+    private String formatearTamano(long tamano) {
+        if (tamano < 1024)
+            return tamano + " bytes";
+        else if (tamano < 1024 * 1024)
+            return String.format("%.2f KB", tamano / 1024.0);
+        else
+            return String.format("%.2f MB", tamano / (1024.0 * 1024.0));
+    }
+
+    /**
+     * Obtiene la lista de documentos asociados a un número de expediente
+     * 
+     * @param expediente el número de expediente
+     * @return la lista de documentos asociados al expediente
+     */
+    private List<DocumentoDemo> obtenerDocumentosPorExpediente(String expediente) {
+        List<DocumentoDemo> documentos = new java.util.ArrayList<>();
+
+        if (expediente == null || expediente.isEmpty()) {
+            return documentos;
+        }
+
+        try (Connection conn = DatabaseConnection.getConnection()) {
+            // Obtener el ID del caso desde el número de expediente
+            String sqlCaso = "SELECT id FROM caso WHERE numero_expediente = ?";
+            int casoId = -1;
+
+            try (java.sql.PreparedStatement stmt = conn.prepareStatement(sqlCaso)) {
+                stmt.setString(1, expediente);
+                try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        casoId = rs.getInt("id");
+                    }
+                }
+            }
+
+            if (casoId == -1) {
+                System.out.println("ADVERTENCIA: No se encontró el caso con número de expediente: " + expediente);
+                return documentos;
+            }
+
+            // Obtener documentos de ese caso
+            DocumentoCasoService service = new DocumentoCasoService(conn);
+            List<DocumentoCaso> docsDB = service.obtenerDocumentosPorCaso(casoId);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+
+            for (DocumentoCaso doc : docsDB) {
+                // Obtener el tamaño del archivo
+                String tamano = "N/A";
+                File archivo = new File(doc.getRuta());
+                if (archivo.exists()) {
+                    long sizeInBytes = archivo.length();
+                    tamano = formatearTamano(sizeInBytes);
+                }
+
+                // Determinar el tipo de documento
+                String tipo = determinarTipoDocumento(doc.getNombre());
+
+                documentos.add(new DocumentoDemo(
+                        expediente,
+                        doc.getNombre(),
+                        tipo,
+                        dateFormat.format(doc.getFechaSubida()),
+                        tamano));
+            }
+
+            return documentos;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            System.err.println("Error al obtener documentos para expediente " + expediente + ": " + e.getMessage());
+            return documentos;
+        }
+    }
+
+    /**
+     * Determina el tipo de documento a partir del nombre
+     * 
+     * @param nombre el nombre del documento
+     * @return el tipo del documento
+     */
+    private String determinarTipoDocumento(String nombre) {
+        // Por extensión
+        if (nombre.toLowerCase().endsWith(".pdf"))
+            return "PDF";
+        if (nombre.toLowerCase().endsWith(".doc") || nombre.toLowerCase().endsWith(".docx"))
+            return "Word";
+        if (nombre.toLowerCase().endsWith(".xls") || nombre.toLowerCase().endsWith(".xlsx"))
+            return "Excel";
+        if (nombre.toLowerCase().endsWith(".jpg") || nombre.toLowerCase().endsWith(".jpeg") ||
+                nombre.toLowerCase().endsWith(".png") || nombre.toLowerCase().endsWith(".gif"))
+            return "Imagen";
+
+        // Por tipo en paréntesis, si existe
+        if (nombre.contains("(") && nombre.contains(")")) {
+            int inicioTipo = nombre.lastIndexOf("(") + 1;
+            int finTipo = nombre.lastIndexOf(")");
+            if (inicioTipo < finTipo) {
+                return nombre.substring(inicioTipo, finTipo);
+            }
+        }
+
+        return "Otro";
     }
 
     private void mostrarFormularioDocumento() {
@@ -227,7 +612,7 @@ public class ModuloDocumentosController {
             javafx.animation.TranslateTransition tt = new javafx.animation.TranslateTransition(
                     javafx.util.Duration.millis(200), form);
             tt.setToX(400); // Sale por la derecha
-            tt.setOnFinished(evt -> {
+            tt.setOnFinished(e -> {
                 pnl_Forms.getChildren().clear();
                 pnl_Forms.setVisible(false);
                 pnl_Forms.setManaged(false);
@@ -267,13 +652,13 @@ public class ModuloDocumentosController {
     }
 
     private void agregarBoton(TableColumn<DocumentoDemo, Void> columna, String texto, String tooltip) {
-        columna.setCellFactory(param -> new TableCell<>() {
+        columna.setCellFactory(tc -> new TableCell<>() {
             final Button btn = new Button(texto);
 
             {
                 btn.getStyleClass().add("table-button");
                 btn.setTooltip(new Tooltip(tooltip));
-                btn.setOnAction(event -> {
+                btn.setOnAction(e -> {
                     DocumentoDemo doc = getTableView().getItems().get(getIndex());
                     if ("Ver".equals(tooltip)) {
                         mostrarDocumentoParaVisualizar(doc);
@@ -302,10 +687,15 @@ public class ModuloDocumentosController {
      * @param doc el documento a eliminar
      */
     private void eliminarDocumento(DocumentoDemo doc) {
+        // Mensaje de confirmación más personalizado y detallado
         Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
-                "Confirmación de eliminación",
-                "¿Está seguro que desea eliminar el documento '" + doc.nombre() + "'?\n" +
-                        "Esta acción no se puede deshacer.",
+                "Confirmación de Eliminación",
+                "¿Estás seguro que deseas eliminar este archivo?\n\n" +
+                        "• Nombre: " + doc.nombre() + "\n" +
+                        "• Tipo: " + doc.tipo() + "\n" +
+                        "• Fecha: " + doc.fecha() + "\n\n" +
+                        "⚠️ Esta acción no se puede deshacer y el archivo\n" +
+                        "será eliminado permanentemente del sistema.",
                 "warning",
                 List.of(ButtonType.YES, ButtonType.NO));
 
@@ -494,67 +884,97 @@ public class ModuloDocumentosController {
         }
     }
 
+    /**
+     * Abre el documento para visualizar usando el programa predeterminado del
+     * sistema
+     * 
+     * @param doc el documento a visualizar
+     */
     private void mostrarDocumentoParaVisualizar(DocumentoDemo doc) {
         try {
-            // Crear panel para formulario si no existe
-            if (pnl_Forms == null) {
-                pnl_Forms = new AnchorPane();
-
-                // Añadimos el panel sobrepuesto al panel principal
-                AnchorPane panelPrincipal = (AnchorPane) tb_Documentos.getParent();
-                panelPrincipal.getChildren().add(pnl_Forms);
-
-                // Inicialmente oculto
-                pnl_Forms.setVisible(false);
-                pnl_Forms.setManaged(false);
-            }
-
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/casos_documentos/form_documento.fxml"));
-            AnchorPane form = loader.load();
-
-            FormDocumentoController controller = loader.getController();
-
-            // Configurar callbacks para ambos escenarios: cancelar y guardar
-            // Esto asegura que el botón de regresar funcione correctamente
-            controller.setOnCancelar(() -> cerrarFormulario());
-            controller.setOnGuardar(() -> cerrarFormulario()); // Aunque no se use en modo VER, es buena práctica
-                                                               // configurarlo
-
             // Obtener la ruta del archivo
             String rutaArchivo = obtenerRutaArchivoDesdeNombre(doc.numeroExpediente(), doc.nombre());
 
-            // Cargar los datos del documento
-            controller.cargarDatosDocumento(
-                    doc.nombre(),
-                    doc.tipo(),
-                    doc.fecha(),
-                    "", // Descripción (no disponible en el modelo actual)
-                    doc.numeroExpediente(),
-                    rutaArchivo);
+            if (rutaArchivo.isEmpty()) {
+                DialogUtil.mostrarDialogo(
+                        "Error",
+                        "No se encontró el archivo físico del documento.",
+                        "error",
+                        List.of(ButtonType.OK));
+                return;
+            }
 
-            // Configurar el formulario para visualización
-            controller.setModo("VER");
+            File archivo = new File(rutaArchivo);
+            if (!archivo.exists() || !archivo.isFile()) {
+                DialogUtil.mostrarDialogo(
+                        "Error",
+                        "El archivo no existe en el sistema.",
+                        "error",
+                        List.of(ButtonType.OK));
+                return;
+            }
 
-            // Posicionamos el formulario en el borde derecho
-            AnchorPane.setTopAnchor(pnl_Forms, 60.0); // Espacio para el título
-            AnchorPane.setRightAnchor(pnl_Forms, 30.0); // Margen desde la derecha
-            AnchorPane.setLeftAnchor(pnl_Forms, null); // Importante: quitar el anclaje izquierdo
-            AnchorPane.setBottomAnchor(pnl_Forms, 30.0); // Margen desde abajo
+            // Abrir el archivo con el programa predeterminado del sistema operativo
+            try {
+                // Verificamos si el sistema operativo es compatible
+                if (java.awt.Desktop.isDesktopSupported()) {
+                    java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
 
-            pnl_Forms.getChildren().setAll(form);
-            pnl_Forms.setVisible(true);
-            pnl_Forms.setManaged(true);
+                    if (desktop.isSupported(java.awt.Desktop.Action.OPEN)) {
+                        desktop.open(archivo);
+                        System.out.println("Archivo abierto con aplicación predeterminada: " + rutaArchivo);
+                    } else {
+                        // Si no es compatible con la acción OPEN, usamos alternativa
+                        abrirArchivoConProceso(archivo);
+                    }
+                } else {
+                    // Si Desktop no es compatible, usamos alternativa
+                    abrirArchivoConProceso(archivo);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.err.println("Error al abrir el archivo: " + e.getMessage());
 
-            // Efecto de animación (desplazamiento desde la derecha)
-            javafx.animation.TranslateTransition tt = new javafx.animation.TranslateTransition(
-                    javafx.util.Duration.millis(250), form);
-            form.setTranslateX(400); // Comienza fuera de la pantalla
-            tt.setToX(0);
-            tt.play();
-        } catch (IOException e) {
+                DialogUtil.mostrarDialogo(
+                        "Error",
+                        "No se pudo abrir el archivo: " + e.getMessage() + "\n\nRuta: " + rutaArchivo,
+                        "error",
+                        List.of(ButtonType.OK));
+            }
+        } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("Error al cargar el formulario de documento: " + e.getMessage());
+            System.err.println("Error al procesar el documento para visualizar: " + e.getMessage());
+
+            DialogUtil.mostrarDialogo(
+                    "Error",
+                    "Error al procesar el documento: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK));
         }
+    }
+
+    /**
+     * Método alternativo para abrir archivos usando ProcessBuilder
+     * 
+     * @param archivo el archivo a abrir
+     */
+    private void abrirArchivoConProceso(File archivo) throws IOException {
+        String osName = System.getProperty("os.name").toLowerCase();
+        ProcessBuilder pb;
+
+        if (osName.contains("windows")) {
+            // Windows usa el comando 'start'
+            pb = new ProcessBuilder("cmd", "/c", "start", "", archivo.getAbsolutePath());
+        } else if (osName.contains("mac")) {
+            // macOS usa el comando 'open'
+            pb = new ProcessBuilder("open", archivo.getAbsolutePath());
+        } else {
+            // Linux/Unix usa 'xdg-open'
+            pb = new ProcessBuilder("xdg-open", archivo.getAbsolutePath());
+        }
+
+        pb.start();
+        System.out.println("Archivo abierto con ProcessBuilder: " + archivo.getAbsolutePath());
     }
 
     /**

@@ -4,6 +4,8 @@ import application.dao.CasoDAO;
 import application.model.Caso;
 import application.database.DatabaseConnection;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -25,8 +27,47 @@ public class CasoService {
         this.casoDAO = new CasoDAO(conn);
     }
 
-    public void registrarCaso(Caso caso) throws SQLException {
-        casoDAO.insertarCaso(caso);
+    public int registrarCaso(Caso caso) throws SQLException {
+        // Insertar el caso y obtener el ID generado
+        String sql = "INSERT INTO caso (cliente_id, numero_expediente, titulo, tipo, fecha_inicio, descripcion, estado";
+
+        // Verificar si hay abogado_id para agregar a la consulta
+        if (caso.getAbogadoId() > 0) {
+            sql += ", abogado_id";
+        }
+
+        sql += ") VALUES (?, ?, ?, ?, ?, ?, ?";
+
+        if (caso.getAbogadoId() > 0) {
+            sql += ", ?";
+        }
+
+        sql += ")";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+            stmt.setInt(1, caso.getClienteId());
+            stmt.setString(2, caso.getNumeroExpediente());
+            stmt.setString(3, caso.getTitulo());
+            stmt.setString(4, caso.getTipo());
+            stmt.setDate(5, caso.getFechaInicio() != null ? new java.sql.Date(caso.getFechaInicio().getTime()) : null);
+            stmt.setString(6, caso.getDescripcion());
+            stmt.setString(7, caso.getEstado());
+
+            // Agregar abogado_id si existe
+            if (caso.getAbogadoId() > 0) {
+                stmt.setInt(8, caso.getAbogadoId());
+            }
+
+            stmt.executeUpdate();
+
+            // Obtener el ID generado
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("No se pudo obtener el ID del caso creado");
+            }
+        }
     }
 
     public List<Caso> consultarCasos(String filtro) throws SQLException {

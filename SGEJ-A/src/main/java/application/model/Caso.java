@@ -6,14 +6,16 @@ import java.util.List;
 public class Caso {
     private int id;
     private int clienteId;
-    private Cliente cliente; // Nuevo campo
+    private Cliente cliente; // Relación con cliente
     private String numeroExpediente;
     private String titulo;
     private String tipo;
     private Date fechaInicio;
     private String descripcion;
     private String estado;
-    private List<AbogadoCaso> abogados;
+    private int abogadoId; // ID del abogado principal asignado
+    private Personal abogado; // Abogado principal asignado
+    private List<AbogadoCaso> abogados; // Lista de abogados asignados
 
     // Getters y setters
     public int getId() {
@@ -86,6 +88,22 @@ public class Caso {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public int getAbogadoId() {
+        return abogadoId;
+    }
+
+    public void setAbogadoId(int abogadoId) {
+        this.abogadoId = abogadoId;
+    }
+
+    public Personal getAbogado() {
+        return abogado;
+    }
+
+    public void setAbogado(Personal abogado) {
+        this.abogado = abogado;
     }
 
     public List<AbogadoCaso> getAbogados() {

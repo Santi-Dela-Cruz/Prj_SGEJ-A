@@ -5,6 +5,7 @@ import application.database.DatabaseConnection;
 import application.model.Caso;
 import application.model.HistorialComunicacion;
 import application.model.Personal;
+import application.service.AbogadoCasoService;
 import application.service.AbogadoService;
 import application.service.CasoService;
 import application.service.HistorialComunicacionService;
@@ -50,9 +51,34 @@ public class FormHistorialComunicacionController {
         // Configurar los tipos de acción
         cbx_TipoAccion.getItems().addAll("Llamada", "Correo", "Mensaje", "Visita", "Otro");
 
-        // Establecer la fecha actual
+        // Establecer la fecha actual y bloquearla para edición
         dtp_Fecha.setValue(LocalDate.now());
         dtp_Fecha.setEditable(false);
+        // También deshabilitamos el DatePicker para que no se pueda abrir el calendario
+        dtp_Fecha.setDisable(true);
+
+        // No cargamos los estilos CSS aquí porque la escena aún no está disponible en
+        // initialize
+        // Lo haremos en el método setModo que se llama después de que el nodo está en
+        // la escena
+
+        // Aplicar estilo para que no parezca deshabilitado
+        dtp_Fecha.getStyleClass().add("readonly-datepicker");
+
+        // Agregar listeners para validación en tiempo real
+        cbx_Abogado.valueProperty().addListener((observable, oldValue, newValue) -> {
+            // Limpiar el estilo de error cuando cambia la selección
+            if (newValue != null) {
+                cbx_Abogado.setStyle("");
+            }
+        });
+
+        txtf_Expediente.textProperty().addListener((observable, oldValue, newValue) -> {
+            // Limpiar el estilo de error cuando cambia el texto
+            if (newValue != null && !newValue.isEmpty()) {
+                txtf_Expediente.setStyle("");
+            }
+        });
 
         // Cargar la lista de abogados
         cargarAbogados();
@@ -73,36 +99,135 @@ public class FormHistorialComunicacionController {
             }
         });
 
-        btn_Guardar.setOnAction(event -> {
-            if (dtp_Fecha.getValue() == null ||
-                    cbx_Abogado.getValue() == null ||
-                    cbx_TipoAccion.getValue() == null ||
-                    txtf_Expediente.getText().isEmpty() ||
-                    txta_Descripcion.getText().isEmpty()) {
+        btn_Guardar.setOnAction(actionEvent -> {
+            // Construir un mensaje específico con solo los campos que faltan
+            StringBuilder camposFaltantes = new StringBuilder();
 
+            if (cbx_Abogado.getValue() == null) {
+                camposFaltantes.append(" - Abogado Responsable\n");
+            }
+
+            if (cbx_TipoAccion.getValue() == null) {
+                camposFaltantes.append(" - Tipo de Acción\n");
+            }
+
+            if (txtf_Expediente.getText().isEmpty()) {
+                camposFaltantes.append(" - Número de Expediente\n");
+            }
+
+            if (txta_Descripcion.getText().isEmpty()) {
+                camposFaltantes.append(" - Descripción\n");
+            }
+
+            // Si hay campos faltantes, mostrar mensaje personalizado
+            if (camposFaltantes.length() > 0) {
                 DialogUtil.mostrarDialogo(
                         "Campos requeridos",
-                        "Por favor, complete los campos obligatorios:\n" +
-                                " - Fecha\n" +
-                                " - Abogado Responsable\n" +
-                                " - Tipo de Acción\n" +
-                                " - Número de Expediente\n" +
-                                " - Descripción",
+                        "Por favor, complete los siguientes campos obligatorios:\n" +
+                                camposFaltantes.toString(),
                         "warning",
                         List.of(ButtonType.OK));
                 return;
             }
 
-            // Validar que el número de expediente exista
+            // Si llegamos aquí, tenemos todos los campos requeridos
+            // Validar ahora que el número de expediente sea válido y exista
             String numeroExpediente = txtf_Expediente.getText().trim();
-            CasoService casoService = new CasoService();
 
-            if (!casoService.existeCasoPorNumero(numeroExpediente)) {
+            // El campo ya fue validado como no vacío en la verificación anterior,
+            // pero verificamos el formato
+            if (!numeroExpediente.matches("^EXP-\\d{4}-\\d{4}$")) {
                 DialogUtil.mostrarDialogo(
-                        "Caso no encontrado",
-                        "El número de expediente '" + numeroExpediente + "' no existe en el sistema.\n" +
-                                "Por favor, verifique el número de expediente.",
+                        "Formato inválido",
+                        "El formato del número de expediente es incorrecto.\n" +
+                                "El formato correcto es: EXP-YYYY-NNNN (por ejemplo, EXP-2025-0001)",
                         "warning",
+                        List.of(ButtonType.OK));
+                return;
+            }
+
+            // Crear instancia del servicio para uso posterior
+            CasoService casoService = new CasoService();
+            Caso caso = null;
+
+            // Verificar existencia en la base de datos
+            try {
+                // Intentar obtener el caso directamente, lo necesitaremos más adelante
+                caso = casoService.obtenerCasoPorNumero(numeroExpediente);
+
+                if (caso == null) {
+                    DialogUtil.mostrarDialogo(
+                            "Caso no encontrado",
+                            "El número de expediente '" + numeroExpediente + "' no existe en el sistema.\n" +
+                                    "Por favor, verifique el número de expediente.",
+                            "warning",
+                            List.of(ButtonType.OK));
+                    // Marcar el campo con error
+                    txtf_Expediente.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+                    txtf_Expediente.requestFocus();
+                    return;
+                }
+
+                // Verificamos inmediatamente si el abogado seleccionado está asignado al caso
+                Personal abogado = cbx_Abogado.getValue();
+                if (abogado != null) {
+                    try {
+                        // Imprimir información de depuración para verificar los IDs
+                        System.out.println("INFO: Verificando asignación de abogado a caso");
+                        System.out.println("- Caso ID: " + caso.getId() + ", Número: " + caso.getNumeroExpediente());
+                        System.out.println("- Abogado ID: " + abogado.getId() + ", Nombre: " + abogado.getNombres()
+                                + " " + abogado.getApellidos());
+
+                        // También imprimir el ID del abogado asignado al caso directamente (si existe)
+                        if (caso.getAbogadoId() > 0) {
+                            System.out.println("- Abogado principal asignado al caso (ID): " + caso.getAbogadoId());
+                        } else {
+                            System.out.println("- No hay abogado principal asignado directamente al caso");
+                        }
+
+                        AbogadoCasoService abogadoVerificador = new AbogadoCasoService();
+                        boolean abogadoAsignado = abogadoVerificador.verificarAbogadoAsignadoACaso(caso.getId(),
+                                abogado.getId());
+                        System.out.println(
+                                "- Resultado de verificación: " + (abogadoAsignado ? "ASIGNADO" : "NO ASIGNADO"));
+
+                        // Verificación adicional directa para depuración
+                        boolean esAbogadoPrincipal = caso.getAbogadoId() == abogado.getId();
+                        System.out.println("- ¿Es abogado principal directo?: " + (esAbogadoPrincipal ? "SÍ" : "NO"));
+
+                        // Si no está asignado según el servicio, pero es el abogado principal directo,
+                        // considerar como asignado
+                        if (!abogadoAsignado && esAbogadoPrincipal) {
+                            abogadoAsignado = true;
+                            System.out.println("- Corrigiendo validación: El abogado es el principal directo del caso");
+                        }
+
+                        // Si después de las verificaciones sigue sin estar asignado
+                        if (!abogadoAsignado) {
+                            DialogUtil.mostrarDialogo(
+                                    "Error de validación",
+                                    "El abogado seleccionado no está asignado al caso " + numeroExpediente + ".\n\n" +
+                                            "Para continuar, debe seleccionar un abogado que esté formalmente asignado al expediente.\n\n"
+                                            +
+                                            "Si está seguro que este abogado debería tener acceso al caso, asígnelo primero desde el módulo de casos.",
+                                    "warning",
+                                    List.of(ButtonType.OK));
+                            // Marcar el campo con error
+                            cbx_Abogado.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+                            cbx_Abogado.requestFocus();
+                            return;
+                        }
+                    } catch (Exception e) {
+                        System.err.println("ERROR al verificar asignación de abogado: " + e.getMessage());
+                        e.printStackTrace();
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                DialogUtil.mostrarDialogo(
+                        "Error de validación",
+                        "No se pudo verificar el número de expediente: " + e.getMessage(),
+                        "error",
                         List.of(ButtonType.OK));
                 return;
             }
@@ -119,20 +244,46 @@ public class FormHistorialComunicacionController {
                 if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
                     // Preparar los datos
                     HistorialComunicacion comunicacion = new HistorialComunicacion();
-                    comunicacion.setFecha(java.sql.Date.valueOf(dtp_Fecha.getValue()));
+
+                    // Asignamos directamente la fecha actual sin validaciones
+                    comunicacion.setFecha(new java.sql.Date(System.currentTimeMillis()));
+
                     comunicacion.setTipo(cbx_TipoAccion.getValue());
                     comunicacion.setDescripcion(txta_Descripcion.getText());
 
-                    // Obtener el ID del caso a partir del número de expediente
-                    Caso caso = casoService.obtenerCasoPorNumero(numeroExpediente);
-                    if (caso != null) {
-                        comunicacion.setCasoId(caso.getId());
-                    } else {
-                        throw new Exception("No se pudo encontrar el caso con el expediente: " + numeroExpediente);
+                    // Usamos el caso que ya fue validado anteriormente
+                    comunicacion.setCasoId(caso.getId());
+
+                    // Obtener el abogado seleccionado y validar que esté asignado al caso
+                    Personal abogado = cbx_Abogado.getValue();
+                    if (abogado == null) {
+                        throw new Exception("Debe seleccionar un abogado responsable");
                     }
 
-                    // Obtener el abogado seleccionado
-                    Personal abogado = cbx_Abogado.getValue();
+                    // Verificar que el abogado esté asignado al caso
+                    AbogadoCasoService abogadoCasoService = new AbogadoCasoService();
+                    if (!abogadoCasoService.verificarAbogadoAsignadoACaso(caso.getId(), abogado.getId())) {
+                        // Mostrar mensaje de error y no permitir continuar
+                        DialogUtil.mostrarDialogo(
+                                "Error de validación",
+                                "El abogado seleccionado no está formalmente asignado al caso " + numeroExpediente
+                                        + ".\n\n" +
+                                        "Para registrar una comunicación, debe seleccionar un abogado que esté asignado al caso.\n\n"
+                                        +
+                                        "Por favor, vaya al módulo de casos y asigne primero el abogado al expediente, o seleccione un abogado diferente.",
+                                "error",
+                                List.of(ButtonType.OK));
+
+                        // Resaltar el campo de abogado para indicar que hay un problema
+                        cbx_Abogado.setStyle("-fx-border-color: red; -fx-border-width: 2px;");
+
+                        // Enfocar el campo para que el usuario pueda seleccionar otro abogado
+                        cbx_Abogado.requestFocus();
+
+                        // No permitimos continuar
+                        return;
+                    }
+
                     comunicacion.setAbogadoId(abogado.getId());
                     comunicacion.setAbogadoNombre(abogado.getNombres() + " " + abogado.getApellidos());
 
@@ -175,7 +326,7 @@ public class FormHistorialComunicacionController {
             }
         });
 
-        btn_Cancelar.setOnAction(event -> {
+        btn_Cancelar.setOnAction(cancelEvent -> {
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                     "Confirmación",
                     "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
@@ -220,15 +371,57 @@ public class FormHistorialComunicacionController {
         boolean esEditar = "EDITAR".equals(modo);
         boolean esVer = "VER".equals(modo);
 
+        // Limpiar cualquier estilo de error previo
+        cbx_Abogado.setStyle("");
+        txtf_Expediente.setStyle("");
+        txta_Descripcion.setStyle("");
+
         if (esNuevo) {
             txt_TituloForm.setText("Registrar comunicación");
+            // Restablecer la fecha actual para nuevos registros
+            dtp_Fecha.setValue(LocalDate.now());
         } else if (esEditar) {
             txt_TituloForm.setText("Editar comunicación");
         } else if (esVer) {
             txt_TituloForm.setText("Visualizar comunicación");
         }
 
-        dtp_Fecha.setDisable(esVer);
+        // La fecha siempre estará deshabilitada ya que es automática
+        dtp_Fecha.setDisable(true);
+        dtp_Fecha.setEditable(false);
+
+        // Aplicar estilos al DatePicker para que se vea mejor aun estando deshabilitado
+        if (dtp_Fecha.getScene() != null
+                && !dtp_Fecha.getScene().getStylesheets().contains("datepicker_readonly.css")) {
+            try {
+                String cssPath = getClass().getResource("/styles/datepicker_readonly.css").toExternalForm();
+                dtp_Fecha.getScene().getStylesheets().add(cssPath);
+            } catch (Exception ex) {
+                System.err.println("No se pudo cargar el archivo CSS: " + ex.getMessage());
+            }
+        }
+
+        // Agregar un listener para el campo de expediente que verifique automáticamente
+        // si el abogado actual está asignado a ese expediente
+        txtf_Expediente.focusedProperty().addListener((obs, oldVal, newVal) -> {
+            // Solo verificamos cuando el campo pierde el foco y no está vacío
+            if (!newVal && !txtf_Expediente.getText().trim().isEmpty()) {
+                verificarAbogadoExpediente();
+            }
+        });
+
+        // También agregamos un listener para el combo de abogados
+        cbx_Abogado.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null && !txtf_Expediente.getText().trim().isEmpty()) {
+                verificarAbogadoExpediente();
+            }
+        });
+
+        // Aplicar la clase de estilo
+        if (!dtp_Fecha.getStyleClass().contains("readonly-datepicker")) {
+            dtp_Fecha.getStyleClass().add("readonly-datepicker");
+        }
+
         cbx_Abogado.setDisable(esVer);
         cbx_TipoAccion.setDisable(esVer);
         txtf_Expediente.setEditable(esNuevo || esEditar);
@@ -236,6 +429,63 @@ public class FormHistorialComunicacionController {
 
         btn_Guardar.setVisible(!esVer);
         btn_Guardar.setDisable(esVer);
+    }
+
+    /**
+     * Verifica si el abogado seleccionado está asignado al expediente ingresado
+     * y muestra una advertencia visual si no lo está.
+     */
+    private void verificarAbogadoExpediente() {
+        String numeroExpediente = txtf_Expediente.getText().trim();
+        Personal abogado = cbx_Abogado.getValue();
+
+        // Si no hay abogado o expediente seleccionados, no hacemos nada
+        if (abogado == null || numeroExpediente.isEmpty()) {
+            return;
+        }
+
+        // Primero verificar que el expediente tenga el formato correcto
+        if (!numeroExpediente.matches("^EXP-\\d{4}-\\d{4}$")) {
+            txtf_Expediente.setStyle("-fx-border-color: orange; -fx-border-width: 2px;");
+            return;
+        }
+
+        // Intentar obtener el caso por número de expediente
+        try {
+            CasoService casoService = new CasoService();
+            Caso caso = casoService.obtenerCasoPorNumero(numeroExpediente);
+
+            if (caso == null) {
+                txtf_Expediente.setStyle("-fx-border-color: orange; -fx-border-width: 2px;");
+                return;
+            }
+
+            // Verificar si el abogado está asignado (ya sea como principal o en la tabla
+            // abogado_caso)
+            AbogadoCasoService abogadoCasoService = new AbogadoCasoService();
+            boolean esAbogadoPrincipal = caso.getAbogadoId() == abogado.getId();
+            boolean asignadoEnTabla = abogadoCasoService.verificarAbogadoAsignadoACaso(caso.getId(), abogado.getId());
+
+            System.out.println("Verificando asignación abogado-expediente en tiempo real:");
+            System.out.println(" - Expediente: " + numeroExpediente + " (ID: " + caso.getId() + ")");
+            System.out.println(" - Abogado: " + abogado.getNombres() + " " + abogado.getApellidos() + " (ID: "
+                    + abogado.getId() + ")");
+            System.out.println(" - Abogado principal del caso (ID): " + caso.getAbogadoId());
+            System.out.println(" - ¿Es abogado principal?: " + (esAbogadoPrincipal ? "SÍ" : "NO"));
+            System.out.println(" - ¿Asignado en tabla abogado_caso?: " + (asignadoEnTabla ? "SÍ" : "NO"));
+
+            if (!esAbogadoPrincipal && !asignadoEnTabla) {
+                // Advertencia visual
+                cbx_Abogado.setStyle("-fx-border-color: orange; -fx-border-width: 2px;");
+            } else {
+                // Todo correcto
+                cbx_Abogado.setStyle("");
+                txtf_Expediente.setStyle("");
+            }
+        } catch (Exception e) {
+            System.err.println("Error al verificar abogado-expediente: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     public void cargarDatos(String fecha, String usuario, String tipo, String descripcion, String expediente) {

@@ -1,81 +1,149 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import java.net.URL?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="application.controllers.casos_documentacion.ModuloDocumentosController"
             AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+            styleClass="background-app">
+    <stylesheets>
+        <URL value="@/styles/app.css" />
+        <URL value="@/styles/combobox-custom.css" />
+    </stylesheets>
 
     <children>
-
-        <!-- Title Panel -->
-        <Pane fx:id="pnl_Title"
-              prefHeight="44.0"
-              style="-fx-background-color: #14213d; -fx-background-radius: 16; -fx-border-radius: 16;"
-              AnchorPane.leftAnchor="14.0"
-              AnchorPane.rightAnchor="2.0"
-              AnchorPane.topAnchor="4.0">
+        <!-- Header Panel Mejorado -->
+        <Pane prefHeight="80.0" 
+              style="-fx-background-color: linear-gradient(to bottom, #1e3a8a, #2563eb, #3b82f6); -fx-background-radius: 0 0 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 0, 3);" 
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Label fx:id="lblTitulo"
-                      text="Gestión de Documentos"
-                      textFill="WHITE"
-                      style="-fx-font-size: 16.0; -fx-font-weight: bold;"
-                      layoutY="28.0"
-                      layoutX="50.0">
-                    <font>
-                        <Font size="16.0" />
-                    </font>
-                </Label>
+                <!-- Línea decorativa superior -->
+                <Pane prefHeight="3.0" style="-fx-background-color: linear-gradient(to right, #f59e0b, #10b981, #3b82f6);" />
+                
+                <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="15.0" spacing="15.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" 
+                                      text="📄 GESTIÓN DE DOCUMENTOS" 
+                                      style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                </Text>
+                                <Text fill="#cbd5e1" strokeType="OUTSIDE" strokeWidth="0.0" 
+                                      text="Administración de archivos y documentos legales" 
+                                      style="-fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-style: italic;">
+                                    <font>
+                                        <Font size="13.0" />
+                                    </font>
+                                </Text>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
             </children>
         </Pane>
 
-        <!-- Botón de regreso -->
-        <Button fx:id="btn_Regresar"
-                text="← Regresar"
-                maxWidth="100" styleClass="button-windows,button-windows-secondary"
-                AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="14.0" />
+        <!-- Control Panel Mejorado -->
+        <VBox layoutX="20.0" layoutY="100.0" prefHeight="90.0" spacing="12.0" 
+              style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 2); -fx-padding: 20; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 15;" 
+              AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="18.0">
+                    <children>
+                        <Button fx:id="btn_Regresar" mnemonicParsing="false" prefHeight="40.0" prefWidth="110.0" 
+                                style="-fx-background-color: linear-gradient(to bottom, #6b7280, #4b5563); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(107, 114, 128, 0.4), 4, 0, 0, 2);" 
+                                text="⏪ Regresar" />
+                                
+                        <VBox alignment="CENTER_LEFT" spacing="5.0">
+                            <children>
+                                <Label text="🔍 Búsqueda de Documentos" textFill="#1e40af" 
+                                       style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <Label text="Seleccione criterio y busque documento" textFill="#6b7280" 
+                                       style="-fx-font-size: 11px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </children>
+                        </VBox>
+                        
+                        <ComboBox fx:id="cmb_CriterioBusqueda" prefHeight="40.0" prefWidth="180.0" 
+                                  style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                                  styleClass="combobox-custom" promptText="Criterio de búsqueda" />
+                        
+                        <TextField fx:id="txtf_Buscar" prefHeight="40.0" prefWidth="280.0" promptText="🔍 Buscar documento..." 
+                                   style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);" 
+                                   HBox.hgrow="SOMETIMES" />
+                                   
+                        <Button fx:id="btn_Buscar" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" 
+                                style="-fx-background-color: linear-gradient(to bottom, #3b82f6, #2563eb); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 4, 0, 0, 2);" 
+                                text="🔍 Buscar" />
+                                
+                        <!-- Spacer para empujar el botón a la derecha -->
+                        <Pane HBox.hgrow="ALWAYS" />
+                        
+                        <Button fx:id="btn_Subir" mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0" 
+                                style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);" 
+                                text="➕ Subir Documento" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
 
-        <!-- Campo de búsqueda -->
-        <TextField fx:id="txtf_Buscar"
-                   AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="125.0"
-                   prefHeight="26.0" prefWidth="335.0"
-                   promptText="Buscar documento..." />
-
-        <Button fx:id="btn_Buscar"
-                text="Buscar"
-                maxWidth="100" styleClass="button-windows,button-windows-blue"
-                AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="470.0" />
-
-        <Button fx:id="btn_Subir"
-                text="Subir documento"
-                maxWidth="180" styleClass="button-windows,button-windows-blue"
-                AnchorPane.topAnchor="54.0" AnchorPane.rightAnchor="14.0" />
-
-        <!-- Tabla de documentos -->
-        <TableView fx:id="tb_Documentos"
-                   AnchorPane.topAnchor="105.0" AnchorPane.leftAnchor="14.0"
-                   AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
-            <columns>
-                <TableColumn fx:id="tbc_Nombre" text="Nombre" />
-                <TableColumn fx:id="tbc_Tipo" text="Tipo" />
-                <TableColumn fx:id="tbc_Fecha" text="Fecha" />
-                <TableColumn fx:id="tbc_Tamano" text="Tamaño" />
-
-                <TableColumn fx:id="tbc_BotonVer" styleClass="column-action" text=" " prefWidth="40"/>
-                <TableColumn fx:id="tbc_BotonEliminar" styleClass="column-action" text=" " prefWidth="40"/>
-                <TableColumn fx:id="tbc_BotonDescargar" styleClass="column-action" text=" " prefWidth="40"/>
-            </columns>
-
-            <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-            </columnResizePolicy>
-        </TableView>
-
+        <!-- Table Container Mejorado -->
+        <VBox layoutX="20.0" layoutY="210.0" spacing="15.0" 
+              style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 2); -fx-padding: 20; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 15;" 
+              AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="210.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Label text="📋 Documentos del Caso" textFill="#1e40af" 
+                                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <Label text="Listado de archivos y documentos legales disponibles" textFill="#6b7280" 
+                                       style="-fx-font-size: 12px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </children>
+                        </VBox>
+                        
+                        <!-- Spacer -->
+                        <Pane HBox.hgrow="ALWAYS" />
+                        
+                        <!-- Indicador de estado -->
+                        <Pane prefHeight="40.0" prefWidth="140.0" 
+                              style="-fx-background-color: linear-gradient(to right, #10b981, #059669); -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.3), 3, 0, 0, 1);">
+                            <children>
+                                <Label layoutX="15.0" layoutY="10.0" text="📊 Estadísticas" textFill="WHITE" 
+                                       style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <Label fx:id="lbl_TotalDocumentos" layoutX="15.0" layoutY="25.0" text="Total: 0 documentos" textFill="#d1fae5" 
+                                       style="-fx-font-size: 10px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </children>
+                        </Pane>
+                    </children>
+                </HBox>
+                
+                <Separator prefWidth="200.0" 
+                           style="-fx-background-color: linear-gradient(to right, #3b82f6, #10b981, #f59e0b); -fx-pref-height: 2;" />
+                
+                <TableView fx:id="tb_Documentos" styleClass="table-modern" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="tbc_Nombre" text="📑 Nombre" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 10 0 10;" minWidth="300" />
+                        <TableColumn fx:id="tbc_Tipo" text="🏷️ Tipo" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="120" />
+                        <TableColumn fx:id="tbc_Fecha" text="📅 Fecha" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="120" />
+                        <TableColumn fx:id="tbc_Tamano" text="📊 Tamaño" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="100" />
+                        <TableColumn fx:id="tbc_BotonVer" text="👁️ Ver" style="-fx-alignment: CENTER; -fx-padding: 0 5 0 5;" minWidth="80" prefWidth="80" maxWidth="80" />
+                        <TableColumn fx:id="tbc_BotonDescargar" text="⬇️ Descargar" style="-fx-alignment: CENTER; -fx-padding: 0 5 0 5;" minWidth="100" prefWidth="100" maxWidth="100" />
+                        <TableColumn fx:id="tbc_BotonEliminar" text="❌ Eliminar" style="-fx-alignment: CENTER; -fx-padding: 0 5 0 5;" minWidth="80" prefWidth="80" maxWidth="80" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+            </children>
+        </VBox>
     </children>
 </AnchorPane>

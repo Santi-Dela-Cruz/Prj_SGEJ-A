@@ -3,64 +3,88 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.*?>
+<?import java.net.URL?>
 
 <ScrollPane fitToWidth="true" fitToHeight="true"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="application.controllers.casos_documentacion.FormHistorialComunicacionController"
-            styleClass="scroll-form">
+            fx:controller="application.controllers.casos_documentacion.FormHistorialComunicacionController">
+    <stylesheets>
+        <URL value="@/styles/app.css" />
+        <URL value="@/styles/combobox-custom.css" />
+    </stylesheets>
+    
+    <content>
+        <VBox spacing="18" alignment="TOP_LEFT" style="-fx-background-color: #f8f9fa; -fx-background-radius: 10;">
+            <padding>
+                <Insets top="30" right="30" bottom="30" left="30"/>
+            </padding>
 
-    <VBox spacing="20" styleClass="form-panel" alignment="TOP_LEFT">
-        <padding>
-            <Insets top="20" right="20" bottom="20" left="20"/>
-        </padding>
+            <!-- Título Mejorado -->
+            <StackPane fx:id="pnl_Titulo" prefHeight="70" alignment="CENTER" 
+                      style="-fx-background-color: linear-gradient(to right, #2563eb, #3b82f6); -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.3), 4, 0, 0, 2);">
+                <Text fx:id="txt_TituloForm" text="📨 AÑADIR COMUNICACIÓN" fill="white" 
+                      style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 2, 0, 0, 1);" />
+            </StackPane>
 
-        <!-- Title in a colored panel -->
-        <StackPane fx:id="pnl_Titulo" prefHeight="50"
-                   alignment="CENTER"
-                   style="-fx-background-color: #90caf9; -fx-background-radius: 8;">
-            <Text fx:id="txt_TituloForm"
-                  text="AÑADIR COMUNICACIÓN"
-                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
-        </StackPane>
+            <!-- Contenedor del Formulario -->
+            <VBox spacing="18" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 0, 2); -fx-padding: 18; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 12;">
+                <Label text="📋 Información de la Comunicación" style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #374151; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                <Separator style="-fx-background-color: #e5e7eb;" />
+                
+                <!-- Form -->
+                <GridPane hgap="20" vgap="15">
+                    <columnConstraints>
+                        <ColumnConstraints prefWidth="250"/>
+                        <ColumnConstraints prefWidth="250"/>
+                    </columnConstraints>
 
-        <!-- Form -->
-        <GridPane hgap="20" vgap="12">
-            <columnConstraints>
-                <ColumnConstraints prefWidth="250"/>
-                <ColumnConstraints prefWidth="250"/>
-            </columnConstraints>
+                    <!-- Row 0 -->
+                    <Label text="📅 Fecha de entrada:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" 
+                           GridPane.rowIndex="0" GridPane.columnIndex="0"/>
+                    <DatePicker fx:id="dtp_Fecha" prefWidth="180.0" 
+                               style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                               GridPane.rowIndex="1" GridPane.columnIndex="0"/>
 
-            <!-- Row 0 -->
-            <Label text="Fecha de entrada:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
-            <DatePicker fx:id="dtp_Fecha" prefWidth="180.0" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+                    <Label text="👨‍⚖️ Abogado responsable:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                           GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+                    <ComboBox fx:id="cbx_Abogado" prefWidth="180.0"
+                             style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                             GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
-            <Label text="Abogado responsable:" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="label"/>
-            <ComboBox fx:id="cbx_Abogado" prefWidth="180.0" styleClass="combo-box"
-                       GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+                    <!-- Row 2 -->
+                    <Label text="🔖 Tipo de acción:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                           GridPane.rowIndex="2" GridPane.columnIndex="0"/>
+                    <ComboBox fx:id="cbx_TipoAccion" prefWidth="180.0"
+                             style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                             GridPane.rowIndex="3" GridPane.columnIndex="0"/>
 
-            <!-- Row 2 -->
-            <Label text="Tipo de acción:" GridPane.rowIndex="2" GridPane.columnIndex="0" styleClass="label"/>
-            <ComboBox fx:id="cbx_TipoAccion" prefWidth="180.0" styleClass="combo-box"
-                      GridPane.rowIndex="3" GridPane.columnIndex="0"/>
+                    <Label text="🔢 Número de expediente:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                           GridPane.rowIndex="2" GridPane.columnIndex="1"/>
+                    <TextField fx:id="txtf_Expediente" prefWidth="180.0" 
+                               style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                               GridPane.rowIndex="3" GridPane.columnIndex="1"/>
 
-            <Label text="Número de expediente:" GridPane.rowIndex="2" GridPane.columnIndex="1" styleClass="label"/>
-            <TextField fx:id="txtf_Expediente" prefWidth="180.0" styleClass="text-field"
-                       GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+                    <!-- Row 4 - Description -->
+                    <Label text="📝 Descripción:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                           GridPane.rowIndex="4" GridPane.columnIndex="0" GridPane.columnSpan="2"/>
+                    <TextArea fx:id="txta_Descripcion" prefWidth="460.0" prefHeight="100.0" wrapText="true"
+                             style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                             GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.columnSpan="2"
+                             VBox.vgrow="ALWAYS"/>
+                </GridPane>
+                
+                <Region VBox.vgrow="ALWAYS" />
 
-            <!-- Row 4 - Description -->
-            <Label text="Descripción:" GridPane.rowIndex="4" GridPane.columnIndex="0"
-                   GridPane.columnSpan="2" styleClass="label"/>
-            <TextArea fx:id="txta_Descripcion" prefWidth="460.0" prefHeight="100.0"
-                      GridPane.rowIndex="5" GridPane.columnIndex="0" GridPane.columnSpan="2"
-                      VBox.vgrow="ALWAYS" styleClass="text-field"/>
-        </GridPane>
-
-        <!-- Buttons -->
-        <HBox spacing="20" alignment="CENTER">
-            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="100.0" styleClass="button-windows,button-windows-green"/>
-            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="100.0" styleClass="button-windows,button-windows-red"/>
-        </HBox>
-    </VBox>
+                <!-- Buttons with improved styling -->
+                <HBox spacing="15" alignment="CENTER_RIGHT">
+                    <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="120" prefHeight="40"
+                            styleClass="btn-secondary" />
+                    <Button fx:id="btn_Guardar" text="💾 Guardar" prefWidth="120" prefHeight="40"
+                            styleClass="btn-success" />
+                </HBox>
+            </VBox>
+        </VBox>
+    </content>
 </ScrollPane>

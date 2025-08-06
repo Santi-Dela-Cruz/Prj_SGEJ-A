@@ -3,47 +3,161 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
+<?import java.net.URL?>
 
-<StackPane xmlns="http://javafx.com/javafx/23.0.1"
-           xmlns:fx="http://javafx.com/fxml/1"
-           fx:controller="application.controllers.casos_documentacion.ModuloBitacoraController"
-           prefWidth="800.0" prefHeight="500.0">
+<AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="application.controllers.casos_documentacion.ModuloBitacoraController"
+            AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
+            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+            styleClass="background-app">
+    <stylesheets>
+        <URL value="@/styles/app.css" />
+        <URL value="@/styles/combobox-custom.css" />
+    </stylesheets>
 
-    <VBox spacing="10" alignment="TOP_LEFT" style="-fx-background-color: #f8f9fa;" prefWidth="800.0" prefHeight="500.0">
-        <!-- Barra superior con título y botones -->
-        <HBox spacing="10" alignment="CENTER" style="-fx-padding: 10;">
-            <HBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
-                <Button fx:id="btn_Regresar" text="Regresar" styleClass="button-windows,button-windows-blue" />
-            </HBox>
-            <Label text="Bitácora de Casos" style="-fx-font-size: 18px; -fx-font-weight: bold;" HBox.hgrow="ALWAYS" alignment="CENTER" />
-            <HBox alignment="CENTER_RIGHT" HBox.hgrow="ALWAYS">
-                <Button fx:id="btn_AnadirEntrada" text="Nueva entrada" styleClass="button-windows,button-windows-blue" />
-            </HBox>
+    <children>
+        <!-- Header Panel Mejorado -->
+        <Pane prefHeight="80.0" 
+              style="-fx-background-color: linear-gradient(to bottom, #1e3a8a, #2563eb, #3b82f6); -fx-background-radius: 0 0 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 0, 3);" 
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <!-- Línea decorativa superior -->
+                <Pane prefHeight="3.0" style="-fx-background-color: linear-gradient(to right, #f59e0b, #10b981, #3b82f6);" />
+                
+                <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="15.0" spacing="15.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" 
+                                      text="📝 BITÁCORA DE CASOS" 
+                                      style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                </Text>
+                                <Text fill="#cbd5e1" strokeType="OUTSIDE" strokeWidth="0.0" 
+                                      text="Registro cronológico de actividades y seguimiento de casos" 
+                                      style="-fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-style: italic;">
+                                    <font>
+                                        <Font size="13.0" />
+                                    </font>
+                                </Text>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </Pane>
+
+        <!-- Control Panel Mejorado -->
+        <VBox layoutX="20.0" layoutY="100.0" prefHeight="90.0" spacing="18.0" styleClass="card-app" 
+              AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="18.0">
+                    <children>
+                        <Button fx:id="btn_Regresar" mnemonicParsing="false" prefHeight="40.0" prefWidth="110.0" 
+                                styleClass="btn-secondary" text="⏪ Regresar" />
+                                
+                        <VBox alignment="CENTER_LEFT" spacing="5.0">
+                            <children>
+                                <Label text="📋 Casos Legales" textFill="#1e40af" 
+                                       style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <Label text="Seleccione un caso para ver su bitácora" textFill="#6b7280" 
+                                       style="-fx-font-size: 11px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </children>
+                        </VBox>
+                        
+                        <!-- Spacer para empujar el botón a la derecha -->
+                        <Pane HBox.hgrow="ALWAYS" />
+                        
+                        <Button fx:id="btn_AnadirEntrada" mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0" 
+                                styleClass="btn-success" text="➕ Nueva Entrada" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+
+        <!-- Tabla de Casos Mejorada -->
+        <VBox layoutX="20.0" layoutY="210.0" spacing="15.0" 
+              style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 2); -fx-padding: 20; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 15;" 
+              AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="210.0" prefHeight="150.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Label text="🧾 Casos Disponibles" textFill="#1e40af" 
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <Label text="Seleccione un caso para ver su bitácora detallada" textFill="#6b7280" 
+                                       style="-fx-font-size: 12px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                
+                <Separator prefWidth="200.0" 
+                           style="-fx-background-color: linear-gradient(to right, #3b82f6, #10b981, #f59e0b); -fx-pref-height: 2;" />
+                
+                <TableView fx:id="tb_Casos" styleClass="table-modern" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="tbc_NumExpediente" text="🔢 Expediente" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="120" />
+                        <TableColumn fx:id="tbc_Cliente" text="👤 Cliente" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 10 0 10;" minWidth="180" />
+                        <TableColumn fx:id="tbc_Estado" text="📊 Estado" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="120" />
+                        <TableColumn fx:id="tbc_Titulo" text="📝 Título" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 10 0 10;" minWidth="250" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+            </children>
+        </VBox>
+
+        <!-- Panel de Información de Caso -->
+        <HBox layoutX="20.0" layoutY="380.0" alignment="CENTER_LEFT" spacing="10.0" 
+              style="-fx-background-color: #eef2ff; -fx-background-radius: 10; -fx-padding: 10 15; -fx-border-color: #c7d2fe; -fx-border-width: 1; -fx-border-radius: 10;" 
+              AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="380.0">
+            <children>
+                <Label text="ℹ️" style="-fx-font-size: 18px;" />
+                <Label fx:id="lbl_InfoCaso" text="Seleccione un caso para ver detalles..." 
+                       style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4338ca; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+            </children>
         </HBox>
         
-        <!-- Tabla de casos -->
-        <Label text="Casos legales:" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 0 0 0 10;" />
-        <TableView fx:id="tb_Casos" prefHeight="120.0">
-            <columns>
-                <TableColumn fx:id="tbc_NumExpediente" text="Expediente" prefWidth="120.0" />
-                <TableColumn fx:id="tbc_Cliente" text="Cliente" prefWidth="180.0" />
-                <TableColumn fx:id="tbc_Estado" text="Estado" prefWidth="100.0" />
-                <TableColumn fx:id="tbc_Titulo" text="Título" prefWidth="180.0" />
-            </columns>
-        </TableView>
-        
-        <!-- Información del caso seleccionado -->
-        <Label fx:id="lbl_InfoCaso" text="Seleccione un caso para ver detalles..." style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-padding: 8;" />
-        
-        <!-- Tabla de entradas de bitácora -->
-        <Label text="Entradas de bitácora:" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-padding: 0 0 0 10;" />
-        <TableView fx:id="tb_BitacoraEntries" prefHeight="220.0">
-            <columns>
-                <TableColumn fx:id="tbc_Fecha" text="Fecha" />
-                <TableColumn fx:id="tbc_Usuario" text="Usuario" />
-                <TableColumn fx:id="tbc_TipoAccion" text="Tipo de acción" />
-                <TableColumn fx:id="tbc_Descripcion" text="Descripción" />
-            </columns>
-        </TableView>
-    </VBox>
-</StackPane>
+        <!-- Tabla de Bitácora Mejorada -->
+        <VBox layoutX="20.0" layoutY="430.0" spacing="15.0" 
+              style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 2); -fx-padding: 20; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 15;" 
+              AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="430.0" 
+              AnchorPane.bottomAnchor="20.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Label text="📒 Entradas de Bitácora" textFill="#1e40af" 
+                                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <Label text="Registro cronológico de actividades y actuaciones" textFill="#6b7280" 
+                                       style="-fx-font-size: 12px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                
+                <Separator prefWidth="200.0" 
+                           style="-fx-background-color: linear-gradient(to right, #3b82f6, #10b981, #f59e0b); -fx-pref-height: 2;" />
+                
+                <TableView fx:id="tb_BitacoraEntries" styleClass="table-modern" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="tbc_Fecha" text="📅 Fecha" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="120" />
+                        <TableColumn fx:id="tbc_Usuario" text="👤 Usuario" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 10 0 10;" minWidth="150" />
+                        <TableColumn fx:id="tbc_TipoAccion" text="🔖 Tipo de acción" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="150" />
+                        <TableColumn fx:id="tbc_Descripcion" text="📝 Descripción" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 10 0 10;" minWidth="350" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

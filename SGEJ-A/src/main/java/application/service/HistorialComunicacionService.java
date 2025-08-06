@@ -70,6 +70,16 @@ public class HistorialComunicacionService {
     }
 
     /**
+     * Obtiene todas las comunicaciones registradas en la base de datos
+     * 
+     * @return Lista de todas las comunicaciones
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> obtenerTodasLasComunicaciones() throws SQLException {
+        return dao.consultarTodasLasComunicaciones();
+    }
+
+    /**
      * Obtiene el ID de un caso a partir del número de expediente
      * 
      * @param numeroExpediente Número de expediente a buscar
@@ -87,5 +97,49 @@ public class HistorialComunicacionService {
      */
     public boolean verificarExistenciaAbogado(int abogadoId) {
         return dao.verificarExistenciaAbogado(abogadoId);
+    }
+
+    /**
+     * Elimina una comunicación de la base de datos
+     * 
+     * @param id ID de la comunicación a eliminar
+     * @return true si se eliminó correctamente, false en caso contrario
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public boolean eliminarComunicacion(int id) throws SQLException {
+        return dao.eliminarComunicacion(id);
+    }
+
+    /**
+     * Busca comunicaciones por número de expediente
+     * 
+     * @param numeroExpediente Número de expediente a buscar
+     * @return Lista de comunicaciones que coinciden con el número de expediente
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> buscarComunicacionesPorExpediente(String numeroExpediente) throws SQLException {
+        return dao.buscarPorExpediente(numeroExpediente);
+    }
+
+    /**
+     * Busca comunicaciones por nombre de abogado
+     * 
+     * @param nombreAbogado Nombre del abogado a buscar
+     * @return Lista de comunicaciones que coinciden con el nombre del abogado
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> buscarComunicacionesPorAbogado(String nombreAbogado) throws SQLException {
+        return dao.buscarPorAbogado(nombreAbogado);
+    }
+
+    /**
+     * Busca comunicaciones por texto en cualquier campo relevante
+     * 
+     * @param texto Texto a buscar
+     * @return Lista de comunicaciones que coinciden con el texto en cualquier campo
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> buscarComunicaciones(String texto) throws SQLException {
+        return dao.buscarGeneral(texto);
     }
 }
