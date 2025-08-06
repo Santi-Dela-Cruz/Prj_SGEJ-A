@@ -109,4 +109,37 @@ public class HistorialComunicacionService {
     public boolean eliminarComunicacion(int id) throws SQLException {
         return dao.eliminarComunicacion(id);
     }
+    
+    /**
+     * Busca comunicaciones por número de expediente
+     * 
+     * @param numeroExpediente Número de expediente a buscar
+     * @return Lista de comunicaciones que coinciden con el número de expediente
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> buscarComunicacionesPorExpediente(String numeroExpediente) throws SQLException {
+        return dao.buscarPorExpediente(numeroExpediente);
+    }
+    
+    /**
+     * Busca comunicaciones por nombre de abogado
+     * 
+     * @param nombreAbogado Nombre del abogado a buscar
+     * @return Lista de comunicaciones que coinciden con el nombre del abogado
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> buscarComunicacionesPorAbogado(String nombreAbogado) throws SQLException {
+        return dao.buscarPorAbogado(nombreAbogado);
+    }
+    
+    /**
+     * Busca comunicaciones por texto en cualquier campo relevante
+     * 
+     * @param texto Texto a buscar
+     * @return Lista de comunicaciones que coinciden con el texto en cualquier campo
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> buscarComunicaciones(String texto) throws SQLException {
+        return dao.buscarGeneral(texto);
+    }
 }

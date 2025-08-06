@@ -261,4 +261,131 @@ public class HistorialComunicacionDAO {
             return filasAfectadas > 0;
         }
     }
+    
+    /**
+     * Busca comunicaciones por número de expediente
+     * 
+     * @param numeroExpediente Número de expediente a buscar
+     * @return Lista de comunicaciones que coinciden con el número de expediente
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> buscarPorExpediente(String numeroExpediente) throws SQLException {
+        List<HistorialComunicacion> lista = new ArrayList<>();
+        String sql = "SELECT hc.*, c.numero_expediente FROM historial_comunicacion hc " +
+                    "LEFT JOIN caso c ON hc.caso_id = c.id " +
+                    "WHERE c.numero_expediente LIKE ? " +
+                    "ORDER BY hc.fecha DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + numeroExpediente + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                HistorialComunicacion com = new HistorialComunicacion();
+                com.setId(rs.getInt("id"));
+                com.setCasoId(rs.getInt("caso_id"));
+                com.setTipo(rs.getString("tipo"));
+                com.setFecha(rs.getDate("fecha"));
+                com.setDescripcion(rs.getString("descripcion"));
+                com.setNumeroExpediente(rs.getString("numero_expediente"));
+                
+                try {
+                    com.setAbogadoId(rs.getInt("abogado_id"));
+                    obtenerNombreAbogado(com);
+                } catch (SQLException e) {
+                    System.out.println("Campo abogado_id no encontrado: " + e.getMessage());
+                }
+                
+                lista.add(com);
+            }
+        }
+
+        return lista;
+    }
+    
+    /**
+     * Busca comunicaciones por nombre de abogado
+     * 
+     * @param nombreAbogado Nombre del abogado a buscar
+     * @return Lista de comunicaciones que coinciden con el nombre del abogado
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> buscarPorAbogado(String nombreAbogado) throws SQLException {
+        List<HistorialComunicacion> lista = new ArrayList<>();
+        String sql = "SELECT hc.*, c.numero_expediente FROM historial_comunicacion hc " +
+                    "LEFT JOIN caso c ON hc.caso_id = c.id " +
+                    "WHERE hc.abogado_nombre LIKE ? " +
+                    "ORDER BY hc.fecha DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, "%" + nombreAbogado + "%");
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                HistorialComunicacion com = new HistorialComunicacion();
+                com.setId(rs.getInt("id"));
+                com.setCasoId(rs.getInt("caso_id"));
+                com.setTipo(rs.getString("tipo"));
+                com.setFecha(rs.getDate("fecha"));
+                com.setDescripcion(rs.getString("descripcion"));
+                com.setNumeroExpediente(rs.getString("numero_expediente"));
+                
+                try {
+                    com.setAbogadoId(rs.getInt("abogado_id"));
+                    com.setAbogadoNombre(rs.getString("abogado_nombre"));
+                } catch (SQLException e) {
+                    System.out.println("Campo abogado_id o abogado_nombre no encontrado: " + e.getMessage());
+                }
+                
+                lista.add(com);
+            }
+        }
+
+        return lista;
+    }
+    
+    /**
+     * Busca comunicaciones por texto en cualquier campo relevante
+     * 
+     * @param texto Texto a buscar
+     * @return Lista de comunicaciones que coinciden con el texto en cualquier campo
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> buscarGeneral(String texto) throws SQLException {
+        List<HistorialComunicacion> lista = new ArrayList<>();
+        String sql = "SELECT hc.*, c.numero_expediente FROM historial_comunicacion hc " +
+                    "LEFT JOIN caso c ON hc.caso_id = c.id " +
+                    "WHERE hc.tipo LIKE ? OR hc.descripcion LIKE ? OR c.numero_expediente LIKE ? OR hc.abogado_nombre LIKE ? " +
+                    "ORDER BY hc.fecha DESC";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            String patron = "%" + texto + "%";
+            stmt.setString(1, patron);
+            stmt.setString(2, patron);
+            stmt.setString(3, patron);
+            stmt.setString(4, patron);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                HistorialComunicacion com = new HistorialComunicacion();
+                com.setId(rs.getInt("id"));
+                com.setCasoId(rs.getInt("caso_id"));
+                com.setTipo(rs.getString("tipo"));
+                com.setFecha(rs.getDate("fecha"));
+                com.setDescripcion(rs.getString("descripcion"));
+                com.setNumeroExpediente(rs.getString("numero_expediente"));
+                
+                try {
+                    com.setAbogadoId(rs.getInt("abogado_id"));
+                    com.setAbogadoNombre(rs.getString("abogado_nombre"));
+                } catch (SQLException e) {
+                    System.out.println("Campo abogado_id o abogado_nombre no encontrado: " + e.getMessage());
+                }
+                
+                lista.add(com);
+            }
+        }
+
+        return lista;
+    }
 }

@@ -5,6 +5,8 @@ import application.service.HistorialComunicacionService;
 import application.database.DatabaseConnection;
 import application.controllers.DialogUtil;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -31,6 +33,8 @@ public class ModuloHistorialController {
             tbc_Expediente;
     @FXML
     private TableColumn<HistorialComunicacion, Void> tbc_BotonEliminar;
+    @FXML
+    private ComboBox<String> cmb_CriterioBusqueda;
 
     private Pane pnl_Forms;
     private HistorialComunicacionService service;
@@ -42,16 +46,27 @@ public class ModuloHistorialController {
 
     @FXML
     private void initialize() {
-        try {
-            Connection conn = DatabaseConnection.getConnection();
-            service = new HistorialComunicacionService(conn);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        System.out.println("INFO: Inicializando ModuloHistorialController");
+        
+        // Configurar ComboBox de criterio de búsqueda
+        cmb_CriterioBusqueda.getItems().addAll(
+            "Número de Expediente", 
+            "Abogado Responsable"
+        );
+        cmb_CriterioBusqueda.setValue("Número de Expediente"); // Valor por defecto
+        
         configurarColumnas();
+        
+        // No inicializamos service aquí, lo haremos en cada método que lo necesite
+        // para asegurar conexiones frescas
         cargarComunicaciones();
 
-        btn_Anadir.setOnAction(event -> mostrarFormulario(null, "NUEVO"));
+        btn_Anadir.setOnAction(event -> {
+            System.out.println("INFO: Iniciando creación de nueva comunicación");
+            mostrarFormulario(null, "NUEVO");
+        });
+        
+        btn_Buscar.setOnAction(event -> buscarComunicaciones());
     }
 
     private void configurarColumnas() {
@@ -136,8 +151,18 @@ public class ModuloHistorialController {
                 modo,
                 null,
                 result -> {
+                    System.out.println("INFO: Callback onGuardar ejecutado - Cerrando formulario y recargando datos");
                     cerrarFormulario();
-                    cargarComunicaciones(); // Recargar datos después de guardar
+                    
+                    // Pequeña pausa para asegurar que la transacción en la BD se complete
+                    try {
+                        Thread.sleep(200); // Esperar 200ms
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                    
+                    // Recargar datos después de guardar
+                    cargarComunicaciones();
                 },
                 result -> cerrarFormulario());
 
@@ -162,13 +187,16 @@ public class ModuloHistorialController {
 
     /**
      * Carga las comunicaciones desde la base de datos
+     * Este método asegura que siempre se carguen los datos más recientes
      */
     private void cargarComunicaciones() {
+        Connection conn = null;
         try {
-            Connection conn = DatabaseConnection.getConnection();
-            if (service == null) {
-                service = new HistorialComunicacionService(conn);
-            }
+            // Crear una nueva conexión cada vez para asegurar que se obtengan datos frescos
+            conn = DatabaseConnection.getConnection();
+            
+            // Crear una nueva instancia del servicio con la conexión fresca
+            service = new HistorialComunicacionService(conn);
 
             // Limpiar tabla
             tb_Comunicaciones.getItems().clear();
@@ -192,6 +220,85 @@ public class ModuloHistorialController {
             Label lblError = new Label("Error al cargar las comunicaciones: " + e.getMessage());
             lblError.setStyle("-fx-font-size: 14px; -fx-text-fill: #d32f2f;");
             tb_Comunicaciones.setPlaceholder(lblError);
+        } finally {
+            // Cerrar la conexión después de usarla para liberar recursos
+            if (conn != null) {
+                try {
+                    conn.close();
+                    System.out.println("INFO: Conexión cerrada después de cargar comunicaciones");
+                } catch (Exception e) {
+                    System.err.println("ERROR: No se pudo cerrar la conexión: " + e.getMessage());
+                }
+            }
+        }
+    }
+    
+    /**
+     * Busca comunicaciones según el criterio seleccionado en el ComboBox
+     */
+    private void buscarComunicaciones() {
+        String criterioBusqueda = cmb_CriterioBusqueda.getValue();
+        String textoBusqueda = txtf_Buscar.getText().trim();
+        
+        if (textoBusqueda.isEmpty()) {
+            // Si el campo de búsqueda está vacío, cargar todas las comunicaciones
+            cargarComunicaciones();
+            return;
+        }
+        
+        Connection conn = null;
+        try {
+            // Crear una nueva conexión cada vez para asegurar datos frescos
+            conn = DatabaseConnection.getConnection();
+            service = new HistorialComunicacionService(conn);
+            
+            System.out.println("INFO: Realizando búsqueda con criterio: " + criterioBusqueda + ", texto: '" + textoBusqueda + "'");
+            
+            // Limpiar tabla
+            tb_Comunicaciones.getItems().clear();
+            
+            List<HistorialComunicacion> resultados = null;
+            
+            // Buscar según el criterio seleccionado
+            switch (criterioBusqueda) {
+                case "Número de Expediente":
+                    resultados = service.buscarComunicacionesPorExpediente(textoBusqueda);
+                    break;
+                case "Abogado Responsable":
+                    resultados = service.buscarComunicacionesPorAbogado(textoBusqueda);
+                    break;
+                default:
+                    // Por defecto, buscar por todos los campos
+                    resultados = service.buscarComunicaciones(textoBusqueda);
+                    break;
+            }
+            
+            if (resultados != null && !resultados.isEmpty()) {
+                tb_Comunicaciones.getItems().addAll(resultados);
+                System.out.println("INFO: Se encontraron " + resultados.size() + " comunicaciones con el criterio: " + criterioBusqueda);
+            } else {
+                System.out.println("INFO: No se encontraron comunicaciones para el criterio: " + criterioBusqueda);
+                // Establecer un mensaje cuando la búsqueda no tiene resultados
+                Label lblNoData = new Label("No se encontraron comunicaciones para la búsqueda: '" + textoBusqueda + "'");
+                lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
+                tb_Comunicaciones.setPlaceholder(lblNoData);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Mostrar mensaje de error en la tabla
+            Label lblError = new Label("Error al buscar comunicaciones: " + e.getMessage());
+            lblError.setStyle("-fx-font-size: 14px; -fx-text-fill: #d32f2f;");
+            tb_Comunicaciones.setPlaceholder(lblError);
+        } finally {
+            // Cerrar la conexión después de usarla para liberar recursos
+            if (conn != null) {
+                try {
+                    conn.close();
+                    System.out.println("INFO: Conexión cerrada después de buscar comunicaciones");
+                } catch (Exception e) {
+                    System.err.println("ERROR: No se pudo cerrar la conexión: " + e.getMessage());
+                }
+            }
         }
     }
 }

@@ -64,17 +64,21 @@
                             <children>
                                 <Label text="🔍 Búsqueda de Documentos" textFill="#1e40af" 
                                        style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
-                                <Label text="Buscar por nombre, tipo o fecha" textFill="#6b7280" 
+                                <Label text="Seleccione criterio y busque documento" textFill="#6b7280" 
                                        style="-fx-font-size: 11px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
                             </children>
                         </VBox>
                         
-                        <TextField fx:id="txtf_Buscar" prefHeight="40.0" prefWidth="350.0" promptText="🔍 Buscar documento..." 
+                        <ComboBox fx:id="cmb_CriterioBusqueda" prefHeight="40.0" prefWidth="180.0" 
+                                  style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                                  styleClass="combobox-custom" promptText="Criterio de búsqueda" />
+                        
+                        <TextField fx:id="txtf_Buscar" prefHeight="40.0" prefWidth="280.0" promptText="🔍 Buscar documento..." 
                                    style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);" 
                                    HBox.hgrow="SOMETIMES" />
                                    
                         <Button fx:id="btn_Buscar" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" 
-                                styleClass="btn-primary" text="Buscar" />
+                                styleClass="btn-primary" text="🔍 Buscar" />
                                 
                         <!-- Spacer para empujar el botón a la derecha -->
                         <Pane HBox.hgrow="ALWAYS" />

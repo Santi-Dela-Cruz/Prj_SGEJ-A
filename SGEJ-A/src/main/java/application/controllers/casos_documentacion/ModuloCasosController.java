@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.ComboBox;
 import javafx.scene.layout.AnchorPane;
 import java.io.IOException;
 import application.model.Caso;
@@ -116,6 +117,8 @@ public class ModuloCasosController {
     private Button btn_Limpiar;
     @FXML
     private TextField txtf_Buscar;
+    @FXML
+    private ComboBox<String> cmb_CriterioBusqueda;
     @FXML
     private Label lbl_TotalCasos;
     @FXML
@@ -368,6 +371,27 @@ public class ModuloCasosController {
             });
             return row;
         });
+        
+        // Inicializar ComboBox de criterios de búsqueda
+        cmb_CriterioBusqueda.getItems().addAll(
+            "General", 
+            "Número de expediente", 
+            "Número de identificación"
+        );
+        cmb_CriterioBusqueda.setValue("General");
+        
+        // Cambiar el placeholder del TextField según el criterio seleccionado
+        cmb_CriterioBusqueda.setOnAction(e -> {
+            String criterio = cmb_CriterioBusqueda.getValue();
+            if (criterio.equals("Número de expediente")) {
+                txtf_Buscar.setPromptText("🔍 Ingrese el número de expediente...");
+            } else if (criterio.equals("Número de identificación")) {
+                txtf_Buscar.setPromptText("🔍 Ingrese el número de identificación...");
+            } else {
+                txtf_Buscar.setPromptText("🔍 Buscar caso...");
+            }
+        });
+        
         configurarColumnas();
         inicializarColumnasDeBotones();
         if (!contextoClienteYaCargado) {
@@ -393,9 +417,8 @@ public class ModuloCasosController {
     }
 
     /**
-     * Busca casos según el texto introducido en el campo de búsqueda
+     * Busca casos según el texto introducido en el campo de búsqueda y el criterio seleccionado
      */
-    // --- MODIFICAR BUSQUEDA PARA RESPETAR EL CONTEXTO ---
     private void buscarCasos() {
         String termino = txtf_Buscar.getText().trim();
         if (termino == null || termino.isEmpty()) {
@@ -403,31 +426,70 @@ public class ModuloCasosController {
             actualizarBotonRegresar();
             return;
         }
+        
+        // Obtener el criterio de búsqueda seleccionado
+        String criterioBusqueda = cmb_CriterioBusqueda.getValue();
+        
         try {
             tb_Casos.getItems().clear();
             java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
             if (conn == null) {
                 throw new Exception("Conexión a base de datos nula");
             }
+            
             String sql;
             java.sql.PreparedStatement stmt;
-            if (hayClienteSeleccionado()) {
-                System.out.println("DEBUG: Buscando casos para cliente: " + clienteActual.getNombreCompleto() + " (ID: "
-                        + clienteActual.getId() + ")");
-                sql = "SELECT * FROM caso WHERE cliente_id = ? AND (numero_expediente LIKE ? OR titulo LIKE ? OR tipo LIKE ? OR estado LIKE ? OR descripcion LIKE ?)";
-                stmt = conn.prepareStatement(sql);
-                stmt.setInt(1, clienteActual.getId());
-                String busqueda = "%" + termino + "%";
-                for (int i = 2; i <= 6; i++) {
-                    stmt.setString(i, busqueda);
+            
+            // Construir la consulta SQL según el criterio seleccionado
+            if (criterioBusqueda.equals("Número de expediente")) {
+                // Búsqueda específica por número de expediente
+                if (hayClienteSeleccionado()) {
+                    sql = "SELECT * FROM caso WHERE cliente_id = ? AND numero_expediente LIKE ?";
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setInt(1, clienteActual.getId());
+                    stmt.setString(2, "%" + termino + "%");
+                } else {
+                    sql = "SELECT * FROM caso WHERE numero_expediente LIKE ?";
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, "%" + termino + "%");
                 }
-            } else {
-                System.out.println("DEBUG: Buscando casos para todos los clientes");
-                sql = "SELECT * FROM caso WHERE numero_expediente LIKE ? OR titulo LIKE ? OR tipo LIKE ? OR estado LIKE ? OR descripcion LIKE ?";
-                stmt = conn.prepareStatement(sql);
-                String busqueda = "%" + termino + "%";
-                for (int i = 1; i <= 5; i++) {
-                    stmt.setString(i, busqueda);
+            } 
+            else if (criterioBusqueda.equals("Número de identificación")) {
+                // Búsqueda por número de identificación del cliente
+                if (hayClienteSeleccionado()) {
+                    // Ya estamos filtrados por cliente, así que es redundante
+                    sql = "SELECT * FROM caso WHERE cliente_id = ?";
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setInt(1, clienteActual.getId());
+                } else {
+                    // Unir con tabla cliente para buscar por identificación
+                    sql = "SELECT c.* FROM caso c " +
+                          "INNER JOIN cliente cl ON c.cliente_id = cl.id " +
+                          "WHERE cl.numero_identificacion LIKE ?";
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setString(1, "%" + termino + "%");
+                }
+            }
+            else {
+                // Búsqueda general (comportamiento original)
+                if (hayClienteSeleccionado()) {
+                    System.out.println("DEBUG: Buscando casos para cliente: " + clienteActual.getNombreCompleto() + " (ID: "
+                            + clienteActual.getId() + ")");
+                    sql = "SELECT * FROM caso WHERE cliente_id = ? AND (numero_expediente LIKE ? OR titulo LIKE ? OR tipo LIKE ? OR estado LIKE ? OR descripcion LIKE ?)";
+                    stmt = conn.prepareStatement(sql);
+                    stmt.setInt(1, clienteActual.getId());
+                    String busqueda = "%" + termino + "%";
+                    for (int i = 2; i <= 6; i++) {
+                        stmt.setString(i, busqueda);
+                    }
+                } else {
+                    System.out.println("DEBUG: Buscando casos para todos los clientes");
+                    sql = "SELECT * FROM caso WHERE numero_expediente LIKE ? OR titulo LIKE ? OR tipo LIKE ? OR estado LIKE ? OR descripcion LIKE ?";
+                    stmt = conn.prepareStatement(sql);
+                    String busqueda = "%" + termino + "%";
+                    for (int i = 1; i <= 5; i++) {
+                        stmt.setString(i, busqueda);
+                    }
                 }
             }
             java.sql.ResultSet rs = stmt.executeQuery();

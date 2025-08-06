@@ -53,11 +53,16 @@
                             <VBox alignment="CENTER_LEFT" spacing="5.0">
                                 <children>
                                     <Label text="🔍 Búsqueda de Casos" textFill="#1e40af" style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
-                                    <Label text="Buscar casos por expediente, título, abogado..." textFill="#6b7280" style="-fx-font-size: 11px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                    <Label text="Seleccione criterio y busque casos" textFill="#6b7280" style="-fx-font-size: 11px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
                                 </children>
                             </VBox>
-                            <TextField fx:id="txtf_Buscar" prefHeight="40.0" prefWidth="350.0" promptText="🔍 Buscar caso..." style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);" HBox.hgrow="SOMETIMES" />
-                            <Button fx:id="btn_Buscar" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" styleClass="btn-primary" text="Buscar" />
+                            
+                            <ComboBox fx:id="cmb_CriterioBusqueda" prefHeight="40.0" prefWidth="180.0" 
+                                    style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;"
+                                    styleClass="combobox-custom" promptText="Criterio de búsqueda" />
+                                    
+                            <TextField fx:id="txtf_Buscar" prefHeight="40.0" prefWidth="280.0" promptText="🔍 Buscar caso..." style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);" HBox.hgrow="SOMETIMES" />
+                            <Button fx:id="btn_Buscar" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" styleClass="btn-primary" text="🔍 Buscar" />
                             <Button fx:id="btn_Limpiar" mnemonicParsing="false" prefHeight="40.0" prefWidth="110.0" styleClass="btn-secondary" text="Limpiar" />
                             <Separator orientation="VERTICAL" prefHeight="40.0" style="-fx-background-color: #e2e8f0;" />
                             <!-- Spacer para empujar el botón Nuevo a la derecha -->
