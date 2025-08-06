@@ -41,7 +41,7 @@ public class ModuloHistorialController {
         configurarColumnas();
         cargarComunicaciones();
 
-        btn_Anadir.setOnAction(e -> mostrarFormulario(null, "NUEVO"));
+        btn_Anadir.setOnAction(event -> mostrarFormulario(null, "NUEVO"));
     }
 
     private void configurarColumnas() {
@@ -55,21 +55,46 @@ public class ModuloHistorialController {
                                                                      d.getValue().getAbogadoNombre() : "Sin asignar"));
         tbc_TipoAccion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getTipo()));
         tbc_Descripcion.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getDescripcion()));
-        // El modelo no tiene un campo específico para expediente, usamos el ID del caso como referencia
-        tbc_Expediente.setCellValueFactory(d -> new SimpleStringProperty("EXP-" + d.getValue().getCasoId()));
+        // Usar el número de expediente completo 
+        tbc_Expediente.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().getNumeroExpediente()));
 
         tbc_BotonEliminar.setCellFactory(tc -> new TableCell<>() {
             private final Button btn = new Button("🗑");
             {
                 btn.getStyleClass().add("table-button");
                 btn.setTooltip(new Tooltip("Eliminar"));
-                btn.setOnAction(event -> {
+                btn.setOnAction(actionEvent -> {
                     if (getIndex() >= 0 && getIndex() < getTableView().getItems().size()) {
                         HistorialComunicacion comm = getTableView().getItems().get(getIndex());
-                        System.out.println("Se eliminó simbólicamente la comunicación de: " + comm.getAbogadoNombre() + ", tipo: " + comm.getTipo());
-                        // Aquí implementar la eliminación real de la comunicación de la base de datos
-                        // Y luego recargar la tabla
-                        ModuloHistorialController.this.cargarComunicaciones();
+                        
+                        // Mostrar diálogo de confirmación
+                        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
+                        confirmacion.setTitle("Confirmar eliminación");
+                        confirmacion.setHeaderText("¿Está seguro de eliminar esta comunicación?");
+                        confirmacion.setContentText("Se eliminará la comunicación de tipo: " + comm.getTipo() + 
+                                                  "\nRealizada por: " + comm.getAbogadoNombre() +
+                                                  "\nExpediente: " + comm.getNumeroExpediente());
+                        
+                        confirmacion.showAndWait().ifPresent(respuesta -> {
+                            if (respuesta == ButtonType.OK) {
+                                try {
+                                    boolean eliminado = service.eliminarComunicacion(comm.getId());
+                                    if (eliminado) {
+                                        System.out.println("Comunicación eliminada correctamente. ID: " + comm.getId());
+                                        // Recargar la tabla
+                                        ModuloHistorialController.this.cargarComunicaciones();
+                                    } else {
+                                        System.out.println("No se pudo eliminar la comunicación");
+                                        // Usar el método de la clase principal
+                                        ModuloHistorialController.this.mostrarAlerta("Error", "No se pudo eliminar la comunicación", Alert.AlertType.ERROR);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    // Usar el método de la clase principal
+                                    ModuloHistorialController.this.mostrarAlerta("Error", "Error al eliminar la comunicación: " + e.getMessage(), Alert.AlertType.ERROR);
+                                }
+                            }
+                        });
                     }
                 });
             }
@@ -109,6 +134,21 @@ public class ModuloHistorialController {
         pnl_Forms.getChildren().clear();
         pnl_Forms.setVisible(false);
         pnl_Forms.setManaged(false);
+    }
+    
+    /**
+     * Muestra una alerta con el mensaje especificado
+     * 
+     * @param titulo Título de la alerta
+     * @param mensaje Mensaje a mostrar
+     * @param tipo Tipo de alerta
+     */
+    private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensaje);
+        alerta.showAndWait();
     }
 
     /**

@@ -98,4 +98,15 @@ public class HistorialComunicacionService {
     public boolean verificarExistenciaAbogado(int abogadoId) {
         return dao.verificarExistenciaAbogado(abogadoId);
     }
+    
+    /**
+     * Elimina una comunicación de la base de datos
+     * 
+     * @param id ID de la comunicación a eliminar
+     * @return true si se eliminó correctamente, false en caso contrario
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public boolean eliminarComunicacion(int id) throws SQLException {
+        return dao.eliminarComunicacion(id);
+    }
 }

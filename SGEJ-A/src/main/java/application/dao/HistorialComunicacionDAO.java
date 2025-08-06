@@ -203,7 +203,7 @@ public class HistorialComunicacionDAO {
      */
     public List<HistorialComunicacion> consultarTodasLasComunicaciones() throws SQLException {
         List<HistorialComunicacion> lista = new ArrayList<>();
-        String sql = "SELECT * FROM historial_comunicacion ORDER BY fecha DESC";
+        String sql = "SELECT hc.*, c.numero_expediente FROM historial_comunicacion hc LEFT JOIN caso c ON hc.caso_id = c.id ORDER BY hc.fecha DESC";
         
         try (Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(sql)) {
@@ -215,6 +215,14 @@ public class HistorialComunicacionDAO {
                 com.setTipo(rs.getString("tipo"));
                 com.setFecha(rs.getDate("fecha"));
                 com.setDescripcion(rs.getString("descripcion"));
+                
+                // Obtener el número de expediente
+                String numeroExpediente = rs.getString("numero_expediente");
+                if (numeroExpediente != null && !numeroExpediente.isEmpty()) {
+                    com.setNumeroExpediente(numeroExpediente);
+                } else {
+                    com.setNumeroExpediente("EXP-" + com.getCasoId());
+                }
                 
                 // Manejar el nuevo campo abogado_id (podría ser nulo en registros antiguos)
                 try {
@@ -232,5 +240,22 @@ public class HistorialComunicacionDAO {
         }
         
         return lista;
+    }
+    
+    /**
+     * Elimina una comunicación de la base de datos
+     * 
+     * @param id ID de la comunicación a eliminar
+     * @return true si la eliminación fue exitosa, false en caso contrario
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public boolean eliminarComunicacion(int id) throws SQLException {
+        String sql = "DELETE FROM historial_comunicacion WHERE id = ?";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, id);
+            int filasAfectadas = stmt.executeUpdate();
+            return filasAfectadas > 0;
+        }
     }
 }
