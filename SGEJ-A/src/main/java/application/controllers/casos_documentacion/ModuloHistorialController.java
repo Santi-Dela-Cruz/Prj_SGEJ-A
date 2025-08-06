@@ -3,10 +3,13 @@ package application.controllers.casos_documentacion;
 import application.model.HistorialComunicacion;
 import application.service.HistorialComunicacionService;
 import application.database.DatabaseConnection;
+import application.controllers.DialogUtil;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
+import java.util.List;
+import java.util.Optional;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import java.sql.Connection;
@@ -67,34 +70,40 @@ public class ModuloHistorialController {
                     if (getIndex() >= 0 && getIndex() < getTableView().getItems().size()) {
                         HistorialComunicacion comm = getTableView().getItems().get(getIndex());
                         
-                        // Mostrar diálogo de confirmación
-                        Alert confirmacion = new Alert(Alert.AlertType.CONFIRMATION);
-                        confirmacion.setTitle("Confirmar eliminación");
-                        confirmacion.setHeaderText("¿Está seguro de eliminar esta comunicación?");
-                        confirmacion.setContentText("Se eliminará la comunicación de tipo: " + comm.getTipo() + 
-                                                  "\nRealizada por: " + comm.getAbogadoNombre() +
-                                                  "\nExpediente: " + comm.getNumeroExpediente());
+                        // Construir el mensaje para el diálogo
+                        String mensaje = "Se eliminará la comunicación de tipo: " + comm.getTipo() + 
+                                        "\nRealizada por: " + comm.getAbogadoNombre() +
+                                        "\nExpediente: " + comm.getNumeroExpediente();
                         
-                        confirmacion.showAndWait().ifPresent(respuesta -> {
-                            if (respuesta == ButtonType.OK) {
-                                try {
-                                    boolean eliminado = service.eliminarComunicacion(comm.getId());
-                                    if (eliminado) {
-                                        System.out.println("Comunicación eliminada correctamente. ID: " + comm.getId());
-                                        // Recargar la tabla
-                                        ModuloHistorialController.this.cargarComunicaciones();
-                                    } else {
-                                        System.out.println("No se pudo eliminar la comunicación");
-                                        // Usar el método de la clase principal
-                                        ModuloHistorialController.this.mostrarAlerta("Error", "No se pudo eliminar la comunicación", Alert.AlertType.ERROR);
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                    // Usar el método de la clase principal
-                                    ModuloHistorialController.this.mostrarAlerta("Error", "Error al eliminar la comunicación: " + e.getMessage(), Alert.AlertType.ERROR);
+                        // Mostrar diálogo de confirmación personalizado
+                        Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
+                            "Confirmar eliminación",
+                            mensaje,
+                            "confirm", 
+                            List.of(ButtonType.OK, ButtonType.CANCEL)
+                        );
+                        
+                        if (respuesta.isPresent() && respuesta.get() == ButtonType.OK) {
+                            try {
+                                boolean eliminado = service.eliminarComunicacion(comm.getId());
+                                if (eliminado) {
+                                    System.out.println("Comunicación eliminada correctamente. ID: " + comm.getId());
+                                    // Recargar la tabla
+                                    ModuloHistorialController.this.cargarComunicaciones();
+                                    
+                                    // Mostrar mensaje de éxito
+                                    DialogUtil.mostrarDialogo("Éxito", "Comunicación eliminada correctamente", "info", List.of(ButtonType.OK));
+                                } else {
+                                    System.out.println("No se pudo eliminar la comunicación");
+                                    // Usar diálogo personalizado
+                                    DialogUtil.mostrarDialogo("Error", "No se pudo eliminar la comunicación", "error", List.of(ButtonType.OK));
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                // Usar diálogo personalizado
+                                DialogUtil.mostrarDialogo("Error", "Error al eliminar la comunicación: " + e.getMessage(), "error", List.of(ButtonType.OK));
                             }
-                        });
+                        }
                     }
                 });
             }
@@ -136,20 +145,7 @@ public class ModuloHistorialController {
         pnl_Forms.setManaged(false);
     }
     
-    /**
-     * Muestra una alerta con el mensaje especificado
-     * 
-     * @param titulo Título de la alerta
-     * @param mensaje Mensaje a mostrar
-     * @param tipo Tipo de alerta
-     */
-    private void mostrarAlerta(String titulo, String mensaje, Alert.AlertType tipo) {
-        Alert alerta = new Alert(tipo);
-        alerta.setTitle(titulo);
-        alerta.setHeaderText(null);
-        alerta.setContentText(mensaje);
-        alerta.showAndWait();
-    }
+    // El método mostrarDialogo fue reemplazado por llamadas directas a DialogUtil.mostrarDialogo
 
     /**
      * Carga las comunicaciones desde la base de datos

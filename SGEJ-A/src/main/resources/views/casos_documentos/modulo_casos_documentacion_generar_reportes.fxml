@@ -40,8 +40,8 @@
         <Text text="Tipo de caso:" AnchorPane.topAnchor="114.0" AnchorPane.leftAnchor="14.0"/>
         <ComboBox fx:id="cbx_TipoCaso" AnchorPane.topAnchor="134.0" AnchorPane.leftAnchor="14.0" prefWidth="150.0"/>
 
-        <Text text="Abogado asignado:" AnchorPane.topAnchor="174.0" AnchorPane.leftAnchor="14.0"/>
-        <ComboBox fx:id="cbx_AbogadoAsignado" AnchorPane.topAnchor="194.0" AnchorPane.leftAnchor="14.0" prefWidth="150.0"/>
+        <Label fx:id="lbl_Error" textFill="RED" AnchorPane.topAnchor="174.0" AnchorPane.leftAnchor="14.0" visible="false"/>
+        <Label fx:id="lbl_Exito" textFill="GREEN" AnchorPane.topAnchor="174.0" AnchorPane.leftAnchor="14.0" visible="false"/>
 
         <!-- Filtros de la derecha -->
         <Text text="Fecha desde:" AnchorPane.topAnchor="74.0" AnchorPane.leftAnchor="320.0"/>
