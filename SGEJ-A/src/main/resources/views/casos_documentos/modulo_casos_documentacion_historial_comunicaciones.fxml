@@ -1,67 +1,129 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import java.net.URL?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="application.controllers.casos_documentacion.ModuloHistorialController"
             AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+            styleClass="background-app">
+    <stylesheets>
+        <URL value="@/styles/app.css" />
+        <URL value="@/styles/combobox-custom.css" />
+    </stylesheets>
 
     <children>
-        <!-- Title Panel Centered at the Top -->
-        <Pane fx:id="pnl_Title"
-              prefHeight="44.0"
-              style="-fx-background-color: #14213d; -fx-background-radius: 16; -fx-border-radius: 16;"
-              AnchorPane.leftAnchor="14.0"
-              AnchorPane.rightAnchor="2.0"
-              AnchorPane.topAnchor="4.0">
+        <!-- Header Panel Mejorado -->
+        <Pane fx:id="pnl_Header" prefHeight="80.0" 
+              style="-fx-background-color: linear-gradient(to bottom, #1e3a8a, #2563eb, #3b82f6); -fx-background-radius: 0 0 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 0, 3);" 
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Text fill="WHITE"
-                      text="Historial de Comunicaciones"
-                      style="-fx-font-size: 16.0; -fx-font-weight: bold;"
-                      layoutY="28.0"
-                      layoutX="50.0">
-                    <font>
-                        <Font size="16.0" />
-                    </font>
-                </Text>
+                <!-- Línea decorativa superior -->
+                <Pane prefHeight="3.0" style="-fx-background-color: linear-gradient(to right, #f59e0b, #10b981, #3b82f6);" />
+                
+                <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="15.0" spacing="15.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" 
+                                      text="📨 HISTORIAL DE COMUNICACIONES" 
+                                      style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                </Text>
+                                <Text fill="#cbd5e1" strokeType="OUTSIDE" strokeWidth="0.0" 
+                                      text="Registro de comunicación con clientes y partes interesadas" 
+                                      style="-fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-style: italic;">
+                                    <font>
+                                        <Font size="13.0" />
+                                    </font>
+                                </Text>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
             </children>
         </Pane>
 
-        <TextField fx:id="txtf_Buscar"
-                   AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="14.0"
-                   prefHeight="26.0" prefWidth="335.0"
-                   promptText="Buscar comunicación..." />
+        <!-- Control Panel Mejorado -->
+        <VBox layoutX="20.0" layoutY="100.0" prefHeight="90.0" spacing="12.0" 
+              style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 2); -fx-padding: 20; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 15;" 
+              AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="18.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="5.0">
+                            <children>
+                                <Label text="🔍 Búsqueda de Comunicaciones" textFill="#1e40af" 
+                                       style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <Label text="Buscar por asunto, fecha o contenido" textFill="#6b7280" 
+                                       style="-fx-font-size: 11px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </children>
+                        </VBox>
+                        <TextField fx:id="txtf_Buscar" prefHeight="40.0" prefWidth="350.0" promptText="🔍 Buscar comunicación..." 
+                                   style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 10; -fx-background-radius: 10; -fx-padding: 12; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);" 
+                                   HBox.hgrow="SOMETIMES" />
+                        <Button fx:id="btn_Buscar" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" 
+                                style="-fx-background-color: linear-gradient(to bottom, #3b82f6, #2563eb); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 4, 0, 0, 2);" 
+                                text="Buscar" />
+                        <!-- Spacer para empujar el botón a la derecha -->
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <!-- Botón Añadir Comunicación -->
+                        <Button fx:id="btn_Anadir" mnemonicParsing="false" prefHeight="40.0" prefWidth="180.0"
+                                style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);" 
+                                text="➕ Añadir Comunicación" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
 
-        <Button fx:id="btn_Buscar"
-                text="Buscar"
-                maxWidth="100" styleClass="button-windows,button-windows-blue"
-                AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="360.0" />
-
-        <Button fx:id="btn_Anadir"
-                text="Añadir comunicación"
-                maxWidth="180" styleClass="button-windows,button-windows-blue"
-                AnchorPane.topAnchor="54.0" AnchorPane.rightAnchor="14.0" />
-
-        <TableView fx:id="tb_Comunicaciones"
-                   AnchorPane.topAnchor="110.0" AnchorPane.leftAnchor="14.0"
-                   AnchorPane.rightAnchor="14.0" AnchorPane.bottomAnchor="10.0">
-            <columns>
-                <TableColumn fx:id="tbc_FechaEntrada" text="Fecha de entrada" />
-                <TableColumn fx:id="tbc_Usuario" text="Usuario" />
-                <TableColumn fx:id="tbc_TipoAccion" text="Tipo de acción" />
-                <TableColumn fx:id="tbc_Descripcion" text="Descripción" />
-                <TableColumn fx:id="tbc_Expediente" text="N° Expediente Asociado" />
-                <TableColumn fx:id="tbc_BotonEliminar" text=" " />
-            </columns>
-            <columnResizePolicy>
-                <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-            </columnResizePolicy>
-        </TableView>
+        <!-- Table Container Mejorado -->
+        <VBox layoutX="20.0" layoutY="210.0" spacing="15.0" 
+              style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 2); -fx-padding: 20; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 15;" 
+              AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="210.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Label text="📋 Historial de Comunicaciones" textFill="#1e40af" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <Label text="Registro histórico de todas las comunicaciones del caso" textFill="#6b7280" style="-fx-font-size: 12px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </children>
+                        </VBox>
+                        <!-- Spacer -->
+                        <Pane HBox.hgrow="ALWAYS" />
+                        <!-- Indicador de estado -->
+                        <Pane prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: linear-gradient(to right, #10b981, #059669); -fx-background-radius: 20; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.3), 3, 0, 0, 1);">
+                            <children>
+                                <Label layoutX="15.0" layoutY="10.0" text="📊 Estadísticas" textFill="WHITE" style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <Label fx:id="lbl_TotalComunicaciones" layoutX="15.0" layoutY="25.0" text="Total: 0 registros" textFill="#d1fae5" style="-fx-font-size: 10px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </children>
+                        </Pane>
+                    </children>
+                </HBox>
+                
+                <Separator prefWidth="200.0" style="-fx-background-color: linear-gradient(to right, #3b82f6, #10b981, #f59e0b); -fx-pref-height: 2;" />
+                
+                <TableView fx:id="tb_Comunicaciones" style="-fx-background-color: transparent; -fx-table-cell-border-color: #e2e8f0; -fx-selection-bar: linear-gradient(to right, #3b82f6, #2563eb); -fx-selection-bar-non-focused: #93c5fd; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-size: 13px; -fx-background-radius: 10; -fx-padding: 5;" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="tbc_FechaEntrada" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="120" prefWidth="120" text="📅 Fecha" />
+                        <TableColumn fx:id="tbc_Usuario" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 10 0 10;" minWidth="150" prefWidth="150" text="👤 Usuario" />
+                        <TableColumn fx:id="tbc_TipoAccion" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="120" prefWidth="120" text="🏷️ Tipo" />
+                        <TableColumn fx:id="tbc_Descripcion" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 10 0 10;" minWidth="250" prefWidth="350" text="📝 Descripción" />
+                        <TableColumn fx:id="tbc_Expediente" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="120" prefWidth="120" text="🔢 Expediente" />
+                        <TableColumn fx:id="tbc_BotonEliminar" style="-fx-alignment: CENTER; -fx-padding: 0 5 0 5;" minWidth="80" prefWidth="80" maxWidth="80" text="❌ Eliminar" />
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                    </columnResizePolicy>
+                </TableView>
+            </children>
+        </VBox>
     </children>
 </AnchorPane>

@@ -1,78 +1,144 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.*?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import java.net.URL?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="application.controllers.casos_documentacion.ModuloReportesController"
             AnchorPane.topAnchor="0.0" AnchorPane.bottomAnchor="0.0"
-            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+            styleClass="background-app">
+    <stylesheets>
+        <URL value="@/styles/app.css" />
+        <URL value="@/styles/combobox-custom.css" />
+    </stylesheets>
 
     <children>
-        <!-- Title Panel Centered at the Top -->
-        <Pane fx:id="pnl_Title"
-              prefHeight="44.0"
-              style="-fx-background-color: #14213d; -fx-background-radius: 16; -fx-border-radius: 16;"
-              AnchorPane.leftAnchor="14.0"
-              AnchorPane.rightAnchor="2.0"
-              AnchorPane.topAnchor="4.0">
+        <!-- Header Panel Mejorado -->
+        <Pane fx:id="pnl_Header" prefHeight="80.0" 
+              style="-fx-background-color: linear-gradient(to bottom, #1e3a8a, #2563eb, #3b82f6); -fx-background-radius: 0 0 20 20; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 0, 3);" 
+              AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <children>
-                <Text fill="WHITE"
-                      text="Generar Reportes"
-                      style="-fx-font-size: 16.0; -fx-font-weight: bold;"
-                      layoutY="28.0"
-                      layoutX="50.0">
-                    <font>
-                        <Font size="16.0" />
-                    </font>
-                </Text>
+                <!-- Línea decorativa superior -->
+                <Pane prefHeight="3.0" style="-fx-background-color: linear-gradient(to right, #f59e0b, #10b981, #3b82f6);" />
+                
+                <HBox alignment="CENTER_LEFT" layoutX="30.0" layoutY="15.0" spacing="15.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Text fill="WHITE" strokeType="OUTSIDE" strokeWidth="0.0" 
+                                      text="📊 GENERACIÓN DE REPORTES" 
+                                      style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 2, 0, 0, 1);">
+                                    <font>
+                                        <Font size="24.0" />
+                                    </font>
+                                </Text>
+                                <Text fill="#cbd5e1" strokeType="OUTSIDE" strokeWidth="0.0" 
+                                      text="Exportación de datos y estadísticas de casos" 
+                                      style="-fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-style: italic;">
+                                    <font>
+                                        <Font size="13.0" />
+                                    </font>
+                                </Text>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
             </children>
         </Pane>
 
-        <!-- Filtros de la izquierda -->
-        <Text text="Estado del caso:" AnchorPane.topAnchor="54.0" AnchorPane.leftAnchor="14.0"/>
-        <ComboBox fx:id="cbx_EstadoCaso" AnchorPane.topAnchor="74.0" AnchorPane.leftAnchor="14.0" prefWidth="150.0"/>
+        <!-- Panel de Filtros Mejorado -->
+        <VBox layoutX="20.0" layoutY="100.0" prefHeight="90.0" spacing="12.0" 
+              style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 2); -fx-padding: 20; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 15;" 
+              AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="100.0">
+            <children>
+                <Label text="🔍 Filtros de Reportes" textFill="#1e40af" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                <Separator prefWidth="200.0" style="-fx-background-color: #e5e7eb;" />
+                
+                <HBox spacing="20">
+                    <children>
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Estado del Caso:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <ComboBox fx:id="cbx_EstadoCaso" prefHeight="35.0" prefWidth="200.0" 
+                                          style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 2 8; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 35; -fx-max-height: 35;" />
+                            </children>
+                        </VBox>
+                        
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Tipo de Caso:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <ComboBox fx:id="cbx_TipoCaso" prefHeight="35.0" prefWidth="200.0" 
+                                          style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 2 8; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 35; -fx-max-height: 35;" />
+                            </children>
+                        </VBox>
 
-        <Text text="Tipo de caso:" AnchorPane.topAnchor="114.0" AnchorPane.leftAnchor="14.0"/>
-        <ComboBox fx:id="cbx_TipoCaso" AnchorPane.topAnchor="134.0" AnchorPane.leftAnchor="14.0" prefWidth="150.0"/>
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Fecha desde:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <DatePicker fx:id="dt_FechaDesde" prefHeight="35.0" prefWidth="180.0"
+                                           style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 35; -fx-max-height: 35;" />
+                            </children>
+                        </VBox>
 
-        <Label fx:id="lbl_Error" textFill="RED" AnchorPane.topAnchor="174.0" AnchorPane.leftAnchor="14.0" visible="false"/>
-        <Label fx:id="lbl_Exito" textFill="GREEN" AnchorPane.topAnchor="174.0" AnchorPane.leftAnchor="14.0" visible="false"/>
+                        <VBox spacing="8">
+                            <children>
+                                <Label text="Fecha hasta:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <DatePicker fx:id="dt_FechaHasta" prefHeight="35.0" prefWidth="180.0"
+                                           style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 35; -fx-max-height: 35;" />
+                            </children>
+                        </VBox>
 
-        <!-- Filtros de la derecha -->
-        <Text text="Fecha desde:" AnchorPane.topAnchor="74.0" AnchorPane.leftAnchor="320.0"/>
-        <DatePicker fx:id="dt_FechaDesde" AnchorPane.topAnchor="60.0" AnchorPane.leftAnchor="410.0" prefWidth="180.0"
-                    promptText="Fecha desde: " styleClass="date-picker"/>
+                        <!-- Spacer para empujar el botón a la derecha -->
+                        <Pane HBox.hgrow="ALWAYS" />
 
-        <Text text="Fecha hasta:" AnchorPane.topAnchor="134.0" AnchorPane.leftAnchor="320.0"/>
-        <DatePicker fx:id="dt_FechaHasta" AnchorPane.topAnchor="120.0" AnchorPane.leftAnchor="410.0" prefWidth="180.0"
-                    promptText="Fecha hasta: " styleClass="date-picker"/>
+                        <!-- Etiquetas de estado -->
+                        <VBox spacing="4" alignment="CENTER_LEFT">
+                            <Label fx:id="lbl_Error" textFill="#ef4444" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" visible="false"/>
+                            <Label fx:id="lbl_Exito" textFill="#10b981" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" visible="false"/>
+                        </VBox>
 
-        <!-- Botón de generar -->
-        <MenuButton fx:id="btnc_Generar"
-                    text="Generar"
-                    AnchorPane.topAnchor="194.0"
-                    AnchorPane.leftAnchor="410.0"
-                    prefWidth="101.0"
-                    prefHeight="26.0" styleClass="combo-box">
-            <items>
-                <MenuItem text="Generar PDF"/>
-                <MenuItem text="Generar Excel"/>
-            </items>
-        </MenuButton>
+                        <!-- Botón de generar mejorado -->
+                        <MenuButton fx:id="btnc_Generar" mnemonicParsing="false" 
+                                   prefHeight="45.0" prefWidth="180.0" 
+                                   style="-fx-background-color: linear-gradient(to bottom, #3b82f6, #2563eb); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 4, 0, 0, 2);"
+                                   text="📥 Generar Reporte">
+                            <items>
+                                <MenuItem text="📄 Generar PDF" style="-fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <MenuItem text="📊 Generar Excel" style="-fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </items>
+                        </MenuButton>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
 
-        <TableView fx:id="tb_Reportes"
-                   AnchorPane.topAnchor="237.0"
-                   AnchorPane.leftAnchor="14.0"
-                   AnchorPane.rightAnchor="14.0"
-                   AnchorPane.bottomAnchor="10.0">
-            <columns>
-                <TableColumn fx:id="tbc_NombreReporte" text="Nombre Reporte"/>
-                <TableColumn fx:id="tbc_TituloCaso" text="Tipo de caso"/>
+        <!-- Table Container Mejorado -->
+        <VBox layoutX="20.0" layoutY="260.0" spacing="15.0" 
+              style="-fx-background-color: white; -fx-background-radius: 15; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 6, 0, 0, 2); -fx-padding: 20; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 15;" 
+              AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="260.0">
+            <children>
+                <HBox alignment="CENTER_LEFT" spacing="15.0">
+                    <children>
+                        <VBox alignment="CENTER_LEFT" spacing="2.0">
+                            <children>
+                                <Label text="📋 Reportes Disponibles" textFill="#1e40af" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                                <Label text="Seleccione un reporte para visualizar o exportar" textFill="#6b7280" style="-fx-font-size: 12px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+                
+                <Separator prefWidth="200.0" style="-fx-background-color: linear-gradient(to right, #3b82f6, #10b981, #f59e0b); -fx-pref-height: 2;" />
+                
+                <TableView fx:id="tb_Reportes" style="-fx-background-color: transparent; -fx-table-cell-border-color: #e2e8f0; -fx-selection-bar: linear-gradient(to right, #3b82f6, #2563eb); -fx-selection-bar-non-focused: #93c5fd; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-size: 13px; -fx-background-radius: 10; -fx-padding: 5;" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="tbc_NombreReporte" style="-fx-alignment: CENTER-LEFT; -fx-padding: 0 10 0 10;" minWidth="250" prefWidth="350" text="📃 Nombre del Reporte" />
+                        <TableColumn fx:id="tbc_TituloCaso" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="150" prefWidth="200" text="🏷️ Tipo de Caso" />
                 <TableColumn fx:id="tbc_AbogadoAsignado" text="Abogado asignado"/>
                 <TableColumn fx:id="tbc_FechaDesde" text="Fecha desde"/>
                 <TableColumn fx:id="tbc_FechaHasta" text="Fecha hasta"/>
@@ -84,5 +150,7 @@
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
             </columnResizePolicy>
         </TableView>
+            </children>
+        </VBox>
     </children>
 </AnchorPane>

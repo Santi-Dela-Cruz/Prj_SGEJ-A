@@ -3,13 +3,17 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import java.net.URL?>
 
 <AnchorPane fx:id="formContainer" prefWidth="550" prefHeight="650" 
             style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, -5, 5); -fx-background-radius: 8;"
             xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="application.controllers.casos_documentacion.FormDocumentoController"
-            stylesheets="@/styles/combobox-custom.css">
+            fx:controller="application.controllers.casos_documentacion.FormDocumentoController">
+    <stylesheets>
+        <URL value="@/styles/app.css" />
+        <URL value="@/styles/combobox-custom.css" />
+    </stylesheets>
 
     <VBox spacing="18" AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0" 
         AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
@@ -17,61 +21,90 @@
             <Insets top="20" right="20" bottom="20" left="20"/>
         </padding>
 
-        <!-- Título -->
-        <StackPane fx:id="pnl_Titulo" prefHeight="50"
-                   style="-fx-background-color: #90caf9; -fx-background-radius: 8;">
-            <Label fx:id="txt_TituloForm"
-                  text="REGISTRAR DOCUMENTO"
-                  style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: white;"/>
+        <!-- Título Mejorado -->
+        <StackPane fx:id="pnl_Titulo" prefHeight="70" alignment="CENTER" 
+                   style="-fx-background-color: linear-gradient(to right, #2563eb, #3b82f6); -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.3), 4, 0, 0, 2);">
+            <Text fx:id="txt_TituloForm" text="📄 GESTIÓN DE DOCUMENTOS" fill="white" 
+                  style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 2, 0, 0, 1);" />
         </StackPane>
 
         <!-- ScrollPane para permitir desplazamiento -->
         <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS"
                     style="-fx-background-color: transparent; -fx-background: transparent; -fx-border-color: transparent;">
-            <!-- Formulario - reorganizado -->
-            <VBox spacing="15" style="-fx-padding: 5 10;">
-                <!-- Primero: Selección de archivo -->
-            <Label text="Archivo:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-            <HBox spacing="8" alignment="CENTER_LEFT">
-                <TextField fx:id="txtf_RutaArchivo" editable="false" HBox.hgrow="ALWAYS" 
-                           style="-fx-background-color: #f8f9fa; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px; -fx-pref-height: 35;"/>
-                <Button fx:id="btn_SeleccionarArchivo" text="Seleccionar" 
-                        prefWidth="100" prefHeight="35" 
-                        style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 4;"/>
-            </HBox>            <!-- Nombre documento - autogenerado pero modificable -->
-            <Label text="Nombre del documento:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-            <TextField fx:id="txtf_NombreDocumento" styleClass="text-field"
-                      style="-fx-background-color: white; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px; -fx-pref-height: 35;"/>
-            
-            <!-- Tipo de documento -->
-            <Label text="Tipo de documento:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-            <ComboBox fx:id="cbx_TipoDocumento" maxWidth="Infinity" 
-                     promptText="Seleccione un tipo..." styleClass="combo-box"/>
-            
-            <!-- Número expediente -->
-            <Label text="Número de expediente:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-            <TextField fx:id="txtf_NumeroExpediente" styleClass="text-field"
-                      style="-fx-background-color: white; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px; -fx-pref-height: 35;"/>
-            
-            <!-- Fecha (automática) -->
-            <Label text="Fecha de carga:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-            <DatePicker fx:id="dtp_FechaCarga" maxWidth="Infinity"
-                      style="-fx-background-color: white; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px; -fx-pref-height: 35;"/>
-            
-            <!-- Descripción -->
-            <Label text="Descripción:" styleClass="label" style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
-            <TextArea fx:id="txta_Descripcion" prefHeight="120" minHeight="120"
-                      wrapText="true" VBox.vgrow="ALWAYS"
-                      style="-fx-background-color: white; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px;"/>
-        </VBox>
+            <!-- Formulario - reorganizado con estilo mejorado -->
+            <VBox spacing="20" style="-fx-padding: 15 10;">
+                <!-- Panel de archivo con estilo mejorado -->
+                <VBox spacing="12" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 0, 2); -fx-padding: 18; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 12;">
+                    <Label text="📎 Archivo Adjunto" style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #374151; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                    <Separator prefWidth="200.0" style="-fx-background-color: #e5e7eb;" />
+                    
+                    <VBox spacing="8">
+                        <Label text="Seleccionar archivo:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                        <HBox spacing="10" alignment="CENTER_LEFT">
+                            <TextField fx:id="txtf_RutaArchivo" editable="false" HBox.hgrow="ALWAYS" 
+                                      style="-fx-background-color: #f8fafc; -fx-border-color: #cbd5e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1); -fx-pref-height: 40;" />
+                            <Button fx:id="btn_SeleccionarArchivo" text="📂 Seleccionar" 
+                                   prefWidth="130" prefHeight="40" 
+                                   style="-fx-background-color: linear-gradient(to bottom, #3b82f6, #2563eb); -fx-text-fill: white; -fx-background-radius: 8; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(59, 130, 246, 0.4), 4, 0, 0, 2);" />
+                        </HBox>
+                    </VBox>
+                    
+                    <VBox spacing="8">
+                        <Label text="Nombre del documento:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                        <TextField fx:id="txtf_NombreDocumento" 
+                                  style="-fx-background-color: #f8fafc; -fx-border-color: #cbd5e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1); -fx-pref-height: 40;" />
+                    </VBox>
+                </VBox>
+                
+                <!-- Panel de detalles del documento -->
+                <VBox spacing="12" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 0, 2); -fx-padding: 18; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 12;">
+                    <Label text="📝 Información del Documento" style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #374151; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                    <Separator prefWidth="200.0" style="-fx-background-color: #e5e7eb;" />
+                    
+                    <GridPane hgap="12" vgap="15">
+                        <columnConstraints>
+                            <ColumnConstraints percentWidth="50"/>
+                            <ColumnConstraints percentWidth="50"/>
+                        </columnConstraints>
+                        
+                        <!-- Tipo de documento -->
+                        <VBox spacing="8" GridPane.rowIndex="0" GridPane.columnIndex="0">
+                            <Label text="Tipo de documento:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            <ComboBox fx:id="cbx_TipoDocumento" maxWidth="Infinity" promptText="Seleccione un tipo..."
+                                     style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 2 8; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 35; -fx-max-height: 35;" />
+                        </VBox>
+                        
+                        <!-- Número expediente -->
+                        <VBox spacing="8" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                            <Label text="Número de expediente:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            <TextField fx:id="txtf_NumeroExpediente" 
+                                      style="-fx-background-color: #f8fafc; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 35;" />
+                        </VBox>
+                        
+                        <!-- Fecha (automática) -->
+                        <VBox spacing="8" GridPane.rowIndex="1" GridPane.columnIndex="0">
+                            <Label text="Fecha de carga:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                            <DatePicker fx:id="dtp_FechaCarga" maxWidth="Infinity"
+                                       style="-fx-background-color: white; -fx-border-color: #cbd5e0; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 2 8; -fx-font-size: 13px; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-pref-height: 35; -fx-max-height: 35;" />
+                        </VBox>
+                    </GridPane>
+                    
+                    <!-- Descripción -->
+                    <VBox spacing="8">
+                        <Label text="Descripción del documento:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                        <TextArea fx:id="txta_Descripcion" prefHeight="120" minHeight="120" wrapText="true"
+                                 style="-fx-background-color: #f8fafc; -fx-border-color: #cbd5e0; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 10; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+                    </VBox>
+                </VBox>
+            </VBox>
         </ScrollPane>
 
-        <!-- Botones -->
+        <!-- Botones Mejorados -->
         <HBox spacing="20" alignment="CENTER_RIGHT" style="-fx-padding: 15 0 0 0;">
-            <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="120" prefHeight="40" 
-                    style="-fx-background-color: #dc3545; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5;"/>
-            <Button fx:id="btn_Guardar" text="Guardar" prefWidth="120" prefHeight="40" 
-                    style="-fx-background-color: #28a745; -fx-text-fill: white; -fx-font-size: 14px; -fx-font-weight: bold; -fx-background-radius: 5;"/>
+            <Button fx:id="btn_Cancelar" text="❌ Cancelar" prefWidth="150" prefHeight="45" 
+                    style="-fx-background-color: linear-gradient(to bottom, #6b7280, #4b5563); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(107, 114, 128, 0.4), 4, 0, 0, 2);" />
+            <Button fx:id="btn_Guardar" text="💾 Guardar" prefWidth="150" prefHeight="45" 
+                    style="-fx-background-color: linear-gradient(to bottom, #10b981, #059669); -fx-text-fill: white; -fx-background-radius: 10; -fx-font-size: 14px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-cursor: hand; -fx-effect: dropshadow(gaussian, rgba(16, 185, 129, 0.4), 4, 0, 0, 2);" />
         </HBox>
     </VBox>
 </AnchorPane>

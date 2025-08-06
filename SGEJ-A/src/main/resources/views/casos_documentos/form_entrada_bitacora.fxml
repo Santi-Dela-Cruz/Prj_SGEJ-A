@@ -3,35 +3,71 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Text?>
+<?import javafx.scene.text.*?>
+<?import java.net.URL?>
 
 <AnchorPane xmlns="http://javafx.com/javafx/23.0.1"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="application.controllers.casos_documentacion.FormBitacoraController"
-            prefWidth="400.0" prefHeight="360.0"
-            style="-fx-background-color: white; -fx-background-radius: 8;" layoutX="85" layoutY="55">
+            prefWidth="500.0" prefHeight="400.0"
+            style="-fx-background-color: white; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 10, 0, -5, 5); -fx-background-radius: 8;">
+    <stylesheets>
+        <URL value="@/styles/app.css" />
+        <URL value="@/styles/combobox-custom.css" />
+    </stylesheets>
 
-    <children>
-        <!-- Title in a colored panel -->
-        <StackPane layoutX="0" layoutY="0" prefHeight="50" prefWidth="400"
-                   style="-fx-background-color: #90caf9; -fx-background-radius: 8;" alignment="CENTER">
-            <Label fx:id="lbl_TituloFormulario"
-                  text="Nueva Bitácora"
-                  style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-fill: white;"/>
+    <VBox spacing="18" AnchorPane.topAnchor="0.0" AnchorPane.rightAnchor="0.0" 
+        AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0">
+        <padding>
+            <Insets top="20" right="20" bottom="20" left="20"/>
+        </padding>
+
+        <!-- Título Mejorado -->
+        <StackPane prefHeight="70" alignment="CENTER" 
+                   style="-fx-background-color: linear-gradient(to right, #2563eb, #3b82f6); -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(37,99,235,0.3), 4, 0, 0, 2);">
+            <Text fx:id="lbl_TituloFormulario" text="📒 NUEVA BITÁCORA" fill="white" 
+                  style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.5), 2, 0, 0, 1);" />
         </StackPane>
 
-        <Label fx:id="lbl_Expediente" text="N° de Expediente:" layoutX="20" layoutY="80"/>
-        <TextField fx:id="txtf_Expediente" layoutX="150" layoutY="76" prefWidth="220"/>
+        <!-- Contenedor del Formulario -->
+        <VBox spacing="15" style="-fx-background-color: white; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.08), 4, 0, 0, 2); -fx-padding: 18; -fx-border-color: #e2e8f0; -fx-border-width: 1; -fx-border-radius: 12;" VBox.vgrow="ALWAYS">
+            <Label text="📋 Información Básica" style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: #374151; -fx-font-family: 'Segoe UI', Arial, sans-serif;" />
+            <Separator style="-fx-background-color: #e5e7eb;" />
+            
+            <GridPane hgap="15" vgap="15">
+                <columnConstraints>
+                    <ColumnConstraints prefWidth="150" />
+                    <ColumnConstraints hgrow="ALWAYS" prefWidth="280" />
+                </columnConstraints>
+                
+                <Label text="🔢 N° de Expediente:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" 
+                       GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                <TextField fx:id="txtf_Expediente" 
+                          style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" 
+                          GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                
+                <Label text="👤 Responsable:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" 
+                       GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                <TextField fx:id="txtf_Responsable" 
+                          style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 8; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" 
+                          GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                
+                <Label text="📅 Fecha de creación:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #4a5568; -fx-font-family: 'Segoe UI', Arial, sans-serif;" 
+                       GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                <DatePicker fx:id="dp_FechaCreacion" 
+                          style="-fx-background-color: #f8fafc; -fx-border-color: #d1d5db; -fx-border-radius: 6; -fx-background-radius: 6; -fx-font-size: 14px; -fx-font-family: 'Segoe UI', Arial, sans-serif;" 
+                          GridPane.rowIndex="2" GridPane.columnIndex="1" />
+            </GridPane>
 
-        <Label fx:id="lbl_Responsable" text="Responsable:" layoutX="20" layoutY="140"/>
-        <TextField fx:id="txtf_Responsable" layoutX="150" layoutY="136" prefWidth="220"/>
+            <Region VBox.vgrow="ALWAYS" />
 
-        <Label fx:id="lbl_FechaCreacion" text="Fecha de creación:" layoutX="20" layoutY="200"/>
-        <DatePicker fx:id="dp_FechaCreacion" layoutX="150" layoutY="196" prefWidth="220"/>
-
-        <Button fx:id="btn_Guardar" text="Guardar" layoutX="150" layoutY="280"
-                styleClass="button-windows,button-windows-green"/>
-        <Button fx:id="btn_Cancelar" text="Cancelar" layoutX="250" layoutY="280"
-                styleClass="button-windows,button-windows-red"/>
-    </children>
+            <!-- Botones de Acción -->
+            <HBox spacing="15" alignment="CENTER_RIGHT">
+                <Button fx:id="btn_Cancelar" text="Cancelar" prefWidth="120" prefHeight="40"
+                        styleClass="btn-secondary" />
+                <Button fx:id="btn_Guardar" text="💾 Guardar" prefWidth="120" prefHeight="40"
+                        styleClass="btn-success" />
+            </HBox>
+        </VBox>
+    </VBox>
 </AnchorPane>
