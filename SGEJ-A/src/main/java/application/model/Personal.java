@@ -27,8 +27,8 @@ public class Personal {
     /**
      * Constructor con parámetros
      */
-    public Personal(String nombres, String apellidos, String numeroIdentificacion, 
-            String tipoIdentificacion, String telefono, String correo, 
+    public Personal(String nombres, String apellidos, String numeroIdentificacion,
+            String tipoIdentificacion, String telefono, String correo,
             String direccion, LocalDate fechaIngreso, String rol, String estado) {
         this.nombres = nombres;
         this.apellidos = apellidos;
@@ -45,8 +45,8 @@ public class Personal {
     /**
      * Constructor con ID
      */
-    public Personal(int id, String nombres, String apellidos, String numeroIdentificacion, 
-            String tipoIdentificacion, String telefono, String correo, 
+    public Personal(int id, String nombres, String apellidos, String numeroIdentificacion,
+            String tipoIdentificacion, String telefono, String correo,
             String direccion, LocalDate fechaIngreso, String rol, String estado) {
         this.id = id;
         this.nombres = nombres;

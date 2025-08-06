@@ -9,13 +9,13 @@ import application.model.Personal;
  * Servicio para gestionar las operaciones relacionadas con los empleados.
  */
 public class EmpleadoService {
-    
+
     private PersonalDAO personalDAO;
-    
+
     public EmpleadoService() {
         this.personalDAO = new PersonalDAO();
     }
-    
+
     /**
      * Registra un nuevo empleado en el sistema.
      * 
@@ -25,7 +25,7 @@ public class EmpleadoService {
     public int registrarEmpleado(Personal personal) {
         return personalDAO.registrarPersonal(personal);
     }
-    
+
     /**
      * Actualiza la información de un empleado existente.
      * 
@@ -35,7 +35,7 @@ public class EmpleadoService {
     public boolean actualizarEmpleado(Personal personal) {
         return personalDAO.actualizarPersonal(personal);
     }
-    
+
     /**
      * Elimina un empleado del sistema.
      * 
@@ -45,7 +45,7 @@ public class EmpleadoService {
     public boolean eliminarEmpleado(int id) {
         return personalDAO.eliminarPersonal(id);
     }
-    
+
     /**
      * Obtiene un empleado por su ID.
      * 
@@ -55,7 +55,7 @@ public class EmpleadoService {
     public Personal obtenerEmpleadoPorId(int id) {
         return personalDAO.obtenerPersonalPorId(id);
     }
-    
+
     /**
      * Obtiene un empleado por su número de identificación.
      * 
@@ -65,7 +65,7 @@ public class EmpleadoService {
     public Personal obtenerEmpleadoPorIdentificacion(String numeroIdentificacion) {
         return personalDAO.obtenerPersonalPorIdentificacion(numeroIdentificacion);
     }
-    
+
     /**
      * Obtiene todos los empleados registrados en el sistema.
      * 
@@ -74,31 +74,31 @@ public class EmpleadoService {
     public List<Personal> obtenerTodosLosEmpleados() {
         return personalDAO.obtenerTodosLosEmpleados();
     }
-    
+
     /**
      * Obtiene una lista de todos los empleados con un rol específico.
      * 
-     * @param rol El rol por el cual filtrar los empleados (ej. "Abogado", "Administrador", etc.)
+     * @param rol El rol por el cual filtrar los empleados (ej. "Abogado",
+     *            "Administrador", etc.)
      * @return Lista de empleados que tienen el rol especificado
      */
     public List<Empleado> getEmpleadosByRol(String rol) {
         List<Personal> personalList = personalDAO.obtenerPersonalPorRol(rol);
         List<Empleado> empleados = new ArrayList<>();
-        
+
         for (Personal persona : personalList) {
             empleados.add(new Empleado(
-                persona.getId(),
-                persona.getNombres(),
-                persona.getApellidos(),
-                persona.getNumeroIdentificacion(),
-                persona.getCorreo(),
-                persona.getRol()
-            ));
+                    persona.getId(),
+                    persona.getNombres(),
+                    persona.getApellidos(),
+                    persona.getNumeroIdentificacion(),
+                    persona.getCorreo(),
+                    persona.getRol()));
         }
-        
+
         return empleados;
     }
-    
+
     /**
      * Clase interna para representar datos básicos de un empleado.
      */
@@ -109,9 +109,9 @@ public class EmpleadoService {
         private final String numeroIdentificacion;
         private final String correo;
         private final String rol;
-        
-        public Empleado(int id, String nombres, String apellidos, String numeroIdentificacion, 
-                        String correo, String rol) {
+
+        public Empleado(int id, String nombres, String apellidos, String numeroIdentificacion,
+                String correo, String rol) {
             this.id = id;
             this.nombres = nombres;
             this.apellidos = apellidos;
@@ -119,27 +119,27 @@ public class EmpleadoService {
             this.correo = correo;
             this.rol = rol;
         }
-        
+
         public int getId() {
             return id;
         }
-        
+
         public String getNombres() {
             return nombres;
         }
-        
+
         public String getApellidos() {
             return apellidos;
         }
-        
+
         public String getNumeroIdentificacion() {
             return numeroIdentificacion;
         }
-        
+
         public String getCorreo() {
             return correo;
         }
-        
+
         public String getRol() {
             return rol;
         }

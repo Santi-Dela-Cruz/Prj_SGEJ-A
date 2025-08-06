@@ -177,22 +177,22 @@ public class ExportadorExcel {
 
         // Cabecera con todas las columnas disponibles
         Row headerRow = sheet.createRow(0);
-        String[] columnas = { 
-            "ID", 
-            "Nombre Completo", 
-            "Tipo Persona", 
-            "Tipo Identificación", 
-            "Número Identificación", 
-            "Teléfono", 
-            "Correo Electrónico", 
-            "Dirección", 
-            "Estado", 
-            "Fecha Registro", 
-            "Estado Civil", 
-            "Representante Legal", 
-            "Dirección Fiscal",
-            "Fecha Creación",
-            "Última Actualización"
+        String[] columnas = {
+                "ID",
+                "Nombre Completo",
+                "Tipo Persona",
+                "Tipo Identificación",
+                "Número Identificación",
+                "Teléfono",
+                "Correo Electrónico",
+                "Dirección",
+                "Estado",
+                "Fecha Registro",
+                "Estado Civil",
+                "Representante Legal",
+                "Dirección Fiscal",
+                "Fecha Creación",
+                "Última Actualización"
         };
 
         for (int i = 0; i < columnas.length; i++) {
@@ -216,7 +216,7 @@ public class ExportadorExcel {
             Cell cellNombre = row.createCell(col++);
             cellNombre.setCellValue(c.getNombreCompleto() != null ? c.getNombreCompleto() : "");
             cellNombre.setCellStyle(dataStyle);
-            
+
             // Tipo Persona
             Cell cellTipoPersona = row.createCell(col++);
             cellTipoPersona.setCellValue(c.getTipoPersona() != null ? c.getTipoPersona().toString() : "");
@@ -224,12 +224,14 @@ public class ExportadorExcel {
 
             // Tipo Identificación
             Cell cellTipoIdentificacion = row.createCell(col++);
-            cellTipoIdentificacion.setCellValue(c.getTipoIdentificacion() != null ? c.getTipoIdentificacion().toString() : "");
+            cellTipoIdentificacion
+                    .setCellValue(c.getTipoIdentificacion() != null ? c.getTipoIdentificacion().toString() : "");
             cellTipoIdentificacion.setCellStyle(dataStyle);
 
             // Número Identificación
             Cell cellNumeroIdentificacion = row.createCell(col++);
-            cellNumeroIdentificacion.setCellValue(c.getNumeroIdentificacion() != null ? c.getNumeroIdentificacion() : "");
+            cellNumeroIdentificacion
+                    .setCellValue(c.getNumeroIdentificacion() != null ? c.getNumeroIdentificacion() : "");
             cellNumeroIdentificacion.setCellStyle(dataStyle);
 
             // Teléfono
@@ -251,32 +253,32 @@ public class ExportadorExcel {
             Cell cellEstado = row.createCell(col++);
             cellEstado.setCellValue(c.getEstado() != null ? c.getEstado().toString() : "");
             cellEstado.setCellStyle(dataStyle);
-            
+
             // Fecha Registro
             Cell cellFechaRegistro = row.createCell(col++);
             cellFechaRegistro.setCellValue(c.getFechaRegistro() != null ? c.getFechaRegistro().toString() : "");
             cellFechaRegistro.setCellStyle(dataStyle);
-            
+
             // Estado Civil (si aplica)
             Cell cellEstadoCivil = row.createCell(col++);
             cellEstadoCivil.setCellValue(c.getEstadoCivil() != null ? c.getEstadoCivil() : "");
             cellEstadoCivil.setCellStyle(dataStyle);
-            
+
             // Representante Legal (si aplica)
             Cell cellRepresentante = row.createCell(col++);
             cellRepresentante.setCellValue(c.getRepresentanteLegal() != null ? c.getRepresentanteLegal() : "");
             cellRepresentante.setCellStyle(dataStyle);
-            
+
             // Dirección Fiscal (si aplica)
             Cell cellDireccionFiscal = row.createCell(col++);
             cellDireccionFiscal.setCellValue(c.getDireccionFiscal() != null ? c.getDireccionFiscal() : "");
             cellDireccionFiscal.setCellStyle(dataStyle);
-            
+
             // Fecha Creación
             Cell cellCreatedAt = row.createCell(col++);
             cellCreatedAt.setCellValue(c.getCreatedAt() != null ? c.getCreatedAt().toString() : "");
             cellCreatedAt.setCellStyle(dataStyle);
-            
+
             // Última Actualización
             Cell cellUpdatedAt = row.createCell(col++);
             cellUpdatedAt.setCellValue(c.getUpdatedAt() != null ? c.getUpdatedAt().toString() : "");
@@ -293,7 +295,7 @@ public class ExportadorExcel {
                 sheet.setColumnWidth(i, anchoMinimo);
             }
         }
-        
+
         // Crear filtros para facilitar la navegación
         sheet.setAutoFilter(new CellRangeAddress(0, 0, 0, columnas.length - 1));
 

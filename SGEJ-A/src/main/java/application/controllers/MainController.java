@@ -371,9 +371,9 @@ public class MainController {
             if (!rutaFXML.startsWith("/")) {
                 rutaFXML = "/" + rutaFXML;
             }
-            
+
             System.out.println("DEBUG: MainController intentando cargar: " + rutaFXML);
-            
+
             // Verificar que el recurso existe antes de intentar cargarlo
             if (getClass().getResource(rutaFXML) == null) {
                 System.err.println("ERROR: El recurso " + rutaFXML + " no existe");
@@ -386,7 +386,7 @@ public class MainController {
                     throw new IllegalArgumentException("El recurso FXML no existe: " + rutaFXML);
                 }
             }
-            
+
             FXMLLoader loader = new FXMLLoader(getClass().getResource(rutaFXML));
             Node modulo = loader.load();
 

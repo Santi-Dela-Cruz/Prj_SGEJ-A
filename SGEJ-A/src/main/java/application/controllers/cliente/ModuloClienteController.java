@@ -556,7 +556,7 @@ public class ModuloClienteController {
         }
         cargarClientesDesdeBaseDatos();
     }
-    
+
     /**
      * Exporta los datos de todos los clientes a un archivo Excel
      * Utiliza la clase ExportadorExcel para generar el archivo
@@ -565,7 +565,7 @@ public class ModuloClienteController {
         try {
             // Obtener la lista completa de clientes desde la base de datos
             List<Cliente> listaClientes;
-            
+
             // Si es administrador, exportar todos los clientes
             if ("Administrador".equals(tipoUsuario)) {
                 listaClientes = clienteService.obtenerTodosLosClientesIncluirInactivos();
@@ -573,30 +573,30 @@ public class ModuloClienteController {
                 // Si no es administrador, exportar solo clientes activos
                 listaClientes = clienteService.obtenerClientesActivos();
             }
-            
+
             // Exportar a Excel usando la utilidad
             boolean resultado = ExportadorExcel.exportarClientesAExcel(listaClientes);
-            
+
             // Mostrar mensaje según el resultado
             if (resultado) {
-                mostrarMensaje(Alert.AlertType.INFORMATION, "Exportación Exitosa", 
-                       "Los datos de los clientes han sido exportados correctamente.");
+                mostrarMensaje(Alert.AlertType.INFORMATION, "Exportación Exitosa",
+                        "Los datos de los clientes han sido exportados correctamente.");
             } else {
-                mostrarMensaje(Alert.AlertType.WARNING, "Exportación Cancelada", 
-                       "La exportación de datos fue cancelada o no se pudo completar.");
+                mostrarMensaje(Alert.AlertType.WARNING, "Exportación Cancelada",
+                        "La exportación de datos fue cancelada o no se pudo completar.");
             }
         } catch (Exception e) {
-            mostrarMensaje(Alert.AlertType.ERROR, "Error en Exportación", 
-                   "No se pudieron exportar los datos: " + e.getMessage());
+            mostrarMensaje(Alert.AlertType.ERROR, "Error en Exportación",
+                    "No se pudieron exportar los datos: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Muestra una alerta con el tipo, título y mensaje especificados
      * 
-     * @param tipo Tipo de alerta (información, advertencia, error)
-     * @param titulo Título de la alerta
+     * @param tipo    Tipo de alerta (información, advertencia, error)
+     * @param titulo  Título de la alerta
      * @param mensaje Mensaje a mostrar
      */
     private void mostrarMensaje(Alert.AlertType tipo, String titulo, String mensaje) {

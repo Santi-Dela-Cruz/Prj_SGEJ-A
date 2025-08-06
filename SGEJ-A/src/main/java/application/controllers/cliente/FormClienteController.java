@@ -395,13 +395,14 @@ public class FormClienteController implements Initializable {
             }
 
             // Configurar tipo de identificación según el tipo de persona
-            // El tipo de identificación ahora se establece automáticamente según el tipo de persona
+            // El tipo de identificación ahora se establece automáticamente según el tipo de
+            // persona
             if (cliente.getTipoIdentificacion() == Cliente.TipoIdentificacion.CEDULA) {
                 cbx_TipoIdentificacion.getSelectionModel().select("Cédula");
             } else if (cliente.getTipoIdentificacion() == Cliente.TipoIdentificacion.RUC) {
                 cbx_TipoIdentificacion.getSelectionModel().select("RUC");
             }
-            
+
             // Asegurar que el combobox esté deshabilitado
             cbx_TipoIdentificacion.setDisable(true);
 
@@ -542,7 +543,7 @@ public class FormClienteController implements Initializable {
             mostrarError(lbl_ErrorTipoIdentificacion);
             esValido = false;
         }
-        
+
         // Validar número de identificación
         if (txtf_NumeroIdentificacion.getText() == null || txtf_NumeroIdentificacion.getText().trim().isEmpty()) {
             mostrarError(lbl_ErrorNumIdentificacion);
@@ -609,88 +610,81 @@ public class FormClienteController implements Initializable {
 
         // Si hay errores, mostrar la lista específica de errores en el diálogo
         if (!esValido) {
-            // Verificar cada campo en el orden del formulario y mostrar solo el primer error encontrado
+            // Verificar cada campo en el orden del formulario y mostrar solo el primer
+            // error encontrado
             if (lbl_ErrorTipoCliente != null && lbl_ErrorTipoCliente.isVisible()) {
                 application.controllers.DialogUtil.mostrarDialogo(
-                    "Error de Validación", 
-                    "• Debe seleccionar un tipo de cliente", 
-                    "error", 
-                    java.util.List.of(javafx.scene.control.ButtonType.OK)
-                );
+                        "Error de Validación",
+                        "• Debe seleccionar un tipo de cliente",
+                        "error",
+                        java.util.List.of(javafx.scene.control.ButtonType.OK));
                 return esValido;
             }
-            
+
             if (lbl_ErrorNombres != null && lbl_ErrorNombres.isVisible()) {
-                String mensaje = lbl_ErrorNombres.getText().contains("Solo se permiten") ?
-                    "• El nombre contiene caracteres no válidos" : 
-                    "• Debe ingresar un nombre completo";
-                    
+                String mensaje = lbl_ErrorNombres.getText().contains("Solo se permiten")
+                        ? "• El nombre contiene caracteres no válidos"
+                        : "• Debe ingresar un nombre completo";
+
                 application.controllers.DialogUtil.mostrarDialogo(
-                    "Error de Validación", 
-                    mensaje, 
-                    "error", 
-                    java.util.List.of(javafx.scene.control.ButtonType.OK)
-                );
+                        "Error de Validación",
+                        mensaje,
+                        "error",
+                        java.util.List.of(javafx.scene.control.ButtonType.OK));
                 return esValido;
             }
-            
+
             if (lbl_ErrorTipoIdentificacion != null && lbl_ErrorTipoIdentificacion.isVisible()) {
                 application.controllers.DialogUtil.mostrarDialogo(
-                    "Error de Validación", 
-                    "• Debe seleccionar un tipo de identificación", 
-                    "error", 
-                    java.util.List.of(javafx.scene.control.ButtonType.OK)
-                );
+                        "Error de Validación",
+                        "• Debe seleccionar un tipo de identificación",
+                        "error",
+                        java.util.List.of(javafx.scene.control.ButtonType.OK));
                 return esValido;
             }
-            
+
             if (lbl_ErrorNumIdentificacion != null && lbl_ErrorNumIdentificacion.isVisible()) {
                 application.controllers.DialogUtil.mostrarDialogo(
-                    "Error de Validación", 
-                    "• Debe ingresar un número de identificación válido", 
-                    "error", 
-                    java.util.List.of(javafx.scene.control.ButtonType.OK)
-                );
+                        "Error de Validación",
+                        "• Debe ingresar un número de identificación válido",
+                        "error",
+                        java.util.List.of(javafx.scene.control.ButtonType.OK));
                 return esValido;
             }
-            
+
             if (lbl_ErrorTelefono != null && lbl_ErrorTelefono.isVisible()) {
                 application.controllers.DialogUtil.mostrarDialogo(
-                    "Error de Validación", 
-                    "• " + lbl_ErrorTelefono.getText().substring(1), 
-                    "error", 
-                    java.util.List.of(javafx.scene.control.ButtonType.OK)
-                );
+                        "Error de Validación",
+                        "• " + lbl_ErrorTelefono.getText().substring(1),
+                        "error",
+                        java.util.List.of(javafx.scene.control.ButtonType.OK));
                 return esValido;
             }
-            
+
             if (lbl_ErrorCorreo != null && lbl_ErrorCorreo.isVisible()) {
                 application.controllers.DialogUtil.mostrarDialogo(
-                    "Error de Validación", 
-                    "• " + lbl_ErrorCorreo.getText().substring(1), 
-                    "error", 
-                    java.util.List.of(javafx.scene.control.ButtonType.OK)
-                );
+                        "Error de Validación",
+                        "• " + lbl_ErrorCorreo.getText().substring(1),
+                        "error",
+                        java.util.List.of(javafx.scene.control.ButtonType.OK));
                 return esValido;
             }
-            
+
             if (lbl_ErrorRepresentante != null && lbl_ErrorRepresentante.isVisible()) {
                 application.controllers.DialogUtil.mostrarDialogo(
-                    "Error de Validación", 
-                    "• Debe ingresar un representante legal", 
-                    "error", 
-                    java.util.List.of(javafx.scene.control.ButtonType.OK)
-                );
+                        "Error de Validación",
+                        "• Debe ingresar un representante legal",
+                        "error",
+                        java.util.List.of(javafx.scene.control.ButtonType.OK));
                 return esValido;
             }
-            
+
             if (lbl_ErrorDireccionFiscal != null && lbl_ErrorDireccionFiscal.isVisible()) {
                 application.controllers.DialogUtil.mostrarDialogo(
-                    "Error de Validación", 
-                    "• Debe ingresar una dirección fiscal", 
-                    "error", 
-                    java.util.List.of(javafx.scene.control.ButtonType.OK)
-                );
+                        "Error de Validación",
+                        "• Debe ingresar una dirección fiscal",
+                        "error",
+                        java.util.List.of(javafx.scene.control.ButtonType.OK));
                 return esValido;
             }
         }
@@ -712,7 +706,8 @@ public class FormClienteController implements Initializable {
         }
         if (lbl_ErrorTipoIdentificacion != null) {
             lbl_ErrorTipoIdentificacion.setVisible(false);
-            lbl_ErrorTipoIdentificacion.setText("*Debe seleccionar un tipo de identificación"); // Mensaje más específico
+            lbl_ErrorTipoIdentificacion.setText("*Debe seleccionar un tipo de identificación"); // Mensaje más
+                                                                                                // específico
         }
         if (lbl_ErrorNumIdentificacion != null) {
             lbl_ErrorNumIdentificacion.setVisible(false);
@@ -724,11 +719,12 @@ public class FormClienteController implements Initializable {
         }
         if (lbl_ErrorCorreo != null) {
             lbl_ErrorCorreo.setVisible(false);
-            lbl_ErrorCorreo.setText("*Ingrese un correo electrónico válido"); 
+            lbl_ErrorCorreo.setText("*Ingrese un correo electrónico válido");
         }
         if (lbl_ErrorRepresentante != null) {
             lbl_ErrorRepresentante.setVisible(false);
-            lbl_ErrorRepresentante.setText("*Debe ingresar el nombre del representante legal"); // Mensaje más específico
+            lbl_ErrorRepresentante.setText("*Debe ingresar el nombre del representante legal"); // Mensaje más
+                                                                                                // específico
         }
         if (lbl_ErrorDireccionFiscal != null) {
             lbl_ErrorDireccionFiscal.setVisible(false);
@@ -901,7 +897,8 @@ public class FormClienteController implements Initializable {
         txtf_Nombres.clear();
         cbx_TipoCliente.setValue(null);
         cbx_TipoIdentificacion.setValue(null);
-        // Habilitar el combobox de tipo de identificación cuando se limpia el formulario
+        // Habilitar el combobox de tipo de identificación cuando se limpia el
+        // formulario
         cbx_TipoIdentificacion.setDisable(false);
         txtf_NumeroIdentificacion.clear();
         txtf_Direccion.clear();

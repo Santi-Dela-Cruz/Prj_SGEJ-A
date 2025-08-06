@@ -55,19 +55,19 @@ public class DetalleCasoBitacoraController {
         btnAgregarEntrada.setOnAction(e -> mostrarFormularioBitacora());
         configurarBotonRegresar();
     }
-    
+
     /**
      * Configura el botón regresar para usar MainController directamente
      */
     private void configurarBotonRegresar() {
         btnRegresar.setOnAction(e -> {
             System.out.println("DEBUG: Botón regresar presionado en DetalleCasoBitacoraController");
-            
+
             // Usar MainController exclusivamente para navegación
             try {
                 System.out.println("DEBUG: Navegando con MainController");
-                application.controllers.MainController mainController = 
-                    application.controllers.MainController.getInstance();
+                application.controllers.MainController mainController = application.controllers.MainController
+                        .getInstance();
                 if (mainController != null) {
                     // Cambiado para usar la ruta correcta del FXML
                     mainController.cargarModulo("/views/casos_documentos/modulo_casos_documentacion_casos.fxml");
@@ -80,8 +80,8 @@ public class DetalleCasoBitacoraController {
                 ex.printStackTrace();
                 // Intentar cargar con una ruta alternativa si la primera falló
                 try {
-                    application.controllers.MainController mainController = 
-                        application.controllers.MainController.getInstance();
+                    application.controllers.MainController mainController = application.controllers.MainController
+                            .getInstance();
                     if (mainController != null) {
                         mainController.cargarModulo("views/casos_documentos/modulo_casos_documentacion_casos.fxml");
                         System.out.println("DEBUG: Navegación exitosa con ruta alternativa");
@@ -204,8 +204,10 @@ public class DetalleCasoBitacoraController {
      */
     public void setOnRegresar(Runnable r) {
         System.out.println("DEBUG: setOnRegresar llamado en DetalleCasoBitacoraController - ignorando callback");
-        
-        // Ya no usamos callbacks para navegación, utilizamos MainController directamente
-        // El botón de regreso ya está configurado en el método configurarBotonRegresar()
+
+        // Ya no usamos callbacks para navegación, utilizamos MainController
+        // directamente
+        // El botón de regreso ya está configurado en el método
+        // configurarBotonRegresar()
     }
 }

@@ -36,8 +36,8 @@
             <Label text="Fecha de entrada:" GridPane.rowIndex="0" GridPane.columnIndex="0" styleClass="label"/>
             <DatePicker fx:id="dtp_Fecha" prefWidth="180.0" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
 
-            <Label text="Usuario responsable:" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="label"/>
-            <TextField fx:id="txtf_Usuario" prefWidth="180.0" styleClass="text-field"
+            <Label text="Abogado responsable:" GridPane.rowIndex="0" GridPane.columnIndex="1" styleClass="label"/>
+            <ComboBox fx:id="cbx_Abogado" prefWidth="180.0" styleClass="combo-box"
                        GridPane.rowIndex="1" GridPane.columnIndex="1"/>
 
             <!-- Row 2 -->

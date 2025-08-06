@@ -71,15 +71,16 @@ public class FormDocumentoController {
         dtp_FechaCarga.setValue(LocalDate.now());
 
         btn_SeleccionarArchivo.setOnAction(e -> seleccionarArchivo());
-        
-        // Configuración inicial del botón Cancelar (será modificado en setModo si es necesario)
+
+        // Configuración inicial del botón Cancelar (será modificado en setModo si es
+        // necesario)
         btn_Cancelar.setOnAction(e -> {
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                     "Confirmación",
                     "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
                     "confirm",
                     List.of(ButtonType.YES, ButtonType.NO));
-                
+
             if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
                 if (onCancelar != null) {
                     onCancelar.run();
@@ -415,7 +416,7 @@ public class FormDocumentoController {
 
         btn_Guardar.setVisible(!esVer);
         btn_Guardar.setDisable(esVer);
-        
+
         // Configurar el botón Cancelar específicamente para el modo Ver
         if (esVer) {
             btn_Cancelar.setText("Regresar");
@@ -434,7 +435,7 @@ public class FormDocumentoController {
                         "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
                         "confirm",
                         List.of(ButtonType.YES, ButtonType.NO));
-                
+
                 if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
                     if (onCancelar != null) {
                         onCancelar.run();

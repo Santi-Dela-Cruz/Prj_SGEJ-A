@@ -96,6 +96,57 @@ public class CasoDAO {
         return casos;
     }
 
+    /**
+     * Obtiene un caso por su número de expediente
+     * 
+     * @param numeroExpediente El número de expediente del caso
+     * @return El caso si existe, null si no se encuentra
+     */
+    public Caso obtenerCasoPorNumero(String numeroExpediente) {
+        if (numeroExpediente == null || numeroExpediente.trim().isEmpty()) {
+            return null;
+        }
+
+        String sql = "SELECT * FROM caso WHERE numero_expediente = ?";
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        Caso caso = null;
+
+        try {
+            conn = DatabaseConnection.getConnection();
+            stmt = conn.prepareStatement(sql);
+            stmt.setString(1, numeroExpediente.trim());
+            rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                caso = new Caso();
+                caso.setId(rs.getInt("id"));
+                caso.setClienteId(rs.getInt("cliente_id"));
+                caso.setNumeroExpediente(rs.getString("numero_expediente"));
+                caso.setTitulo(rs.getString("titulo"));
+                caso.setTipo(rs.getString("tipo"));
+                caso.setFechaInicio(rs.getDate("fecha_inicio"));
+                caso.setDescripcion(rs.getString("descripcion"));
+                caso.setEstado(rs.getString("estado"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // No cerramos la conexión aquí porque podría ser compartida
+            try {
+                if (rs != null)
+                    rs.close();
+                if (stmt != null)
+                    stmt.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return caso;
+    }
+
     public void actualizarCaso(Caso caso) throws SQLException {
         String sql = "UPDATE caso SET titulo=?, tipo=?, descripcion=?, abogado=?, estado=? WHERE id=?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {

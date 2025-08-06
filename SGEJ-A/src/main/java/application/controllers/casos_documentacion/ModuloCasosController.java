@@ -119,16 +119,17 @@ public class ModuloCasosController {
                     getClass().getResource("/views/casos_documentos/detalle_caso_bitacora.fxml"));
             Node detalle = loader.load();
             System.out.println("DEBUG: Vista de bitácora cargada exitosamente");
-            
+
             DetalleCasoBitacoraController controller = loader.getController();
             if (controller != null) {
                 System.out.println("DEBUG: Controlador DetalleCasoBitacoraController obtenido exitosamente");
-                
+
                 // Primero establecemos los datos del caso
                 controller.setCaso(caso);
                 System.out.println("DEBUG: Datos del caso establecidos en DetalleCasoBitacoraController");
-                
-                // Luego configuramos el callback de regresar con una referencia directa al método
+
+                // Luego configuramos el callback de regresar con una referencia directa al
+                // método
                 final Runnable regresarCallback = this::cerrarDetalleYMostrarCasos;
                 System.out.println("DEBUG: Creado callback de regreso, configurando...");
                 controller.setOnRegresar(regresarCallback);
@@ -158,60 +159,61 @@ public class ModuloCasosController {
 
     /**
      * Cierra la vista de detalle y muestra la lista de casos
-     * Este método es llamado desde el controlador DetalleCasoBitacoraController 
+     * Este método es llamado desde el controlador DetalleCasoBitacoraController
      * cuando se presiona el botón Regresar
      */
     private void cerrarDetalleYMostrarCasos() {
         try {
             System.out.println("\n===== DEBUG: cerrarDetalleYMostrarCasos INICIANDO =====");
             Thread.dumpStack(); // Imprime el stack trace para ver quién llamó a este método
-            
+
             // IMPORTANTE: verificar todos los paneles relevantes
             if (pnl_ListView != null) {
                 System.out.println("DEBUG: pnl_ListView encontrado, visible = " + pnl_ListView.isVisible());
             } else {
                 System.out.println("DEBUG: pnl_ListView es null");
             }
-            
+
             if (pnl_DetalleView != null) {
                 System.out.println("DEBUG: pnl_DetalleView encontrado, visible = " + pnl_DetalleView.isVisible() +
-                                  ", número de hijos = " + pnl_DetalleView.getChildren().size());
+                        ", número de hijos = " + pnl_DetalleView.getChildren().size());
             } else {
                 System.out.println("DEBUG: pnl_DetalleView es null");
             }
-            
+
             if (pnl_Modulos != null) {
                 System.out.println("DEBUG: pnl_Modulos encontrado, visible = " + pnl_Modulos.isVisible() +
-                                  ", número de hijos = " + pnl_Modulos.getChildren().size());
+                        ", número de hijos = " + pnl_Modulos.getChildren().size());
             } else {
                 System.out.println("DEBUG: pnl_Modulos es null");
             }
-            
+
             if (pnl_DetalleView != null && pnl_ListView != null) {
                 System.out.println("DEBUG: Cerrando panel de detalle y mostrando lista");
-                
+
                 // Primero mostrar el panel de lista
                 pnl_ListView.setVisible(true);
                 pnl_ListView.setManaged(true);
-                
+
                 // Luego limpiar y ocultar el panel de detalle
                 pnl_DetalleView.getChildren().clear();
                 pnl_DetalleView.setVisible(false);
                 pnl_DetalleView.setManaged(false);
-                
+
                 // Actualizar la lista de casos
                 if (hayClienteSeleccionado()) {
                     cargarCasosPorCliente(clienteActual.getId());
                 } else {
                     cargarCasosDesdeBD();
                 }
-                
+
                 System.out.println("DEBUG: Vista de lista visible: " + pnl_ListView.isVisible());
             } else if (pnl_Modulos != null) {
                 // Volver a cargar el módulo de casos usando MainController para mayor seguridad
                 try {
                     System.out.println("DEBUG: Recargando módulo de casos mediante MainController");
-                    application.controllers.MainController mainController = application.controllers.MainController.getInstance();
+                    application.controllers.MainController mainController = application.controllers.MainController
+                            .getInstance();
                     if (mainController != null) {
                         System.out.println("DEBUG: MainController encontrado, cargando módulo de casos");
                         mainController.cargarModulo("/views/casos_documentos/modulo_casos.fxml");
@@ -222,14 +224,16 @@ public class ModuloCasosController {
                         // Continuamos con el método alternativo si MainController falla
                     }
                 } catch (Exception e) {
-                    System.err.println("ERROR: Error al recargar módulo de casos con MainController: " + e.getMessage());
+                    System.err
+                            .println("ERROR: Error al recargar módulo de casos con MainController: " + e.getMessage());
                     e.printStackTrace();
                 }
-                
+
                 // Método alternativo si MainController falla
                 try {
                     System.out.println("DEBUG: Recargando módulo de casos mediante método alternativo");
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/casos_documentos/modulo_casos.fxml"));
+                    FXMLLoader loader = new FXMLLoader(
+                            getClass().getResource("/views/casos_documentos/modulo_casos.fxml"));
                     Node casosView = loader.load();
                     ModuloCasosController controller = loader.getController();
                     controller.setPanelModulos(pnl_Modulos);
@@ -241,11 +245,12 @@ public class ModuloCasosController {
                 } catch (IOException e) {
                     System.err.println("ERROR: Error al recargar módulo de casos: " + e.getMessage());
                     e.printStackTrace();
-                    
+
                     // Último intento de recuperación
                     try {
                         System.out.println("DEBUG: Intentando cargar vista básica como último recurso");
-                        FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/casos_documentos/modulo_casos.fxml"));
+                        FXMLLoader loader = new FXMLLoader(
+                                getClass().getResource("/views/casos_documentos/modulo_casos.fxml"));
                         Node alternativeView = loader.load();
                         pnl_Modulos.getChildren().setAll(alternativeView);
                     } catch (Exception ex) {
@@ -253,12 +258,14 @@ public class ModuloCasosController {
                     }
                 }
             } else {
-                System.err.println("ERROR: No se pudo cerrar el detalle porque pnl_DetalleView, pnl_ListView y pnl_Modulos son null");
-                
+                System.err.println(
+                        "ERROR: No se pudo cerrar el detalle porque pnl_DetalleView, pnl_ListView y pnl_Modulos son null");
+
                 // Intento de recuperación usando MainController
                 try {
                     System.out.println("DEBUG: Intentando usar MainController para recuperación");
-                    application.controllers.MainController mainController = application.controllers.MainController.getInstance();
+                    application.controllers.MainController mainController = application.controllers.MainController
+                            .getInstance();
                     if (mainController != null) {
                         mainController.cargarModulo("/views/casos_documentos/modulo_casos.fxml");
                         System.out.println("DEBUG: Recuperación exitosa usando MainController");
@@ -569,7 +576,8 @@ public class ModuloCasosController {
                     int idx = getIndex();
                     if (idx >= 0 && idx < getTableView().getItems().size()) {
                         Caso caso = getTableView().getItems().get(idx);
-                        System.out.println("DEBUG: Botón documentos presionado para caso: " + caso.getNumeroExpediente());
+                        System.out
+                                .println("DEBUG: Botón documentos presionado para caso: " + caso.getNumeroExpediente());
                         mostrarDocumentosCaso(caso);
                     }
                 });
@@ -586,13 +594,14 @@ public class ModuloCasosController {
 
     private void mostrarDocumentosCaso(Caso caso) {
         try {
-            System.out.println("\n===== DEBUG: Iniciando mostrarDocumentosCaso para: " + caso.getNumeroExpediente() + " =====");
-            
+            System.out.println(
+                    "\n===== DEBUG: Iniciando mostrarDocumentosCaso para: " + caso.getNumeroExpediente() + " =====");
+
             // Cargar la vista de documentos
             System.out.println("DEBUG: Cargando vista de documentos...");
             FXMLLoader loader = new FXMLLoader(
                     getClass().getResource("/views/casos_documentos/modulo_casos_documentacion_documentos.fxml"));
-            
+
             System.out.println("DEBUG: Antes de loader.load()");
             Node documentosView = loader.load();
             System.out.println("DEBUG: Vista de documentos cargada exitosamente");
@@ -600,20 +609,22 @@ public class ModuloCasosController {
             // Configurar el controlador
             System.out.println("DEBUG: Obteniendo controlador de documentos...");
             ModuloDocumentosController controller = loader.getController();
-            
+
             if (controller == null) {
                 System.err.println("ERROR CRÍTICO: No se pudo obtener ModuloDocumentosController");
                 throw new RuntimeException("No se pudo obtener el controlador ModuloDocumentosController");
             }
-            
+
             System.out.println("DEBUG: Controlador ModuloDocumentosController obtenido exitosamente");
 
             // Establecer el número de expediente del caso seleccionado
-            System.out.println("DEBUG: Estableciendo número de expediente en controlador: " + caso.getNumeroExpediente());
+            System.out
+                    .println("DEBUG: Estableciendo número de expediente en controlador: " + caso.getNumeroExpediente());
             controller.setNumeroExpediente(caso.getNumeroExpediente());
             System.out.println("DEBUG: Número de expediente establecido correctamente");
-            
-            // Ya no configuramos el callback para el regreso, porque el ModuloDocumentosController 
+
+            // Ya no configuramos el callback para el regreso, porque el
+            // ModuloDocumentosController
             // ahora usa directamente MainController para navegar, lo cual es más confiable
 
             if (pnl_Modulos != null) {

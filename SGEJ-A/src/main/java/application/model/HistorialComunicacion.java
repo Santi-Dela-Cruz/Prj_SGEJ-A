@@ -8,6 +8,8 @@ public class HistorialComunicacion {
     private String tipo;
     private Date fecha;
     private String descripcion;
+    private int abogadoId;
+    private String abogadoNombre; // Campo para almacenar el nombre del abogado (no persiste en BD)
 
     public int getId() {
         return id;
@@ -47,5 +49,21 @@ public class HistorialComunicacion {
 
     public void setDescripcion(String descripcion) {
         this.descripcion = descripcion;
+    }
+
+    public int getAbogadoId() {
+        return abogadoId;
+    }
+
+    public void setAbogadoId(int abogadoId) {
+        this.abogadoId = abogadoId;
+    }
+
+    public String getAbogadoNombre() {
+        return abogadoNombre;
+    }
+
+    public void setAbogadoNombre(String abogadoNombre) {
+        this.abogadoNombre = abogadoNombre;
     }
 }

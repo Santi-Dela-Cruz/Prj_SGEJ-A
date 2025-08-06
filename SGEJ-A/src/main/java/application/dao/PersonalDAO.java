@@ -25,12 +25,12 @@ public class PersonalDAO {
      */
     public int registrarPersonal(Personal personal) {
         String sql = "INSERT INTO personal (nombres, apellidos, numero_identificacion, tipo_identificacion, " +
-                    "telefono, correo, direccion, fecha_ingreso, rol, estado) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        
+                "telefono, correo, direccion, fecha_ingreso, rol, estado) " +
+                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+
             stmt.setString(1, personal.getNombres());
             stmt.setString(2, personal.getApellidos());
             stmt.setString(3, personal.getNumeroIdentificacion());
@@ -41,7 +41,7 @@ public class PersonalDAO {
             stmt.setString(8, personal.getFechaIngreso() != null ? personal.getFechaIngreso().toString() : null);
             stmt.setString(9, personal.getRol());
             stmt.setString(10, personal.getEstado());
-            
+
             int filasAfectadas = stmt.executeUpdate();
             if (filasAfectadas > 0) {
                 try (ResultSet rs = stmt.getGeneratedKeys()) {
@@ -50,15 +50,15 @@ public class PersonalDAO {
                     }
                 }
             }
-            
+
         } catch (SQLException e) {
             System.err.println("Error al registrar personal: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return -1;
     }
-    
+
     /**
      * Actualiza los datos de un empleado existente.
      * 
@@ -67,13 +67,13 @@ public class PersonalDAO {
      */
     public boolean actualizarPersonal(Personal personal) {
         String sql = "UPDATE personal SET nombres = ?, apellidos = ?, numero_identificacion = ?, " +
-                    "tipo_identificacion = ?, telefono = ?, correo = ?, direccion = ?, " +
-                    "fecha_ingreso = ?, rol = ?, estado = ?, updated_at = CURRENT_TIMESTAMP " +
-                    "WHERE id = ?";
-        
+                "tipo_identificacion = ?, telefono = ?, correo = ?, direccion = ?, " +
+                "fecha_ingreso = ?, rol = ?, estado = ?, updated_at = CURRENT_TIMESTAMP " +
+                "WHERE id = ?";
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, personal.getNombres());
             stmt.setString(2, personal.getApellidos());
             stmt.setString(3, personal.getNumeroIdentificacion());
@@ -85,18 +85,18 @@ public class PersonalDAO {
             stmt.setString(9, personal.getRol());
             stmt.setString(10, personal.getEstado());
             stmt.setInt(11, personal.getId());
-            
+
             int filasAfectadas = stmt.executeUpdate();
             return filasAfectadas > 0;
-            
+
         } catch (SQLException e) {
             System.err.println("Error al actualizar personal: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return false;
     }
-    
+
     /**
      * Elimina un empleado de la base de datos.
      * 
@@ -105,22 +105,22 @@ public class PersonalDAO {
      */
     public boolean eliminarPersonal(int id) {
         String sql = "DELETE FROM personal WHERE id = ?";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, id);
             int filasAfectadas = stmt.executeUpdate();
             return filasAfectadas > 0;
-            
+
         } catch (SQLException e) {
             System.err.println("Error al eliminar personal: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return false;
     }
-    
+
     /**
      * Obtiene un empleado por su ID.
      * 
@@ -129,25 +129,25 @@ public class PersonalDAO {
      */
     public Personal obtenerPersonalPorId(int id) {
         String sql = "SELECT * FROM personal WHERE id = ?";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setInt(1, id);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 return extraerPersonalDeResultSet(rs);
             }
-            
+
         } catch (SQLException e) {
             System.err.println("Error al obtener personal por ID: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return null;
     }
-    
+
     /**
      * Obtiene un empleado por su número de identificación.
      * 
@@ -156,25 +156,25 @@ public class PersonalDAO {
      */
     public Personal obtenerPersonalPorIdentificacion(String numeroIdentificacion) {
         String sql = "SELECT * FROM personal WHERE numero_identificacion = ?";
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, numeroIdentificacion);
             ResultSet rs = stmt.executeQuery();
-            
+
             if (rs.next()) {
                 return extraerPersonalDeResultSet(rs);
             }
-            
+
         } catch (SQLException e) {
             System.err.println("Error al obtener personal por identificación: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return null;
     }
-    
+
     /**
      * Obtiene todos los empleados registrados.
      * 
@@ -183,23 +183,23 @@ public class PersonalDAO {
     public List<Personal> obtenerTodosLosEmpleados() {
         String sql = "SELECT * FROM personal ORDER BY id DESC";
         List<Personal> empleados = new ArrayList<>();
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
-            
+                Statement stmt = conn.createStatement();
+                ResultSet rs = stmt.executeQuery(sql)) {
+
             while (rs.next()) {
                 empleados.add(extraerPersonalDeResultSet(rs));
             }
-            
+
         } catch (SQLException e) {
             System.err.println("Error al obtener todos los empleados: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return empleados;
     }
-    
+
     /**
      * Obtiene todos los empleados que tienen un rol específico.
      * 
@@ -209,32 +209,32 @@ public class PersonalDAO {
     public List<Personal> obtenerPersonalPorRol(String rol) {
         String sql = "SELECT * FROM personal WHERE LOWER(rol) = LOWER(?) OR LOWER(rol) LIKE LOWER(?) ORDER BY id DESC";
         List<Personal> empleados = new ArrayList<>();
-        
+
         try (Connection conn = DatabaseConnection.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, rol);
             stmt.setString(2, "%" + rol + "%");
             ResultSet rs = stmt.executeQuery();
-            
+
             while (rs.next()) {
                 empleados.add(extraerPersonalDeResultSet(rs));
             }
-            
+
         } catch (SQLException e) {
             System.err.println("Error al obtener personal por rol: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         return empleados;
     }
-    
+
     /**
      * Método auxiliar para extraer un objeto Personal de un ResultSet.
      */
     private Personal extraerPersonalDeResultSet(ResultSet rs) throws SQLException {
         Personal personal = new Personal();
-        
+
         personal.setId(rs.getInt("id"));
         personal.setNombres(rs.getString("nombres"));
         personal.setApellidos(rs.getString("apellidos"));
@@ -243,7 +243,7 @@ public class PersonalDAO {
         personal.setTelefono(rs.getString("telefono"));
         personal.setCorreo(rs.getString("correo"));
         personal.setDireccion(rs.getString("direccion"));
-        
+
         // Convertir fecha de string a LocalDate
         String fechaStr = rs.getString("fecha_ingreso");
         if (fechaStr != null && !fechaStr.isEmpty()) {
@@ -253,10 +253,10 @@ public class PersonalDAO {
                 System.err.println("Error al parsear fecha: " + fechaStr);
             }
         }
-        
+
         personal.setRol(rs.getString("rol"));
         personal.setEstado(rs.getString("estado"));
-        
+
         return personal;
     }
 }

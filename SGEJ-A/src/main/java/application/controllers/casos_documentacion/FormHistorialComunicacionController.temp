@@ -26,22 +26,14 @@ import java.util.function.Consumer;
 
 public class FormHistorialComunicacionController {
 
-    @FXML
-    private DatePicker dtp_Fecha;
-    @FXML
-    private ComboBox<Personal> cbx_Abogado;
-    @FXML
-    private ComboBox<String> cbx_TipoAccion;
-    @FXML
-    private TextField txtf_Expediente;
-    @FXML
-    private TextArea txta_Descripcion;
-    @FXML
-    private Button btn_Guardar;
-    @FXML
-    private Button btn_Cancelar;
-    @FXML
-    private Text txt_TituloForm;
+    @FXML private DatePicker dtp_Fecha;
+    @FXML private ComboBox<Personal> cbx_Abogado;
+    @FXML private ComboBox<String> cbx_TipoAccion;
+    @FXML private TextField txtf_Expediente;
+    @FXML private TextArea txta_Descripcion;
+    @FXML private Button btn_Guardar;
+    @FXML private Button btn_Cancelar;
+    @FXML private Text txt_TituloForm;
 
     private Runnable onGuardar, onCancelar;
 
@@ -49,14 +41,14 @@ public class FormHistorialComunicacionController {
     private void initialize() {
         // Configurar los tipos de acción
         cbx_TipoAccion.getItems().addAll("Llamada", "Correo", "Mensaje", "Visita", "Otro");
-
+        
         // Establecer la fecha actual
         dtp_Fecha.setValue(LocalDate.now());
         dtp_Fecha.setEditable(false);
-
+        
         // Cargar la lista de abogados
         cargarAbogados();
-
+        
         // Configurar cómo se muestran los abogados en el combobox
         cbx_Abogado.setConverter(new StringConverter<Personal>() {
             @Override
@@ -89,21 +81,23 @@ public class FormHistorialComunicacionController {
                                 " - Número de Expediente\n" +
                                 " - Descripción",
                         "warning",
-                        List.of(ButtonType.OK));
+                        List.of(ButtonType.OK)
+                );
                 return;
             }
-
+            
             // Validar que el número de expediente exista
             String numeroExpediente = txtf_Expediente.getText().trim();
             CasoService casoService = new CasoService();
-
+            
             if (!casoService.existeCasoPorNumero(numeroExpediente)) {
                 DialogUtil.mostrarDialogo(
                         "Caso no encontrado",
                         "El número de expediente '" + numeroExpediente + "' no existe en el sistema.\n" +
                                 "Por favor, verifique el número de expediente.",
                         "warning",
-                        List.of(ButtonType.OK));
+                        List.of(ButtonType.OK)
+                );
                 return;
             }
 
@@ -114,7 +108,8 @@ public class FormHistorialComunicacionController {
                         "Confirmación",
                         "¿Está seguro que desea guardar este historial de comunicación?",
                         "confirm",
-                        List.of(ButtonType.YES, ButtonType.NO));
+                        List.of(ButtonType.YES, ButtonType.NO)
+                );
 
                 if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
                     // Preparar los datos
@@ -122,7 +117,7 @@ public class FormHistorialComunicacionController {
                     comunicacion.setFecha(java.sql.Date.valueOf(dtp_Fecha.getValue()));
                     comunicacion.setTipo(cbx_TipoAccion.getValue());
                     comunicacion.setDescripcion(txta_Descripcion.getText());
-
+                    
                     // Obtener el ID del caso a partir del número de expediente
                     Caso caso = casoService.obtenerCasoPorNumero(numeroExpediente);
                     if (caso != null) {
@@ -130,48 +125,51 @@ public class FormHistorialComunicacionController {
                     } else {
                         throw new Exception("No se pudo encontrar el caso con el expediente: " + numeroExpediente);
                     }
-
+                    
                     // Obtener el abogado seleccionado
                     Personal abogado = cbx_Abogado.getValue();
                     comunicacion.setAbogadoId(abogado.getId());
                     comunicacion.setAbogadoNombre(abogado.getNombres() + " " + abogado.getApellidos());
-
+                    
                     // Guardar en la base de datos
                     Connection conn = DatabaseConnection.getConnection();
                     HistorialComunicacionService service = new HistorialComunicacionService(conn);
                     String resultado = service.registrarComunicacion(comunicacion);
-
+                    
                     if (resultado.isEmpty()) {
                         DialogUtil.mostrarDialogo(
-                                "Guardado exitoso",
-                                "La comunicación ha sido registrada correctamente.",
-                                "info",
-                                List.of(ButtonType.OK));
-
-                        if (onGuardar != null)
-                            onGuardar.run();
+                            "Guardado exitoso",
+                            "La comunicación ha sido registrada correctamente.",
+                            "info",
+                            List.of(ButtonType.OK)
+                        );
+                        
+                        if (onGuardar != null) onGuardar.run();
                     } else {
                         DialogUtil.mostrarDialogo(
-                                "Error al guardar",
-                                "No se pudo guardar la comunicación: " + resultado,
-                                "error",
-                                List.of(ButtonType.OK));
+                            "Error al guardar",
+                            "No se pudo guardar la comunicación: " + resultado,
+                            "error",
+                            List.of(ButtonType.OK)
+                        );
                     }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
                 DialogUtil.mostrarDialogo(
-                        "Error en la base de datos",
-                        "Ocurrió un error al guardar la comunicación: " + e.getMessage(),
-                        "error",
-                        List.of(ButtonType.OK));
+                    "Error en la base de datos",
+                    "Ocurrió un error al guardar la comunicación: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK)
+                );
             } catch (Exception e) {
                 e.printStackTrace();
                 DialogUtil.mostrarDialogo(
-                        "Error inesperado",
-                        "Ocurrió un error inesperado: " + e.getMessage(),
-                        "error",
-                        List.of(ButtonType.OK));
+                    "Error inesperado",
+                    "Ocurrió un error inesperado: " + e.getMessage(),
+                    "error",
+                    List.of(ButtonType.OK)
+                );
             }
         });
 
@@ -180,16 +178,16 @@ public class FormHistorialComunicacionController {
                     "Confirmación",
                     "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO));
+                    List.of(ButtonType.YES, ButtonType.NO)
+            );
 
             if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
-                if (onCancelar != null)
-                    onCancelar.run();
+                if (onCancelar != null) onCancelar.run();
             }
         });
 
     }
-
+    
     /**
      * Carga la lista de abogados en el combobox
      */
@@ -200,10 +198,11 @@ public class FormHistorialComunicacionController {
         } catch (Exception e) {
             e.printStackTrace();
             DialogUtil.mostrarDialogo(
-                    "Error al cargar abogados",
-                    "No se pudo cargar la lista de abogados: " + e.getMessage(),
-                    "error",
-                    List.of(ButtonType.OK));
+                "Error al cargar abogados",
+                "No se pudo cargar la lista de abogados: " + e.getMessage(),
+                "error",
+                List.of(ButtonType.OK)
+            );
         }
     }
 
@@ -247,7 +246,7 @@ public class FormHistorialComunicacionController {
                 dtp_Fecha.setValue(LocalDate.now());
             }
         }
-
+        
         // Buscar el abogado por nombre y seleccionarlo
         if (usuario != null && !usuario.isEmpty()) {
             for (Personal abogado : cbx_Abogado.getItems()) {
@@ -258,17 +257,15 @@ public class FormHistorialComunicacionController {
                 }
             }
         }
-
+        
         cbx_TipoAccion.setValue(tipo);
         txta_Descripcion.setText(descripcion);
         txtf_Expediente.setText(expediente);
     }
 
-    public static Node cargarFormulario(String modo, ComunicacionDemo comunicacion, Consumer<Void> onGuardar,
-            Consumer<Void> onCancelar) {
+    public static Node cargarFormulario(String modo, ComunicacionDemo comunicacion, Consumer<Void> onGuardar, Consumer<Void> onCancelar) {
         try {
-            FXMLLoader loader = new FXMLLoader(FormHistorialComunicacionController.class
-                    .getResource("/views/casos_documentos/form_historial_comunicacion.fxml"));
+            FXMLLoader loader = new FXMLLoader(FormHistorialComunicacionController.class.getResource("/views/casos_documentos/form_historial_comunicacion.fxml"));
             Node form = loader.load();
 
             FormHistorialComunicacionController controller = loader.getController();
@@ -282,7 +279,8 @@ public class FormHistorialComunicacionController {
                         comunicacion.usuario(),
                         comunicacion.accion(),
                         comunicacion.descripcion(),
-                        comunicacion.expediente());
+                        comunicacion.expediente()
+                );
             }
 
             return form;
@@ -292,6 +290,5 @@ public class FormHistorialComunicacionController {
         }
     }
 
-    public record ComunicacionDemo(String fecha, String usuario, String accion, String descripcion, String expediente) {
-    }
+    public record ComunicacionDemo(String fecha, String usuario, String accion, String descripcion, String expediente) {}
 }
