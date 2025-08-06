@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Text?>
 <?import java.net.URL?>
 
 <AnchorPane fx:id="formContainer" prefWidth="550" prefHeight="650" 

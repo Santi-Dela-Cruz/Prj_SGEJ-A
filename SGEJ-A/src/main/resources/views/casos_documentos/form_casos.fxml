@@ -44,7 +44,7 @@
                                style="-fx-background-color: white; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px; -fx-pref-height: 35;"
                                GridPane.rowIndex="1" GridPane.columnIndex="0"/>
 
-                    <Label text="Identificación Cliente (Cédula/RUC/Pasaporte):" GridPane.rowIndex="0" GridPane.columnIndex="1" 
+                    <Label text="Identificación del Cliente:" GridPane.rowIndex="0" GridPane.columnIndex="1" 
                            style="-fx-font-weight: bold; -fx-font-size: 14px;"/>
                     <TextField fx:id="txtf_IdentificacionCliente" 
                                style="-fx-background-color: white; -fx-border-color: #ced4da; -fx-border-radius: 4; -fx-background-radius: 4; -fx-padding: 8; -fx-font-size: 13px; -fx-pref-height: 35;"

@@ -144,7 +144,6 @@
                 <TableColumn fx:id="tbc_FechaHasta" text="Fecha hasta"/>
                 <TableColumn fx:id="tbc_TipoDocumento" text="Tipo de documento"/>
                 <TableColumn fx:id="tbc_Tamano" text="Tamaño"/>
-                <TableColumn fx:id="tbc_ButonVisualizar" styleClass="column-action" text=" " prefWidth="40"/>
             </columns>
             <columnResizePolicy>
                 <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>

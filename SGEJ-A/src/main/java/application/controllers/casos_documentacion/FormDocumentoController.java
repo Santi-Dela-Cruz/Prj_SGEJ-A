@@ -43,7 +43,7 @@ public class FormDocumentoController {
     @FXML
     private TextField txtf_RutaArchivo;
     @FXML
-    private Label txt_TituloForm;
+    private javafx.scene.text.Text txt_TituloForm;
 
     @FXML
     private Button btn_SeleccionarArchivo;

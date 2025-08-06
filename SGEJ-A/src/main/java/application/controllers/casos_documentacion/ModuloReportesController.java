@@ -49,13 +49,10 @@ public class ModuloReportesController {
     @FXML
     private TableColumn<ReporteDemo, String> tbc_NombreReporte, tbc_TituloCaso, tbc_AbogadoAsignado,
             tbc_FechaDesde, tbc_FechaHasta, tbc_TipoDocumento, tbc_Tamano;
-    @FXML
-    private TableColumn<ReporteDemo, Void> tbc_ButonVisualizar;
 
     @FXML
     private void initialize() {
         configurarColumnas();
-        inicializarBotonVisualizar();
         configurarComboBoxes();
         configurarMenuGenerar();
 
@@ -97,28 +94,6 @@ public class ModuloReportesController {
         tbc_FechaHasta.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().fechaHasta()));
         tbc_TipoDocumento.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().tipoDocumento()));
         tbc_Tamano.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().tamano()));
-    }
-
-    private void inicializarBotonVisualizar() {
-        tbc_ButonVisualizar.setCellFactory(param -> new TableCell<>() {
-            final Button btn = new Button("👁");
-
-            {
-                btn.getStyleClass().add("table-button");
-                btn.setTooltip(new Tooltip("Visualizar reporte"));
-                btn.setOnAction(e -> {
-                    ReporteDemo reporte = getTableView().getItems().get(getIndex());
-                    System.out.println("Visualizar reporte: " + reporte.nombre());
-                });
-            }
-
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                setGraphic(empty ? null : btn);
-                setStyle("-fx-alignment: CENTER;");
-            }
-        });
     }
 
     private void cargarReportesDesdeBaseDeDatos() {
@@ -233,11 +208,11 @@ public class ModuloReportesController {
             return;
         }
         if (fin.isBefore(inicio)) {
-            mostrarError("La fecha final no puede ser anterior a la fecha inicial.");
+            mostrarError("La fecha hasta no puede ser anterior a la fecha desde.");
             return;
         }
         if (fin.isAfter(LocalDate.now())) {
-            mostrarError("La fecha final no puede ser posterior a la fecha actual.");
+            mostrarError("La fecha hasta no puede ser posterior a la fecha actual.");
             return;
         }
 

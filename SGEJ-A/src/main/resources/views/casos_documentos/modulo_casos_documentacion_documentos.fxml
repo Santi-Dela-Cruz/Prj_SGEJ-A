@@ -136,7 +136,6 @@
                         <TableColumn fx:id="tbc_Fecha" text="📅 Fecha" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="120" />
                         <TableColumn fx:id="tbc_Tamano" text="📊 Tamaño" style="-fx-alignment: CENTER; -fx-padding: 0 10 0 10;" minWidth="100" />
                         <TableColumn fx:id="tbc_BotonVer" text="👁️ Ver" style="-fx-alignment: CENTER; -fx-padding: 0 5 0 5;" minWidth="80" prefWidth="80" maxWidth="80" />
-                        <TableColumn fx:id="tbc_BotonDescargar" text="⬇️ Descargar" style="-fx-alignment: CENTER; -fx-padding: 0 5 0 5;" minWidth="100" prefWidth="100" maxWidth="100" />
                         <TableColumn fx:id="tbc_BotonEliminar" text="❌ Eliminar" style="-fx-alignment: CENTER; -fx-padding: 0 5 0 5;" minWidth="80" prefWidth="80" maxWidth="80" />
                     </columns>
                     <columnResizePolicy>

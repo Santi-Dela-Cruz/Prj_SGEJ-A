@@ -14,8 +14,6 @@ import javafx.scene.layout.Pane;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -35,7 +33,7 @@ public class ModuloDocumentosController {
     @FXML
     private TableColumn<DocumentoDemo, String> tbc_Nombre, tbc_Tipo, tbc_Fecha, tbc_Tamano;
     @FXML
-    private TableColumn<DocumentoDemo, Void> tbc_BotonVer, tbc_BotonEliminar, tbc_BotonDescargar;
+    private TableColumn<DocumentoDemo, Void> tbc_BotonVer, tbc_BotonEliminar;
     @FXML
     private Label lblTitulo, lbl_TotalDocumentos;
 
@@ -517,12 +515,24 @@ public class ModuloDocumentosController {
                 pnl_Forms = new AnchorPane();
 
                 // Añadimos el panel sobrepuesto al panel principal
-                AnchorPane panelPrincipal = (AnchorPane) tb_Documentos.getParent();
-                panelPrincipal.getChildren().add(pnl_Forms);
-
-                // Inicialmente oculto
-                pnl_Forms.setVisible(false);
-                pnl_Forms.setManaged(false);
+                // Buscamos el AnchorPane raíz en la jerarquía de nodos
+                Node current = tb_Documentos;
+                while (current != null && !(current instanceof AnchorPane)) {
+                    current = current.getParent();
+                }
+                
+                // Si encontramos un AnchorPane, agregamos el panel de formulario
+                if (current instanceof AnchorPane) {
+                    AnchorPane panelPrincipal = (AnchorPane) current;
+                    panelPrincipal.getChildren().add(pnl_Forms);
+                    
+                    // Inicialmente oculto
+                    pnl_Forms.setVisible(false);
+                    pnl_Forms.setManaged(false);
+                } else {
+                    // No se encontró un AnchorPane padre
+                    throw new IllegalStateException("No se pudo encontrar un AnchorPane padre para agregar el formulario");
+                }
             }
 
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/casos_documentos/form_documento.fxml"));
@@ -617,7 +627,6 @@ public class ModuloDocumentosController {
     private void inicializarColumnasDeBotones() {
         agregarBoton(tbc_BotonVer, "👁", "Ver");
         agregarBoton(tbc_BotonEliminar, "🗑", "Eliminar");
-        agregarBoton(tbc_BotonDescargar, "⬇", "Descargar");
     }
 
     private void agregarBoton(TableColumn<DocumentoDemo, Void> columna, String texto, String tooltip) {
@@ -633,8 +642,6 @@ public class ModuloDocumentosController {
                         mostrarDocumentoParaVisualizar(doc);
                     } else if ("Eliminar".equals(tooltip)) {
                         eliminarDocumento(doc);
-                    } else if ("Descargar".equals(tooltip)) {
-                        descargarDocumento(doc);
                     } else {
                         System.out.println(tooltip + " documento: " + doc.nombre());
                     }
@@ -755,101 +762,6 @@ public class ModuloDocumentosController {
                         "error",
                         List.of(ButtonType.OK));
             }
-        }
-    }
-
-    /**
-     * Descarga un documento al sistema de archivos del usuario
-     * 
-     * @param doc el documento a descargar
-     */
-    private void descargarDocumento(DocumentoDemo doc) {
-        try {
-            // Obtener la ruta del archivo
-            String rutaArchivo = obtenerRutaArchivoDesdeNombre(doc.numeroExpediente(), doc.nombre());
-
-            if (rutaArchivo.isEmpty()) {
-                DialogUtil.mostrarDialogo(
-                        "Error",
-                        "No se encontró el archivo físico del documento.",
-                        "error",
-                        List.of(ButtonType.OK));
-                return;
-            }
-
-            File archivoOrigen = new File(rutaArchivo);
-            if (!archivoOrigen.exists() || !archivoOrigen.isFile()) {
-                DialogUtil.mostrarDialogo(
-                        "Error",
-                        "El archivo no existe en el sistema.",
-                        "error",
-                        List.of(ButtonType.OK));
-                return;
-            }
-
-            // Mostrar diálogo para seleccionar destino
-            javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
-            fileChooser.setTitle("Guardar documento");
-
-            // Extraer el nombre original del archivo
-            String nombreArchivo = archivoOrigen.getName();
-            if (nombreArchivo.contains("_")) {
-                // Si tiene formato timestamp_nombre.ext, obtener solo la parte del nombre
-                nombreArchivo = nombreArchivo.substring(nombreArchivo.indexOf("_") + 1);
-            }
-
-            fileChooser.setInitialFileName(nombreArchivo);
-
-            // Configurar filtros según el tipo de documento
-            String extension = "";
-            int puntoIndex = nombreArchivo.lastIndexOf('.');
-            if (puntoIndex > 0) {
-                extension = nombreArchivo.substring(puntoIndex + 1).toLowerCase();
-
-                // Añadir filtro para este tipo de archivo
-                String descripcion = "Archivos " + extension.toUpperCase();
-                fileChooser.getExtensionFilters().add(
-                        new javafx.stage.FileChooser.ExtensionFilter(descripcion, "*." + extension));
-            }
-
-            // Añadir filtro para todos los archivos
-            fileChooser.getExtensionFilters().add(
-                    new javafx.stage.FileChooser.ExtensionFilter("Todos los archivos", "*.*"));
-
-            // Mostrar diálogo de guardar
-            javafx.stage.Window window = btn_Buscar.getScene().getWindow();
-            File archivoDestino = fileChooser.showSaveDialog(window);
-
-            if (archivoDestino != null) {
-                // Copiar el archivo
-                try {
-                    Files.copy(archivoOrigen.toPath(), archivoDestino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-                    DialogUtil.mostrarDialogo(
-                            "Éxito",
-                            "Documento descargado correctamente en:\n" + archivoDestino.getAbsolutePath(),
-                            "info",
-                            List.of(ButtonType.OK));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    System.err.println("Error al copiar archivo: " + e.getMessage());
-
-                    DialogUtil.mostrarDialogo(
-                            "Error",
-                            "Error al descargar el documento: " + e.getMessage(),
-                            "error",
-                            List.of(ButtonType.OK));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.err.println("Error al descargar documento: " + e.getMessage());
-
-            DialogUtil.mostrarDialogo(
-                    "Error",
-                    "Error al procesar la descarga: " + e.getMessage(),
-                    "error",
-                    List.of(ButtonType.OK));
         }
     }
 
