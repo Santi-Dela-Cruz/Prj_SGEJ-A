@@ -522,6 +522,23 @@ public class ModuloCasosController {
                 Label lblNoData = new Label("No se encontraron casos con el término: '" + termino + "'");
                 lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
                 tb_Casos.setPlaceholder(lblNoData);
+                
+                // Mostrar diálogo informando que no se encontraron casos según el criterio de búsqueda
+                String mensaje;
+                if (criterioBusqueda.equals("Número de expediente")) {
+                    mensaje = "No se encontró ningún caso con el número de expediente: " + termino;
+                } else if (criterioBusqueda.equals("Número de identificación")) {
+                    mensaje = "No se encontró ningún caso asociado al cliente con identificación: " + termino;
+                } else {
+                    mensaje = "No se encontraron casos que coincidan con: " + termino;
+                }
+                
+                application.controllers.DialogUtil.mostrarDialogo(
+                    "Búsqueda sin resultados",
+                    mensaje,
+                    "info",
+                    java.util.List.of(javafx.scene.control.ButtonType.OK)
+                );
             }
         } catch (Exception e) {
             e.printStackTrace();

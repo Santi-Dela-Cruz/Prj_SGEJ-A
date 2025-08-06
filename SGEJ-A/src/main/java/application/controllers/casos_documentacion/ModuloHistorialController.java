@@ -279,6 +279,15 @@ public class ModuloHistorialController {
                         + criterioBusqueda);
             } else {
                 System.out.println("INFO: No se encontraron comunicaciones para el criterio: " + criterioBusqueda);
+                
+                // Mostrar diálogo de error cuando no se encuentran resultados
+                DialogUtil.mostrarDialogo(
+                    "Sin resultados",
+                    "No se encontraron comunicaciones para la búsqueda: '" + textoBusqueda + "'",
+                    "warning",
+                    List.of(ButtonType.OK)
+                );
+                
                 // Establecer un mensaje cuando la búsqueda no tiene resultados
                 Label lblNoData = new Label(
                         "No se encontraron comunicaciones para la búsqueda: '" + textoBusqueda + "'");
