@@ -68,6 +68,16 @@ public class HistorialComunicacionService {
     public List<HistorialComunicacion> obtenerPorCaso(int casoId) throws SQLException {
         return dao.consultarPorCaso(casoId);
     }
+    
+    /**
+     * Obtiene todas las comunicaciones registradas en la base de datos
+     * 
+     * @return Lista de todas las comunicaciones
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> obtenerTodasLasComunicaciones() throws SQLException {
+        return dao.consultarTodasLasComunicaciones();
+    }
 
     /**
      * Obtiene el ID de un caso a partir del número de expediente

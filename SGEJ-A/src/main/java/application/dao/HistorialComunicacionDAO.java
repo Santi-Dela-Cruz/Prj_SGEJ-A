@@ -13,15 +13,67 @@ public class HistorialComunicacionDAO {
     }
 
     public void insertarComunicacion(HistorialComunicacion com) throws SQLException {
-        String sql = "INSERT INTO historial_comunicacion (caso_id, tipo, fecha, descripcion, abogado_id) VALUES (?, ?, ?, ?, ?)";
+        // Primero intentamos ejecutar la migración para asegurar que las columnas existan
+        try {
+            ejecutarMigracion();
+        } catch (Exception e) {
+            System.out.println("Advertencia al ejecutar migración: " + e.getMessage());
+            // Continuamos incluso si hay error, para intentar la inserción de todas formas
+        }
+        
+        String sql = "INSERT INTO historial_comunicacion (caso_id, tipo, fecha, descripcion, abogado_id, abogado_nombre) VALUES (?, ?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, com.getCasoId());
             stmt.setString(2, com.getTipo());
             stmt.setDate(3, new java.sql.Date(com.getFecha().getTime()));
             stmt.setString(4, com.getDescripcion());
             stmt.setInt(5, com.getAbogadoId());
+            stmt.setString(6, com.getAbogadoNombre());
             stmt.executeUpdate();
         }
+    }
+    
+    /**
+     * Ejecuta el script SQL para añadir las columnas necesarias a la tabla historial_comunicacion
+     */
+    private void ejecutarMigracion() throws SQLException {
+        String[] alterTableStatements = {
+            "ALTER TABLE historial_comunicacion ADD COLUMN IF NOT EXISTS abogado_id INTEGER",
+            "ALTER TABLE historial_comunicacion ADD COLUMN IF NOT EXISTS abogado_nombre TEXT"
+        };
+        
+        // Intentamos cada sentencia ALTER TABLE por separado
+        Statement stmt = conn.createStatement();
+        for (String sql : alterTableStatements) {
+            try {
+                stmt.execute(sql);
+            } catch (SQLException e) {
+                // Si la base de datos no soporta "IF NOT EXISTS", intentamos verificar si la columna existe primero
+                if (e.getMessage().contains("syntax error")) {
+                    // SQLite versiones antiguas no soportan ADD COLUMN IF NOT EXISTS
+                    // Extraemos el nombre de la columna para verificar si existe
+                    String columnName = sql.contains("abogado_id") ? "abogado_id" : "abogado_nombre";
+                    if (!columnExists("historial_comunicacion", columnName)) {
+                        // Si la columna no existe, ejecutamos el ALTER TABLE sin el IF NOT EXISTS
+                        stmt.execute("ALTER TABLE historial_comunicacion ADD COLUMN " + columnName + 
+                                    (columnName.equals("abogado_id") ? " INTEGER" : " TEXT"));
+                    }
+                } else {
+                    throw e; // Propagar otros errores SQL
+                }
+            }
+        }
+        stmt.close();
+    }
+    
+    /**
+     * Verifica si una columna existe en una tabla
+     */
+    private boolean columnExists(String tableName, String columnName) throws SQLException {
+        ResultSet rs = conn.getMetaData().getColumns(null, null, tableName, columnName);
+        boolean exists = rs.next();
+        rs.close();
+        return exists;
     }
 
     public List<HistorialComunicacion> consultarPorCaso(int casoId) throws SQLException {
@@ -141,5 +193,44 @@ public class HistorialComunicacionDAO {
             System.err.println("Error al obtener ID del caso por expediente: " + e.getMessage());
             return -1;
         }
+    }
+    
+    /**
+     * Obtiene todas las comunicaciones registradas en la base de datos
+     * 
+     * @return Lista con todas las comunicaciones
+     * @throws SQLException Si ocurre un error en la base de datos
+     */
+    public List<HistorialComunicacion> consultarTodasLasComunicaciones() throws SQLException {
+        List<HistorialComunicacion> lista = new ArrayList<>();
+        String sql = "SELECT * FROM historial_comunicacion ORDER BY fecha DESC";
+        
+        try (Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            
+            while (rs.next()) {
+                HistorialComunicacion com = new HistorialComunicacion();
+                com.setId(rs.getInt("id"));
+                com.setCasoId(rs.getInt("caso_id"));
+                com.setTipo(rs.getString("tipo"));
+                com.setFecha(rs.getDate("fecha"));
+                com.setDescripcion(rs.getString("descripcion"));
+                
+                // Manejar el nuevo campo abogado_id (podría ser nulo en registros antiguos)
+                try {
+                    com.setAbogadoId(rs.getInt("abogado_id"));
+                    
+                    // Cargar el nombre del abogado
+                    obtenerNombreAbogado(com);
+                } catch (SQLException e) {
+                    // Si el campo no existe, continuamos
+                    System.out.println("Campo abogado_id no encontrado en el registro: " + e.getMessage());
+                }
+                
+                lista.add(com);
+            }
+        }
+        
+        return lista;
     }
 }

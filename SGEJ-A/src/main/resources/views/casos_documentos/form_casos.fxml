@@ -93,7 +93,7 @@
                             <TableColumn fx:id="tbc_Nombres" text="Nombres" prefWidth="100.0"/>
                             <TableColumn fx:id="tbc_Apellidos" text="Apellidos" prefWidth="100.0"/>
                             <TableColumn fx:id="tbc_Cedula" text="Cédula" prefWidth="80.0"/>
-                            <TableColumn fx:id="tbc_Rol_ChekBox" text="Rol en el caso" prefWidth="120.0"/>
+                            <TableColumn fx:id="tbc_Rol_ChekBox" text="Rol del abogado" prefWidth="120.0"/>
                         </columns>
                         <columnResizePolicy>
                             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>

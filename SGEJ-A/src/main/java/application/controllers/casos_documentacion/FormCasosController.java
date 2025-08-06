@@ -317,18 +317,14 @@ public class FormCasosController {
 
     private void configurarTabla() {
         tbc_CheckBoton.setCellFactory(CheckBoxTableCell.forTableColumn(tbc_CheckBoton));
-        tbc_CheckBoton.setCellValueFactory(data -> data.getValue().asignadoProperty());
+        tbc_CheckBoton.setCellValueFactory(data -> data.getValue().seleccionadoProperty());
 
         tbc_Nombres.setCellValueFactory(data -> data.getValue().nombresProperty());
         tbc_Apellidos.setCellValueFactory(data -> data.getValue().apellidosProperty());
         tbc_Cedula.setCellValueFactory(data -> data.getValue().cedulaProperty());
         tbc_Cedula.setStyle("-fx-alignment: CENTER-LEFT;"); // Align cedula left
 
-        tbc_Rol_ChekBox.setCellFactory(ComboBoxTableCell.forTableColumn(roles));
         tbc_Rol_ChekBox.setCellValueFactory(data -> data.getValue().rolProperty());
-        tbc_Rol_ChekBox.setOnEditCommit(event -> {
-            event.getRowValue().rolProperty().set(event.getNewValue());
-        });
 
         tb_Abogados.setEditable(true);
     }
@@ -444,16 +440,41 @@ public class FormCasosController {
             caso.setFechaInicio(fechaInicio);
             caso.setClienteId(cliente.getId());
 
+            // Verificar si hay algún abogado seleccionado (será el principal)
+            application.model.Personal abogadoPrincipal = null;
+            
+            for (AbogadoDemo abogado : tb_Abogados.getItems()) {
+                if (abogado.isSeleccionado()) {
+                    // Buscar este abogado en la base de datos por su cédula
+                    try {
+                        application.dao.PersonalDAO personalDAO = new application.dao.PersonalDAO();
+                        application.model.Personal personal = personalDAO.obtenerPersonalPorIdentificacion(abogado.getCedula());
+                        if (personal != null) {
+                            abogadoPrincipal = personal;
+                            // Asignar el abogado principal al caso
+                            caso.setAbogadoId(personal.getId());
+                            break;
+                        }
+                    } catch (Exception ex) {
+                        System.err.println("Error al buscar abogado: " + ex.getMessage());
+                    }
+                }
+            }
+            
             // Guardar el caso en la base de datos
             try (java.sql.Connection conn = application.database.DatabaseConnection.getConnection()) {
                 application.service.CasoService casoService = new application.service.CasoService(conn);
-                casoService.registrarCaso(caso);
-
+                int casoId = casoService.registrarCaso(caso);
+                caso.setId(casoId);
+                
                 // Imprimir información para depuración
                 System.out.println("INFO: Caso guardado exitosamente:");
                 System.out.println("  Expediente: " + numeroExpediente);
                 System.out.println("  Título: " + titulo);
                 System.out.println("  Cliente ID: " + cliente.getId());
+                if (abogadoPrincipal != null) {
+                    System.out.println("  Abogado Principal: " + abogadoPrincipal.getNombres() + " " + abogadoPrincipal.getApellidos());
+                }
 
                 // Mostrar mensaje de éxito
                 DialogUtil.mostrarDialogo("Éxito",
@@ -526,20 +547,48 @@ public class FormCasosController {
         }
     }
 
-    // Inner class for demo purposes
+    // Clase para representar abogados en la tabla
     public static class AbogadoDemo {
         private final StringProperty nombres;
         private final StringProperty apellidos;
         private final StringProperty cedula;
         private final StringProperty rol;
-        private final BooleanProperty asignado;
-
-        public AbogadoDemo(String nombres, String apellidos, String cedula, String rol, boolean asignado) {
+        private final BooleanProperty seleccionado;
+        
+        public AbogadoDemo(String nombres, String apellidos, String cedula, String rol, boolean seleccionado) {
             this.nombres = new SimpleStringProperty(nombres);
             this.apellidos = new SimpleStringProperty(apellidos);
             this.cedula = new SimpleStringProperty(cedula);
             this.rol = new SimpleStringProperty(rol);
-            this.asignado = new SimpleBooleanProperty(asignado);
+            this.seleccionado = new SimpleBooleanProperty(seleccionado);
+        }
+        
+        public String getNombres() {
+            return nombres.get();
+        }
+        
+        public String getApellidos() {
+            return apellidos.get();
+        }
+        
+        public String getCedula() {
+            return cedula.get();
+        }
+        
+        public String getRol() {
+            return rol.get();
+        }
+        
+        public Boolean isSeleccionado() {
+            return seleccionado.get();
+        }
+        
+        public void setSeleccionado(Boolean value) {
+            seleccionado.set(value);
+        }
+        
+        public BooleanProperty getSeleccionado() {
+            return seleccionado;
         }
 
         public StringProperty nombresProperty() {
@@ -558,8 +607,8 @@ public class FormCasosController {
             return rol;
         }
 
-        public BooleanProperty asignadoProperty() {
-            return asignado;
+        public BooleanProperty seleccionadoProperty() {
+            return seleccionado;
         }
     }
 

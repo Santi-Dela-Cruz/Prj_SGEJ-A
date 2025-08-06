@@ -44,6 +44,23 @@ public class CasoDAO {
                     caso.setFechaInicio(rs.getDate("fecha_inicio"));
                     caso.setDescripcion(rs.getString("descripcion"));
                     caso.setEstado(rs.getString("estado"));
+                    
+                    // Intentar obtener el abogado_id si la columna existe
+                    try {
+                        int abogadoId = rs.getInt("abogado_id");
+                        caso.setAbogadoId(abogadoId);
+                        
+                        // Si hay un abogado asignado, cargar sus datos
+                        if (abogadoId > 0) {
+                            application.dao.PersonalDAO personalDAO = new application.dao.PersonalDAO();
+                            application.model.Personal abogado = personalDAO.obtenerPersonalPorId(abogadoId);
+                            caso.setAbogado(abogado);
+                        }
+                    } catch (SQLException ex) {
+                        // Si la columna no existe, simplemente continuamos
+                        System.out.println("Nota: La columna abogado_id no existe en la tabla caso.");
+                    }
+                    
                     casos.add(caso);
                 }
             }

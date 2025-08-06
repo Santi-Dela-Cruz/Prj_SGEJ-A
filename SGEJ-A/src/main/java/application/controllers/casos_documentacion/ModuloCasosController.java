@@ -69,6 +69,23 @@ public class ModuloCasosController {
                 caso.setDescripcion(rs.getString("descripcion"));
                 caso.setCliente(clienteActual);
                 caso.setClienteId(clienteActual.getId());
+                
+                // Intentar obtener el abogado_id si la columna existe
+                try {
+                    int abogadoId = rs.getInt("abogado_id");
+                    caso.setAbogadoId(abogadoId);
+                    
+                    // Si hay un abogado asignado, cargar sus datos
+                    if (abogadoId > 0) {
+                        application.dao.PersonalDAO personalDAO = new application.dao.PersonalDAO();
+                        application.model.Personal abogado = personalDAO.obtenerPersonalPorId(abogadoId);
+                        caso.setAbogado(abogado);
+                        System.out.println("Abogado cargado: " + (abogado != null ? abogado.getNombres() + " " + abogado.getApellidos() : "null") + " para caso " + caso.getNumeroExpediente());
+                    }
+                } catch (java.sql.SQLException ex) {
+                    // Si la columna no existe, simplemente continuamos
+                    System.out.println("Nota: La columna abogado_id no existe en la tabla caso.");
+                }
                 tb_Casos.getItems().add(caso);
             }
             lbl_TotalCasos.setText("Total: " + count + (count == 1 ? " caso" : " casos"));
@@ -453,14 +470,23 @@ public class ModuloCasosController {
 
     // --- CORREGIR: Solo cargar todos los casos si NO hay cliente seleccionado ---
     private void cargarCasosDesdeBD() {
+        java.sql.Connection conn = null;
+        java.sql.PreparedStatement stmt = null;
+        java.sql.ResultSet rs = null;
+        int count = 0;
+        
         try {
+            // Limpiar tabla
             tb_Casos.getItems().clear();
-            java.sql.Connection conn = application.database.DatabaseConnection.getConnection();
+            
+            // Obtener conexión
+            conn = application.database.DatabaseConnection.getConnection();
             if (conn == null) {
                 throw new Exception("Conexión a base de datos nula");
             }
+            
+            // Preparar consulta según contexto
             String sql;
-            java.sql.PreparedStatement stmt;
             if (clienteActual == null) {
                 sql = "SELECT * FROM caso";
                 stmt = conn.prepareStatement(sql);
@@ -469,45 +495,102 @@ public class ModuloCasosController {
                 stmt = conn.prepareStatement(sql);
                 stmt.setInt(1, clienteActual.getId());
             }
-            java.sql.ResultSet rs = stmt.executeQuery();
-            int count = 0;
+            
+            // Ejecutar consulta
+            rs = stmt.executeQuery();
+            
+            // Lista temporal para casos
+            java.util.List<Caso> casosTemporales = new java.util.ArrayList<>();
+            
+            // Recolectar datos básicos
             while (rs.next()) {
                 count++;
                 Caso caso = new Caso();
                 caso.setId(rs.getInt("id"));
+                
                 String numeroExpediente = rs.getString("numero_expediente");
                 if (numeroExpediente == null || numeroExpediente.isEmpty()) {
                     numeroExpediente = "EXP-" + caso.getId();
                 }
                 caso.setNumeroExpediente(numeroExpediente);
+                
                 caso.setTitulo(rs.getString("titulo"));
                 caso.setTipo(rs.getString("tipo"));
                 caso.setEstado(rs.getString("estado"));
+                
                 java.sql.Date fechaSQL = rs.getDate("fecha_inicio");
                 if (fechaSQL != null) {
                     caso.setFechaInicio(new java.util.Date(fechaSQL.getTime()));
                 }
+                
                 caso.setDescripcion(rs.getString("descripcion"));
+                
+                // Datos del cliente
                 if (clienteActual != null) {
                     caso.setCliente(clienteActual);
                     caso.setClienteId(clienteActual.getId());
+                } else {
+                    caso.setClienteId(rs.getInt("cliente_id"));
                 }
+                
+                // Obtener abogado_id
+                try {
+                    int abogadoId = rs.getInt("abogado_id");
+                    caso.setAbogadoId(abogadoId);
+                } catch (java.sql.SQLException ex) {
+                    // Columna no existe
+                    System.out.println("Nota: La columna abogado_id no existe en la tabla caso.");
+                }
+                
+                casosTemporales.add(caso);
+            }
+            
+            // Cerrar recursos de consulta
+            if (rs != null) {
+                rs.close();
+                rs = null;
+            }
+            if (stmt != null) {
+                stmt.close();
+                stmt = null;
+            }
+            
+            // Procesar datos de abogados
+            application.dao.PersonalDAO personalDAO = new application.dao.PersonalDAO();
+            for (Caso caso : casosTemporales) {
+                if (caso.getAbogadoId() > 0) {
+                    application.model.Personal abogado = personalDAO.obtenerPersonalPorId(caso.getAbogadoId());
+                    caso.setAbogado(abogado);
+                    System.out.println("Abogado cargado: " + (abogado != null ? abogado.getNombres() + " " + abogado.getApellidos() : "null") + " para caso " + caso.getNumeroExpediente());
+                }
+                
                 tb_Casos.getItems().add(caso);
             }
+            
+            // Actualizar contador
             lbl_TotalCasos.setText("Total: " + count + (count == 1 ? " caso" : " casos"));
-            rs.close();
-            stmt.close();
-            conn.close();
+            
+            // Mensaje si no hay casos
             if (count == 0) {
                 Label lblNoData = new Label("No hay casos registrados en la base de datos");
                 lblNoData.setStyle("-fx-font-size: 14px; -fx-text-fill: #555;");
                 tb_Casos.setPlaceholder(lblNoData);
             }
         } catch (Exception e) {
+            // Manejo de errores
             e.printStackTrace();
             Label lblError = new Label("Error al cargar casos. Verifique la conexión a la base de datos.");
             lblError.setStyle("-fx-font-size: 14px; -fx-text-fill: #d32f2f;");
             tb_Casos.setPlaceholder(lblError);
+        } finally {
+            // Cerrar recursos pendientes
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (conn != null) conn.close();
+            } catch (java.sql.SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -522,6 +605,13 @@ public class ModuloCasosController {
             return new SimpleStringProperty(fechaStr);
         });
         tbc_AbogadoAsignado.setCellValueFactory(d -> {
+            // Primero intentamos obtener del abogado principal (campo abogado_id)
+            application.model.Personal abogadoPrincipal = d.getValue().getAbogado();
+            if (abogadoPrincipal != null) {
+                return new SimpleStringProperty(abogadoPrincipal.getNombres() + " " + abogadoPrincipal.getApellidos());
+            }
+            
+            // Si no hay abogado principal, buscamos en la lista de abogados (tabla abogado_caso)
             List<application.model.AbogadoCaso> abogados = d.getValue().getAbogados();
             String nombreAbogado = (abogados != null && !abogados.isEmpty() && abogados.get(0) != null
                     && abogados.get(0).getNombre() != null) ? abogados.get(0).getNombre() : "";
