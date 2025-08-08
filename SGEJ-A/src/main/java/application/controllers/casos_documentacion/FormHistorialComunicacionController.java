@@ -235,13 +235,17 @@ public class FormHistorialComunicacionController {
             // Intentar guardar la comunicación
             try {
                 // Confirmar antes de guardar
+                // Crear botones personalizados en español
+                ButtonType btnSi = new ButtonType("SI", ButtonBar.ButtonData.YES);
+                ButtonType btnNo = new ButtonType("NO", ButtonBar.ButtonData.NO);
+                
                 Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                         "Confirmación",
                         "¿Está seguro que desea guardar este historial de comunicación?",
                         "confirm",
-                        List.of(ButtonType.YES, ButtonType.NO));
+                        List.of(btnSi, btnNo));
 
-                if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (respuesta.orElse(btnNo).getButtonData() == ButtonBar.ButtonData.YES) {
                     // Preparar los datos
                     HistorialComunicacion comunicacion = new HistorialComunicacion();
 
@@ -340,13 +344,17 @@ public class FormHistorialComunicacionController {
         });
 
         btn_Cancelar.setOnAction(cancelEvent -> {
+            // Crear botones personalizados en español
+            ButtonType btnSi = new ButtonType("SI", ButtonBar.ButtonData.YES);
+            ButtonType btnNo = new ButtonType("NO", ButtonBar.ButtonData.NO);
+            
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                     "Confirmación",
                     "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO));
+                    List.of(btnSi, btnNo));
 
-            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+            if (respuesta.orElse(btnNo).getButtonData() == ButtonBar.ButtonData.YES) {
                 if (onCancelar != null)
                     onCancelar.run();
             }

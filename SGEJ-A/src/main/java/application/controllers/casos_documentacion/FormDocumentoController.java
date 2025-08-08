@@ -75,13 +75,17 @@ public class FormDocumentoController {
         // Configuración inicial del botón Cancelar (será modificado en setModo si es
         // necesario)
         btn_Cancelar.setOnAction(e -> {
+            // Crear botones personalizados en español
+            ButtonType btnSi = new ButtonType("SI", ButtonBar.ButtonData.YES);
+            ButtonType btnNo = new ButtonType("NO", ButtonBar.ButtonData.NO);
+
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                     "Confirmación",
                     "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO));
+                    List.of(btnSi, btnNo));
 
-            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+            if (respuesta.orElse(btnNo).getButtonData() == ButtonBar.ButtonData.YES) {
                 if (onCancelar != null) {
                     onCancelar.run();
                 }
@@ -108,13 +112,17 @@ public class FormDocumentoController {
                 return;
             }
 
+            // Crear botones personalizados en español
+            ButtonType btnSi = new ButtonType("SI", ButtonBar.ButtonData.YES);
+            ButtonType btnNo = new ButtonType("NO", ButtonBar.ButtonData.NO);
+
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                     "Confirmación",
                     "¿Está seguro que desea guardar este documento?",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO));
+                    List.of(btnSi, btnNo));
 
-            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+            if (respuesta.orElse(btnNo).getButtonData() == ButtonBar.ButtonData.YES) {
                 try {
                     // Guardar el archivo en la carpeta de uploads según configuración
                     File archivoOrigen = new File(txtf_RutaArchivo.getText());
@@ -187,13 +195,17 @@ public class FormDocumentoController {
         });
 
         btn_Cancelar.setOnAction(event -> {
+            // Crear botones personalizados en español
+            ButtonType btnSi = new ButtonType("SI", ButtonBar.ButtonData.YES);
+            ButtonType btnNo = new ButtonType("NO", ButtonBar.ButtonData.NO);
+
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                     "Confirmación",
                     "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO));
+                    List.of(btnSi, btnNo));
 
-            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+            if (respuesta.orElse(btnNo).getButtonData() == ButtonBar.ButtonData.YES) {
                 if (onCancelar != null)
                     onCancelar.run();
             }
@@ -399,7 +411,7 @@ public class FormDocumentoController {
         boolean esVer = "VER".equals(modo);
 
         if (esNuevo) {
-            txt_TituloForm.setText("Registrar Documento");
+            txt_TituloForm.setText("Subir Documento");
         } else if (esEditar) {
             txt_TituloForm.setText("Editar Documento");
         } else if (esVer) {
@@ -430,13 +442,17 @@ public class FormDocumentoController {
             btn_Cancelar.setText("Cancelar");
             // Reestablecer comportamiento normal para otros modos
             btn_Cancelar.setOnAction(e -> {
+                // Crear botones personalizados en español
+                ButtonType btnSi = new ButtonType("SI", ButtonBar.ButtonData.YES);
+                ButtonType btnNo = new ButtonType("NO", ButtonBar.ButtonData.NO);
+
                 Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                         "Confirmación",
                         "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
                         "confirm",
-                        List.of(ButtonType.YES, ButtonType.NO));
+                        List.of(btnSi, btnNo));
 
-                if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (respuesta.orElse(btnNo).getButtonData() == ButtonBar.ButtonData.YES) {
                     if (onCancelar != null) {
                         onCancelar.run();
                     }

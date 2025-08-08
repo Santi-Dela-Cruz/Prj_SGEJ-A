@@ -164,15 +164,19 @@ public class FormBitacoraController {
                 return;
             }
 
+            // Crear botones personalizados en español
+            ButtonType btnSi = new ButtonType("SI", ButtonBar.ButtonData.YES);
+            ButtonType btnNo = new ButtonType("NO", ButtonBar.ButtonData.NO);
+            
             // Mostrar diálogo de confirmación antes de guardar
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                     "Confirmar guardado",
                     "¿Está seguro que desea guardar esta entrada en la bitácora?",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO));
+                    List.of(btnSi, btnNo));
 
             // Si el usuario no confirma, cancelamos la operación
-            if (!respuesta.isPresent() || respuesta.get() != ButtonType.YES) {
+            if (!respuesta.isPresent() || respuesta.get().getButtonData() != ButtonBar.ButtonData.YES) {
                 return;
             }
 

@@ -89,13 +89,17 @@ public class FormCasosController {
                     mensaje = "¿Está seguro que desea actualizar el estado de este caso?";
                 }
 
+                // Crear botones personalizados en español
+                ButtonType btnSi = new ButtonType("SI", ButtonBar.ButtonData.YES);
+                ButtonType btnNo = new ButtonType("NO", ButtonBar.ButtonData.NO);
+                
                 Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                         "Confirmación",
                         mensaje,
                         "confirm",
-                        List.of(ButtonType.YES, ButtonType.NO));
+                        List.of(btnSi, btnNo));
 
-                if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (respuesta.orElse(btnNo).getButtonData() == ButtonBar.ButtonData.YES) {
                     // Actualizar el estado y/o abogado del caso en la base de datos
                     if (actualizarEstadoCasoEnBaseDeDatos()) {
                         // Si la actualización fue exitosa, cerrar el formulario
@@ -116,13 +120,17 @@ public class FormCasosController {
                     return;
                 }
 
+                // Crear botones personalizados en español
+                ButtonType btnSi = new ButtonType("SI", ButtonBar.ButtonData.YES);
+                ButtonType btnNo = new ButtonType("NO", ButtonBar.ButtonData.NO);
+                
                 Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                         "Confirmación",
                         "¿Está seguro que desea guardar este caso?",
                         "confirm",
-                        List.of(ButtonType.YES, ButtonType.NO));
+                        List.of(btnSi, btnNo));
 
-                if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+                if (respuesta.orElse(btnNo).getButtonData() == ButtonBar.ButtonData.YES) {
                     // Guardar el caso en la base de datos
                     if (guardarCasoEnBaseDeDatos()) {
                         // Si el guardado fue exitoso, cerrar el formulario
@@ -134,13 +142,17 @@ public class FormCasosController {
         });
 
         btn_Cancelar.setOnAction(e -> {
+            // Crear botones personalizados en español
+            ButtonType btnSi = new ButtonType("SI", ButtonBar.ButtonData.YES);
+            ButtonType btnNo = new ButtonType("NO", ButtonBar.ButtonData.NO);
+            
             Optional<ButtonType> respuesta = DialogUtil.mostrarDialogo(
                     "Confirmación",
                     "¿Está seguro que desea cancelar el formulario?\nSe perderán los cambios no guardados.",
                     "confirm",
-                    List.of(ButtonType.YES, ButtonType.NO));
+                    List.of(btnSi, btnNo));
 
-            if (respuesta.orElse(ButtonType.NO) == ButtonType.YES) {
+            if (respuesta.orElse(btnNo).getButtonData() == ButtonBar.ButtonData.YES) {
                 if (onCancelar != null)
                     onCancelar.run();
             }
