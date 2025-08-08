@@ -12,7 +12,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -37,9 +36,6 @@ public class LoginController {
 
     @FXML
     private PasswordField passwordField;
-
-    @FXML
-    private ComboBox<String> userTypeBox;
 
     @FXML
     private Label errorLabel;
@@ -92,9 +88,6 @@ public class LoginController {
             Stage stage = (Stage) minimizeButton.getScene().getWindow();
             stage.setIconified(true);
         });
-
-        userTypeBox.getItems().addAll("Administrador", "Asistente Legal", "Contador", "Abogado");
-        userTypeBox.getSelectionModel().selectFirst();
 
         // Configurar y ocultar el error al inicio
         if (errorLabel != null) {
@@ -186,9 +179,9 @@ public class LoginController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/views/main_panel.fxml"));
             Parent root = loader.load();
 
-            // Convertir enum a string esperado por MainController
+            // Obtener el tipo de usuario del usuario actual autenticado
             String tipoUsuarioStr = userType;
-            // Si el parámetro es un enum, conviértelo
+            // Si el usuario está autenticado, obtenemos su tipo
             if (autenticacionService.getUsuarioActual() != null) {
                 tipoUsuarioStr = MainController
                         .tipoUsuarioToString(autenticacionService.getUsuarioActual().getTipoUsuario());
